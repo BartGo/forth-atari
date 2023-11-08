@@ -53,14 +53,15 @@ B/BUF .
 ( ZEPSUTE!)
 
 : SZESCIAN DUP OVER * * . ;
-
 : KWADRAT DUP * . ;
-
 : KWADRATY CR DO I DUP U* 15 D.R CR LOOP ;
+45001 44980 KWADRATY 
 
-KWADRATY 45001 41980
-(coś nie tak, chyba raczej:  41980 45001 KWADRATY )
+( OK )
+
+(coś było nie tak, chyba raczej:  41980 45001 KWADRATY )
 ( albo górna plus 1: 41980 45002 KWADRATY )
+( czwórka zamiast jedynki )
 
 ( 3.5 )
 
@@ -115,6 +116,8 @@ S->D ( n --- d )
     LOOP CR 
   LOOP ; 
 
+( OK )
+
 : J
   R> R> R> R R# ! >R >R >R R# @ ;
 
@@ -132,6 +135,7 @@ S->D ( n --- d )
     LOOP CR
   LOOP ;
 
+( OK )
 
 ( PF ERATOS 1/2 )
 0 VARIABLE ERATOS 254 ALLOT
@@ -149,7 +153,6 @@ S->D ( n --- d )
 	 DUP ( n n )
   +LOOP ( n )
   DROP ;
-
 : PIERWSZE ( --- )
   ERATOS WSTAW CR
   ERATOS ( adr )
@@ -163,15 +166,47 @@ S->D ( n --- d )
 	   USUN ( adr ) ( gdy n<>0 )
 	 THEN
   LOOP DROP ;
-  ( crash )
+ 
+( crash )
+
   
-  
-: S0 18 +ORIGIN ; ( ? MOŻE TAK ? Z DECOMP S. NIEEEEEEEEEE )
+: S0 18 +ORIGIN ; ( ? MOŻE TAK ? Z DECOMP S. )
   
 : .S 2 SPACES SP@ S0 @ = 0=
   IF
     SP@ 2 – S0 @ -
 	DO I @ . -2 +LOOP
   THEN ;
+  
+( coś tu nie tak )  
+  
+  
+: FIBO ( n --- ) ( max n: 23 ) ( * a nie trzydziesta trzecia! )
+  0 1 ROT 0 CR
+  DO
+    DUP 10 .R CR SWAP OVER +
+  LOOP ; 
+  
+33 FIBO
+( OK )
+  
+: DFIBO ( n --- ) ( max n: 46 )
+  0.       ( d=0 )       ( od początku używamy liczb podwójnych )
+  ROT      ( 0. n )      ( przenosi górną granicę nad 0. )
+  1. ROT   ( 0. 1. n )   ( taki sam manewr )
+  0 CR     ( 0. 1. n 0 ) ( granice pętli ustalone )
+  DO       ( 0. 1. )     ( granice pętli przeniesione na stos powrotów )
+    2DUP   ( 0. 1. 1. )
+    14 D.R ( 0. 1. )     ( pierwsza liczba wydrukowana )
+    CR
+	2SWAP  ( 1. 0. )
+    2OVER  ( 1. 0. 1. )
+    D+     ( 1. 1. )     ( pierwsze z kolejnych dodawań )
+  LOOP ;                 ( powrót do początku pętli )
+  
+
+46 DFIBO
+( OK )
+
   
   

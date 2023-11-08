@@ -1,6 +1,6 @@
 ( ROZDZIAL 1 )
 
-: TEST 30000 0 DO LOOP BEEP ; ( *oryginalnie brak spacji przed średnikiem, błąd )
+: TEST 30000 0 DO LOOP BEEP ; 
 : ZMIENNA VARIABLE ;
 : TU HERE ;
 : KASUJ DROP ;
@@ -60,6 +60,7 @@ B/BUF .
 
 KWADRATY 45001 41980
 (coś nie tak, chyba raczej:  41980 45001 KWADRATY )
+( albo górna plus 1: 41980 45002 KWADRATY )
 
 ( 3.5 )
 
@@ -105,11 +106,12 @@ S->D ( n --- d )
   CR CR 3 SPACES
   10 1 DO I 3 .R LOOP CR 
   30 0 DO ." _" LOOP CR 
-  10 1 DO
+  10 1 DO 
     I DUP AA ! 
     . ." |" 
     10 1 DO
-	  I AA 3 .R 
+	  I AA @ *
+	  3 .R 
     LOOP CR 
   LOOP ; 
 
@@ -125,7 +127,8 @@ S->D ( n --- d )
   10 1 DO
     I . ." |"
     10 1 DO
-	  I J * 3 .R
+	  I J *
+	  3 .R
     LOOP CR
   LOOP ;
 
@@ -161,5 +164,14 @@ S->D ( n --- d )
 	 THEN
   LOOP DROP ;
   ( crash )
+  
+  
+: S0 18 +ORIGIN ; ( ? MOŻE TAK ? Z DECOMP S. NIEEEEEEEEEE )
+  
+: .S 2 SPACES SP@ S0 @ = 0=
+  IF
+    SP@ 2 – S0 @ -
+	DO I @ . -2 +LOOP
+  THEN ;
   
   

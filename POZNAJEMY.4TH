@@ -1,30 +1,37 @@
 ( ROZDZIAL 1 )
 
-: TEST 30000 0 DO LOOP BEEP ;
+: TEST 30000 0 DO LOOP BEEP ; ( *oryginalnie brak spacji przed średnikiem, błąd )
 : ZMIENNA VARIABLE ;
 : TU HERE ;
 : KASUJ DROP ;
 : LICZBA NUMBER ;
 
 ( ROZDZIAL 2 )
-: KOT ;
+: KOT ; ( *oryginalnie brak średnika na końcu )
+KOT
 FORGET KOT
 : KOT CR ." Kot pije mleko" ;
-: TEST2 11 0 DO I . LOOP ;
+7 SPACES
+: TEST2 11 0 DO I . LOOP ; ( *oryginalnie brak spacji przed ; )
 : TEST3 7 0 DO ." A " LOOP ;
-
-( wszystko okej )
+B/SCR .
+B/BUF .
+. ." " : ; SPACES VLIST B/BUF B/SCR C/L CR FORGET SPACE
 
 ( ROZDZIAL 3 )
 
+2 3 +
+2 3 + 7 *
+5 7 - 10 8 + *
+
 7 5 * 3 + 2 / 4 - 7 /
-( wynik: 2 )
+( wynik: 2 , czy tak w odpowiedziach? )
 
 22 3 5 + / 7 10 + *
-( wynik: 34 )
+( wynik: 34 , czy tak w odpowiedziach?  )
 
 17 34 + 3 / +
-( coś nie tak, underflow )
+( błąd, za mało liczb na stosie, czy tak w odpowiedziach? )
  
 40000   .   ( wynik: -25536   )
 40000  U.   ( wynik:  40000   )
@@ -35,12 +42,15 @@ FORGET KOT
 : TEST 7 333 55 9999 20000 CR
   5 0 DO 6 .R CR LOOP ;
 
-( przedtem zdefiniować S0 )
+( przedtem zdefiniować S0, NP. WG INSTRUKCJI )
+: S0 188 ;
+( - )
 
 : .S 2 SPACES SP@ S0 @ = 0=
   IF
     SP@ 2 – S0 @ - DO I @ . -2 +LOOP
   THEN ;
+( ZEPSUTE!)
 
 : SZESCIAN DUP OVER * * . ;
 
@@ -49,7 +59,7 @@ FORGET KOT
 : KWADRATY CR DO I DUP U* 15 D.R CR LOOP ;
 
 KWADRATY 45001 41980
-(coś nie tak, chyba raczej:  45001 41980 KWADRATY )
+(coś nie tak, chyba raczej:  41980 45001 KWADRATY )
 
 ( 3.5 )
 

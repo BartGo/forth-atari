@@ -137,13 +137,11 @@ S->D ( n --- d )
 
 ( OK )
 
-( PF ERATOS 1/2 )
 0 VARIABLE ERATOS 254 ALLOT
 : WSTAW ( adr --- )
   256 1 DO 
     I OVER C! 1+
-  LOOP
-  DROP ;
+  LOOP DROP ;
 : USUN ( n --- )
   256 OVER ( n 256 n )
   DO ( n )
@@ -162,12 +160,13 @@ S->D ( n --- d )
      OVER   ( adr I-1 adr )
      +      ( adr adr+I-1 )
      C@     ( adr n )
-     -DUP IF DUP . 
+     -DUP IF
+	   DUP . 
        USUN ( adr ) ( gdy n<>0 )
      THEN
   LOOP DROP ;
  
-( crash )
+( ERROR - ??? )
 
   
 : S0 18 +ORIGIN ; ( ? MOŻE TAK ? Z DECOMP S. )
@@ -187,7 +186,7 @@ S->D ( n --- d )
     DUP 10 .R CR SWAP OVER +
   LOOP ; 
   
-33 FIBO
+34 FIBO
 ( OK )
   
 : DFIBO ( n --- ) ( max n: 46 )
@@ -205,8 +204,156 @@ S->D ( n --- d )
   LOOP ;                 ( powrót do początku pętli )
   
 
-46 DFIBO
+47 DFIBO
 ( OK )
 
-  
+: IKSY BEGIN ." X" 1 - DUP 0= UNTIL ;
+4 IKSY
+
+( OK )
+
+: NWP BEGIN SWAP OVER MOD -DUP 0= UNTIL ;
+
+128 1024 NWP .
+( wynik: 128 -- a nie 126, plus brak był kropki w listingu )
+324 556 NWP .
+( wynik: 4 )
+1933 821 NWP .
+( wynik: 1 )
+
+
+
+: QUERY TIB @ 80 EXPECT 0 IN ! ; ( *ZGADZA SIĘ Z DECOMP )
+: NAZWISKO? CR ." PODAJ SWOJE NAZWISKO: " CR QUERY ; ( *DODANE CR, ŁADNIEJ )
+NAZWISKO?
+: NAZWISKO? CR ." PODAJ SWOJE NAZWISKO: " CR QUERY 155 WORD HERE ; 
+: DRUKUJ NAZWISKO? CR COUNT TYPE ;
+DRUKUJ
+
+( OK )  
+
+: INPUT CR QUERY BL WORD HERE NUMBER DROP ;  ( *Z CR ŁADNIEJ )
+INPUT .
+
+
+: DATY ( n n n --- )
+ <BUILDS , , , DOES>
+ DUP 2+ DUP 2+ ? ? ?
+ CR ;
+
+12 9 1683 DATY WIEDEN
+4 4 1794 DATY RACLAWICE
+18 6 1815 DATY WATERLOO
+1 9 1870 DATY SEDAN
+12 10 1943 DATY LENINO
+
+WATERLOO
+
+( OK )
+
+: TENKOD ( --- n )
+  CURRENT @ @ PFA CFA
+  ; IMMEDIATE
+: SILNIA ( n --- )
+  1 SWAP 1+ 1 DO I * LOOP ;
+: SILNIA2 ( n --- )
+  DUP 2 = IF ELSE
+    DUP 1 -
+	TENKOD LITERAL
+	EXECUTE *
+  THEN ;
+: SILNIA3 ( n --- )
+  [ SMUDGE ]
+  DUP 2 = IF ELSE
+    DUP 1 - SILNIA3 *
+  THEN
+  [ SMUDGE ] ;
+8 SILNIA  U.
+8 SILNIA2 U. ( * NIE ZADZIAŁA W TEAMS FORTH )
+8 SILNIA3 U.
+
+
+: ARRAY <BUILDS 2 * ALLOT DOES> SWAP 2 * + ;
+10 ARRAY LICZBY
+7 LICZBY
+22 7 LICZBY !
+7 LICZBY @ .
+
+: 2DARRAY
+  <BUILDS
+    DUP ,       ( wpisuje wymiar Dim2 )
+    * 2 * ALLOT ( rezerwuje miejsce )
+  DOES>
+  ROT           ( przenosi wskaźnik i1 na szczyt stosu)
+  OVER @ +      ( mnoży i1 przez Dim2 )
+  ROT +         ( dodaje wskaźnik i2 )
+  2 * + 2+ ;    ( oblicza adres komórki [i1, i2] )
+4 5 2DARRAY PROSTOKAT
+
+( PONIŻEJ NIE DZIAŁA W APX, NIE MA 0> W WIELU WERSJACH; DZIAŁA W VAL )
+( ALE TAM NIE MA R@, ZAMIAST TEGO UŻYWAMY R )
+
+: MATDEF ( dim1 dim2 --- )
+  <BUILDS
+    OVER OVER SWAP , , * 2 * ALLOT
+  DOES> ( i1 i2 pfa+2 )
+  >R ( i1 i2 )
+  OVER OVER ( i1 12 i1 12 )
+  R @ ( i1 i2 i1 i2 dim1 )
+  R 2 + @ ( i1 12 i1 i2 dim1 dim2 )
+  ROT - 0> ROT
+  ROT - 0< ( ind1 ind2 f1 f2 )
+  * ( ind1 ind2 f )
+  IF
+    R @ * + 2 * R> 4 + ( przesunięcie pfa+6 ) ( * ZMIANA R@ NA R @ )
+    + ( adres )
+  ELSE
+    R> DROP DROP DROP
+    ." ZLE WSKAZNIKI" ( sygnał o błędzie )
+  THEN ;
+
+
+: MATDISP ( --- ) ( MATDISP matrix )
+  [COMPILE]' 6 + DUP >R 4 - @ R>
+  2 - @ 0
+  DO
+    SWAP OVER 0
+	DO DUP ? 2+ LOOP
+    SWAP
+  LOOP DROP DROP ;
+
+: ARRAY2 ( n n --- ) ( n n ARRAY2 matrix )
+  <BUILDS
+    OVER , * ALLOT
+  DOES>
+  DUP @ ROT * + + 2+ ;
+
+2 3 ARRAY2 MATRIX
+11 1 1 MATRIX C!
+22 2 1 MATRIX C!
+33 1 2 MATRIX C!
+44 2 2 MATRIX C!
+2 2 MATRIX C@ . ( *TUTAJ BŁĘDNY WYNIK )
+1 1 MATRIX C@ .
+1 2 MATRIX C@ .
+2 1 MATRIX C@ .
+
+( PRAWIE OK )
+
+DECIMAL
+
+: SETNE <# # # 46 HOLD #S #> TYPE ;
+123489. SETNE ( [Return] 1234.89 ok )
+
+: SEXTAL 6 BASE ! ;
+: XX # SEXTAL # DECIMAL 58 HOLD ;
+: SEK ( n --- )
+  <# XX XX #S #> TYPE ;
+15610. CR SEK CR
+
+( OK )
+
+
+
+
   

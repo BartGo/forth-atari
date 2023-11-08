@@ -80,7 +80,7 @@ B/BUF .
     2SWAP ( n3 n4 n5 n6 n1 n2 ) ( – zamiana wykonana! )
     ;
 ( dziwne wyniki )
-	
+    
 : /MOD 2DUP MOD ROT ROT / ;
 ( ! niewyraźna spacja przed średnikiem )
 
@@ -111,8 +111,8 @@ S->D ( n --- d )
     I DUP AA ! 
     . ." |" 
     10 1 DO
-	  I AA @ *
-	  3 .R 
+      I AA @ *
+      3 .R 
     LOOP CR 
   LOOP ; 
 
@@ -130,8 +130,8 @@ S->D ( n --- d )
   10 1 DO
     I . ." |"
     10 1 DO
-	  I J *
-	  3 .R
+      I J *
+      3 .R
     LOOP CR
   LOOP ;
 
@@ -147,10 +147,10 @@ S->D ( n --- d )
 : USUN ( n --- )
   256 OVER ( n 256 n )
   DO ( n )
-	 I 1 ERATOS ( n I-1 adres )
-	 + ( n adres --- I )
-	 0 SWAP C! ( n ) ( 0 pod adr I )
-	 DUP ( n n )
+     I 1 ERATOS ( n I-1 adres )
+     + ( n adres --- I )
+     0 SWAP C! ( n ) ( 0 pod adr I )
+     DUP ( n n )
   +LOOP ( n )
   DROP ;
 : PIERWSZE ( --- )
@@ -158,13 +158,13 @@ S->D ( n --- d )
   ERATOS ( adr )
   256 2  ( adr 256 2 )
   DO     ( adr )
-	 I 1 -  ( adr I-1 )
-	 OVER   ( adr I-1 adr )
-	 +      ( adr adr+I-1 )
-	 C@     ( adr n )
-	 -DUP IF DUP . 
-	   USUN ( adr ) ( gdy n<>0 )
-	 THEN
+     I 1 -  ( adr I-1 )
+     OVER   ( adr I-1 adr )
+     +      ( adr adr+I-1 )
+     C@     ( adr n )
+     -DUP IF DUP . 
+       USUN ( adr ) ( gdy n<>0 )
+     THEN
   LOOP DROP ;
  
 ( crash )
@@ -175,7 +175,7 @@ S->D ( n --- d )
 : .S 2 SPACES SP@ S0 @ = 0=
   IF
     SP@ 2 – S0 @ -
-	DO I @ . -2 +LOOP
+    DO I @ . -2 +LOOP
   THEN ;
   
 ( coś tu nie tak )  
@@ -199,7 +199,7 @@ S->D ( n --- d )
     2DUP   ( 0. 1. 1. )
     14 D.R ( 0. 1. )     ( pierwsza liczba wydrukowana )
     CR
-	2SWAP  ( 1. 0. )
+    2SWAP  ( 1. 0. )
     2OVER  ( 1. 0. 1. )
     D+     ( 1. 1. )     ( pierwsze z kolejnych dodawań )
   LOOP ;                 ( powrót do początku pętli )

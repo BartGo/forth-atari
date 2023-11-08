@@ -70,6 +70,7 @@ B/BUF .
 : 2SWAP ROT >R ROT R> ;
 : 2OVER >R >R 2DUP R> R> 2SWAP ;
 : 2ROT >R >R 2SWAP R> R> 2SWAP ; ( nadmiarowa spacja )
+( powyższe zgadza się z Salman / Tisserant / T )
 
 : 2ROT ( n1 n2 n3 n4 n5 n6 --- n3 n4 n5 n6 n1 n2 )
     >R ( n1 n2 n3 n4 n5 )       ( – przenosi n6 na stos powrotów )
@@ -137,6 +138,7 @@ S->D ( n --- d )
 
 ( OK )
 
+( poniższe sprawdzone z Salman / Tisserand / T )
 0 VARIABLE ERATOS 254 ALLOT
 : WSTAW ( adr --- )
   256 1 DO 
@@ -145,7 +147,7 @@ S->D ( n --- d )
 : USUN ( n --- )
   256 OVER ( n 256 n )
   DO ( n )
-     I 1 ERATOS ( n I-1 adres )
+     I 1 - ERATOS ( n I-1 adres ) ( * brakowało minusa )
      + ( n adres --- I )
      0 SWAP C! ( n ) ( 0 pod adr I )
      DUP ( n n )
@@ -166,7 +168,8 @@ S->D ( n --- d )
      THEN
   LOOP DROP ;
  
-( ERROR - ??? )
+( OK - CHYBA )
+( nawet poprawione lekko w stos. do STT )
 
   
 : S0 18 +ORIGIN ; ( ? MOŻE TAK ? Z DECOMP S. )
@@ -291,9 +294,11 @@ WATERLOO
 4 5 2DARRAY PROSTOKAT
 
 ( PONIŻEJ NIE DZIAŁA W APX, NIE MA 0> W WIELU WERSJACH; DZIAŁA W VAL )
-( ALE TAM NIE MA R@, ZAMIAST TEGO UŻYWAMY R )
+( ALE TAM NIE MA R@, ZAMIAST TEGO UŻYWAMY R - ??? )
 
 : MATDEF ( dim1 dim2 --- )
+         ( dim1 dim2 MATDEF Array-name  )
+         ( indl ind2 Array-name --- adr )
   <BUILDS
     OVER OVER SWAP , , * 2 * ALLOT
   DOES> ( i1 i2 pfa+2 )
@@ -305,7 +310,7 @@ WATERLOO
   ROT - 0< ( ind1 ind2 f1 f2 )
   * ( ind1 ind2 f )
   IF
-    R @ * + 2 * R> 4 + ( przesunięcie pfa+6 ) ( * ZMIANA R@ NA R @ )
+    R@ * + 2 * R> 4 + ( przesunięcie pfa+6 ) 
     + ( adres )
   ELSE
     R> DROP DROP DROP
@@ -313,8 +318,9 @@ WATERLOO
   THEN ;
 
 
+
 : MATDISP ( --- ) ( MATDISP matrix )
-  [COMPILE]' 6 + DUP >R 4 - @ R>
+  [COMPILE] ' 6 + DUP >R 4 - @ R>
   2 - @ 0
   DO
     SWAP OVER 0

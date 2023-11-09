@@ -54,8 +54,8 @@ C/L .
 1000000. . . ( wynik: 15 16960 )
 1000000. D.  ( wynik: 1000000  )
 
-.R  n długość-pola ---
-D.R d długość-pola ---
+.R  ( n długość-pola --- )
+D.R ( d długość-pola --- )
 
 ( oryginalnie źle: .R  długość-pola n --- )
 ( oryginalnie źle: D.R długość-pola d --- )
@@ -80,7 +80,8 @@ D.R d długość-pola ---
 
 ( działa po podmianie S0 @ na SP@ przy pustym stosie i w kontekście apx, ładnie)
 
-COLD SP@ . ( 188 )
+SP! SP@ . ( 188 )
+
 : .S ( --- )
   2 SPACES
   SP@ 188 =
@@ -90,6 +91,21 @@ COLD SP@ . ( 188 )
   THEN ;
 1 2 3 
 .S ( wynik: 1 2 3 )
+
+( OK )
+
+( POZA KONKURSEM, JEŚLI NIE PODOBA NAM SIĘ MAGICZNA STAŁA 188 )
+( SUGESTIA PRZYPISU )
+SP! : S0@ ( --- n )
+  [ SP@ ]
+  LITERAL ; 
+: .S ( --- )
+  2 SPACES
+  SP@ S0@ =
+  0= IF
+    SP@ 2 - S0@ 2 - 
+    DO I @ . -2 +LOOP
+  THEN ;
 
 ( OK )
 

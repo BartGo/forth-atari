@@ -42,7 +42,7 @@ B/BUF .
 : TEST 7 333 55 9999 20000 CR
   5 0 DO 6 .R CR LOOP ;
 
-( przedtem zdefiniować S0, NP. WG INSTRUKCJI )
+( przedtem zdefiniować S0, NP. WG INSTRUKCJI w apx )
 : S0 188 ;
 ( - )
 
@@ -168,19 +168,32 @@ S->D ( n --- d )
      THEN
   LOOP DROP ;
  
+PIERWSZE
+ 
 ( OK - CHYBA )
-( nawet poprawione lekko w stos. do STT )
+( faktycznie nawet poprawione lekko w stos. do STT )
 
   
-: S0 18 +ORIGIN ; ( ? MOŻE TAK ? Z DECOMP S. )
   
 : .S 2 SPACES SP@ S0 @ = 0=
   IF
     SP@ 2 – S0 @ -
     DO I @ . -2 +LOOP
   THEN ;
+
+( po podmianie S0 @ na SP@ przy pustym stosie i w kontekście apx)
+COLD SP@ . ( 188 )
+: .S ( --- )
+  2 SPACES
+  SP@ 188 =
+  0= IF
+    SP@ 2 - 188 2 - 
+    DO I @ . -2 +LOOP
+  THEN ;
+99 88 77 .S
+
   
-( coś tu nie tak )  
+( coś tu nie tak, bardzo zależy od wersji forth; w apx wyświetla zero jako  )  
   
   
 : FIBO ( n --- ) ( max n: 23 ) ( * a nie trzydziesta trzecia! )
@@ -189,7 +202,7 @@ S->D ( n --- d )
     DUP 10 .R CR SWAP OVER +
   LOOP ; 
   
-34 FIBO
+24 FIBO
 ( OK )
   
 : DFIBO ( n --- ) ( max n: 46 )
@@ -206,17 +219,20 @@ S->D ( n --- d )
     D+     ( 1. 1. )     ( pierwsze z kolejnych dodawań )
   LOOP ;                 ( powrót do początku pętli )
   
-
+( uruchomienie: )
 47 DFIBO
 ( OK )
 
 : IKSY BEGIN ." X" 1 - DUP 0= UNTIL ;
+
+( uruchomienie: )
 4 IKSY
 
 ( OK )
 
 : NWP BEGIN SWAP OVER MOD -DUP 0= UNTIL ;
 
+( uruchomienie: )
 128 1024 NWP .
 ( wynik: 128 -- a nie 126, plus brak był kropki w listingu )
 324 556 NWP .
@@ -228,14 +244,21 @@ S->D ( n --- d )
 
 : QUERY TIB @ 80 EXPECT 0 IN ! ; ( *ZGADZA SIĘ Z DECOMP )
 : NAZWISKO? CR ." PODAJ SWOJE NAZWISKO: " CR QUERY ; ( *DODANE CR, ŁADNIEJ )
+
+( uruchomienie: )
 NAZWISKO?
+
 : NAZWISKO? CR ." PODAJ SWOJE NAZWISKO: " CR QUERY 155 WORD HERE ; 
 : DRUKUJ NAZWISKO? CR COUNT TYPE ;
+
+( uruchomienie: )
 DRUKUJ
 
 ( OK )  
 
 : INPUT CR QUERY BL WORD HERE NUMBER DROP ;  ( *Z CR ŁADNIEJ )
+
+( uruchomienie: )
 INPUT .
 
 
@@ -243,6 +266,8 @@ INPUT .
  <BUILDS , , , DOES>
  DUP 2+ DUP 2+ ? ? ?
  CR ;
+
+( uruchomienie: )
 
 12 9 1683 DATY WIEDEN
 4 4 1794 DATY RACLAWICE
@@ -271,12 +296,16 @@ WATERLOO
     DUP 1 - SILNIA3 *
   THEN
   [ SMUDGE ] ;
+
+( uruchomienie: )
 8 SILNIA  U.
-8 SILNIA2 U. ( * NIE ZADZIAŁA W TEAMS FORTH )
+8 SILNIA2 U. ( * NIE ZADZIAŁA W COIN-OP/1.4S ITP; DOBRE W APX )
 8 SILNIA3 U.
 
 
 : ARRAY <BUILDS 2 * ALLOT DOES> SWAP 2 * + ;
+
+( uruchomienie: )
 10 ARRAY LICZBY
 7 LICZBY
 22 7 LICZBY !
@@ -291,6 +320,8 @@ WATERLOO
   OVER @ +      ( mnoży i1 przez Dim2 )
   ROT +         ( dodaje wskaźnik i2 )
   2 * + 2+ ;    ( oblicza adres komórki [i1, i2] )
+
+( uruchomienie: )
 4 5 2DARRAY PROSTOKAT
 
 ( PONIŻEJ NIE DZIAŁA W APX, NIE MA 0> W WIELU WERSJACH; DZIAŁA W VAL )
@@ -334,6 +365,7 @@ WATERLOO
   DOES>
   DUP @ ROT * + + 2+ ;
 
+( uruchomienie: )
 2 3 ARRAY2 MATRIX
 11 1 1 MATRIX C!
 22 2 1 MATRIX C!
@@ -349,13 +381,17 @@ WATERLOO
 DECIMAL
 
 : SETNE <# # # 46 HOLD #S #> TYPE ;
+
+( uruchomienie: )
 123489. SETNE ( [Return] 1234.89 ok )
 
 : SEXTAL 6 BASE ! ;
 : XX # SEXTAL # DECIMAL 58 HOLD ;
 : SEK ( n --- )
-  <# XX XX #S #> TYPE ;
-15610. CR SEK CR
+  CR <# XX XX #S #> TYPE CR ;
+
+( uruchomienie: )
+15610. SEK
 
 ( OK )
 

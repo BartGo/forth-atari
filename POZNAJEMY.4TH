@@ -1,24 +1,37 @@
-( ROZDZIAL 1 )
 
+( ROZDZIAŁ 1.3.1 )
 : TEST 30000 0 DO LOOP BEEP ; 
+
+( ROZDZIAŁ 1.3.4 )
+
 : ZMIENNA VARIABLE ;
 : TU HERE ;
 : KASUJ DROP ;
 : LICZBA NUMBER ;
 
-( ROZDZIAL 2 )
+( ROZDZIAŁ 2.1 )
+
 : KOT ; ( *oryginalnie brak średnika na końcu )
 KOT
 FORGET KOT
 : KOT CR ." Kot pije mleko" ;
 7 SPACES
-: TEST2 11 0 DO I . LOOP ; ( *oryginalnie brak spacji przed ; )
+
+( ROZDZIAŁ 2.2 )
+
+: TEST2 11 0 DO I . LOOP ; ( *oryginalnie może brak spacji przed ; )
 : TEST3 7 0 DO ." A " LOOP ;
+
+( ROZDZIAŁ 2.3 )
+
 B/SCR .
 B/BUF .
-. ." " : ; SPACES VLIST B/BUF B/SCR C/L CR FORGET SPACE
+C/L .
 
-( ROZDZIAL 3 )
+. ." " : ; SPACES VLIST B/BUF B/SCR C/L CR FORGET SPACE 
+( w listingu błędnie ," )
+
+( ROZDZIAŁ 3.3 )
 
 2 3 +
 2 3 + 7 *
@@ -33,37 +46,68 @@ B/BUF .
 17 34 + 3 / +
 ( błąd, za mało liczb na stosie, czy tak w odpowiedziach? )
  
-40000   .   ( wynik: -25536   )
-40000  U.   ( wynik:  40000   )
-1000000 .   ( wynik:  16960   )
-1000000 . . ( coś nie tak, sprawdzić )
-1000000. D. ( wynik: 1000000  )
+( ROZDZIAŁ 3.4.2 ) 
+ 
+40000   .    ( wynik: -25536   )
+40000  U.    ( wynik:  40000   )
+1000000 .    ( wynik:  16960   )
+1000000. . . ( wynik: 15 16960 )
+1000000. D.  ( wynik: 1000000  )
 
-: TEST 7 333 55 9999 20000 CR
+.R  n długość-pola ---
+D.R d długość-pola ---
+
+( oryginalnie źle: .R  długość-pola n --- )
+( oryginalnie źle: D.R długość-pola d --- )
+
+: TEST
+  7 333 55 9999 20000 CR
   5 0 DO 6 .R CR LOOP ;
 
-( przedtem zdefiniować S0, NP. WG INSTRUKCJI w apx )
-: S0 188 ;
-( - )
+-----------
 
+( ROZDZIAŁ 3.4.3 )
+ 
 : .S 2 SPACES SP@ S0 @ = 0=
   IF
-    SP@ 2 – S0 @ - DO I @ . -2 +LOOP
+    SP@ 2 – S0 @ -
+    DO I @ . -2 +LOOP
   THEN ;
-( ZEPSUTE!)
+
+( sugerowany przypis: "Być może, S0 należy zmniejszyć o 2, jak w następnym fragmencie kodu zrobiono z wartością 188." )
+
+( w kodzie SO (es-ooo) zamiast S0 (es-zero), do poprawki )
+
+( działa po podmianie S0 @ na SP@ przy pustym stosie i w kontekście apx, ładnie)
+
+COLD SP@ . ( 188 )
+: .S ( --- )
+  2 SPACES
+  SP@ 188 =
+  0= IF
+    SP@ 2 - 188 2 - 
+    DO I @ . -2 +LOOP
+  THEN ;
+1 2 3 
+.S ( wynik: 1 2 3 )
+
+( OK )
 
 : SZESCIAN DUP OVER * * . ;
 : KWADRAT DUP * . ;
 : KWADRATY CR DO I DUP U* 15 D.R CR LOOP ;
 45001 44980 KWADRATY 
+( w książce była czwórka zamiast jedynki )
 
 ( OK )
 
-(coś było nie tak, chyba raczej:  41980 45001 KWADRATY )
-( albo górna plus 1: 41980 45002 KWADRATY )
-( czwórka zamiast jedynki )
+( 3.4.4 )  
+
+TODO: do sprawdzenia
 
 ( 3.5 )
+
+warto dodać przypis (sprawdzić) że R czasem jest zastąpione przez R@
 
 : 2DUP OVER OVER ;
 : 2DROP DROP DROP ;
@@ -80,8 +124,13 @@ B/BUF .
     R> ( n3 n4 n1 n2 n5 n6 )    ( – przenosi z powrotem n6 )
     2SWAP ( n3 n4 n5 n6 n1 n2 ) ( – zamiana wykonana! )
     ;
-( dziwne wyniki )
-    
+
+( OK )
+
+( ROZDZIAŁ 3.6.1 ) 
+
+TODO: DO SPRAWDZENIA ROZDZIAŁ
+	
 : /MOD 2DUP MOD ROT ROT / ;
 ( ! niewyraźna spacja przed średnikiem )
 
@@ -139,6 +188,8 @@ S->D ( n --- d )
 ( OK )
 
 ( poniższe sprawdzone z Salman / Tisserand / T )
+
+
 0 VARIABLE ERATOS 254 ALLOT
 : WSTAW ( adr --- )
   256 1 DO 
@@ -153,6 +204,8 @@ S->D ( n --- d )
      DUP ( n n )
   +LOOP ( n )
   DROP ;
+  
+  
 : PIERWSZE ( --- )
   ERATOS WSTAW CR
   ERATOS ( adr )
@@ -174,26 +227,6 @@ PIERWSZE
 ( faktycznie nawet poprawione lekko w stos. do STT )
 
   
-  
-: .S 2 SPACES SP@ S0 @ = 0=
-  IF
-    SP@ 2 – S0 @ -
-    DO I @ . -2 +LOOP
-  THEN ;
-
-( po podmianie S0 @ na SP@ przy pustym stosie i w kontekście apx)
-COLD SP@ . ( 188 )
-: .S ( --- )
-  2 SPACES
-  SP@ 188 =
-  0= IF
-    SP@ 2 - 188 2 - 
-    DO I @ . -2 +LOOP
-  THEN ;
-99 88 77 .S
-
-  
-( coś tu nie tak, bardzo zależy od wersji forth; w apx wyświetla zero jako  )  
   
   
 : FIBO ( n --- ) ( max n: 23 ) ( * a nie trzydziesta trzecia! )
@@ -395,6 +428,8 @@ DECIMAL
 
 ( OK )
 
+
+można ją jednak utworzyć
 
 
 

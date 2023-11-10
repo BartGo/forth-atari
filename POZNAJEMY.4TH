@@ -1,15 +1,15 @@
 
-( ROZDZIAŁ 1.3.1 )
+( ROZDZ. 1.3.1 )
 : TEST 30000 0 DO LOOP BEEP ; 
 
-( ROZDZIAŁ 1.3.4 )
+( ROZDZ. 1.3.4 )
 
 : ZMIENNA VARIABLE ;
 : TU HERE ;
 : KASUJ DROP ;
 : LICZBA NUMBER ;
 
-( ROZDZIAŁ 2.1 )
+( ROZDZ. 2.1 )
 
 : KOT ; ( *oryginalnie brak średnika na końcu )
 KOT
@@ -17,12 +17,12 @@ FORGET KOT
 : KOT CR ." Kot pije mleko" ;
 7 SPACES
 
-( ROZDZIAŁ 2.2 )
+( ROZDZ. 2.2 )
 
 : TEST2 11 0 DO I . LOOP ; ( *oryginalnie może brak spacji przed ; )
 : TEST3 7 0 DO ." A " LOOP ;
 
-( ROZDZIAŁ 2.3 )
+( ROZDZ. 2.3 )
 
 B/SCR .
 B/BUF .
@@ -31,7 +31,7 @@ C/L .
 . ." " : ; SPACES VLIST B/BUF B/SCR C/L CR FORGET SPACE 
 ( w listingu błędnie ," )
 
-( ROZDZIAŁ 3.3 )
+( ROZDZ. 3.3 )
 
 2 3 +
 2 3 + 7 *
@@ -66,7 +66,7 @@ D.R ( d długość-pola --- )
 
 -----------
 
-( ROZDZIAŁ 3.4.3 )
+( ROZDZ. 3.4.3 )
  
 : .S 2 SPACES SP@ S0 @ = 0=
   IF
@@ -117,11 +117,11 @@ SP! : S0@ ( --- n )
 
 ( OK )
 
-( 3.4.4 )  
+( ROZDZ. 3.4.4 )  
 
 TODO: do sprawdzenia
 
-( 3.5 )
+( ROZDZ. 3.5 )
 
 warto dodać przypis (sprawdzić) że R czasem jest zastąpione przez R@
 
@@ -143,7 +143,7 @@ warto dodać przypis (sprawdzić) że R czasem jest zastąpione przez R@
 
 ( OK )
 
-( ROZDZIAŁ 3.6.1 ) 
+( ROZDZ. 3.6.1 ) 
 
 TODO: DO SPRAWDZENIA ROZDZIAŁ
 	
@@ -153,7 +153,7 @@ TODO: DO SPRAWDZENIA ROZDZIAŁ
 : / /MOD SWAP DROP ;
 ( ! niewyraźna spacja przed średnikiem )
 
-( 3.6.2 )
+( ROZDZ. 3.6.2 )
 
 D+ /d1 d2 --- d1+d2/
 D- /d1 d2 --- d1-d2/
@@ -165,6 +165,13 @@ S->D n --- d
 ( ! brak nawiasów )
 S->D ( n --- d )
 
+( ROZDZ. 3.7 )
+
+255 2 BASE ! . DECIMAL
+32767 2 BASE ! CR . DECIMAL ( * bylo BASB )
+
+
+( ************** )
 
 0 VARIABLE AA
 : TABLICZKA ( --- )
@@ -351,6 +358,14 @@ WATERLOO
 8 SILNIA2 U. ( * NIE ZADZIAŁA W COIN-OP/1.4S ITP; DOBRE W APX )
 8 SILNIA3 U.
 
+( co na to JB? )
+: FACTORIAL
+  DUP IF
+    DUP 1 -
+    [ SMUDGE ] FACTORIAL [ SMUDGE ]
+    * 
+  ELSE 1+ THEN ;
+  8 FACTORIAL U.
 
 : ARRAY <BUILDS 2 * ALLOT DOES> SWAP 2 * + ;
 
@@ -373,9 +388,12 @@ WATERLOO
 ( uruchomienie: )
 4 5 2DARRAY PROSTOKAT
 
+
+
 ( PONIŻEJ NIE DZIAŁA W APX, NIE MA 0> W WIELU WERSJACH; DZIAŁA W VAL )
 ( ALE TAM NIE MA R@, ZAMIAST TEGO UŻYWAMY R - ??? )
 
+: 0> 0 MAX ; ( HELPER )
 : MATDEF ( dim1 dim2 --- )
          ( dim1 dim2 MATDEF Array-name  )
          ( indl ind2 Array-name --- adr )
@@ -390,23 +408,45 @@ WATERLOO
   ROT - 0< ( ind1 ind2 f1 f2 )
   * ( ind1 ind2 f )
   IF
-    R@ * + 2 * R> 4 + ( przesunięcie pfa+6 ) 
+    R @ * + 2 * R> 4 + ( przesunięcie pfa+6 ) ( * NIE R@ ALE R @ )
     + ( adres )
   ELSE
     R> DROP DROP DROP
     ." ZLE WSKAZNIKI" ( sygnał o błędzie )
   THEN ;
 
+2 3 MATDEF MATRIX2
+
+11 0 0 MATRIX2 C!
+22 0 1 MATRIX2 C!
+33 1 0 MATRIX2 C!
+44 1 1 MATRIX2 C!
+55 0 2 MATRIX2 C!
+66 1 2 MATRIX2 C!
+77 2 3 MATRIX2 C! ( DOBRZE, WYKRYWA PRZEKROCZONE GRANICE )
+0 0 MATRIX2 C@ .
+0 1 MATRIX2 C@ .
+1 0 MATRIX2 C@ .
+1 1 MATRIX2 C@ .
+0 2 MATRIX2 C@ .
+1 2 MATRIX2 C@ .
 
 
+
+( NIE UMIEM TEGO NAPRAWIĆ, NAWET Z SALMANA NIE DZIAŁA )
 : MATDISP ( --- ) ( MATDISP matrix )
-  [COMPILE] ' 6 + DUP >R 4 - @ R>
-  2 - @ 0
+  [COMPILE] '
+  6 + DUP >R
+  4 - @
+  R> 2 - @ 0
   DO
     SWAP OVER 0
-	DO DUP ? 2+ LOOP
+	DO DUP @ . 2+ LOOP 
     SWAP
   LOOP DROP DROP ;
+
+
+
 
 : ARRAY2 ( n n --- ) ( n n ARRAY2 matrix )
   <BUILDS
@@ -414,20 +454,35 @@ WATERLOO
   DOES>
   DUP @ ROT * + + 2+ ;
 
-( uruchomienie: )
 2 3 ARRAY2 MATRIX
-11 1 1 MATRIX C!
-22 2 1 MATRIX C!
-33 1 2 MATRIX C!
-44 2 2 MATRIX C!
-2 2 MATRIX C@ . ( *TUTAJ BŁĘDNY WYNIK )
-1 1 MATRIX C@ .
-1 2 MATRIX C@ .
-2 1 MATRIX C@ .
 
-( PRAWIE OK )
+11 0 0 MATRIX C!
+22 0 1 MATRIX C!
+33 1 0 MATRIX C!
+44 1 1 MATRIX C!
+55 0 2 MATRIX C!
+66 1 2 MATRIX C!
+
+0 0 MATRIX C@ .
+0 1 MATRIX C@ .
+1 0 MATRIX C@ .
+1 1 MATRIX C@ .
+0 2 MATRIX C@ .
+1 2 MATRIX C@ .
+
+( OK )
+
+( co na to JB? )
+: ARRAY-JB  <BUILDS OVER C, DUP C, * ALLOT
+  DOES> 1+ ROT OVER C@ * + + 1+ ;
+2 3 ARRAY-JB BUF
+13 2 1 BUF C!
+2 1 BUF C@ .
+
 
 DECIMAL
+
+
 
 : SETNE <# # # 46 HOLD #S #> TYPE ;
 
@@ -445,7 +500,40 @@ DECIMAL
 ( OK )
 
 
-można ją jednak utworzyć
+( PONIŻSZE NAM NIE ZADZIAŁA JEŚLI NIE MAMY D*, JAK W "COMPLETE FORTH" )
+
+0 VARIABLE A_
+0 VARIABLE B_
+0 VARIABLE C_
+0 VARIABLE D_
+: D* A_ ! B_ ! C_ ! D_ !
+  D_ @ B_ A_ U*
+  D_ @ A_ @ U* DROP +
+  C_ @ B_ @ U* DROP + ; 
+
+
+( --- )
+
+: FIX DPL @ 0< IF ( jeżeli liczba była pojedyncza)
+S->D 0 DPL ! ( przekształca ją w podwójną )
+THEN
+DPL @ DUP 4 < IF 4 SWAP
+DO 10. D* LOOP ( skaluje )
+ELSE
+4 > IF ." Poza zakresem" 2DROP THEN THEN ; ( * TO NIE ZADZIAŁA DOPÓKI NIE ZDEFINIUJEMY D* )
+: F. SWAP OVER DABS
+<# # # # # 46 HOLD #S SIGN #> TYPE SPACE ;
+
+0.04 FIX 
+0.3 FIX D+ 
+0.625 FIX D+ 
+0.0001 FIX D+ 
+10 FIX D+ 
+F. 10.9651 
+
+WCALE NIE, TO NIE DZIAŁA!!
+
+
 
 
 

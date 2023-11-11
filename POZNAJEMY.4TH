@@ -505,7 +505,7 @@ DECIMAL
 : PRZEDZIAL ( dolna-granica n gorna-granica )
   OVER ( dol-gr n gor-gr n )
   > ( dol-gr n f1 )
-  >R ( dol-gr n >
+  >R ( dol-gr n )
   < ( f2 )
   R> ( f2 f1 )
   * ; ( f )  ( * tu był brak spacji )
@@ -549,7 +549,7 @@ WCALE NIE, TO NIE DZIAŁA!!
 
 ( ROZDZ. 9.3 )
 
-( przed UD. brakowało dwukropka; DABS już istnieje )
+( przed UD. brakowało dwukropka; D+- oraz DABS już istnieje )
 : UD. <# #S #> TYPE ;
 : D- DMINUS D+ ;
 : D0= OR 0= ; ( test na liczbę podwójną 0 )

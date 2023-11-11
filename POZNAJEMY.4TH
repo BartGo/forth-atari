@@ -500,6 +500,20 @@ DECIMAL
 ( OK )
 
 
+
+
+: PRZEDZIAL ( dolna-granica n gorna-granica )
+  OVER ( dol-gr n gor-gr n )
+  > ( dol-gr n f1 )
+  >R ( dol-gr n >
+  < ( f2 )
+  R> ( f2 f1 )
+  * ; ( f )  ( * tu był brak spacji )
+
+
+
+
+
 ( PONIŻSZE NAM NIE ZADZIAŁA JEŚLI NIE MAMY D*, JAK W "COMPLETE FORTH" )
 
 0 VARIABLE A_
@@ -533,7 +547,20 @@ F. 10.9651
 
 WCALE NIE, TO NIE DZIAŁA!!
 
+( ROZDZ. 9.3 )
 
+( przed UD. brakowało dwukropka; DABS już istnieje )
+: UD. <# #S #> TYPE ;
+: D- DMINUS D+ ;
+: D0= OR 0= ; ( test na liczbę podwójną 0 )
+: D0< SWAP DROP 0< ; ( test na ujemną liczbę podwójna )
+: D= D- D0= ; ( test na równość dwóch liczb podwójnych )
+: D+- 0< IF DMINUS THEN ;
+: DABS DUP D+- ;
+
+
+
+( 9.5 bez błędów )
 
 
 

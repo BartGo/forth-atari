@@ -1,37 +1,42 @@
 
-( ROZDZ. 1.3.1 )
+( ROZDZIAL 1.3.1 )
 : TEST 30000 0 DO LOOP BEEP ; 
 
-( ROZDZ. 1.3.4 )
+( ROZDZIAL 1.3.4 )
 
 : ZMIENNA VARIABLE ;
 : TU HERE ;
 : KASUJ DROP ;
 : LICZBA NUMBER ;
 
-( ROZDZ. 2.1 )
+( ROZDZIAL 2.1 )
 
-: KOT ; ( *oryginalnie brak średnika na końcu )
+: KOT ; 
 KOT
 FORGET KOT
 : KOT CR ." Kot pije mleko" ;
 7 SPACES
 
-( ROZDZ. 2.2 )
+( ROZDZIAL 2.2 )
 
-: TEST2 11 0 DO I . LOOP ; ( *oryginalnie może brak spacji przed ; )
+: TEST2 11 0 DO I . LOOP ; 
+
+TEST2
+
 : TEST3 7 0 DO ." A " LOOP ;
 
-( ROZDZ. 2.3 )
+TEST3
 
-B/SCR .
-B/BUF .
-C/L .
+( ROZDZIAL 2.3 )
+
+B/SCR . ( 8 ) 
+B/BUF . ( 128 ) 
+C/L .   ( 64 )
 
 . ." " : ; SPACES VLIST B/BUF B/SCR C/L CR FORGET SPACE 
 ( w listingu błędnie ," )
 
-( ROZDZ. 3.3 )
+( ROZDZIAL 3.3 )
 
 2 3 +
 2 3 + 7 *
@@ -46,7 +51,7 @@ C/L .
 17 34 + 3 / +
 ( błąd, za mało liczb na stosie, czy tak w odpowiedziach? )
  
-( ROZDZIAŁ 3.4.2 ) 
+( ROZDZIAL 3.4.2 ) 
  
 40000   .    ( wynik: -25536   )
 40000  U.    ( wynik:  40000   )
@@ -64,9 +69,11 @@ D.R ( d długość-pola --- )
   7 333 55 9999 20000 CR
   5 0 DO 6 .R CR LOOP ;
 
+TEST
+
 -----------
 
-( ROZDZ. 3.4.3 )
+( ROZDZIAL 3.4.3 )
  
 : .S 2 SPACES SP@ S0 @ = 0=
   IF
@@ -78,10 +85,7 @@ D.R ( d długość-pola --- )
 
 ( w kodzie SO (es-ooo) zamiast S0 (es-zero), do poprawki )
 
-( działa po podmianie S0 @ na SP@ przy pustym stosie i w kontekście apx, ładnie)
-
-SP! SP@ . ( 188 )
-
+COLD SP@ . ( 188 )
 : .S ( --- )
   2 SPACES
   SP@ 188 =
@@ -145,7 +149,7 @@ warto dodać przypis (sprawdzić) że R czasem jest zastąpione przez R@
 
 ( ROZDZ. 3.6.1 ) 
 
-TODO: DO SPRAWDZENIA ROZDZIAŁ
+TODO: DO SPRAWDZENIA ROZDZIAL
 	
 : /MOD 2DUP MOD ROT ROT / ;
 ( ! niewyraźna spacja przed średnikiem )
@@ -564,4 +568,4 @@ WCALE NIE, TO NIE DZIAŁA!!
 
 
 
-  
+

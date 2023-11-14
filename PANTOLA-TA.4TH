@@ -1,4 +1,6 @@
-: --> ; ( off )
+( : --> ; ) ( off )
+
+: <=< OVER > >R < R> * ; 
 
 : TASK ;
 
@@ -643,7 +645,7 @@ wszystkie wersje z kodami sprawdzic i zachowac
 1L68 2 ,X LDA, XSAVE 2+ STA,
 1M3P 3 ,X LDA, XSAVE 3 + STA,
 1NNC 0 ,X LDY,
-106Q BEGIN, DEY, XSAVE 2+ )Y LDA,
+1O6Q BEGIN, DEY, XSAVE 2+ )Y LDA,
 1PEJ 96 # AND, .A LSR, .A LSR,
 1Q03 .A LSR, .A LSR, .A LSR, TAX,
 1RGO XSAVE 2+ )Y LDA,
@@ -673,7 +675,7 @@ wszystkie wersje z kodami sprawdzic i zachowac
 2JFB EDITOR DEFINITIONS
 2K86 : #DLE [ 112 C, 66 C, 48032 ,
 2LBD 2 C, 2 C, 2 C, 2 C, 2 C, 2 C,
-2MPR 2 C, 2 C, 2 C, 2 C, 2 C, 2 C,
+2MPR 2 C, 2 C, 2 C, 2 C, 2 C, 2 C, 2
 2N3T C, 2 C, 2 C, 2 C, 2 C, 2 C, 2
 2O3T C, 2 C, 2 C, 2 C, 2 C, 2 C, 2
 2P9S C, 2 C, 2 C, 65 C, 47998 , ] ;

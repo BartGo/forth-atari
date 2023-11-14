@@ -567,13 +567,16 @@ WCALE NIE, TO NIE DZIAŁA!!
 ( 9.5 bez błędów )
 
 
-HETMANY - upiększone
+HETMANY - wydziwione
 ==================================================================
 
+( *** MAKRA *** )
+
+: DEF [COMPILE] : ; IMMEDIATE
 
 ( *** TYPY DANYCH *** )
 
-: T-Wektor
+DEF T:Wektor
   <BUILDS HERE OVER ERASE ALLOT DOES> + ;
 
 ( *** STAŁE I ZMIENNE *** )
@@ -582,45 +585,44 @@ ASCII X CONSTANT %hetman
 ASCII . CONSTANT %plansza
 
       0 VARIABLE &rozwiazanie
-   1024 T-Wektor &wspolrzedna
+   1024 T:Wektor &wspolrzedna
 
 ( *** SŁOWA PODSTAWOWE *** )
 
-: LHet ( --- liczba hetmanów+1 )
+DEF LHet ( --- liczba hetmanów+1 )
   0 &wspolrzedna C@ ;
 
-: Postaw ( rząd kolumna --- )
+DEF ))Postaw ( rząd kolumna --- )
   SWAP &wspolrzedna C! ; ( umieszcza hetmana )
   
-: Usun ( rząd --- )
-  0 Postaw ; ( kasuje hetmana )
+DEF )Usun ( rząd --- )
+  0 ))Postaw ; ( kasuje hetmana )
   
-: Wolne ( rząd n --- rząd f )
+DEF ))Wolne ( rząd n --- rząd f )
   2DUP = >R OVER
   &wspolrzedna C@ OVER
   &wspolrzedna C@ -
   ROT ROT - ABS OVER ABS =
   SWAP 0= OR 0= R> OR ;
   
-: WszystkieWolne ( rząd --- rząd f )
+DEF )WszystkieWolne ( rząd --- rząd f )
   1 OVER 1
   DO
     OVER I Wolne AND
   LOOP ;
   
-: Brzeg ( rząd --- rząd f )
+DEF )Brzeg ( rząd --- rząd f )
   LHet OVER &wspolrzedna C@ > ;
 
-: Naprzod ( rząd --- rząd f ) ( f=1, gdy hetmana w rzędzie
-  ( "rząd" można przesunąć do następnej kolumny )
-  DUP DUP &wspolrzedna C@ 1+ Postaw Brzeg
-  IF 1 ELSE DUP Usun 0 THEN ;
+DEF )Naprzod ( rząd --- rząd f ) 
+  DUP DUP &wspolrzedna C@ 1+
+  ))Postaw )Brzeg
+  IF 1 ELSE DUP )Usun 0 THEN ;
 
-: PierwszaWolna ( rząd --- rząd f ) ( f=1,gdy hetman może
-  ( przejść do następnej kolumny w rzędzie )
+DEF )PierwszaWolna ( rząd --- rząd f )
   BEGIN
     Naprzod IF
-	  WszystkieWolne -DUP
+	  )WszystkieWolne -DUP
 	ELSE
 	  0 1
 	THEN
@@ -628,16 +630,16 @@ ASCII . CONSTANT %plansza
 
 ( *** INICJOWANIE *** )
   
-: Inic ( --- ) ( inicjuje szachownice z hetmanami w rz. 0 )
+DEF Inic ( --- )
   LHet 1 
   DO
-	I Usun
+	I )Usun
   LOOP
   0 &rozwiazanie ! ;
   
 ( *** PLANSZA *** )
   
-: Druk ( --- )
+DEF Druk ( --- )
   CR LHet 1
   DO
     I &wspolrzedna C@ LHet 1
@@ -654,14 +656,14 @@ ASCII . CONSTANT %plansza
 
 ( *** GŁÓWNY PROGRAM *** )
 
-: Pozycja ( rząd --- f )
+DEF )Pozycja ( rząd --- f )
   [ SMUDGE ]
     LHet OVER >
 	IF
       BEGIN
-	    PierwszaWolna
+	    )PierwszaWolna
 		IF
-		  1+ Pozycja -DUP
+		  1+ )Pozycja -DUP
 		ELSE
 		  1 - 0 1
 		THEN
@@ -673,15 +675,16 @@ ASCII . CONSTANT %plansza
 
 ( *** WYWOŁANIE *** )
 
-: HETMANY ( --- )
-  9 0 SWAP Postaw  ( * pozostałość z [5] )
+DEF Hetmany ( --- )
+  9 0 SWAP ))Postaw 
   Inic
-  1 Pozycja
-  2DROP ; ( zamiast 2 DROP )
-==================================================================
+  1 )Pozycja ( --- f )
+  2DROP ; 
 
 
 
+
+ 
 
 
 

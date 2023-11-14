@@ -447,7 +447,7 @@ PP? ENDIF ;
 % 35 SWAP % 1 - SWAP ENDIF
 DUP % 35 > IF DROP % 4 SWAP
 1+ SWAP ENDIF SWAP
-DUP 0 < IF #LINIA0 8 IF % 27
+DUP 0 < IF #LINIA0 @ IF % 27
 LINB LIN-BUF
  -1 #LINIA0 +! 0 E:V 0 LINB
 LIN-E: DROP 0
@@ -529,12 +529,12 @@ YPOS@ % 27 < IF SWAP % 40
 ERASE 32CM 32CM ;
 : <#CM <#CM> SWAP 32CM SWAP
 32CM #KUR ;
-: #> >#CM XSPAC #CM % 63 +
+: #>> >#CM XSPAC #CM % 63 +
 C@ 0= OVER X#CM + #CM - % 63
 < + IF X#CM DUP 1+ ROT
 CMOVE> 0 X#CM C! ELSE BEEP
 DROP ENDIF <#CM ;
-: #< >#CM X#CM 1+ DUP 1 -
+: #<< >#CM X#CM 1+ DUP 1 -
 XSPAC CMOVE <#CM ;
 -->
 ( --- )
@@ -549,7 +549,7 @@ C, 31 C, 155 C, 126 C, 254 C,
 ] ;
 : #NR-KLAW ' #KLA0 % 12 INSTR ;
 SELECT #WYB0 #PISZ ESC ?^ ?V ?<
- ?> #RET #COF #< #> #^^ #VV
+ ?> #RET #COF #<< #>> #^^ #VV
 #<BF ;
 
 -->

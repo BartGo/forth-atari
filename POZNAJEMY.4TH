@@ -567,5 +567,121 @@ WCALE NIE, TO NIE DZIAŁA!!
 ( 9.5 bez błędów )
 
 
+HETMANY - upiększone
+==================================================================
+
+
+( *** TYPY DANYCH *** )
+
+: T-Wektor
+  <BUILDS HERE OVER ERASE ALLOT DOES> + ;
+
+( *** STAŁE I ZMIENNE *** )
+
+ASCII X CONSTANT %hetman
+ASCII . CONSTANT %plansza
+
+      0 VARIABLE &rozwiazanie
+   1024 T-Wektor &wspolrzedna
+
+( *** SŁOWA PODSTAWOWE *** )
+
+: LHet ( --- liczba hetmanów+1 )
+  0 &wspolrzedna C@ ;
+
+: Postaw ( rząd kolumna --- )
+  SWAP &wspolrzedna C! ; ( umieszcza hetmana )
+  
+: Usun ( rząd --- )
+  0 Postaw ; ( kasuje hetmana )
+  
+: Wolne ( rząd n --- rząd f )
+  2DUP = >R OVER
+  &wspolrzedna C@ OVER
+  &wspolrzedna C@ -
+  ROT ROT - ABS OVER ABS =
+  SWAP 0= OR 0= R> OR ;
+  
+: WszystkieWolne ( rząd --- rząd f )
+  1 OVER 1
+  DO
+    OVER I Wolne AND
+  LOOP ;
+  
+: Brzeg ( rząd --- rząd f )
+  LHet OVER &wspolrzedna C@ > ;
+
+: Naprzod ( rząd --- rząd f ) ( f=1, gdy hetmana w rzędzie
+  ( "rząd" można przesunąć do następnej kolumny )
+  DUP DUP &wspolrzedna C@ 1+ Postaw Brzeg
+  IF 1 ELSE DUP Usun 0 THEN ;
+
+: PierwszaWolna ( rząd --- rząd f ) ( f=1,gdy hetman może
+  ( przejść do następnej kolumny w rzędzie )
+  BEGIN
+    Naprzod IF
+	  WszystkieWolne -DUP
+	ELSE
+	  0 1
+	THEN
+  UNTIL ;
+
+( *** INICJOWANIE *** )
+  
+: Inic ( --- ) ( inicjuje szachownice z hetmanami w rz. 0 )
+  LHet 1 
+  DO
+	I Usun
+  LOOP
+  0 &rozwiazanie ! ;
+  
+( *** PLANSZA *** )
+  
+: Druk ( --- )
+  CR LHet 1
+  DO
+    I &wspolrzedna C@ LHet 1
+    DO
+	  DUP I =
+      IF %hetman EMIT
+	  ELSE %plansza EMIT
+	  THEN
+    LOOP DROP CR
+  LOOP CR
+  1 &rozwiazanie +!
+  ." Rozwiazanie nr "
+  &rozwiazanie ? CR ;
+
+( *** GŁÓWNY PROGRAM *** )
+
+: Pozycja ( rząd --- f )
+  [ SMUDGE ]
+    LHet OVER >
+	IF
+      BEGIN
+	    PierwszaWolna
+		IF
+		  1+ Pozycja -DUP
+		ELSE
+		  1 - 0 1
+		THEN
+	  UNTIL
+	ELSE
+	  Druk 1 - 0
+	THEN
+  [ SMUDGE ] ;
+
+( *** WYWOŁANIE *** )
+
+: HETMANY ( --- )
+  9 0 SWAP Postaw  ( * pozostałość z [5] )
+  Inic
+  1 Pozycja
+  2DROP ; ( zamiast 2 DROP )
+==================================================================
+
+
+
+
 
 

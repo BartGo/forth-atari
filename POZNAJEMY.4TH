@@ -683,6 +683,106 @@ DEF Hetmany ( --- )
 
 
 
+( NIE DZIAŁA )
+
+36 CONSTANT DIMX
+23 CONSTANT DIMY
+
+: ARRAY ( dimX dimY --- )
+  <BUILDS 
+    OVER ,  ( umieszcza dimY pod adresem pfa+2 )
+    * ALLOT ( rezerwuje dimX*dimY bajtów )
+  DOES>
+  DUP @  ( umieszcza dimX na stosie )
+  ROT *  ( oblicza dimY*dimX )
+  + + 2+ ( oblicza bezwzględny adres komórki )
+ ;
+  
+DIMX DIMY ARRAY UNIVERSUM
+
+: HOME 125 EMIT ;
+
+: J R> R> R> R R# ! >R >R >R R# @ ;
+
+: WSTAW ( indX indY --- )
+  UNIVERSUM 1 SWAP C! ;
+
+: USUN ( indX indY --- )
+  UNIVERSUM 0 SWAP C! ;
+
+: ZERUJ ( --- )
+  DIMY 0 DO
+    DIMX 0 DO
+      I J USUN
+    LOOP
+  LOOP ;
+
+: WERYFIKACJA ( liczba stanu sąsiadów --- )
+  DUP 3 = ( liczba stanu f )
+  IF DROP 2+ ELSE
+    2 = 0= ( stan stan nr2 )
+    IF 4 + THEN
+  THEN ;
+  
+: PRZYGOTOWANIE ( --- )
+  DIMY 0 DO
+    DIMX 0 DO
+      0
+	  J 2+ DIMY MIN
+	  J 1 - 0 MAX
+      DO
+	    J 2+ DIMX MIN
+		J 1 - 0 MAX
+        DO
+		  I J UNIVERSUM C@ 1 AND + ( 1+ *** chyba nie )
+        LOOP
+      LOOP
+      I J UNIVERSUM C@ 1 AND ( liczba sąsiadów )
+      SWAP OVER - WERYFIKACJA ( koduje przyszłość )
+      I J UNIVERSUM C! ( 1+ ** chyba nie )
+    LOOP
+  LOOP ;
+
+: DRUK ( --- )
+  HOME
+  DIMY 0 DO
+    DIMX 0 DO
+      I J UNIVERSUM C@
+      IF ." *" ELSE SPACE THEN
+    LOOP CR
+  LOOP ;
+
+: TWORZENIE
+  DIMY 0 DO
+    DIMX 0 DO
+      I J UNIVERSUM DUP C@
+	  DUP 3 >
+      IF DROP 0
+	  ELSE
+	    DUP 1 > IF DROP 1 THEN
+	  THEN
+      SWAP C! ( wprowadza nową wartość )
+    LOOP
+  LOOP ;
+
+: GRA ( n --- )
+  0 DO
+    DRUK ( wyświetla pokolenie N )
+    PRZYGOTOWANIE ( gasi pokolenie N i zostawia dane dla następnego )
+    TWORZENIE ( tworzy pokolenie N+1 )
+  LOOP
+  DRUK ; ( drukuje ostatnie pokolenie )
+
+: GRA1
+  BEGIN
+    ?TERMINAL IF ;S THEN
+    DRUK PRZYGOTOWANIE TWORZENIE
+  AGAIN
+  DRUK ;
+
+
+=============================================
+
 
  
 

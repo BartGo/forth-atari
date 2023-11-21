@@ -682,11 +682,12 @@ DEF Hetmany ( --- )
   2DROP ; 
 
 
+-------------------------------------------
 
-( NIE DZIAŁA )
+( NIE DZIAŁA JAKOŚ SUPER )
 
-36 CONSTANT DIMX
-23 CONSTANT DIMY
+10 CONSTANT DIMX
+10 CONSTANT DIMY
 
 : ARRAY ( dimX dimY --- )
   <BUILDS 

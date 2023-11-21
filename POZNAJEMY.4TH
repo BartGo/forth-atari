@@ -786,5 +786,76 @@ DIMX DIMY ARRAY UNIVERSUM
 
  
 
+( SCR # 25 )
+0  ( PSY RASOWE
+1  bokser 165
+2  cocker-spaniel 90
+3  dog 163
+4  doberman 35
+5  bernardyn 221
+6  owczarek alzacki 171
+7  foksterier 46
+8  seter 27
+9  jamnik 194
+10 ratler 32
+11 chow-chow 172
+12 pekińczyk 28
+13 -->
+14
+15
 
 
+( SCR # 26 )
+0  ( CECHY PSOW
+1  Czy ma:
+2  1 wiecej niż 60 cm wzrostu?
+3  2 wydluzona glowe?
+4  3 kwadratowy lub plaski pysk?
+5  4 obfita siersc?
+6  5 dlugi wlos?
+7  6 stojace lub przyciete uszy?
+8  7 dlugie uszy?
+9  8 krepa lub mocna budowe?
+10 -->
+11
+12
+13
+14
+15
+
+
+( SCR # 27 )
+
+: CARRAY <BUILDS ALLOT DOES> + ;
+15 CARRAY CECHY
+: X CECHY C! ;
+165 0 X 98 1 X 163 2 X 35 3 X
+221 4 X 171 5 X 46 6 X 27 7 X
+194 8 X 32 9 X 172 10 X 28 11 X
+0 VARIABLE BAJT
+: BITY
+  1 SWAP 0 DO 2 * LOOP 
+  2 / BAJT @ OR BAJT ! ;
+: WLASNOSCI
+  0 BAJT ! BEGIN
+  QUERY BL WORD HERE NUMBER
+  DROP DUP MINUS 0< WHILE
+  1 SWAP BITY CR DROP REPEAT ;
+-->
+
+
+( SCR # 28 )
+
+: DAJ BAJT @ 12 0 DO
+    DUP I CECHY C@ XOR 0=
+    IF I 1+ 25 .LINE CR THEN
+  LOOP DROP ;
+: HOME 125 EMIT ;
+: PSY ( -- ) HOME 12 1
+  DO
+    I 26 .LINE CR
+  LOOP CR ." Napisz liczby:" CR
+  WLASNOSCI CR ." To moze byc:"
+  CR DAJ DROP ;
+
+;S

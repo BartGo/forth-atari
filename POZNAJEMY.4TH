@@ -825,7 +825,7 @@ DIMX DIMY ARRAY UNIVERSUM
 ( SCR # 26 )
 0  ( CECHY PSOW
 1  Czy ma:
-2  1 wiecej niż 60 cm wzrostu?
+2  1 wiecej niz 60 cm wzrostu?
 3  2 wydluzona glowe?
 4  3 kwadratowy lub plaski pysk?
 5  4 obfita siersc?
@@ -853,38 +853,39 @@ DIMX DIMY ARRAY UNIVERSUM
 9 P 8 krepa lub mocna budowe?
 10 P -->
 
-( SCR # 27 )
 
+( ----- )
+
+: TASK ; 
+: #PSY 80 ; : #CECHY 81 ; 
+: HOME 125 EMIT ;
 : CARRAY <BUILDS ALLOT DOES> + ;
 15 CARRAY CECHY
-: X CECHY C! ;
-165 0 X 98 1 X 163 2 X 35 3 X
-221 4 X 171 5 X 46 6 X 27 7 X
-194 8 X 32 9 X 172 10 X 28 11 X
+  : X CECHY C! ;
+  165 0 X 98 1 X 163 2 X 35 3 X
+  221 4 X 171 5 X 46 6 X 27 7 X
+  194 8 X 32 9 X 172 10 X 28 11 X
 0 VARIABLE BAJT
-: BITY
-  1 SWAP 0 DO 2 * LOOP 
+: BITY 1 SWAP 0 DO 2 * LOOP 
   2 / BAJT @ OR BAJT ! ;
-: WLASNOSCI
-  0 BAJT ! BEGIN
-  QUERY BL WORD HERE NUMBER
-  DROP DUP MINUS 0< WHILE
-  1 SWAP BITY CR DROP REPEAT ;
--->
-
-
-( SCR # 28 )
-: #QS 80 ; : #AS 81 ; ( #scr )
-: DAJ BAJT @ 12 0 DO
-    DUP I CECHY C@ XOR 0=
-    IF I 1+ #QS .LINE CR THEN
-  LOOP DROP ;
-: HOME 125 EMIT ;
-: PSY ( -- ) HOME 12 1
+: WLASNOSCI 0 BAJT !
+  BEGIN
+    QUERY BL WORD HERE NUMBER
+    DROP DUP MINUS 0<
+  WHILE 1 SWAP BITY CR DROP
+  REPEAT ;
+: DAJ BAJT @ 12 0
   DO
-    I #AS .LINE CR
+    DUP I CECHY C@ XOR 0=
+    IF I 1+ #PSY .LINE CR THEN
+  LOOP DROP ;
+: PSY ( -- )
+  HOME 12 1 DO
+    I #CECHY .LINE CR
   LOOP CR ." Napisz liczby:" CR
-  WLASNOSCI CR ." To moze byc:"
+  WLASNOSCI CR CR
+  CR ." To moze byc:"
   CR DAJ DROP ;
-
-;S
+;S 
+( PSY .. 6 0 - ratler 32 )
+( .. 2 3 4 6 0 - foksterier 46 )

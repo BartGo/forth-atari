@@ -804,6 +804,23 @@ DIMX DIMY ARRAY UNIVERSUM
 14
 15
 
+( EDITED )
+0 P ( PSY RASOWE
+1 P bokser 165
+2 P cocker-spaniel 90
+3 P dog 163
+4 P doberman 35
+5 P bernardyn 221
+6 P owczarek alzacki 171
+7 P foksterier 46
+8 P seter 27
+9 P jamnik 194
+10 P ratler 32
+11 P chow-chow 172
+12 P pekińczyk 28
+13 P -->
+
+
 
 ( SCR # 26 )
 0  ( CECHY PSOW
@@ -823,6 +840,18 @@ DIMX DIMY ARRAY UNIVERSUM
 14
 15
 
+( EDIT )
+0 P ( CECHY PSOW
+1 P Czy ma:
+2 P 1 wiecej niż 60 cm wzrostu?
+3 P 2 wydluzona glowe?
+4 P 3 kwadratowy lub plaski pysk?
+5 P 4 obfita siersc?
+6 P 5 dlugi wlos?
+7 P 6 stojace lub przyciete uszy?
+8 P 7 dlugie uszy?
+9 P 8 krepa lub mocna budowe?
+10 P -->
 
 ( SCR # 27 )
 
@@ -845,15 +874,15 @@ DIMX DIMY ARRAY UNIVERSUM
 
 
 ( SCR # 28 )
-
+: #QS 25 ; : #AS 26 ; ( #scr )
 : DAJ BAJT @ 12 0 DO
     DUP I CECHY C@ XOR 0=
-    IF I 1+ 25 .LINE CR THEN
+    IF I 1+ #QS .LINE CR THEN
   LOOP DROP ;
 : HOME 125 EMIT ;
 : PSY ( -- ) HOME 12 1
   DO
-    I 26 .LINE CR
+    I #AS .LINE CR
   LOOP CR ." Napisz liczby:" CR
   WLASNOSCI CR ." To moze byc:"
   CR DAJ DROP ;

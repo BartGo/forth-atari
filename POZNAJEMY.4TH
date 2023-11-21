@@ -874,7 +874,7 @@ DIMX DIMY ARRAY UNIVERSUM
 
 
 ( SCR # 28 )
-: #QS 25 ; : #AS 26 ; ( #scr )
+: #QS 80 ; : #AS 81 ; ( #scr )
 : DAJ BAJT @ 12 0 DO
     DUP I CECHY C@ XOR 0=
     IF I 1+ #QS .LINE CR THEN

@@ -17,44 +17,40 @@
 ( ** BASIC WORDS )
 : PAPER ( -- ) 0 81 ! #BGCOLOR 710 ! ;
 : HOME ( -- ) PAPER 125 EMIT ;
-: HEADER ( -- )
-  HOME
-  ." FORTHEN, a Forth development environment" CR CR ;
 : CASE ( -- ) <TODO ;
-: ANY-KEY CR ." Press any key..." CR KEY DROP ;
+: ANY-KEY CR ." Press any key." CR KEY DROP ;
 
+: ASK ( -- n ) ." ?" KEY <TODO ;
 ( ** LOGIC)
 VOCABULARY APP IMMEDIATE
 APP APP DEFINITIONS
-: C ." COMPILE" CR ;
-: D ." DEBUG" CR ;
-: E ." EDITOR" CR ;
-: B ABORT ;
+  : E ." EDITOR" CR ;
+  : D ." DEBUG" CR ;
+  : H ." HELP" CR ;
+  : C ." COMPILE" CR ;
+  : B ABORT ;
+  : S ." SETUP" ;
+  : I ." cOpy formaT Verify" CR ;
 FORTH FORTH DEFINITIONS
 
 ( ** GUI )
-: >ASK ( -- n ) ." ?" KEY <TODO ;
-: >SETUP ( -- )
-  HEADER ." SETUP:" CR CR
-  >ASK DROP ;
-: >MENU ( -- )
-  HEADER 
-  CR 5 SPACES ." Edit Debug Forget Help Compile"
-  CR 5 SPACES ." Boot Setup Verify cOpy formaT"
-  CR 5 SPACES ." Sxx Pxx Rxx 0:MASTER 1:SOURCE"
-  CR 5 SPACES ." CURRENT: xx CONTEXT: xx"
-  CR CR ;
+: MENU ( -- )
+  HOME
+  ." FORTHEN, a Forth development environment"  
+  ." Edit Debug Help Compile Boot Setup drIve" 
+  SPACE ." DSD:xx RSD:xx SCR:xx 0:MASTER 1:SOURCE"
+  CR ." CURRENT: xx CONTEXT: xx" CR CR ." "?";
 
 ( ** MAIN LOOP )
-: RUN ( -- ) BEGIN
-    >MENU CR ." "?"
+: RUN ( -- )
+  MENU BEGIN
     QUERY APP
       INTERPRET
     FORTH
   AGAIN ;  
 
 ( ** AUTO-RUN )   
-: <ABORT CR ANY-KEY RUN ;  
-' <ABORT CFA ' ABORT 4 + !  
+: ((ABORT)) CR ANY-KEY RUN ;  
+' ((ABORT)) CFA ' ABORT 4 + !  
 
-( EOF )
+RUN

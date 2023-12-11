@@ -2,7 +2,7 @@
 
 ( COMPUTE, The FORTH Page, Disk Management)
 ( Michael Riley, Philadelphia )
-
+( COMPUTE! ISSUE 30 / NOVEMBER 1982 / PAGE 232 )
 ( The words SERT and TRADE allow you to move and mass-move screens around )
 ( on a disk without fear of accidentally erasing something of value.      )
 ( No matter how you use these commands, no screens are ever overwritten.  )
@@ -17,10 +17,12 @@
 ( starting at N3. The two groups are assumed to be the same size.
 
 
-27 LOAD ( STANDARD LN EDITOR )
-DECIMAL EDITOR 85 SCR ! 
+27 LOAD CR ( STANDARD LN EDITOR )
+DECIMAL EDITOR
 
- 0 P ( SERT & TRADE 1/2 )
+85 SCR ! 
+
+ 0 P ( SERT&TRADE 1/2: COMPUTE 30, NOV )
  1 P : PAD-SWAP ( N1 --- / SWAP SCR W/ PAD )
  2 P	 DUP BLOCK PAD 1024 + 1024 CMOVE
  3 P 	 PAD SWAP BLOCK 1024 CMOVE UPDATE
@@ -39,7 +41,7 @@ DECIMAL EDITOR 85 SCR !
 
 86 SCR !
 
- 0 P ( FX SERT TRADE RANGE? ROOM? )
+ 0 P ( SERT&TRADE 2/2: 1982, M. RILEY  )
  1 P : ROOM? ( / IF ERROR, PRINT ‘NO ROOM IN DICT’ )
  2 P	 PAD 2048 + FIRST > 14 ?ERROR ;
  3 P ( ‘ FIRST > ’ IS INSTALATION DEPENDENT )

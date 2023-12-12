@@ -172,21 +172,21 @@ EDITOR
  15 P ;S
 
 19 SCR !
-  0 P ( MDEDIT: EDIT by M. Dougherty )
-  1 P ;S ( Keyboard shortcuts - help )
-  2 P Arrows, Insert, Delete: standard
+  0 P ( Help -- EDIT by M. Dougherty ) 
+  1 P ;S 
+  2 P Arrows, Insert, BckSpc: standard
   3 P Return: next line, Tab: tab (2)
-  4 P Shf-Insert: insert whole line
-  5 P Shf-Delete: delete whole line
-  6 P Ctl-Insert: paste from PAD (?)
-  7 P Ctl-Delete: copy into PAD (?)
+  4 P Shf-Insert: insert whole line*
+  5 P Shf-Delete: delete whole line*
+  6 P Ctl-Insert: insert space
+  7 P Ctl-BckSpc: delete
   8 P Clear: clear screen (Shf> Ctl>)
   9 P Esc+S: change sides
  10 P Esc+N: next screen, save (flush)
  11 P Esc+L: last screen, save (flush)
  12 P Esc+E: exit, save (flush)
- 13 P Esc+A: exit, discard (empty-buf)
- 14 P Esc+P: put, overwrite from PAD
+ 13 P Esc+A: abort/exit (empty-buf)
+ 14 P Esc+P: put last deleted line*
  15 P Esc+T: undo scrn chn (empty-buf)
 
 ( FLUSH )

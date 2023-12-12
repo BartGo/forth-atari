@@ -890,3 +890,143 @@ DIMX DIMY ARRAY UNIVERSUM
 ;S 
 ( PSY .. 6 0 - ratler 32 )
 ( .. 2 3 4 6 0 - foksterier 46 )
+
+
+
+=====
+
+
+  
+12.6 sortowanie
+
+
+: ARRAY <BUILDS 2 * ALLOT
+  DOES> SWAP 2 * + ;
+5 ARRAY LICZBY
+0 VARIABLE NAST
+: WSTAW 120 23 157 18 93
+  5 0 DO I LICZBY ! LOOP ;
+: POKAZ 5 0 DO I LICZBY ? LOOP ;
+: POROWNAJ  ( n1 n2 --- )
+  DUP       ( n1 n2 n2 )
+  LICZBY @  ( n1 n2 L2 )
+  ROT DUP   ( n2 L2 n1 n1 )
+  LICZBY @  ( n2 L2 n1 L1 )
+  ROT       ( n2 n1 L1 L2 )
+  OVER OVER ( n2 n1 L1 L2 L1 L2 )
+  >         ( n2 n1 L1 L2 f )
+  IF        ( n2 n1 L1 L2 )
+  ROT       ( n2 L1 L2 n1 ) 
+  LICZBY !  ( n2 Li )
+  SWAP      ( L1 n2 )
+  LICZBY !  ( --- )
+  ELSE 2DROP 2DROP THEN ;
+
+: PRZEJRZYJ DUP 1+ NAST !
+  BEGIN OVER 1+ NAST @ >
+  WHILE DUP NAST @ POROWNAJ
+  NAST @ 1+ NAST ! REPEAT
+  2DROP ;
+  
+: EXSORT ( n1 n2 -- )
+  BEGIN OVER OVER
+    PRZEJRZYJ 1+ OVER OVER
+  = UNTIL 2DROP ;
+
+WSTAW
+4 0 EXSORT
+CR ." EXSORT: " CR POKAZ CR
+
+( DZIAŁA: POSORTOWANE )
+
+
+( BĄBELKOWE )
+
+0 VARIABLE KONIEC?
+
+: PORBUB ( n1 n2 -- )
+  DUP LICZBY @
+  ROT DUP LICZBY @
+  ROT OVER OVER >
+  IF
+    ROT LICZBY ! SWAP LICZBY !
+	0 KONIEC? !
+  ELSE 2DROP 2DROP THEN ;
+: PRZESUN
+  BEGIN
+    DUP DUP 1+ PORBUB 1+ OVER OVER
+  = UNTIL
+  DROP DROP ;
+: BUBSORT
+  BEGIN
+    1 KONIEC? !
+	OVER OVER PRZESUN
+  KONIEC? @ UNTIL
+  2DROP ;
+
+WSTAW
+4 0 BUBSORT
+CR ." BUBSORT: " CR POKAZ CR
+
+( OK )
+
+
+0 VARIABLE POCZ
+0 VARIABLE KON
+0 VARIABLE LW
+0 VARIABLE PW
+
+: POCZATEK WSTAW ;
+
+: LEWY
+  BEGIN
+    DUP LW @ LICZBY @
+  > WHILE LW @
+    1+ LW !
+  REPEAT DROP ;
+: PRAWY
+  BEGIN
+    DUP PW @ LICZBY @
+  < WHILE PW @
+    1 - PW !
+  REPEAT DROP ;
+: CZYTAJ @ LICZBY @ ;
+: WSTAW @ LICZBY ! ;
+: ZAM
+  LW CZYTAJ PW CZYTAJ
+  LW WSTAW PW WSTAW
+  LW @ 1+ LW ! PW @ 1 - PW ! ;
+: SORTUJ
+  BEGIN
+    DUP DUP LEWY PRAWY
+	LW @ PW @ > DUP
+	IF ELSE ZAM THEN
+  UNTIL DROP ;
+: KOMPARAND
+  OVER OVER LW ! PW ! + 2 /
+  LICZBY @ ;
+: QUICK
+ [ SMUDGE ]
+   KOMPARAND SORTUJ
+   POCZ @ PW @ <
+   IF
+     PW @ DUP KON ! POCZ @ QUICK
+   THEN
+   LW @ KON @ <
+   IF
+     KON @ LW @ DUP POCZ ! QUICK
+   THEN
+ [ SMUDGE ] ;
+: QUICKSORT
+  OVER OVER POCZ ! KON ! QUICK ;
+
+POCZATEK
+4 0 QUICKSORT
+CR ." QUICKSORT: " CR POKAZ CR
+
+( DZIAŁA )
+
+************************************
+
+
+  

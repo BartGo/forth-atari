@@ -165,9 +165,28 @@ EDITOR
   8 P 254 CASE DELETE ENDCASE
   9 P 157 CASE INSERT-LINE ENDCASE 156 CASE DELETE-LINE ENDCASE
  10 P 126 CASE DEL ENDCASE 127 CASE TAB ENDCASE
- 11 P 125 CASE CLEAR-SCR ENDCASE 27 CASE ESC ENDCASE
+ 11 P 125 CASE CLEAR-SCR ENDCASE 27 CASE ESC ENDCASE 
  12 P DUP ADDKEY ENDCASES
  13 P STOP @ UNTIL 125 EMIT ;
  14 E 
  15 P ;S
+
+19 SCR !
+  0 P ( MDEDIT: EDIT by M. Dougherty )
+  1 P ;S ( Keyboard shortcuts - help )
+  2 P Arrows, Insert, Delete: standard
+  3 P Return: next line, Tab: tab (2)
+  4 P Shf-Insert: insert whole line
+  5 P Shf-Delete: delete whole line
+  6 P Ctl-Insert: paste from PAD (?)
+  7 P Ctl-Delete: copy into PAD (?)
+  8 P Clear: clear screen (Shf> Ctl>)
+  9 P Esc+S: change sides
+ 10 P Esc+N: next screen, save (flush)
+ 11 P Esc+L: last screen, save (flush)
+ 12 P Esc+E: exit, save (flush)
+ 13 P Esc+A: exit, discard (empty-buf)
+ 14 P Esc+P: put, overwrite from PAD
+ 15 P Esc+T: undo scrn chn (empty-buf)
+
 ( FLUSH )

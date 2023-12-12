@@ -135,7 +135,7 @@ EDITOR
  12 E 
  13 E 
  14 E 
- 15 E -->
+ 15 P -->
 68 SCR !
   0 P ( EDIT )
   1 P : REVB 712 @ 255 XOR 712 ! ;

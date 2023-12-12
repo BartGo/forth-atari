@@ -891,6 +891,41 @@ DIMX DIMY ARRAY UNIVERSUM
 ( PSY .. 6 0 - ratler 32 )
 ( .. 2 3 4 6 0 - foksterier 46 )
 
+====
+
+
+12.5 fn trig
+
+
+ : TABLICA                        
+  <BUILDS 0 DO , LOOP DOES>       
+  SWAP 2 * + @ ;                  
+
+91 TABLICA SINTABLICA
+
+( ta polecenie z "Poznajemy FORTH"         )
+( oraz z [5] nie działa poprawnie,         )
+( zawieszając emulator, w różnych wersjach )
+( FORTH - kto znajdzie błąd?               )
+
+: S180
+  DUP 90 >
+  IF
+    180 SWAP -
+  THEN SINTABLICA ;
+
+: SIN ( arg --- sin[arg] )
+  360 MOD
+  DUP 0<
+  IF 360 + THEN
+  DUP 180 >
+  IF 180 - S180 MINUS ELSE S180 THEN ;
+: COS 90 + SIN ;
+: TAN DUP SIN SWAP COS DUP ABS 2920 >
+  IF 10000 SWAP */
+  ELSE DROP DROP ." ZR DUZE! " THEN ;
+
+
 
 
 =====

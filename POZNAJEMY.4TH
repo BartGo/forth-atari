@@ -896,10 +896,35 @@ DIMX DIMY ARRAY UNIVERSUM
 
 12.5 fn trig
 
-
+ ( w książce pomiędzy DO a , nie ma nieczego      )      
+ ( jak również nic nie jest umieszczane na stosie )      
+ (
  : TABLICA                        
-  <BUILDS 0 DO , LOOP DOES>       
+  <BUILDS 0 DO I , LOOP DOES>  
   SWAP 2 * + @ ;                  
+ )
+
+ ( zamiast 
+: TABLICA <BUILDS
+0 , 174 , 348 , 522 , 696 , 870 ,
+1044 , 1218 , 1390 , 1564 , 1736 ,
+1908 , 2078 , 2248 , 2418 , 2588 ,
+2756 , 2922 , 3090 , 3254 , 3420 ,
+3582 , 3746 , 3906 , 4066 , 4226 ,
+4382 , 4538 , 4694 , 4848 , 5000 ,
+5150 , 5298 , 5446 , 5590 , 5734 ,
+5876 , 6018 , 6156 , 6292 , 6426 ,
+6560 , 6690 , 6818 , 6946 , 7070 ,
+7192 , 7312 , 7430 , 7546 , 7660 ,
+7770 , 7880 , 7986 , 8090 , 8190 ,
+8290 , 8386 , 8480 , 8570 , 8660 ,
+8746 , 8828 , 8910 , 8986 , 9062 ,
+9134 , 9204 , 9270 , 9334 , 9396 ,
+9454 , 9510 , 9562 , 9612 , 9658 ,
+9702 , 9742 , 9780 , 9816 , 9848 ,
+9876 , 9902 , 9924 , 9944 , 9960 ,
+9974 , 9986 , 9992 , 9998 , 10000 ,
+DOES> SWAP 2 * + @ ;
 
 91 TABLICA SINTABLICA
 
@@ -923,7 +948,7 @@ DIMX DIMY ARRAY UNIVERSUM
 : COS 90 + SIN ;
 : TAN DUP SIN SWAP COS DUP ABS 2920 >
   IF 10000 SWAP */
-  ELSE DROP DROP ." ZR DUZE! " THEN ;
+  ELSE DROP DROP ." ZA DUZE! " THEN ;
 
 
 

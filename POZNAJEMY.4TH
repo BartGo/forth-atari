@@ -893,6 +893,51 @@ DIMX DIMY ARRAY UNIVERSUM
 
 ====
 
+12.4 liczby zespolone
+
+
+: COMPLEX <BUILDS
+  , , ( wprowadza do słownika 2 wartości ze stosu )
+  DOES> ; ( potrzebny adres jest już na stosie )
+
+: X@   ( adr --- rz ur )
+  DUP  ( adr dr )
+  @    ( adr ur )
+  SWAP ( ur adr )
+  2+   ( ur adr+2 )
+  @    ( ur rz )
+  SWAP ( rz ur ) ;
+
+: X!   ( rz ur adr --- )
+  SWAP OVER ! 2+ ! ;
+
+: X+   ( rz1 ur1 rz2 ur2 --- rz1+rz2 ur1+ur2 )
+  ROT  ( rz1 rz2 ur2 ur1 )
+  +    ( rz1 rz2 ur1+ur2 )
+  >R   ( rz1 rz2 )
+  + R> ( rz1+rz2 ur1+ur2 )
+  ;
+  
+: X-
+  ROT SWAP - >R - R> ;
+  
+: X*' ( rz ur rzecz --- rz*rzecz ur*rzecz )
+  SWAP OVER   ( rz rzecz ur rzecz )
+  * ROT ROT * ( ur*rzecz rz*rzecz )
+  SWAP ;      ( rz*rzecz ur*rzecz )
+
+: X* ( r1 u1 r2 u2 --- r1.r2-u1.u2 r1.u2+r2.u1 )
+  2OVER 2OVER ( C1 C2 C1 C2 )
+  ROT *       ( Cl C2 r1 r2 u1.u2 )
+  >R * R> -   ( C1 C2 r1.r2-u1.u2 )
+  >R          ( r1 u1 r2 u2 )
+  ROT ROT *   ( r1 u2 u1.r2 )
+  >R * R> +   ( r1.u2+u1.r2 )
+  R> SWAP ;   ( r1.r2-u1.u2 r1.u2+u1.r2 )
+  
+
+====
+
 
 12.5 fn trig
 

@@ -935,7 +935,10 @@ DIMX DIMY ARRAY UNIVERSUM
   >R * R> +   ( r1.u2+u1.r2 )
   R> SWAP ;   ( r1.r2-u1.u2 r1.u2+u1.r2 )
   
-
+ 
+3 2 1 7 X* . .  ( -11 23 ok )
+( wynik odpowiada −11 + 23i )
+  
 ====
 
 

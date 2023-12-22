@@ -1,23 +1,34 @@
 
-( ROZDZIAL 1.3.1 )
+( * ROZDZIAL 1.3.1 )
+( * OK, BRAK BŁĘDÓW )
+
 : TEST 30000 0 DO LOOP BEEP ; 
 
-( ROZDZIAL 1.3.4 )
+( * ROZDZIAL 1.3.4 )
+( * POPRAWIONE BŁĘDY - PRZED ŚREDNIKAMI MUSZĄ BYĆ SPACJE )
+( * PRZYKŁAD Z "NUMBER" NIE ZADZIAŁA ALE JAK PRZYKŁAD KONCEPCJI JEST OK )
 
 : ZMIENNA VARIABLE ;
 : TU HERE ;
 : KASUJ DROP ;
 : LICZBA NUMBER ;
 
-( ROZDZIAL 2.1 )
+( * ROZDZIAL 2.1 )
+( * kod jest OK, uwaga żeby nie zgubić spacji )
+( * informacje zwracane przez Forth - czcionką mono? )
 
-: KOT ; 
+: KOT
 KOT
 FORGET KOT
-: KOT CR ." Kot pije mleko" ;
+: KOT CR ." Kot pije mleko" ; ( Return )
+FORGET KOT
 7 SPACES
 
-( ROZDZIAL 2.2 )
+( * Ćwiczenie 1 - ODPOWIEDŹ W ANEKSIE 4 JEST DOBRA )
+: NAPIS KOT ." i poluje na myszy" ;
+
+( * ROZDZIAL 2.2 )
+( * OK )
 
 : TEST2 11 0 DO I . LOOP ; 
 
@@ -27,51 +38,72 @@ TEST2
 
 TEST3
 
-( ROZDZIAL 2.3 )
+( * ROZDZIAL 2.3 )
 
 B/SCR . ( 8 ) 
 B/BUF . ( 128 ) 
 C/L .   ( 64 )
 
+( * poprawka w listingu - błędnie ," zamiast ." )
 . ." " : ; SPACES VLIST B/BUF B/SCR C/L CR FORGET SPACE 
-( w listingu błędnie ," )
 
-( ROZDZIAL 3.3 )
+( * ROZDZIAL 3.3 )
 
 2 3 +
 2 3 + 7 *
 5 7 - 10 8 + *
 
-7 5 * 3 + 2 / 4 - 7 /
-( wynik: 2 , czy tak w odpowiedziach? )
+( * Ćwiczenie 2 - PYTANIA DOBRE ALE NA KOŃCU WSZYTSKIE BŁĘDNE ODPOWIEDZI (ANEKS 4) )
 
+( * DO TEGO NIE BYŁO ODPOWIEDZI )
+(A+B)*(C–D) ===> A B + C D - * 
+
+( * TU BYŁA NIEKOMPLETNA, URWANA PO MINUSIE )
+A*(B-C)+D ===> A B C - * D + 
+
+( * TU BYŁA NIEKOMPLETNA, NIE DOPISANO MNOŻENIA )
+(A+B)/C+(D+E)*F ===> A B + C / D E + F * +
+
+( * TU BYŁA NIEKOMPLETNA, NIE DOPISANO MNOŻEŃ )
+A/(B+C)*(D+A)*(C+D) ===> A B C + / D A + * C D + *
+
+( * Ćwiczenie 3 - KOD JEST OKEJ )
+( * MOŻEMY DOPISAĆ ODPOWIEDZI W ANEKSIE 4, NIE BYŁO ICH )
+
+7 5 * 3 + 2 / 4 - 7 /
+( * wynik: 2 )
+
+( * POPRAWKA: MUSI BYĆ SPACJA MIĘDZY + ORAZ * )
 22 3 5 + / 7 10 + *
-( wynik: 34 , czy tak w odpowiedziach?  )
+( * wynik: 34 )
 
 17 34 + 3 / +
-( błąd, za mało liczb na stosie, czy tak w odpowiedziach? )
+( * błąd - za mało liczb na stosie )
  
 ( ROZDZIAL 3.4.2 ) 
  
-40000   .    ( wynik: -25536   )
+40000        ( ok )
+.            ( wynik: -25536   )
 40000  U.    ( wynik:  40000   )
 1000000 .    ( wynik:  16960   )
+( * NIŻEJ ORYGINALNIE BRAK KROPKI ZA LICZBĄ, POPRAWIONE )
 1000000. . . ( wynik: 15 16960 )
 1000000. D.  ( wynik: 1000000  )
 
 .R  ( n długość-pola --- )
 D.R ( d długość-pola --- )
-
-( oryginalnie źle: .R  długość-pola n --- )
-( oryginalnie źle: D.R długość-pola d --- )
+( * oryginalnie źle: .R  długość-pola n --- )
+( * oryginalnie źle: D.R długość-pola d --- )
 
 : TEST
   7 333 55 9999 20000 CR
-  5 0 DO 6 .R CR LOOP ;
+  5 0 DO
+    6 .R CR
+  LOOP ;
 
 TEST
 
------------
+----------- << 2023.12.23
 
 ( ROZDZIAL 3.4.3 )
  

@@ -103,36 +103,26 @@ D.R ( d długość-pola --- )
 
 TEST
 
------------ << 2023.12.23
-
-( ROZDZIAL 3.4.3 )
+( * ROZDZIAL 3.4.3 )
  
+( * NIEPOPRAWNIE: SO (es-ooo)  zamiast S0, RÓWNIEŻ DALEJ )
+
 : .S 2 SPACES SP@ S0 @ = 0=
   IF
-    SP@ 2 – S0 @ -
-    DO I @ . -2 +LOOP
+    SP@ 2 – S0 @ - DO I @ . -2 +LOOP
   THEN ;
 
-( sugerowany przypis: "Być może, S0 należy zmniejszyć o 2, jak w następnym fragmencie kodu zrobiono z wartością 188." )
+( * PROPOZYCJA DODANEJ SEKCJI WYDANIA 2023 )
+( * ZA ZDANIEM: 
+Następnie liczbą która zostanie przy tym wydrukowana, zastępujemy w dwóch miejscach
+definicji pary słów: SO @. )
 
-( w kodzie SO (es-ooo) zamiast S0 (es-zero), do poprawki )
+----------------------------
 
-COLD SP@ . ( 188 )
-: .S ( --- )
-  2 SPACES
-  SP@ 188 =
-  0= IF
-    SP@ 2 - 188 2 - 
-    DO I @ . -2 +LOOP
-  THEN ;
-1 2 3 
-.S ( wynik: 1 2 3 )
+Można to zrobić tak (przykład wykorzystuje wcześniej nie wymieniane polecenia):
 
-( OK )
-
-( POZA KONKURSEM, JEŚLI NIE PODOBA NAM SIĘ MAGICZNA STAŁA 188 )
-( SUGESTIA PRZYPISU )
-SP! : S0@ ( --- n )
+SP!   ( opróżnienie stosu )
+: S0@ ( --- n )
   [ SP@ ]
   LITERAL ; 
 : .S ( --- )
@@ -143,30 +133,44 @@ SP! : S0@ ( --- n )
     DO I @ . -2 +LOOP
   THEN ;
 
-( OK )
+----------------------------
+I dalej wracamy do tekstu: "Wypróbujmy nasze nowe słowo:"..
 
+
+( * sekcja poniżej jest OK chociaż wytłuszczenie jest mało wyraźne )
+DUP .S ( 1 2 3 3 ok )
+DROP .S ( 1 2 3 ok )
+SWAP .S ( 1 3 2 ok )
+ROT .S ( 3 2 1 ok )
+OVER .S ( 3 2 1 2 ok )
+
+( * poniżej okej )
 : SZESCIAN DUP OVER * * . ;
 : KWADRAT DUP * . ;
 : KWADRATY CR DO I DUP U* 15 D.R CR LOOP ;
-45001 44980 KWADRATY 
-( w książce była czwórka zamiast jedynki )
 
-( OK )
+( * poniżej w książce była czwórka zamiast jedynki )
+45001 44980 KWADRATY 
 
 ( ROZDZ. 3.4.4 )  
 
-TODO: do sprawdzenia
+( * diagram rozjechany )
+
+( * OK )
+7 8 9 DUP ROT OVER DROP ROT ROT DROP
+
+( * podzielić SWAP ( n1 n2 --- n2 n1 ) OVER ( n1 n2 --- n1 n2 n1 ) na dwie linie jak u SOETO )
 
 ( ROZDZ. 3.5 )
-
-warto dodać przypis (sprawdzić) że R czasem jest zastąpione przez R@
 
 : 2DUP OVER OVER ;
 : 2DROP DROP DROP ;
 : 2SWAP ROT >R ROT R> ;
 : 2OVER >R >R 2DUP R> R> 2SWAP ;
-: 2ROT >R >R 2SWAP R> R> 2SWAP ; ( nadmiarowa spacja )
-( powyższe zgadza się z Salman / Tisserant / T )
+
+( * fix: usunięta nadmiarowa spacja z 2ROT )
+: 2ROT >R >R 2SWAP R> R> 2SWAP ;
+
 
 : 2ROT ( n1 n2 n3 n4 n5 n6 --- n3 n4 n5 n6 n1 n2 )
     >R ( n1 n2 n3 n4 n5 )       ( – przenosi n6 na stos powrotów )
@@ -180,34 +184,97 @@ warto dodać przypis (sprawdzić) że R czasem jest zastąpione przez R@
 ( OK )
 
 ( ROZDZ. 3.6.1 ) 
+( * podkreślenie z SOETO jest wyraźniejsze niż pogrubienie Retronics; mnie sie podobają nawiasy: )
 
-TODO: DO SPRAWDZENIA ROZDZIAL
-	
+19 5 / . ( 3 ok )
+20 5 / . ( 4 ok )
+19 5 MOD . ( 4 ok )
+154 7 MOD . ( 0 ok )
+19 5 /MOD . . ( 3 4 ok )
+
+( * niewyraźna spacja przed średnikiem )
 : /MOD 2DUP MOD ROT ROT / ;
-( ! niewyraźna spacja przed średnikiem )
 
+( * niewyraźna spacja przed średnikiem )
 : / /MOD SWAP DROP ;
-( ! niewyraźna spacja przed średnikiem )
+
+( * chyba OK )
+*/ ( n1 n2 n3 --- n1*n2/n3 )
+*/MOD ( n1 n2 n3 --- reszta wynik )
+
+
+22220 45 100 */ . ( 9999 ok )
+( * brak kilku spacji )
+22220 100 / 45 * . ( 9990 ok )
+22220 45 100 */MOD . . ( 9999 0 ok )
+
+( * reszta okej chociaż słabe wyjaśnienie +- )
 
 ( ROZDZ. 3.6.2 )
 
 D+ /d1 d2 --- d1+d2/
 D- /d1 d2 --- d1-d2/
-( ! - niekonsekwentne nawiasy, tutaj ukośne, gdzie indziej zwykłe )
+( * - niekonsekwentne nawiasy, tutaj ukośne, gdzie indziej zwykłe, tak lepiej: )
 D+ ( d1 d2 --- d1+d2 )
 D- ( d1 d2 --- d1-d2 )
 
+( * LITERÓWKA: DMONUS )
+DMINUS czy też DNEGATE 
+
 S->D n --- d
-( ! brak nawiasów )
+( * brak nawiasów )
 S->D ( n --- d )
+
+( ROZDZ. 3.6.3 )
+
+( * błąd też z SOETO - ostatnie działanie to M*/ a nie M* )
+
+( * Ćwiczenie 7 - brak odpowiedzi na końcu jest okej ; kod pytań OK )
+
+
+( * Ćwiczenie 8 - nie policzyłem ale wygląda OK )
 
 ( ROZDZ. 3.7 )
 
-255 2 BASE ! . DECIMAL
-32767 2 BASE ! CR . DECIMAL ( * bylo BASB )
+255 HEX . DECIMAL ( FF ok )
+65535 HEX U. DECIMAL ( FFFF ok )
+32767 HEX . DECIMAL ( 7FFF ok )
+
+255 2 BASE ! . DECIMAL ( 11111111 ok )
+
+( * bylo BASB )
+32767 2 BASE ! CR . DECIMAL
+( 111111111111111 ok )
+
+32768 DUP 2 BASE ! CR U. CR . DECIMAL
+( 1000000000000000 )
+
+( * zgubione zero z wyniku )
+( -1000000000000000 ok )
+
+32769 DUP 2 BASE ! CR U. CR . DECIMAL
+( 1000000000000001 )
+( -111111111111111 ok )
+
+27777 DUP 2 BASE ! CR . HEX CR . DECIMAL
+( 110110010000001 )
+( 6C81 ok )
 
 
-( ************** )
+
+
+( * ROZDZ. 3.8 )
+
+7ABBCCDD. ( ok )
+D.
+
+7ABBCCDD. U. U. ( 7ABB CCDD ok )
+
+
+( * ROZDZIAŁ 4 )
+
+----------- << 2023.12.23
+
 
 0 VARIABLE AA
 : TABLICZKA ( --- )

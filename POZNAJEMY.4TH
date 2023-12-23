@@ -271,7 +271,7 @@ D.
 7ABBCCDD. U. U. ( 7ABB CCDD ok )
 
 
-( * ROZDZIAŁ 4 )
+( * ROZDZIAŁ 4 i 5 do zrobienia w calości, chyba jest tylko fibo, iksy, tab !! )
 
 ----------- << 2023.12.23
 

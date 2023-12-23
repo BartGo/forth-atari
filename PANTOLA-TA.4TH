@@ -59,6 +59,9 @@ DROP 32 C, , ; IMMEDIATE
 ( END )
 
 
+: --> ; ( if pasted into Altirra and not loaded )
+
+
 ( Public Domain 4th Tools v0.1 )
 ( For Extended fig-FORTH Rev.2 )
 ( Collected by BartGo 20231006 )

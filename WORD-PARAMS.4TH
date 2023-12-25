@@ -67,7 +67,7 @@ enum cfg
   1 ?NOPAR 100 THEN ( default 1 )
   2 ?NOPAR 710 THEN 
   4 ?NOPAR  55 THEN 
-  8 
+  8 ?NOPAR   1 THEN
   SWAP DROP ( drop par# )
   710 ! 709 ! 712 ! 85 ! ;
 

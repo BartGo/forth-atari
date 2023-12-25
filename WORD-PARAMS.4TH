@@ -47,9 +47,18 @@ DUP R>
 
 120 212 0 7 varpar
 
-DUP  1 and 0= if 100 then ( dflt p 1 )
-OVER 2 and 0= if 710 then ( dflt p 2 )
-OVER 3 and 0= if 55 then ( d 3 )
-SWAP DROP ( drop par# )
+
+: ?NOPAR
+  OVER AND 0= [ IF ] ; IMMEDIATE 
+
+: THEME ( [bg] [fg] [fr] n -- )
+  0 ( sentinel )
+  1 ?NOPAR 100 THEN ( default 1 )
+  2 ?NOPAR 710 THEN 
+  3 ?NOPAR  55 THEN 
+  SWAP DROP ( drop par# )
+  710 ! 709 ! 712 ! ;
+
+  
 
 

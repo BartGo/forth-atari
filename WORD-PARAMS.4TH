@@ -41,11 +41,17 @@ https://excamera.com/sphinx/article-forth-enum.html
 
 : enum
   create 0 ,
-  does> create dup @ 1 rot +! ,
-  does> @ ;
+  does>
+    create dup @ 1 rot +! ,
+    does> @ ;
 
+( zamienić na potęgi dwójki)
 
-
+enum cfg
+  cfg #background
+  cfg #foreground
+  cfg #frame
+  cfg #cursor 
 
 ( BG )
 

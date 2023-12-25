@@ -49,13 +49,14 @@ KEY DROP
 
 : ?NOPAR
   OVER AND 0= [ IF ] ; IMMEDIATE 
+: THE PAR 
 
-: THEME ( [bg] [fg] [fr] n -- )
-  0 ( sentinel )
-  1 ?NOPAR 100 THEN ( default 1 )
-  2 ?NOPAR 710 THEN 
-  4 ?NOPAR  55 THEN 
-  8 ?NOPAR   1 THEN
+: THEME ( [p1] [p2] [p3] [p4] n -- )
+  8 ?NOPAR ( [p1-4] n if
+    100 ROT DROP THEN ( [p1-3] n 100 )
+  4 ?NOPAR 710 THEN 
+  2 ?NOPAR  55 THEN 
+  1 ?NOPAR   1 THEN
   ( move params through return st )
   SWAP DROP ( drop par# )
   710 ! 709 ! 712 ! 85 ! ;

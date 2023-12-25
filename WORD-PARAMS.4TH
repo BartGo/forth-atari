@@ -45,8 +45,9 @@ DUP R>
 
 
 
-120 212 0 7 varpar
-
+120 212 0 1 15 THEME
+0 THEME
+120 8 THEME
 
 : ?NOPAR
   OVER AND 0= [ IF ] ; IMMEDIATE 
@@ -55,9 +56,10 @@ DUP R>
   0 ( sentinel )
   1 ?NOPAR 100 THEN ( default 1 )
   2 ?NOPAR 710 THEN 
-  3 ?NOPAR  55 THEN 
+  4 ?NOPAR  55 THEN 
+  8 
   SWAP DROP ( drop par# )
-  710 ! 709 ! 712 ! ;
+  710 ! 709 ! 712 ! 85 ! ;
 
   
 

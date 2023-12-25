@@ -56,6 +56,7 @@ KEY DROP
   2 ?NOPAR 710 THEN 
   4 ?NOPAR  55 THEN 
   8 ?NOPAR   1 THEN
+  ( move params through return st )
   SWAP DROP ( drop par# )
   710 ! 709 ! 712 ! 85 ! ;
 

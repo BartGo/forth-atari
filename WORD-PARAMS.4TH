@@ -33,3 +33,23 @@ KEY DROP
 
 123 Compare
 
+( **** )
+
+: varpar ( [n]m n -- )
+  ( m=: varpar )
+  ( m params n bits )
+DUP R> 
+
+
+
+
+
+
+120 212 0 7 varpar
+
+DUP  1 and 0= if 100 then ( dflt p 1 )
+OVER 2 and 0= if 710 then ( dflt p 2 )
+OVER 3 and 0= if 55 then ( d 3 )
+SWAP DROP ( drop par# )
+
+

@@ -35,29 +35,17 @@ KEY DROP
 
 ( **** )
 
-(
-https://excamera.com/sphinx/article-forth-enum.html
-)
-
-: enum
-  create 0 ,
-  does>
-    create dup @ 1 rot +! ,
-    does> @ ;
-
-( zamienić na potęgi dwójki)
-
-enum cfg
-  cfg #background
-  cfg #foreground
-  cfg #frame
-  cfg #cursor 
 
 ( BG )
 
-120 212 0 1 15 THEME
-0 THEME
-120 8 THEME
+120 212 0 1 15
+  THEME
+
+0
+  THEME
+
+120 8
+  THEME
 
 : ?NOPAR
   OVER AND 0= [ IF ] ; IMMEDIATE 

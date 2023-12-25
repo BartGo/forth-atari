@@ -35,15 +35,19 @@ KEY DROP
 
 ( **** )
 
-: varpar ( [n]m n -- )
-  ( m=: varpar )
-  ( m params n bits )
-DUP R> 
+(
+https://excamera.com/sphinx/article-forth-enum.html
+)
+
+: enum
+  create 0 ,
+  does> create dup @ 1 rot +! ,
+  does> @ ;
 
 
 
 
-
+( BG )
 
 120 212 0 1 15 THEME
 0 THEME

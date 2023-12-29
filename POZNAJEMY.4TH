@@ -877,7 +877,7 @@ WCALE NIE, TO NIE DZIAŁA!!
 
 
 
-( 12.1 osiem hetmanów zgubiłem - jest na drive )
+( 12.2 osiem hetmanów zgubiłem - jest na drive )
 
 ( TODO )
 

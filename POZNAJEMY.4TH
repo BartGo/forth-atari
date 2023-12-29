@@ -24,8 +24,6 @@ FORGET KOT
 FORGET KOT
 7 SPACES
 
-( * Ćwiczenie 1 - ODPOWIEDŹ W ANEKSIE 4 JEST DOBRA )
-: NAPIS KOT ." i poluje na myszy" ;
 
 ( * ROZDZIAL 2.2 )
 ( * OK )
@@ -47,7 +45,12 @@ C/L .   ( 64 )
 ( * poprawka w listingu - błędnie ," zamiast ." )
 . ." " : ; SPACES VLIST B/BUF B/SCR C/L CR FORGET SPACE 
 
+( * Ćwiczenie 1 - ODPOWIEDŹ W ANEKSIE 4 JEST DOBRA )
+: NAPIS KOT ." i poluje na myszy" ;
+
 ( * ROZDZIAL 3.3 )
+
+( * OK )
 
 2 3 +
 2 3 + 7 *
@@ -67,8 +70,9 @@ A*(B-C)+D ===> A B C - * D +
 ( * TU BYŁA NIEKOMPLETNA, NIE DOPISANO MNOŻEŃ )
 A/(B+C)*(D+A)*(C+D) ===> A B C + / D A + * C D + *
 
-( * Ćwiczenie 3 - KOD JEST OKEJ )
-( * MOŻEMY DOPISAĆ ODPOWIEDZI W ANEKSIE 4, NIE BYŁO ICH )
+( * Ćwiczenie 3 )
+( * MOŻEMY DOPISAĆ ODPOWIEDZI W ANEKSIE 4 )
+( * NIE BYŁO ICH )
 
 7 5 * 3 + 2 / 4 - 7 /
 ( * wynik: 2 )
@@ -262,6 +266,10 @@ S->D ( n --- d )
 
 
 
+( OK )
+: H. BASE @ HEX OVER U. BASE ! ;
+: B? BASE @ DUP DECIMAL . BASE ! ;
+
 
 ( * ROZDZ. 3.8 )
 
@@ -271,26 +279,116 @@ D.
 7ABBCCDD. U. U. ( 7ABB CCDD ok )
 
 
-( * ROZDZIAŁ 4 i 5 do zrobienia w calości, chyba jest tylko fibo, iksy, tab !! )
+( * ROZDZIAŁ 4 )
 
------------ << 2023.12.23
+( * 4.1 ok )
+( * 4.2 ok )
+( ... ) 
 
+( * 4.5 )
+
+( * niejednolita forma )
+NFA / --- pfa nfa/
+LFA / --- pda lfa/
+CFA / --- pfa cfa/
+PFA / --- nfa pfa/
+
+lepiej:
+
+NFA ( --- pfa nfa )
+LFA ( --- pda lfa )
+CFA ( --- pfa cfa )
+PFA ( --- nfa pfa )
+
+Przykład:
+
+: DUMP-INDEX
+  ' INDEX NFA
+  ' TRIAD NFA
+  OVER -
+  DUMP ;
+
+HEX DUMP-INDEX DECIMAL
+
+( * rozdział 5.2.2 )
+
+( kod jest okej )
+
+: PRZEDZIAL ( dolna-granica n gorna-granica )
+  OVER ( dol-gr n gor-gr n )
+  > ( dol-gr n f1 )
+  >R ( dol-gr n )
+  < ( f2 )
+  R> ( f2 f1 )
+  * ; ( f )  ( * tu był brak spacji )
+
+
+20 370 400 PRZEDZIAŁ .
+
+
+( 5.5 )
+
+
+  
+  
+: FIBO ( n --- ) ( max n: 23 ) ( * a nie trzydziesta trzecia! )
+  0 1 ROT 0 CR
+  DO
+    DUP 10 .R CR SWAP OVER +
+  LOOP ; 
+  
+24 FIBO
+( OK )
+  
+: DFIBO ( n --- ) ( max n: 46 )
+  0.       ( d=0 )       ( od początku używamy liczb podwójnych )
+  ROT      ( 0. n )      ( przenosi górną granicę nad 0. )
+  1. ROT   ( 0. 1. n )   ( taki sam manewr )
+  0 CR     ( 0. 1. n 0 ) ( granice pętli ustalone )
+  DO       ( 0. 1. )     ( granice pętli przeniesione na stos powrotów )
+    2DUP   ( 0. 1. 1. )
+    14 D.R ( 0. 1. )     ( pierwsza liczba wydrukowana )
+    CR
+    2SWAP  ( 1. 0. )
+    2OVER  ( 1. 0. 1. )
+    D+     ( 1. 1. )     ( pierwsze z kolejnych dodawań )
+  LOOP ;                 ( powrót do początku pętli )
+  
+( uruchomienie: )
+46 DFIBO
+47 DFIBO ( ujemne )
+( OK )
+
+
+( poniżej okej )
+: KWADRAT2 DUP * ;
+: KWADRAT3 DO I KWADRAT2 DUP 32760
+IF DROP LEAVE THEN . LOOP ;
+
+
+: TEST1 51 1 DO I . 2 +LOOP ;
+: TEST2 0 20 DO I . -1 +LOOP ;
+
+( * 5.6 )
 
 0 VARIABLE AA
+
 : TABLICZKA ( --- )
-  125 EMIT CR CR 8 SPACES 
-  ." TABLICZKA MNOZENIA" 
+  125 EMIT					( patrz uwagi powyżej )
+  CR CR 8 SPACES 			( nowy wiersz i przesunięcie kursora ) 
+  ." TABLICZKA MNOZENIA" 	( tytuł )
   CR CR 3 SPACES
-  10 1 DO I 3 .R LOOP CR 
-  30 0 DO ." _" LOOP CR 
-  10 1 DO 
-    I DUP AA ! 
-    . ." |" 
+  10 1 DO I 3 .R LOOP CR 	( nagłówek )
+  30 0 DO ." _" LOOP CR		( podkreślenie )  
+  10 1 DO I DUP AA ! 		( wskaźnik zewnętrznej pętli wprowadzamy do zmiennej AA )
+    . ." |" 				( kopię drukujemy, pionowa kreska ) 
     10 1 DO
-      I AA @ *
-      3 .R 
-    LOOP CR 
-  LOOP ; 
+      I AA @ *				( wskaźnik wewnętrznej pętli mnożymy przez AA )
+      3 .R 					( drukujemy wynik mnożenia )
+    LOOP					( koniec wewnętrznej pętli )
+	CR 						( nowy wiersz )
+  LOOP						( koniec zewnętrznej pętli )
+  ; 						( koniec definiowania słowa ) 
 
 ( OK )
 
@@ -312,6 +410,30 @@ D.
   LOOP ;
 
 ( OK )
+
+
+( * 5.7 )
+
+
+: IKSY BEGIN ." X" 1 - DUP 0= UNTIL ;
+
+( uruchomienie: )
+4 IKSY
+
+( OK )
+
+: NWP BEGIN SWAP OVER MOD -DUP 0= UNTIL ;
+
+( uruchomienie: )
+128 1024 NWP .
+( wynik: 128 -- a nie 126, plus brak był kropki w listingu )
+324 556 NWP .
+( wynik: 4 )
+1933 821 NWP .
+( wynik: 1 )
+
+
+( * 5.8 )
 
 ( poniższe sprawdzone z Salman / Tisserand / T )
 
@@ -352,53 +474,7 @@ PIERWSZE
 ( OK - CHYBA )
 ( faktycznie nawet poprawione lekko w stos. do STT )
 
-  
-  
-  
-: FIBO ( n --- ) ( max n: 23 ) ( * a nie trzydziesta trzecia! )
-  0 1 ROT 0 CR
-  DO
-    DUP 10 .R CR SWAP OVER +
-  LOOP ; 
-  
-24 FIBO
-( OK )
-  
-: DFIBO ( n --- ) ( max n: 46 )
-  0.       ( d=0 )       ( od początku używamy liczb podwójnych )
-  ROT      ( 0. n )      ( przenosi górną granicę nad 0. )
-  1. ROT   ( 0. 1. n )   ( taki sam manewr )
-  0 CR     ( 0. 1. n 0 ) ( granice pętli ustalone )
-  DO       ( 0. 1. )     ( granice pętli przeniesione na stos powrotów )
-    2DUP   ( 0. 1. 1. )
-    14 D.R ( 0. 1. )     ( pierwsza liczba wydrukowana )
-    CR
-    2SWAP  ( 1. 0. )
-    2OVER  ( 1. 0. 1. )
-    D+     ( 1. 1. )     ( pierwsze z kolejnych dodawań )
-  LOOP ;                 ( powrót do początku pętli )
-  
-( uruchomienie: )
-47 DFIBO
-( OK )
-
-: IKSY BEGIN ." X" 1 - DUP 0= UNTIL ;
-
-( uruchomienie: )
-4 IKSY
-
-( OK )
-
-: NWP BEGIN SWAP OVER MOD -DUP 0= UNTIL ;
-
-( uruchomienie: )
-128 1024 NWP .
-( wynik: 128 -- a nie 126, plus brak był kropki w listingu )
-324 556 NWP .
-( wynik: 4 )
-1933 821 NWP .
-( wynik: 1 )
-
+( * 6.2 )  
 
 
 : QUERY TIB @ 80 EXPECT 0 IN ! ; ( *ZGADZA SIĘ Z DECOMP )
@@ -413,13 +489,20 @@ NAZWISKO?
 ( uruchomienie: )
 DRUKUJ
 
-( OK )  
+( * 6.3 )
+
+
 
 : INPUT CR QUERY BL WORD HERE NUMBER DROP ;  ( *Z CR ŁADNIEJ )
 
 ( uruchomienie: )
 INPUT .
 
+
+( * rozdział 7  - tu chyba nic )
+
+
+( * rozdział 8 )
 
 : DATY ( n n n --- )
  <BUILDS , , , DOES>
@@ -468,7 +551,11 @@ WATERLOO
     [ SMUDGE ] FACTORIAL [ SMUDGE ]
     * 
   ELSE 1+ THEN ;
+  
   8 FACTORIAL U.
+
+
+( * rozdział 9 )
 
 : ARRAY <BUILDS 2 * ALLOT DOES> SWAP 2 * + ;
 
@@ -605,16 +692,6 @@ DECIMAL
 
 
 
-: PRZEDZIAL ( dolna-granica n gorna-granica )
-  OVER ( dol-gr n gor-gr n )
-  > ( dol-gr n f1 )
-  >R ( dol-gr n )
-  < ( f2 )
-  R> ( f2 f1 )
-  * ; ( f )  ( * tu był brak spacji )
-
-
-
 
 
 ( PONIŻSZE NAM NIE ZADZIAŁA JEŚLI NIE MAMY D*, JAK W "COMPLETE FORTH" )
@@ -665,226 +742,13 @@ WCALE NIE, TO NIE DZIAŁA!!
 
 ( 9.5 bez błędów )
 
-
-HETMANY - wydziwione
-==================================================================
-
-( *** MAKRA *** )
-
-: DEF [COMPILE] : ; IMMEDIATE
-
-( *** TYPY DANYCH *** )
-
-DEF T:Wektor
-  <BUILDS HERE OVER ERASE ALLOT DOES> + ;
-
-( *** STAŁE I ZMIENNE *** )
-
-ASCII X CONSTANT %hetman
-ASCII . CONSTANT %plansza
-
-      0 VARIABLE &rozwiazanie
-   1024 T:Wektor &wspolrzedna
-
-( *** SŁOWA PODSTAWOWE *** )
-
-DEF LHet ( --- liczba hetmanów+1 )
-  0 &wspolrzedna C@ ;
-
-DEF ))Postaw ( rząd kolumna --- )
-  SWAP &wspolrzedna C! ; ( umieszcza hetmana )
-  
-DEF )Usun ( rząd --- )
-  0 ))Postaw ; ( kasuje hetmana )
-  
-DEF ))Wolne ( rząd n --- rząd f )
-  2DUP = >R OVER
-  &wspolrzedna C@ OVER
-  &wspolrzedna C@ -
-  ROT ROT - ABS OVER ABS =
-  SWAP 0= OR 0= R> OR ;
-  
-DEF )WszystkieWolne ( rząd --- rząd f )
-  1 OVER 1
-  DO
-    OVER I Wolne AND
-  LOOP ;
-  
-DEF )Brzeg ( rząd --- rząd f )
-  LHet OVER &wspolrzedna C@ > ;
-
-DEF )Naprzod ( rząd --- rząd f ) 
-  DUP DUP &wspolrzedna C@ 1+
-  ))Postaw )Brzeg
-  IF 1 ELSE DUP )Usun 0 THEN ;
-
-DEF )PierwszaWolna ( rząd --- rząd f )
-  BEGIN
-    Naprzod IF
-	  )WszystkieWolne -DUP
-	ELSE
-	  0 1
-	THEN
-  UNTIL ;
-
-( *** INICJOWANIE *** )
-  
-DEF Inic ( --- )
-  LHet 1 
-  DO
-	I )Usun
-  LOOP
-  0 &rozwiazanie ! ;
-  
-( *** PLANSZA *** )
-  
-DEF Druk ( --- )
-  CR LHet 1
-  DO
-    I &wspolrzedna C@ LHet 1
-    DO
-	  DUP I =
-      IF %hetman EMIT
-	  ELSE %plansza EMIT
-	  THEN
-    LOOP DROP CR
-  LOOP CR
-  1 &rozwiazanie +!
-  ." Rozwiazanie nr "
-  &rozwiazanie ? CR ;
-
-( *** GŁÓWNY PROGRAM *** )
-
-DEF )Pozycja ( rząd --- f )
-  [ SMUDGE ]
-    LHet OVER >
-	IF
-      BEGIN
-	    )PierwszaWolna
-		IF
-		  1+ )Pozycja -DUP
-		ELSE
-		  1 - 0 1
-		THEN
-	  UNTIL
-	ELSE
-	  Druk 1 - 0
-	THEN
-  [ SMUDGE ] ;
-
-( *** WYWOŁANIE *** )
-
-DEF Hetmany ( --- )
-  9 0 SWAP ))Postaw 
-  Inic
-  1 )Pozycja ( --- f )
-  2DROP ; 
+( * rozdział 10 )
 
 
--------------------------------------------
 
-( NIE DZIAŁA JAKOŚ SUPER )
-
-10 CONSTANT DIMX
-10 CONSTANT DIMY
-
-: ARRAY ( dimX dimY --- )
-  <BUILDS 
-    OVER ,  ( umieszcza dimY pod adresem pfa+2 )
-    * ALLOT ( rezerwuje dimX*dimY bajtów )
-  DOES>
-  DUP @  ( umieszcza dimX na stosie )
-  ROT *  ( oblicza dimY*dimX )
-  + + 2+ ( oblicza bezwzględny adres komórki )
- ;
-  
-DIMX DIMY ARRAY UNIVERSUM
-
-: HOME 125 EMIT ;
-
-: J R> R> R> R R# ! >R >R >R R# @ ;
-
-: WSTAW ( indX indY --- )
-  UNIVERSUM 1 SWAP C! ;
-
-: USUN ( indX indY --- )
-  UNIVERSUM 0 SWAP C! ;
-
-: ZERUJ ( --- )
-  DIMY 0 DO
-    DIMX 0 DO
-      I J USUN
-    LOOP
-  LOOP ;
-
-: WERYFIKACJA ( liczba stanu sąsiadów --- )
-  DUP 3 = ( liczba stanu f )
-  IF DROP 2+ ELSE
-    2 = 0= ( stan stan nr2 )
-    IF 4 + THEN
-  THEN ;
-  
-: PRZYGOTOWANIE ( --- )
-  DIMY 0 DO
-    DIMX 0 DO
-      0
-	  J 2+ DIMY MIN
-	  J 1 - 0 MAX
-      DO
-	    J 2+ DIMX MIN
-		J 1 - 0 MAX
-        DO
-		  I J UNIVERSUM C@ 1 AND + ( 1+ *** chyba nie )
-        LOOP
-      LOOP
-      I J UNIVERSUM C@ 1 AND ( liczba sąsiadów )
-      SWAP OVER - WERYFIKACJA ( koduje przyszłość )
-      I J UNIVERSUM C! ( 1+ ** chyba nie )
-    LOOP
-  LOOP ;
-
-: DRUK ( --- )
-  HOME
-  DIMY 0 DO
-    DIMX 0 DO
-      I J UNIVERSUM C@
-      IF ." *" ELSE SPACE THEN
-    LOOP CR
-  LOOP ;
-
-: TWORZENIE
-  DIMY 0 DO
-    DIMX 0 DO
-      I J UNIVERSUM DUP C@
-	  DUP 3 >
-      IF DROP 0
-	  ELSE
-	    DUP 1 > IF DROP 1 THEN
-	  THEN
-      SWAP C! ( wprowadza nową wartość )
-    LOOP
-  LOOP ;
-
-: GRA ( n --- )
-  0 DO
-    DRUK ( wyświetla pokolenie N )
-    PRZYGOTOWANIE ( gasi pokolenie N i zostawia dane dla następnego )
-    TWORZENIE ( tworzy pokolenie N+1 )
-  LOOP
-  DRUK ; ( drukuje ostatnie pokolenie )
-
-: GRA1
-  BEGIN
-    ?TERMINAL IF ;S THEN
-    DRUK PRZYGOTOWANIE TWORZENIE
-  AGAIN
-  DRUK ;
+( * 10.4 (psy ) )
 
 
-=============================================
-
-
- 
 
 ( SCR # 25 )
 0  ( PSY RASOWE
@@ -991,6 +855,136 @@ DIMX DIMY ARRAY UNIVERSUM
 ( .. 2 3 4 6 0 - foksterier 46 )
 
 ====
+
+
+
+
+
+: 3DUP >R 2DUP R ROT ROT R> ;
+: TAM ( a c n -- a c n a b n-1 ) 
+  3DUP ROT ROT OVER + 6 SWAP -
+  ROT 1 - ;
+: Z.POWROTEM ( a c n -- a c n b c n-1 )
+  3DUP SWAP ROT OVER + 6 SWAP -
+  SWAP ROT 1 - ;
+: DRUKUJ 3DUP DROP SWAP
+  . ." NA " . ." ," ;
+: WIEZE ( a c n -- ) [ SMUDGE ] DUP IF 
+    TAM WIEZE DRUKUJ 
+    Z.POWROTEM WIEZE 
+  THEN DROP DROP DROP [ SMUDGE ] ;   
+: HANOI 1 3 ROT CR WIEZE ; ( n -- )
+
+
+
+( 12.1 osiem hetmanów zgubiłem - jest na drive )
+
+( TODO )
+
+-------------------------------------------
+
+( NIE DZIAŁA JAKOŚ SUPER )
+
+10 CONSTANT DIMX
+10 CONSTANT DIMY
+
+: ARRAY ( dimX dimY --- )
+  <BUILDS 
+    OVER ,  ( umieszcza dimY pod adresem pfa+2 )
+    * ALLOT ( rezerwuje dimX*dimY bajtów )
+  DOES>
+  DUP @  ( umieszcza dimX na stosie )
+  ROT *  ( oblicza dimY*dimX )
+  + + 2+ ( oblicza bezwzględny adres komórki )
+ ;
+  
+DIMX DIMY ARRAY UNIVERSUM
+
+: HOME 125 EMIT ;
+
+: J R> R> R> R R# ! >R >R >R R# @ ;
+
+: WSTAW ( indX indY --- )
+  UNIVERSUM 1 SWAP C! ;
+
+: USUN ( indX indY --- )
+  UNIVERSUM 0 SWAP C! ;
+
+: ZERUJ ( --- )
+  DIMY 0 DO
+    DIMX 0 DO
+      I J USUN
+    LOOP
+  LOOP ;
+
+: WERYFIKACJA ( liczba stanu sąsiadów --- )
+  DUP 3 = ( liczba stanu f )
+  IF DROP 2+ ELSE
+    2 = 0= ( stan stan nr2 )
+    IF 4 + THEN
+  THEN ;
+  
+: PRZYGOTOWANIE ( --- )
+  DIMY 0 DO
+    DIMX 0 DO
+      0
+	  J 2+ DIMY MIN
+	  J 1 - 0 MAX
+      DO
+	    J 2+ DIMX MIN
+		J 1 - 0 MAX
+        DO
+		  I J UNIVERSUM C@ 1 AND + ( 1+ *** chyba nie )
+        LOOP
+      LOOP
+      I J UNIVERSUM C@ 1 AND ( liczba sąsiadów )
+      SWAP OVER - WERYFIKACJA ( koduje przyszłość )
+      I J UNIVERSUM C! ( 1+ ** chyba nie )
+    LOOP
+  LOOP ;
+
+: DRUK ( --- )
+  HOME
+  DIMY 0 DO
+    DIMX 0 DO
+      I J UNIVERSUM C@
+      IF ." *" ELSE SPACE THEN
+    LOOP CR
+  LOOP ;
+
+: TWORZENIE
+  DIMY 0 DO
+    DIMX 0 DO
+      I J UNIVERSUM DUP C@
+	  DUP 3 >
+      IF DROP 0
+	  ELSE
+	    DUP 1 > IF DROP 1 THEN
+	  THEN
+      SWAP C! ( wprowadza nową wartość )
+    LOOP
+  LOOP ;
+
+: GRA ( n --- )
+  0 DO
+    DRUK ( wyświetla pokolenie N )
+    PRZYGOTOWANIE ( gasi pokolenie N i zostawia dane dla następnego )
+    TWORZENIE ( tworzy pokolenie N+1 )
+  LOOP
+  DRUK ; ( drukuje ostatnie pokolenie )
+
+: GRA1
+  BEGIN
+    ?TERMINAL IF ;S THEN
+    DRUK PRZYGOTOWANIE TWORZENIE
+  AGAIN
+  DRUK ;
+
+
+=============================================
+
+
+ 
 
 12.4 liczby zespolone
 
@@ -1254,4 +1248,122 @@ CR ." QUICKSORT: " CR POKAZ CR
 ************************************
 
 
+
+/////////////////
+HETMANY - wydziwione - pominąć
+==================================================================
+
+( *** MAKRA *** )
+
+: DEF [COMPILE] : ; IMMEDIATE
+
+( *** TYPY DANYCH *** )
+
+DEF T:Wektor
+  <BUILDS HERE OVER ERASE ALLOT DOES> + ;
+
+( *** STAŁE I ZMIENNE *** )
+
+ASCII X CONSTANT %hetman
+ASCII . CONSTANT %plansza
+
+      0 VARIABLE &rozwiazanie
+   1024 T:Wektor &wspolrzedna
+
+( *** SŁOWA PODSTAWOWE *** )
+
+DEF LHet ( --- liczba hetmanów+1 )
+  0 &wspolrzedna C@ ;
+
+DEF ))Postaw ( rząd kolumna --- )
+  SWAP &wspolrzedna C! ; ( umieszcza hetmana )
+  
+DEF )Usun ( rząd --- )
+  0 ))Postaw ; ( kasuje hetmana )
+  
+DEF ))Wolne ( rząd n --- rząd f )
+  2DUP = >R OVER
+  &wspolrzedna C@ OVER
+  &wspolrzedna C@ -
+  ROT ROT - ABS OVER ABS =
+  SWAP 0= OR 0= R> OR ;
+  
+DEF )WszystkieWolne ( rząd --- rząd f )
+  1 OVER 1
+  DO
+    OVER I Wolne AND
+  LOOP ;
+  
+DEF )Brzeg ( rząd --- rząd f )
+  LHet OVER &wspolrzedna C@ > ;
+
+DEF )Naprzod ( rząd --- rząd f ) 
+  DUP DUP &wspolrzedna C@ 1+
+  ))Postaw )Brzeg
+  IF 1 ELSE DUP )Usun 0 THEN ;
+
+DEF )PierwszaWolna ( rząd --- rząd f )
+  BEGIN
+    Naprzod IF
+	  )WszystkieWolne -DUP
+	ELSE
+	  0 1
+	THEN
+  UNTIL ;
+
+( *** INICJOWANIE *** )
+  
+DEF Inic ( --- )
+  LHet 1 
+  DO
+	I )Usun
+  LOOP
+  0 &rozwiazanie ! ;
+  
+( *** PLANSZA *** )
+  
+DEF Druk ( --- )
+  CR LHet 1
+  DO
+    I &wspolrzedna C@ LHet 1
+    DO
+	  DUP I =
+      IF %hetman EMIT
+	  ELSE %plansza EMIT
+	  THEN
+    LOOP DROP CR
+  LOOP CR
+  1 &rozwiazanie +!
+  ." Rozwiazanie nr "
+  &rozwiazanie ? CR ;
+
+( *** GŁÓWNY PROGRAM *** )
+
+DEF )Pozycja ( rząd --- f )
+  [ SMUDGE ]
+    LHet OVER >
+	IF
+      BEGIN
+	    )PierwszaWolna
+		IF
+		  1+ )Pozycja -DUP
+		ELSE
+		  1 - 0 1
+		THEN
+	  UNTIL
+	ELSE
+	  Druk 1 - 0
+	THEN
+  [ SMUDGE ] ;
+
+( *** WYWOŁANIE *** )
+
+DEF Hetmany ( --- )
+  9 0 SWAP ))Postaw 
+  Inic
+  1 )Pozycja ( --- f )
+  2DROP ; 
+
+
+/////////////////
   

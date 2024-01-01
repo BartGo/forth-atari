@@ -2,7 +2,7 @@
 : GLOBAL VARIABLE ; IMMEDIATE
 0 GLOBAL *RP ( return stack memory )
 \ scopes can't be nested, only seq.
-: LOCAL <BUILDS , DOES> @ ;
+: LOCAL <BUILDS , DOES> @ ; / mk snglt
 
 (( \ RP stored in *RP
   0 LOCAL &test

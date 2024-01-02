@@ -877,11 +877,96 @@ WCALE NIE, TO NIE DZIAŁA!!
 
 
 
-( 12.2 osiem hetmanów zgubiłem - jest na drive )
+( 12.2 osiem hetmanów )
+( * błędy: brak dwukropków przed definicjami, )
+( * jeśli poprzednie słowo kończy się średnikiem, )
+( * definicja nastepnego zaczyna sie od ":" )
+( * brakowało też czasem spacji po definiowanym słowie )
+( * a przed nawiasem komentarza, lub po nawiasie )
+( * zaczynającym komentarz )
+( * poprawione wcięcia )
 
-( TODO )
+( --------------------------------------- )
 
--------------------------------------------
+0 VARIABLE ROZWIAZANIE
+: WEKTOR
+  <BUILDS HERE OVER ERASE ALLOT
+  DOES> + ;
+1024 WEKTOR WSPOLRZEDNA
+
+: LHET ( --- liczba hetmanów+1 )
+  0 WSPOLRZEDNA C@ ;
+: POSTAW ( rząd kolumna --- )
+  SWAP WSPOLRZEDNA C! ; ( umieszcza hetmana )
+: USUN ( rząd --- )
+  0 POSTAW ; ( kasuje hetmana )
+
+: WOLNE ( rząd n --- rząd f )
+  2DUP = >R
+  OVER WSPOLRZEDNA C@
+  OVER WSPOLRZEDNA C@ -
+  ROT ROT - ABS OVER ABS =
+  SWAP 0= OR 0=
+  R> OR ;
+
+: WSZYSTKIE-WOLNE ( rząd --- rząd f )
+  1 OVER 1 DO
+    OVER I WOLNE AND
+  LOOP ;
+
+: BRZEG ( rząd --- rząd f )
+  LHET OVER WSPOLRZEDNA C@ > ;
+
+: DRUK ( --- )
+  CR LHET 1 DO
+    I WSPOLRZEDNA C@ LHET 1
+    DO DUP I =
+      IF ." X " ELSE ." . " THEN
+    LOOP DROP CR
+  LOOP
+  1 ROZWIAZANIE +! CR ." Rozwiazanie nr "
+  ROZWIAZANIE ? CR ;
+: INIC ( --- )
+  ( inicjuje szachownice z hetmanami w rz. 0 ) 
+  LHET 1 DO
+    I USUN
+  LOOP 0 ROZWIAZANIE ! ;
+: NAPRZOD ( rząd --- rząd f )
+  ( f=1, gdy hetmana w rzędzie "rząd" )
+  ( można przesunąć do następnej kolumny )
+  DUP DUP WSPOLRZEDNA
+  C@ 1+ POSTAW BRZEG
+  IF 1 ELSE DUP USUN 0 THEN ;
+: PIERWSZA-WOLNA ( rząd --- rząd f )
+  ( f=1,gdy hetman może )
+  ( przejść do następnej kolumny w rzędzie )
+  BEGIN
+    NAPRZOD
+    IF WSZYSTKIE-WOLNE -DUP ELSE 0 1 THEN
+  UNTIL ;
+: POZYCJA ( rząd --- f )
+  [ SMUDGE ]
+  LHET OVER > IF
+    BEGIN
+	  PIERWSZA-WOLNA IF
+	    1+ POZYCJA -DUP
+	  ELSE
+	    1 - 0 1
+      THEN
+	UNTIL
+  ELSE
+    DRUK 1 - 0
+  THEN
+  [ SMUDGE ] ;
+
+: HETMANY ( --- )
+  9 0 SWAP POSTAW INIC
+  1 POZYCJA
+  2 DROP ; 
+
+
+( --------------------------------------- )
+
 
 ( NIE DZIAŁA JAKOŚ SUPER )
 

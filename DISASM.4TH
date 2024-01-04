@@ -11,6 +11,7 @@
 (   EDITOR, xx SCR !, xx P, -->          )
 ( BELOW USES SCRS 80-85, NOT ORIG. 30-35 )
 ( NOTE, REMEMBER TO "FLUSH" IF NO ERRORS )
+( TO RUN > ' SOMEWORD DIS > e.g. ' @ DIS )
 
 EDITOR
 

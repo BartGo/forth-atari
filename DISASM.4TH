@@ -1,17 +1,22 @@
-( 6502 DISASSEMBLER by JOHN MATTES       )
-( ANTIC 3/84 W/ ERRATA FROM 4/84         )
+BYE
+( 6502 DISASSEMBLER by JOHN MATTES        )
+( ANTIC 3/84 W/ ERRATA FROM 4/84          )
                                         
-( WORKS W/ ATARI APX FIG-FORTH REV. 2    )
-( MAY WORK W/ TEAM ATARI FIG-FORTH 1.4S? )
-( DOES NOT WORK W/ VALFORTH?             )
-( "TABLE OF ADDRESS MODES" - MISSING     )
-( REQUIRES EDITOR TO LOAD ONTO SCREENS   )
-( REQUIRES ALIRRA TO PASTE THE CODE      )
-( USE "27 LOAD" in APX OR TUNE/REMOVE:   )
-(   EDITOR, xx SCR !, xx P, -->          )
-( BELOW USES SCRS 80-85, NOT ORIG. 30-35 )
-( NOTE, REMEMBER TO "FLUSH" IF NO ERRORS )
-( TO RUN > ' SOMEWORD DIS > e.g. ' @ DIS )
+( WORKS W/ ATARI APX FIG-FORTH REV. 2     )
+( MAY WORK W/ TEAM ATARI FIG-FORTH 1.4S?  )
+( DOES NOT WORK W/ VALFORTH?              )
+( "TABLE OF ADDRESS MODES" - MISSING      )
+( REQUIRES EDITOR TO LOAD ONTO SCREENS    )
+( REQUIRES ALIRRA TO PASTE THE CODE       )
+( USE "27 LOAD" in APX OR TUNE/REMOVE:    )
+(   EDITOR, xx SCR !, xx P, -->           )
+( BELOW USES SCRS 80-85, NOT ORIG. 30-35  )
+( NOTE, REMEMBER TO "FLUSH" IF NO ERRORS  )
+( TO RUN > ' SOMEWORD DIS > e.g. ' @ DIS  )
+( RESULTS ARE OFTEN DOUBTFUL, PLEASE TEST )
+( AND TEST IF 80/8 IS @ OR C@ - BUG?      )
+( SEE ALSO: https://www.reddit.com/r/Forth/comments/18yh02m/atari_8bit_6502_disassembler/ )
+( FOR SUGGESTED IMPROVEMENTS              )
 
 EDITOR
 
@@ -24,7 +29,7 @@ EDITOR
    5 P 9E , BC , BD , BE , DC , DD ,
    6 P DE , FC , FD , FE ,
    7 P : SEARCH 1 + 0 DO OVER OVER I 2
-   8 P     * + C@ - DUP 0= IF DROP
+   8 P     * + C@ - DUP 0= IF DROP ( **- C@ or @ - ? )
    9 P     DROP DROP I 1 LEAVE ELSE
   10 P     0 < (*) IF DROP DROP I 0 LEAVE
   11 P     ENDIF ENDIF LOOP ;

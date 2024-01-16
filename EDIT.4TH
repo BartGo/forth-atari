@@ -153,8 +153,9 @@ EDITOR
  13 E 
  14 E 
  15 P -->
+
 69 SCR !
-  0 P ( EDIT ENDS )
+  0 P ( EDIT ENDS\ )
   1 P : EDIT SCR ! EREAD DISPLAY 0 STOP ! BEGIN
   2 P KEY DOCASE 28 CASE UP-CURSOR ENDCASE
   3 P 29 CASE DOWN-CURSOR ENDCASE
@@ -171,22 +172,26 @@ EDITOR
  14 E 
  15 P ;S
 
-19 SCR !
-  0 P ( Help -- EDIT by M. Dougherty ) 
-  1 P ;S 
+70 SCR ! 
+  0 P ( EDIT BY M. DOUGHERTY, HELP\ ) ;S
   2 P Arrows, Insert, BckSpc: standard
   3 P Return: next line, Tab: tab (2)
-  4 P Shf-Insert: insert whole line*
-  5 P Shf-Delete: delete whole line*
-  6 P Ctl-Insert: insert space
-  7 P Ctl-BckSpc: delete
-  8 P Clear: clear screen (Shf> Ctl>)
-  9 P Esc+S: change sides
- 10 P Esc+N: next screen, save (flush)
- 11 P Esc+L: last screen, save (flush)
- 12 P Esc+E: exit, save (flush)
- 13 P Esc+A: abort/exit (empty-buf)
- 14 P Esc+P: put last deleted line*
- 15 P Esc+T: undo scrn chn (empty-buf)
-
+  4 P Clear: clear screen (Shf> Ctl>)
+  5 P Esc-T: undo scrn chn (empty-buf)
+  6 P Shf-Insert: insert whole line*
+  7 P Shf-Delete: delete whole line*
+  8 P Ctl-Insert: insert space
+  9 P Ctl-BckSpc: delete
+ 10 P Esc-S: change sides
+ 11 P Esc-N: next screen, save (flush)
+ 12 P Esc-L: last screen, save (flush)
+ 13 P Esc-E: exit, save (flush)
+ 14 P Esc-A: abort/exit (empty-buf)
+ 15 P Esc-P: put last deleted line*    ===> change to Ctl-Ins !
+ 15 P ( -------------------------- )
+ 
+ ( => add save, remove from all, block unsaved )
+ ( arr ins bck ret tab ^clr empTb )
+ ( S/N/L ^ins* ^del* Put* Ext Abt )
+ 
 ( FLUSH )

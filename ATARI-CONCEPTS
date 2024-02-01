@@ -1,0 +1,650 @@
+Extracted from the file: "figasm, f69asm, computype master.atr"
+Originally present at: "http://annex.retroarchive.org/disks/Atari/Forth-Disks/"
+
+------------ CONCEPTS.001
+
+                         Development system concepts
+                             File:  CONCEPTS.DOC
+ 
+ 
+      
+
+Table of contents: 
+
+          I.   Overview
+          II.  Terminal sub-system
+          III. Logic Analyser sub-system
+          IV.  Game interface sub-system
+               A. Hardware description
+               B. Software description
+               C. Game interface requirements
+ 
+------------ CONCEPTS.002
+
+                         Development System Overview
+ 
+ 
+      This  document  is  an  overview  of  the  design  considerations and
+ 
+   elements of  the development  system. Complete  hardware memory  maps of
+ 
+   each  system  element  are  available  on  the PCB schematics ( Ask Dave
+ 
+   Wiebenson ) .  Program file names are included for each program in  each
+ 
+   system  element.   Owen  Rubin  is  currently  an expert at the terminal
+ 
+   Forth system. Mike Albaugh is the Octopus communications expert as  well
+ 
+   as the ROM  resident monitor expert  on the analyser  and Game Interface
+ 
+   Board.  Steve  Calfee  can   help  with  Terminal  and   analyser  FORTH
+ 
+   questions.
+
+
+
+      The  development  system  is  composed  of  three major elements, the
+
+   terminal ( or blue box ), the  logic analyser ( or white box ),  and the
+
+   Game Interface  Board (  GIB )  ( also  in the  white box  ). All  three
+
+   elements  of  the  development  system  have  separate memory spaces and
+
+   communicate only  through I/O  interfaces (  see block  diagram drawing,
+
+   attached ).   The terminal  has all  the external  I/O capability of the
+
+   system,  including   keyboard  and   video  screen,   3M  magnetic  tape
+
+   cartridge,  paper  tape  reader  (  now  unused ), two ACIA's for serial
+
+   communications, floppy disk drive(s), and a real-time clock.  The  logic
+
+   analyser receives  commands from  the terminal  with an  ACIA and passes
+
+   communications to the game ( instead  of itself ) on a special  parallel
+
+   interface  to  the  game  interface  board.   The  game  interface board
+
+   receives all of  its commands via  the logic analyser  and this parallel
+
+   interface.  The logic analyser is the middle-man in the system.
+
+
+
+      All  three  elements  of  the  development  system  are   independent
+
+   computers communicating with each other via the Lawrence Livermore  Labs
+
+   Octopus  link  protocol  (  I  have  a  copy  of  the  original  article
+
+   describing  this  protocol)  .   This  protocol  is  packet  based   and
+
+   automatically retries on link errors.  There is a higher level  protocol
+
+   ( called DESTIN )  that is not a  communications link protocol (  ie.  a
+
+   link  is  a  bi-directional  point-to-point  communications path ).  The
+
+   higher level protocol  DESTIN is packet  based and specifies  within the
+
+   packet  sending  and  receiving  node  numbers. The Octopus protocol and
+
+   DESTIN are completely invisible to each other.
+
+
+
+      Each element in the DESTIN system checks the ÔĎ and ĆŇĎÍ node  number
+
+   and passes  the message  to the  ÔĎ node  in that  processor (  if it is
+
+   within that element  ) or (  if the processor  is the analyser  ) passes
+
+   the  message  to  another  processor.   All  of  the  development system
+
+   terminals ( blue boxes ) have  8 DIP switches to indicate the  terminals
+
+   number in the high  5 switches which is  used as the terminals  node ÉÄ,
+
+   and the  low 3  bits of  the node  ÉÄ number  designate one  of up  to 8
+
+   independent  communications  nodes  in  the  terminal.  Terminals can be
+
+   hooked together to  communicate using their  unique node IDs.   The only
+
+   illegal  terminal  node  ÉÄ  is  zero  (  see  below  ), so there are 31
+
+   possible unique terminal ÉÄs.  ÉÄ  0 is dedicated to the  game interface
+
+   board resident monitor, and  ÉÄ 1 is available  on the game board  for a
+
+   user program ( ie fig-FORTH running in a game ) to communicate with  the
+
+   rest of the  system from a  game.  Node ÉÄ  2 is dedicated  to the logic
+
+   analyser  resident  monitor,  and  node  ÉÄs  3  to  7  is available for
+
+   independent communication nodes in the logic analyser processor.
+
+
+
+      There  is  one  even  higher  level  communications  protocol  in the
+
+   system, the resident monitor commands  ( called the COMMAND protocol  ).
+
+   These  commands  are  common  to  both  the  game  board  and  the logic
+
+   analyser.   The  only  commands  defined  are examine memory and deposit
+
+   into  memory  and  registers,  report  abnormal  monitor  entries to the
+
+   MASTER ÉÄ patched  into the GIB  ram by the  terminal ( for  BRKs, IRQs,
+
+   NMIs, RESETs,  etc.), and  go to  a specified  address.  If  a packet is
+
+   sent to node 0 or 2, it will be interpreted as a COMMAND packet.
+
+
+
+      The terminal and logic analyser are programmed in a version of  FORTH
+
+   based on the  PDP-11 DECUS user  group FORTH.  Most  of the software  in
+
+   both is RAM  based, and must  be loaded when  the system is  powered-on.
+
+   The terminal is loaded by the  S command to the terminal monitor  .  The
+
+   analyser is loaded by the terminal ( after the FORTH system is booted  )
+
+   when you type  ÁÎÁĚ ĚĎÁÄ.  The  analyser program must  be loaded to  use
+
+   the  analyser  functions,  but  communications  between the game and the
+
+   terminal will occur even if  the analyser program is not  loaded because
+
+   of the EPROM analyser resident monitor on the analyser PCB in the  white
+
+   box.
+
+
+
+      The game interface board  ( GIB )is the  only hardware that needs  to
+
+   be changed in the development system  in order to change to a  different
+
+   processor.   The  GIB  is  conceptually  a  super-powerful  single  chip
+
+   processor.  The GIB  plugs into the  processor chip socket  and requires
+
+   the  same  signals  to  be  working  as  a real processor chip would ( a
+
+   clock,  and  reset  high  ).   The  GIB  has memory from F000 to FFFF to
+
+   accomodate its  I/O with  the logic  analyser and  its resident  monitor
+
+   program, which implements the command interface with the logic  analyser
+
+   and terminal. A  separate PCB in  the white box  is a 16K  RAM card that
+
+   can be dialed  into the GIB  address space.  The  RAM can be  set to any
+
+   set of two 8K  chunks of memory (  starting at even 4K  addresses ). The
+
+   RAM memory can also be disabled in 1K chunks by DIP switches on the  RAM
+
+   PCB. The GIB has fully buffered lines to a game board, so shorts on  the
+
+   data/address buses  do not  prevent operation  of the  resident monitor.
+
+   Addresses local to the GIB override all addresses on the game.  The  16K
+
+   ram card addresses also override game board addresses.  
+
+------------ CONCEPTS.003
+
+                             TERMINAL SUB-SYSTEM
+ 
+ 
+      The  development  system  terminal  contains the controlling software
+ 
+   for the  rest of  the development  system. The  terminal handles all I/O
+ 
+   operations including the keyboard commmands from the operator. 
+
+ 
+ 
+      The terminal hardware consists  of 32K of RAM  memory from 0 to  8000
+ 
+   and includes the 2K of video display RAM at 880 to 1000.  An  additional
+ 
+   2K of  RAM has  been added  on a  "piggy-back" PCB  for disk  buffers at
+ 
+   addresses D800 to  DFFF. The terminal  has I/O interfaces  to the system
+ 
+   keyboard,  3M  mag  tape  reader,  a  paper  tape reader, two ACIA's for
+ 
+   serial communications, and a 6532 Timer-I/O-RAM chip.
+
+
+
+      The software for the terminal is composed of three different  levels.
+
+   The  first  level  is  the  terminal  debugger  program named AYADS.MAC.
+
+   AYADS is used to  debug software in the  terminal itself, and to  report
+
+   breakpoints  in  the  terminal.   AYADS  resides  in  2K of EPROM on the
+
+   terminal and is entered by pressing the RESET button on the back of  the
+
+   terminal, or  by power-on  resets.  The  only command  that is typically
+
+   used by a development system user is Ó to boot the disk.
+
+
+
+      The  next  higher  level  of  software  is  the  MX  (  multi-tasking
+
+   executive ) multi-tasking time-sharing  system kernel.  MX controls  the
+
+   base-page/stack-page   mapping   and   task   sequencing   and  interupt
+
+   dispatching. MX  is in  1K of  EPROM (  at F400  ) in the terminal along
+
+   with the MX system disk driver in the other 1K at F000.
+
+
+
+      The highest level  of software is  the FORTH program  which is booted
+
+   in from disk  and is the  users interface to  the other elements  of the
+
+   development   system.    Refer   to   DEVSYS.DOC  for  this  sub-systems
+
+   documentation.
+
+
+
+      
+
+   PROGRAMS:
+
+     RAM: ( described in link order )
+
+          FAST4,MXTASK,COMMN2,MX2,ROMEQU,MXCOMM,DICT2
+
+          FORTH definitions are on FORSYS.DAT on your DEVSYS diskette.
+
+     ROM:
+
+          TERMDS
+          MX1,MXFD
+
+------------ CONCEPTS.004
+
+                          LOGIC ANALYSER SUB-SYSTEM
+ 
+ 
+      The logic  analyser passes  communications between  the game  and the
+ 
+   terminal.   The  analyser  is  also  an  independent  computer  that has
+ 
+   special  hardware  with  connections  to  the  GIB  processor  pins. The
+ 
+   analyser  contains  a  2K  resident  monitor  EPROM  and  a  2K  Octopus
+ 
+   communications  protocol  program  EPROM.   There  is  16K of RAM in the
+ 
+   analysers  6502  processor  address  space  that  can  be  loaded with a
+ 
+   program to control  the logic analyser  functions ( loaded  by ÁÎÁĚ ĚĎÁÄ
+ 
+   at the terminal).
+
+ 
+ 
+      The software loaded by ÁÎÁĚ  ĚĎÁÄ is another version of  the terminal
+
+   FORTH program and is controlled  by commands from the terminal  enclosed
+
+   in ĹÓĂ key delimiters.
+
+
+
+      The analyser  resident monitor  can be  told that  its communications
+
+   node ÉÄ is zero, so the  debugging commands used for testing a  game can
+
+   be used for testing a program  in the analyser. The terminal command  to
+
+   tell the  analyser to  use the  GIB ÉÄ  is ÂĹÇÁÍĹ  ( and  to return  the
+
+   analyser to the analyser ÉÄ type ÂĹÁÎÁĚ ).
+
+
+
+      
+
+   PROGRAMS:
+
+     RAM:
+
+          ANAL5.MAC
+          Analyser FORTH definitions are in FORSYS.DAT on the DEVSYS diskette
+
+     ROM:
+
+          LACM.MAC,LARMON.MAC
+          
+
+------------ CONCEPTS.005
+
+                       GAME INTERFACE BOARD SUB-SYSTEM
+ 
+ 
+      The GIB pretends to be a super single-chip processor that plugs  into
+ 
+   a normal processor IC socket. The address and data lines on the GIB  are
+ 
+   completely buffered and only a minimally operational game is needed  for
+ 
+   the development  system to  run. The  GIB occupies  4K of the processors
+ 
+   memory space at F000 to FFFF and includes a 2K resident monitor  program
+ 
+   and 128 bytes of RAM at F780 to F7FF.
+
+ 
+ 
+      The  hardware  on  the  GIB  includes  a  parallel interface port for
+ 
+   communications with the  analyser via the  Octopus protocol sub-set  and
+ 
+   is  controlled  by  the  resident  monitor program. The resident monitor
+
+   program resides at F800 to  FFFF and includes the hardware  ROM vectors.
+
+   The last 8 bytes of the RAM  at F7F8 to F7FF can be address  mapped onto
+
+   FFF8 to FFFF. The analyser has 2 bits in its I/O space that can  request
+
+   the hardware on the GIB to do  an NMI or RESET through the ROM  vectors.
+
+   All game NMI,  IRQ, BRK, and  RESETs go through  the RAM vectors  on the
+
+   GIB. There  is a  hardware arbitration  network on  the GIB that selects
+
+   the appropriate RAM or  ROM vectors depending on  the source of the  NMI
+
+   or RESET.
+
+
+
+      The  vector  mapping  allows  the  user  to specify RAM interrupt and
+
+   reset vectors for the game  for no debug system overhead  on interrupts.
+
+   The resident monitor  always enables this  mapping after the  monitor is
+
+   entered by a special reset from the analyser board.  The logic  analyser
+
+   can RESET the GIB  and NMI the GIB,  and these signals cause  the GIB to
+
+   use the ROM vectors. This means that two sets of NMI's can be  operating
+
+   simultaneously,  and  cause  execution  of  different NMI routines.  The
+
+   reset  button  on  the  game  will  cause  a reset through the RAM reset
+
+   vector,  so  if  the  RAM  contains  an  address pointing to a undefined
+
+   op-code  (  which  causes  the  processor  to  lock-up ), the game reset
+
+   button will not  actually reset the  game. The analyser  reset line will
+
+   always reset the game via ROM vectors  so that you can then fix the  RAM
+
+   vectors. The terminal command ŇĹÓ is used to do a patch in the  analyser
+
+   resident monitor ( ÉÄ 2 ) which will actuate the reset line on the  GIB.
+
+   If the analyser Octopus communications routine does not get  cooperation
+
+   from the game for  communicating ( such as  when a user game  is running
+
+   ), the analyser  will NMI the  game through the  ROM vector so  that the
+
+   terminal  command  will  be  executed  by  the  GIB  even when a game is
+
+   running.
+
+
+
+      The GIB has hardware control  of write-protecting the 16K RAM  board,
+
+   so at your option  the RAM can be  either RAM or become  "ROM".  The GIB
+
+   also can disable game NMI's, which  it automatically does on a reset  to
+
+   the resident  monitor.  In  addition to  these hardware  system controls
+
+   the resident  monitor maintains  a software  flag to  indicate that  the
+
+   game  stack  RAM  can  not  be  trusted.  The  stack is only used by the
+
+   development system  when the  analyser NMI's  the GIB  for communication
+
+   purposes.  The resident monitor does  not use z-page either, so  no user
+
+   RAM  will  be  altered.  If  the  stack  RAM  is  not  to  be trusted, a
+
+   development  system  NMI  will  cause  the  game program operation to be
+
+   stopped, because the  NMI can not  be RTI'ed. There  is another software
+
+   flag that tells the resident monitor  to disable game NMI's after a  BRK
+
+   has occured.  Normally, the  NMI routine will continue.   These hardware
+
+   and software  options are  controlled by  setting the  terminal variable
+
+   ÇĂĎÎÄ with the proper bits ( see DEVSYS.DOC ).  The ÇĂĎÎÄ bits are  only
+
+   sent to the game on the next ÇĎ or ĂĎÎÔ terminal command.
+
+
+
+      Breakpoints  are   largely  handled   by  the   terminal,  with  some
+
+   assistance by  the resident  monitor. There  are two  volatile execution
+
+   blocks  (  VEBs  )  maintained  in  the  GIB ram.  On a BRK the resident
+
+   monitor checks  the stacked  PC against  the address  in the "fast" VEB,
+
+   and if it matches, the resident monitor decrements a counter and if  the
+
+   counter is not zero, it executes the code previously stored in the  fast
+
+   VEB by the terminal, otherwise,  when the counter is zero,  the resident
+
+   monitor reports  the BRK  condition to  the terminal.   This fast VEB is
+
+   used  to  BRK  on  the  nth  occurance  of  a BRK which is automatically
+
+   continued from  at nearly  real-time. The  other VEB  is patched  by the
+
+   terminal whenever a BRK occurs in the game, at an address not  specified
+
+   in the fast  VEB address word,  to simulate the  instruction replaced by
+
+   the BRK. Note that the terminal  reads the op-code from the game  memory
+
+   when you request a  BRK, and then stores  a zero ( BRK  instruction ) at
+
+   that address, so if the  terminal is re-booted all the  BRK instructions
+
+   will still be in the game.
+
+
+
+      
+
+   PROGRAMS:
+
+     ROM:
+
+          6502 - YADS.MAC
+          6809 - DEVS69.MAC
+          6800 - DEVS68.MAC
+
+
+------------ CONCEPTS.200 
+
+                       GAME INTERFACE BOARD SUB-SYSTEM
+ 
+ 
+      The GIB pretends to be a super single-chip processor that plugs  into
+ 
+   a normal processor IC socket. The address and data lines on the GIB  are
+ 
+   completely buffered and only a minimally operational game is needed  for
+ 
+   the development  system to  run. The  GIB occupies  4K of the processors
+ 
+   memory space at F000 to FFFF and includes a 2K resident monitor  program
+ 
+   and 128 bytes of RAM at F780 to F7FF.
+
+ 
+ 
+      The  hardware  on  the  GIB  includes  a  parallel interface port for
+ 
+   communications with the  analyser via the  Octopus protocol sub-set  and
+ 
+   is  controlled  by  the  resident  monitor program. The resident monitor
+
+   program resides at F800 to  FFFF and includes the hardware  vectors. The
+
+   last 8 bytes of the RAM at F7F8 to F7FF can be address mapped onto  FFF8
+
+   to  FFFF.   This  allows  the  user  to  specify RAM interrupt and reset
+
+   vectors for  the game  for no  debug system  overhead on interrupts. The
+
+   resident  monitor  always  enables  this  mapping  after  the monitor is
+
+   entered by a special reset from the analyser board.  The logic  analyser
+
+   can RESET the GIB  and NMI the GIB,  and these signals cause  the GIB to
+
+   use the ROM vectors. This means that two sets of NMI's can be  operating
+
+   simultaneously,  and  cause  execution  of  different NMI routines.  The
+
+   reset  button  on  the  game  will  cause  a reset through the RAM reset
+
+   vector,  so  if  the  RAM  contains  an  address pointing to a undefined
+
+   op-code  (  which  causes  the  processor  to  lock-up ), the game reset
+
+   button will not  actually reset the  game. The analyser  reset line will
+
+   always reset the game via ROM vectors  so that you can then fix the  RAM
+
+   vectors. The terminal command ŇĹÓ is used to do a patch in the  analyser
+
+   resident monitor ( ÉÄ 2 ) which will actuate the reset line on the  GIB.
+
+   If the analyser Octopus communications routine does not get  cooperation
+
+   from the game for  communicating ( such as  when a user game  is running
+
+   ), the analyser  will NMI the  game through the  ROM vector so  that the
+
+   terminal  command  will  be  executed  by  the  GIB  even when a game is
+
+   running.
+
+
+
+      The GIB has hardware control  of write-protecting the 16K RAM  board,
+
+   so at your  option the RAM  can be either  RAM or ROM.  The GIB also can
+
+   disable  game  NMI's,  which  it  automatically  does  on a reset to the
+
+   resident monitor.   In addition  to these  hardware system  controls the
+
+   resident monitor  maintains a  software flag  to indicate  that the game
+
+   stack RAM can not be trusted. The stack is only used by the  development
+
+   system when the analyser NMI's the GIB for communication purposes.   The
+
+   resident monitor  does not  use z-page  either, so  no user  RAM will be
+
+   altered. If the  stack RAM is  not to be  trusted, a development  system
+
+   NMI will  cause the  game program  operation to  be stopped, because the
+
+   NMI can not  be RTI'ed. There  is another software  flag that tells  the
+
+   resident  monitor  to  disable  game  NMI's  after  a  BRK  has occured.
+
+   Normally, the NMI  routine will continue.   These hardware and  software
+
+   options are controlled by setting  the terminal variable ÇĂĎÎÄ with  the
+
+   proper bits (  see DEVSYS.DOC ).   The ÇĂĎÎÄ bits  are only sent  to the
+
+   game on the next ÇĎ or ĂĎÎÔ terminal command.
+
+
+
+      Breakpoints  are   largely  handled   by  the   terminal,  with  some
+
+   assistance by  the resident  monitor. There  are two  volatile execution
+
+   blocks  (  VEBs  )  maintained  in  the  GIB ram.  On a BRK the resident
+
+   monitor checks  the stacked  PC against  the address  in the "fast" VEB,
+
+   and if it matches, the resident monitor decrements a counter and if  the
+
+   counter is not zero, it executes the code previously stored in the  fast
+
+   VEB by the terminal, otherwise,  when the counter is zero,  the resident
+
+   monitor reports  the BRK  condition to  the terminal.  This fast  VEB is
+
+   used  to  BRK  on  the  nth  occurance  of  a BRK which is automatically
+
+   continued from  at nearly  real-time. The  other VEB  is patched  by the
+
+   terminal whenever a BRK occurs  to simulate the instruction replaced  by
+
+   the BRK. Note that the terminal  reads the op-code from the game  memory
+
+   when you request a  BRK, and then stores  a zero ( BRK  instruction ) at
+
+   that address, so if the  terminal is re-booted all the  BRK instructions
+
+   will still be in the game.
+
+
+
+      
+
+   PROGRAMS:
+
+     ROM:
+
+          6502 - YADS.MAC
+          6809 - DEVS69.MAC
+          6800 - ??????????
+
+
+

@@ -3,8 +3,6 @@
 ( - https://archive.org/details/waug-newsletter-april-1983/page/4/mode/1up?q=forth - )
 ( - Compatible with APX Extended Fig-Forth 1.1 Rev. 2, "39 LOAD" to load assembler - )
 
-39 LOAD ( INCLUDE: FIG-Mullarky's Assembler ) 
-
 HEX
 
 CODE Blink ( -- )

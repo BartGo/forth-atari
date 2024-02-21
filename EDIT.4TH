@@ -188,9 +188,8 @@ EDITOR
  13 P Esc-E: exit, save (flush)
  14 P Esc-A: abort/exit (empty-buf)
  15 P Esc-P: put last deleted line*    ===> change to Ctl-Ins !
- 15 P ( -------------------------- )
- 
- ( => add save, remove from all, block unsaved )
+  
+ ( => add save, remove from all, block unsaved, type screen # )
  ( arr ins bck ret tab ^clr empTb )
  ( S/N/L ^ins* ^del* Put* Ext Abt )
  

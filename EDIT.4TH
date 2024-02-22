@@ -18,7 +18,7 @@ EDITOR
   8 P : EREAD 16 0 DO I SCR @ (LINE) DROP
   9 P   UPDATE DROP LOOP 0 CLINE !
  10 P   0 CCHAR ! 0 SIDE ! ; 70 CONSTANT #HLP
- 11 P : ECLEAR 125 EMIT 1 752 C! ;
+ 11 P : ECLEAR 125 EMIT 1 752 C! ; ( CRSINH )
  12 P : POINT-CURSOR 85 ! 84 C! ;
  13 P : CURSOR@ CLINE @ LINEOFF @ +
  14 P  CCHAR @ SIDE @ IF 32 - ENDIF CHAROFF @ + ;
@@ -174,8 +174,8 @@ NEXT-SCREEN
  11 P 156 CASE DELETE-LINE ENDCASE
  12 P 126 CASE DEL ENDCASE 127 CASE TAB ENDCASE
  13 P 125 CASE CLEAR-SCR ENDCASE 
- 14 P DUP ADDKEY ENDCASES
- 15 P STOP @ UNTIL 125 EMIT 0 752 ! ; ;S
+ 14 P DUP ADDKEY ENDCASES STOP @ UNTIL 
+ 15 P 125 EMIT 0 752 ! ( CRSINH ) ; ;S
 NEXT-SCREEN ( #HLP = 70 )
   0 P ( EDIT BY M. DOUGHERTY, HELP\ ) ;S
   2 P Arrows, Insert, BckSpc: standard
@@ -207,8 +207,9 @@ FLUSH
 ( TODO: kompilacja ekranu / nowy słownik TEMP, load, drop słownik ? )
 ( TODO: CAPS = 60, 188, 124, 252; INV = 39, 103, 167, 231 )
 ( TODO: is it possible to mark directly if file changed??  )
-( TODO: jump to screen )
+( TODO: jump to screen ; next / last: < > )
 ( TODO: esc shows help? )
+( TODO: use joystick to navigate, with fire - change sides / screens )
 
 ( Curson blink: "Blinking Characters" )
 ( ** Ron Miller's FORTH version of a routine published in COMPUTE, December, 1981 ** )

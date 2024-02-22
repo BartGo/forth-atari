@@ -1,8 +1,25 @@
-( Screens 60-70 will be destroyed!" )
+(  ** EDIT BY M. DOUGHERTY, MICRO 57/FEB/83 **  )
+(  * AN EDITOR FOR ATARI 8-BIT APX FIG-FORTH *  )
+( Curson blink procedure: "Blinking Characters" )
+(   Ron Miller's FORTH version of a routine published in COMPUTE, December, 1981   )
+(   https://archive.org/details/waug-newsletter-april-1983/page/4/mode/1up?q=forth )
 
-( 18 LOAD )
-
-: NEXT-SCREEN 1 SCR +! ;
+( Warning: Screens 60-70 will be destroyed by the below script! )
+( To prepare the code: )
+( - run clean APX fig-Forth in Altirra )
+( - load fig-forth editor, debugger, assembler - by: 18 LOAD )
+( - press CAPS to enable lowercase and paste the below )
+( - FLUSH )
+( - WHERE should show screen 0 if there were no errors )
+( - check by 60 90 INDEX )
+( To compile the code: )
+( - boot the floppy prepared above )
+( - 39 LOAD for the assembler, needed for cursor blinking )
+( - or 18 LOAD for debugger, assembler, fig editor )
+( - then 60 LOAD to compile EDIT, only warning about DEPTH is expected )
+( - optionally, SAVE - if you know what it does )
+( - to EDIT, type edit, optionally putting before the screen number on stack )
+( - help is on screen 70 )
 
 EDITOR
 
@@ -23,7 +40,7 @@ EDITOR
  13 P : CURSOR@ CLINE @ LINEOFF @ +
  14 P  CCHAR @ SIDE @ IF 32 - ENDIF CHAROFF @ + ;
  15 P : CURSOR CURSOR@ POINT-CURSOR ; -->
-NEXT-SCREEN
+61 SCR ! 
   0 P ( EDIT )
   1 P : SCREEN-CURSOR CURSOR@ SWAP 40 * + 106 C@ 256 *
   2 P  960 - + DUP C@ 128 XOR SWAP C! ;
@@ -40,7 +57,7 @@ NEXT-SCREEN
  13 P  POINT-CURSOR XLINE ;
  14 P : TOP LINEOFF @ 1 - CHAROFF @ 1 -
  15 P  POINT-CURSOR HLINE ;  -->
-NEXT-SCREEN
+62 SCR ! 
   0 P ( EDIT )
   1 P : BOT LINEOFF @ 16 + CHAROFF @ 1 -
   2 P  POINT-CURSOR HLINE ;
@@ -57,7 +74,7 @@ NEXT-SCREEN
  13 P : ENDCASE 5 ?PAIRS COMPILE BRANCH HERE 0 ,
  14 P  SWAP 2 [COMPILE] ENDIF 4 ; IMMEDIATE
  15 P -->
-NEXT-SCREEN
+63 SCR ! 
   0 P ( EDIT )
   1 P : ENDCASES 4 ?PAIRS COMPILE DROP
   2 P   BEGIN SP@ CSP @ = 0= WHILE
@@ -74,7 +91,7 @@ NEXT-SCREEN
  13 P  DUP -1 = IF DROP 31 ENDIF ENDIF
  14 P  CCHAR ! ; 
  15 P : LEFT MOVE-LEFT SCREEN-CURSOR ; -->
-NEXT-SCREEN
+64 SCR ! 
   0 P ( EDIT )
   1 P : LEFT-CURSOR SCREEN-CURSOR LEFT ;
   2 P : MOVE-UP CLINE @ 1 - 15 AND
@@ -91,7 +108,7 @@ NEXT-SCREEN
  13 P : KEYJOY 632 C@ DUP 15 = IF KEY SWAP ENDIF DUP 
  14 P 11 = IF 30 ENDIF DUP 7 = IF 31 ENDIF DUP 14
  15 P = IF 28 ENDIF DUP 13 = IF 29 ENDIF DROP ; -->
-NEXT-SCREEN
+65 SCR ! 
   0 P ( EDIT )
   1 P : SH ECLEAR IN @ >R BLK @ >R 0 IN ! 0 BLK !
   2 P QUERY INTERPRET R> BLK ! R> IN ! ; ( REFORTH )
@@ -108,7 +125,7 @@ NEXT-SCREEN
  13 P : INSERT SIDE @ IF 63 ELSE 31 ENDIF
  14 P   INSERT-CHAR WRITE-LINE CURSOR SCREEN-CURSOR ;
  15 P : HLP #HLP SCR ! ; -->
-NEXT-SCREEN
+66 SCR ! 
   0 P ( EDIT )
   1 P : DELETE-CHAR ADDR SWAP CCHAR @ -
   2 P   -DUP IF 0 DO DUP 1 + C@ OVER C!
@@ -125,7 +142,7 @@ NEXT-SCREEN
  13 P   -1 +LOOP ENDIF CLINE @ L-A 64 BLANKS ;
  14 P : INSERT-LINE INSERT-L DISPLAY ;
  15 P : DELETE-LINE DELETE-L DISPLAY ; -->
-NEXT-SCREEN
+67 SCR ! 
   0 P ( EDIT )
   1 P : PUT-LINE INSERT-L SAV-BUF CLINE @
   2 P   L-A 64 CMOVE DISPLAY ;
@@ -142,7 +159,7 @@ NEXT-SCREEN
  13 P 021A STA, NEXT JMP, 
  14 P : BINIT ' (BLNK) 228 ! ; DECIMAL
  15 P : BLNK BINIT BGO ; -->
-NEXT-SCREEN
+68 SCR ! 
   0 P ( EDIT )
   1 P : REVB 712 @ 128 XOR 712 ! ; ( CLR4 )
   2 P : ESC REVB KEY DOCASE        
@@ -159,7 +176,7 @@ NEXT-SCREEN
  13 P   BEEP ENDCASES REVB ;
  14 P : DEPTH SP@ 12 +ORIGIN @ SWAP - 2 / ;
  15 P : SETSCR DEPTH 0= IF #HLP ENDIF SCR ! ;  -->
-NEXT-SCREEN
+69 SCR ! 
   0 P ( EDIT ENDS. ) : EDIT ( n -- ) 
   1 P SETSCR BLNK EREAD DISPLAY 0 STOP ! BEGIN 
   2 P KEYJOY DOCASE 27 CASE ESC ENDCASE 
@@ -176,7 +193,7 @@ NEXT-SCREEN
  13 P 125 CASE CLEAR-SCR ENDCASE 
  14 P DUP ADDKEY ENDCASES STOP @ UNTIL 
  15 P 125 EMIT 0 752 ! ( CRSINH ) ; ;S
-NEXT-SCREEN ( #HLP = 70 )
+69 SCR !  ( CONST #HLP = 70 )
   0 P ( EDIT BY M. DOUGHERTY, HELP. ) ;S
   2 P Arrows, Insert, BckSpc: standard
   3 P Return: next line, Tab: tab (2)
@@ -221,6 +238,3 @@ FLUSH
 ( SAVE "N:PEWPEW.BAS"
 
 
-( Curson blink: "Blinking Characters" )
-( ** Ron Miller's FORTH version of a routine published in COMPUTE, December, 1981 ** )
-( - https://archive.org/details/waug-newsletter-april-1983/page/4/mode/1up?q=forth - )

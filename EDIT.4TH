@@ -4,9 +4,12 @@
 (  * AN EDITOR FOR ATARI 8-BIT APX FIG-FORTH *  )
 ( Cursor blink procedure: "Blinking Characters" )
 (   Ron Miller's FORTH version of a routine     )
-(   published in COMPUTE, December, 1981          )
+(   published in COMPUTE, December, 1981        )
 (   https://archive.org/details/waug-newsletter-april-1983/page/4/mode/1up?q=forth )
+
 ( Warning: Screens 60-70 will be destroyed by the below script! )
+( These screens are floating point words and the second editor. )
+
 ( To prepare the code: )
 ( - run clean APX fig-Forth in Altirra )
 ( - load fig-forth editor, debugger, assembler - by: 18 LOAD )
@@ -215,6 +218,11 @@ EDITOR
  13 P Esc-S: save (flush) ; Esc-0: cold!
  14 P Esc-Q: quit (empty-buf)
  15 P Esc-V: put last deleted line
+
+71 CLEAR
+72 CLEAR
+73 CLEAR
+74 CLEAR
 
 FLUSH
 

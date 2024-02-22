@@ -146,13 +146,13 @@ EDITOR
   6 P   83 CASE FLUSH       ENDCASE ( S )
   7 P   81 CASE EABORT      ENDCASE ( Q )
   8 P   86 CASE PUT-LINE    ENDCASE ( V )
-  9 P   90 CASE EMPTY-BUFFERS       
- 10 P           DISPLAY     ENDCASE ( Z )
- 11 P   72 CASE HLP DISPLAY ENDCASE ( H ) 
- 12 P   48 CASE BOOT ENDCASE ( 0 ) BEEP ENDCASES REVB ;
- 13 P : DEPTH SP@ 12 +ORIGIN @ SWAP - 2 / ;
- 14 P : SETSCR 0 DEPTH IF #HLP ENDIF SCR ! ;  
- 15 P -->
+  9 P   90 CASE EMPTY-BUFFERS DISPLAY ENDCASE ( Z )      
+ 10 P   74 CASE 125 EMIT BEGIN 125 EMIT ." >"         
+ 11 P     QUERY INTERPRET CR AGAIN DISPLAY ENDCASE
+ 12 P   72 CASE HLP DISPLAY ENDCASE ( H ) 
+ 13 P   48 CASE BOOT ENDCASE ( 0 ) BEEP ENDCASES REVB ;
+ 14 P : DEPTH SP@ 12 +ORIGIN @ SWAP - 2 / ;
+ 15 P : SETSCR 0 DEPTH IF #HLP ENDIF SCR ! ;  -->
 1 SCR +!
   0 P ( EDIT ENDS\ ) : EDIT ( n -- ) SETSCR
   1 P BLNK EREAD DISPLAY 0 STOP ! BEGIN KEY 
@@ -180,7 +180,7 @@ EDITOR
   6 P Shf-Insert: insert whole line*
   7 P Shf-Delete: delete whole line*
   8 P Ctl-Insert: insert space
-  9 P Ctl-BckSpc: delete
+  9 P Ctl-BckSpc: delete  ; Esc-J: sh
  10 P Esc-R: rotate/sides ; Esc-H: help
  11 P Esc-N: next screen, save (flush)
  12 P Esc-L: last screen, save (flush)
@@ -188,7 +188,6 @@ EDITOR
  14 P Esc-Q: quit (empty-buf)
  15 P Esc-V: put last deleted line
   
- ( => add save, remove from all, block unsaved, type screen # )
  ( arr ins bck ret tab ^clr empTb )
  ( S/N/L ^ins* ^del* Put* Ext Abt )
  

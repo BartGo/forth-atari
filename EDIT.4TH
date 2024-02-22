@@ -1,8 +1,8 @@
+( Screens 60-70 will be destroyed!" )
+
 ( 18 LOAD )
 
-125 EMIT ." Screens 60-70 will be destroyed!"
-         ." Any key to proceed or reboot." CR
-KEY DROP : NEXT-SCREEN 1 SCR +! ;
+: NEXT-SCREEN 1 SCR +! ;
 
 EDITOR
 

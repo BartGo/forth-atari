@@ -195,6 +195,14 @@ NEXT-SCREEN ( #HLP = 70 )
 
 FLUSH
 
+( TODO: change status line to include DR0/DR1, editor name, CAPS, INV )
+( TODO: like this: EDIT|DR0/SCR20^|Chng|Caps|Inv|Esc,Hlp )
+( ." |DR" OFFSET @ 0= 0= . ." /SCR" SCR ? )
+( TODO: top, bottom, left, right )
+( TODO: CAPS = 60, 188, 124, 252; INV = 39, 103, 167, 231 )
+( TODO: is it possible to mark directly if file changed??  )
+( TODO: jump to screen )
+
 ( Curson blink: "Blinking Characters" )
 ( ** Ron Miller's FORTH version of a routine published in COMPUTE, December, 1981 ** )
 ( - https://archive.org/details/waug-newsletter-april-1983/page/4/mode/1up?q=forth - )

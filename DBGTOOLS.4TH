@@ -4,6 +4,9 @@
 ( the script requires editor to be loaded, by e.g. 18 LOAD )
 ( and edits default screens - only adds, not overwrites )
 
+( TODO: make this permanent:  ASCII 0 7894 C! )
+(       to display modified Forth banner      )
+
 DECIMAL EDITOR
 
 21 SCR !
@@ -60,5 +63,3 @@ DECIMAL EDITOR
 15 P ;S
   
 FLUSH
-
-ASCII 0 7894 C!

@@ -1,10 +1,11 @@
-( DR0 18 LOAD EDITOR )
+( 18 LOAD )
 
 125 EMIT ." Screens 60-70 will be destroyed!"
          ." Any key to proceed or reboot." CR
-KEY DROP
+KEY DROP : NEXT-SCREEN 1 SCR +! ;
 
-: NEXT-SCREEN 1 SCR +! ;
+EDITOR
+
 60 SCR ! 
   0 P ( EDIT BY M. DOUGHERTY, MICRO 57/FEB/83 )
   1 P ( 27 LOAD to edit, 39 LOAD for assembly )

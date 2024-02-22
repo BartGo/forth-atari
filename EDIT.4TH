@@ -211,6 +211,14 @@ FLUSH
 ( TODO: esc shows help? )
 ( TODO: use joystick to navigate, with fire - change sides / screens )
 ( TODO: if Fujinet is present, display time? other features? Esc-F to toggle? )
+( TODO: Fujinet: print to source control? script to detect screen number and update / replace? )
+(       a la https://github.com/FujiNetWIFI/atariwifi/wiki/Using-the-N%3A-Device )
+( READY
+( XIO 44,#1,0,0,"N:TNFS://HOMESERVER/"
+( 
+( READY
+( SAVE "N:PEWPEW.BAS"
+
 
 ( Curson blink: "Blinking Characters" )
 ( ** Ron Miller's FORTH version of a routine published in COMPUTE, December, 1981 ** )

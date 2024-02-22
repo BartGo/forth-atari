@@ -210,6 +210,7 @@ FLUSH
 ( TODO: jump to screen ; next / last: < > )
 ( TODO: esc shows help? )
 ( TODO: use joystick to navigate, with fire - change sides / screens )
+( TODO: if Fujinet is present, display time? other features? Esc-F to toggle? )
 
 ( Curson blink: "Blinking Characters" )
 ( ** Ron Miller's FORTH version of a routine published in COMPUTE, December, 1981 ** )

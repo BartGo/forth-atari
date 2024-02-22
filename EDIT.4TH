@@ -1,9 +1,11 @@
+;S
+
 (  ** EDIT BY M. DOUGHERTY, MICRO 57/FEB/83 **  )
 (  * AN EDITOR FOR ATARI 8-BIT APX FIG-FORTH *  )
-( Curson blink procedure: "Blinking Characters" )
-(   Ron Miller's FORTH version of a routine published in COMPUTE, December, 1981   )
+( Cursor blink procedure: "Blinking Characters" )
+(   Ron Miller's FORTH version of a routine     )
+(   published in COMPUTE, December, 1981          )
 (   https://archive.org/details/waug-newsletter-april-1983/page/4/mode/1up?q=forth )
-
 ( Warning: Screens 60-70 will be destroyed by the below script! )
 ( To prepare the code: )
 ( - run clean APX fig-Forth in Altirra )
@@ -20,6 +22,10 @@
 ( - optionally, SAVE - if you know what it does )
 ( - to EDIT, type edit, optionally putting before the screen number on stack )
 ( - help is on screen 70 )
+
+;S
+
+( *** CODE STARTS HERE *** ) 
 
 EDITOR
 
@@ -211,6 +217,8 @@ EDITOR
  15 P Esc-V: put last deleted line
 
 FLUSH
+
+( *** CODE ENDS HERE *** ) 
 
 ( TODO: change status line to include DR0/DR1, editor name, CAPS, INV )
 ( TODO: like this: EDIT|DR0/SCR20^|Chng|Caps|Inv|HELP )

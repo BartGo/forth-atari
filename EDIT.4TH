@@ -208,6 +208,7 @@ FLUSH
 ( TODO: CAPS = 60, 188, 124, 252; INV = 39, 103, 167, 231 )
 ( TODO: is it possible to mark directly if file changed??  )
 ( TODO: jump to screen )
+( TODO: esc shows help? )
 
 ( Curson blink: "Blinking Characters" )
 ( ** Ron Miller's FORTH version of a routine published in COMPUTE, December, 1981 ** )

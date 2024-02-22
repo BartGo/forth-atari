@@ -171,7 +171,7 @@ EDITOR
  14 P DUP ADDKEY ENDCASES
  15 P STOP @ UNTIL 125 EMIT 0 752 ! ; ;S
 ." Last changed screen:" SCR ? CR
-#HLP SCR ! 
+70 SCR ! ( #HLP )
   0 P ( EDIT BY M. DOUGHERTY, HELP\ ) ;S
   2 P Arrows, Insert, BckSpc: standard
   3 P Return: next line, Tab: tab (2)

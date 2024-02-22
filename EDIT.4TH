@@ -1,6 +1,11 @@
-( DR0 )
-EDITOR
-60 DUP SCR ! ." First changed screen: " SCR ? CR
+( DR0 18 LOAD EDITOR )
+
+125 EMIT ." Screens 60-70 will be destroyed!"
+         ." Any key to proceed or reboot." CR
+KEY DROP
+
+: NEXT-SCREEN 1 SCR +! ;
+60 SCR ! 
   0 P ( EDIT BY M. DOUGHERTY, MICRO 57/FEB/83 )
   1 P ( 27 LOAD to edit, 39 LOAD for assembly )
   2 P 0  VARIABLE CLINE     0 VARIABLE CCHAR
@@ -17,7 +22,7 @@ EDITOR
  13 P : CURSOR@ CLINE @ LINEOFF @ +
  14 P  CCHAR @ SIDE @ IF 32 - ENDIF CHAROFF @ + ;
  15 P : CURSOR CURSOR@ POINT-CURSOR ; -->
-1 SCR +!
+NEXT-SCREEN
   0 P ( EDIT )
   1 P : SCREEN-CURSOR CURSOR@ SWAP 40 * + 106 C@ 256 *
   2 P  960 - + DUP C@ 128 XOR SWAP C! ;
@@ -34,7 +39,7 @@ EDITOR
  13 P  POINT-CURSOR XLINE ;
  14 P : TOP LINEOFF @ 1 - CHAROFF @ 1 -
  15 P  POINT-CURSOR HLINE ;  -->
-1 SCR +!
+NEXT-SCREEN
   0 P ( EDIT )
   1 P : BOT LINEOFF @ 16 + CHAROFF @ 1 -
   2 P  POINT-CURSOR HLINE ;
@@ -51,7 +56,7 @@ EDITOR
  13 P : ENDCASE 5 ?PAIRS COMPILE BRANCH HERE 0 ,
  14 P  SWAP 2 [COMPILE] ENDIF 4 ; IMMEDIATE
  15 P -->
-1 SCR +!
+NEXT-SCREEN
   0 P ( EDIT )
   1 P : ENDCASES 4 ?PAIRS COMPILE DROP
   2 P   BEGIN SP@ CSP @ = 0= WHILE
@@ -68,7 +73,7 @@ EDITOR
  13 P  DUP -1 = IF DROP 31 ENDIF ENDIF
  14 P  CCHAR ! ;
  15 P : LEFT MOVE-LEFT SCREEN-CURSOR ; -->
-1 SCR +!
+NEXT-SCREEN
   0 P ( EDIT )
   1 P : LEFT-CURSOR SCREEN-CURSOR LEFT ;
   2 P : MOVE-UP CLINE @ 1 - 15 AND
@@ -85,7 +90,7 @@ EDITOR
  13 P : EABORT EMPTY-BUFFERS 1 STOP ! ;
  14 P -->
  15 E 
-1 SCR +!
+NEXT-SCREEN
   0 P ( EDIT )
   1 P : ENEXT FLUSH SCR @ 1 + SCR !
   2 P   EREAD DISPLAY ;
@@ -102,7 +107,7 @@ EDITOR
  13 P : INSERT SIDE @ IF 63 ELSE 31 ENDIF
  14 P   INSERT-CHAR WRITE-LINE CURSOR SCREEN-CURSOR ;
  15 P : HLP #HLP SCR ! ; -->
-1 SCR +!
+NEXT-SCREEN
   0 P ( EDIT )
   1 P : DELETE-CHAR ADDR SWAP CCHAR @ -
   2 P   -DUP IF 0 DO DUP 1 + C@ OVER C!
@@ -119,7 +124,7 @@ EDITOR
  13 P   -1 +LOOP ENDIF CLINE @ L-A 64 BLANKS ;
  14 P : INSERT-LINE INSERT-L DISPLAY ;
  15 P : DELETE-LINE DELETE-L DISPLAY ; -->
-1 SCR +!
+NEXT-SCREEN
   0 P ( EDIT )
   1 P : PUT-LINE INSERT-L SAV-BUF CLINE @
   2 P   L-A 64 CMOVE DISPLAY ;
@@ -136,24 +141,24 @@ EDITOR
  13 P 021A STA, NEXT JMP, 
  14 P : BINIT ' (BLNK) 228 ! ; DECIMAL
  15 P : BLNK BINIT BGO ; -->
-1 SCR +!
+NEXT-SCREEN
   0 P ( EDIT )
-  1 P : REVB 712 @ 128 XOR 712 ! ;
-  2 P : ESC REVB KEY DOCASE
-  3 P   82 CASE CHANGE-SIDE ENDCASE ( R )
-  4 P   78 CASE ENEXT       ENDCASE ( N )
-  5 P   76 CASE ELAST       ENDCASE ( L )
-  6 P   83 CASE FLUSH       ENDCASE ( S )
-  7 P   81 CASE EABORT      ENDCASE ( Q )
-  8 P   86 CASE PUT-LINE    ENDCASE ( V )
-  9 P   90 CASE EMPTY-BUFFERS DISPLAY ENDCASE ( Z )      
- 10 P   74 CASE 125 EMIT BEGIN 125 EMIT ." >"         
- 11 P     QUERY INTERPRET CR AGAIN DISPLAY ENDCASE
- 12 P   72 CASE HLP DISPLAY ENDCASE ( H ) 
- 13 P   48 CASE BOOT ENDCASE ( 0 ) BEEP ENDCASES REVB ;
+  1 P : REVB 712 @ 128 XOR 712 ! ; ( CLR4 )
+  2 P : ESC REVB KEY DOCASE        
+  3 P     82 CASE CHANGE-SIDE ENDCASE ( R )
+  4 P     78 CASE ENEXT       ENDCASE ( N )
+  5 P     76 CASE ELAST       ENDCASE ( L )
+  6 P     83 CASE FLUSH       ENDCASE ( S )
+  7 P     81 CASE EABORT      ENDCASE ( Q )
+  8 P     86 CASE PUT-LINE    ENDCASE ( V )
+  9 P     90 CASE EMPTY-BUFFERS 
+ 10 P                 DISPLAY ENDCASE ( Z )      
+ 11 P     48 CASE BOOT ENDCASE ( 0 ) 
+ 12 P     72 CASE HLP DISPLAY ENDCASE ( H )          
+ 13 P   BEEP ENDCASES REVB ;
  14 P : DEPTH SP@ 12 +ORIGIN @ SWAP - 2 / ;
  15 P : SETSCR 0 DEPTH IF #HLP ENDIF SCR ! ;  -->
-1 SCR +!
+NEXT-SCREEN
   0 P ( EDIT ENDS\ ) : EDIT ( n -- ) 
   1 P SETSCR BLNK EREAD DISPLAY 0 STOP ! BEGIN 
   2 P KEY DOCASE 28 CASE UP-CURSOR ENDCASE
@@ -170,10 +175,7 @@ EDITOR
  13 P 125 CASE CLEAR-SCR ENDCASE 
  14 P DUP ADDKEY ENDCASES
  15 P STOP @ UNTIL 125 EMIT 0 752 ! ; ;S
-
-." Last changed screen:" SCR ? CR
-EDITOR
-70 SCR ! ( #HLP )
+NEXT-SCREEN ( #HLP = 70 )
   0 P ( EDIT BY M. DOUGHERTY, HELP\ ) ;S
   2 P Arrows, Insert, BckSpc: standard
   3 P Return: next line, Tab: tab (2)
@@ -182,15 +184,16 @@ EDITOR
   6 P Shf-Insert: insert whole line*
   7 P Shf-Delete: delete whole line*
   8 P Ctl-Insert: insert space
-  9 P Ctl-BckSpc: delete  ; Esc-J: sh
+  9 P Ctl-BckSpc: delete  
  10 P Esc-R: rotate/sides ; Esc-H: help
  11 P Esc-N: next screen, save (flush)
  12 P Esc-L: last screen, save (flush)
  13 P Esc-S: save (flush) ; Esc-0: cold!
  14 P Esc-Q: quit (empty-buf)
  15 P Esc-V: put last deleted line
-  
- ( arr ins bck ret tab ^clr empTb )
- ( S/N/L ^ins* ^del* Put* Ext Abt )
- 
-( FLUSH )
+
+FLUSH
+
+( Curson blink: "Blinking Characters" )
+( ** Ron Miller's FORTH version of a routine published in COMPUTE, December, 1981 ** )
+( - https://archive.org/details/waug-newsletter-april-1983/page/4/mode/1up?q=forth - )

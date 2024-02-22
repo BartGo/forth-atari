@@ -205,6 +205,7 @@ FLUSH
 ( TODO: use real HELP key? SELECT/OPTION - next/last? )
 ( TODO: buffer a la EDYTOR-FORTHA; full-screen/80col LIST? )
 ( TODO: kompilacja ekranu / nowy słownik TEMP, load, drop słownik ? )
+( TODO: breakpoint () odpala re-forth podczas działania? )
 ( TODO: CAPS = 60, 188, 124, 252; INV = 39, 103, 167, 231 )
 ( TODO: is it possible to mark directly if file changed??  )
 ( TODO: jump to screen ; next / last: < > )

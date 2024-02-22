@@ -3,15 +3,15 @@ EDITOR
 60 SCR !
   0 P ( EDIT BY M. DOUGHERTY, MICRO 57/FEB/83 )
   1 P ( 27 LOAD to edit, 39 LOAD for assembly )
-  2 P 0 VARIABLE CLINE 0 VARIABLE CCHAR
-  3 P 3 VARIABLE LINEOFF 3 VARIABLE CHAROFF
-  4 P 18 CONSTANT TOP-BOT 2 CONSTANT REDGE
-  5 P 22 CONSTANT LEDGE 0 VARIABLE SIDE
-  6 P 17 VARIABLE EXTRAOFF 0 VARIABLE STOP
+  2 P 0  VARIABLE CLINE     0 VARIABLE CCHAR
+  3 P 3  VARIABLE LINEOFF   3 VARIABLE CHAROFF
+  4 P 18 CONSTANT TOP-BOT   2 CONSTANT REDGE
+  5 P 22 CONSTANT LEDGE     0 VARIABLE SIDE
+  6 P 17 VARIABLE EXTRAOFF  0 VARIABLE STOP
   7 P  0 VARIABLE SAV-BUF 64 ALLOT
   8 P : EREAD 16 0 DO I SCR @ (LINE) DROP
   9 P   UPDATE DROP LOOP 0 CLINE !
- 10 P   0 CCHAR ! 0 SIDE ! ;
+ 10 P   0 CCHAR ! 0 SIDE ! ; 70 CONSTANT #HLP
  11 P : ECLEAR 125 EMIT 1 752 C! ;
  12 P : POINT-CURSOR 85 ! 84 C! ;
  13 P : CURSOR@ CLINE @ LINEOFF @ +
@@ -81,7 +81,7 @@ EDITOR
   9 P : DOWN-CURSOR SCREEN-CURSOR DOWN ;
  10 P : RETURN SCREEN-CURSOR SIDE @ IF
  11 P  32 ELSE 0 ENDIF CCHAR ! DOWN ;
- 12 P : EXIT FLUSH 1 STOP ! ;
+ 12 P : SAV FLUSH ;
  13 P : EABORT EMPTY-BUFFERS 1 STOP ! ;
  14 P -->
  15 E 
@@ -101,7 +101,7 @@ EDITOR
  12 P   ENDIF BL SWAP C! ;
  13 P : INSERT SIDE @ IF 63 ELSE 31 ENDIF
  14 P   INSERT-CHAR WRITE-LINE CURSOR SCREEN-CURSOR ;
- 15 P -->
+ 15 P : HLP #HLP SCR ! ;     -->
 66 SCR !
   0 P ( EDIT )
   1 P : DELETE-CHAR ADDR SWAP CCHAR @ -
@@ -140,18 +140,18 @@ EDITOR
   0 P ( EDIT )
   1 P : REVB 712 @ 255 XOR 712 ! ;
   2 P : ESC REVB KEY DOCASE
-  3 P   83 CASE CHANGE-SIDE ENDCASE ( S )
+  3 P   82 CASE CHANGE-SIDE ENDCASE ( R )
   4 P   78 CASE ENEXT       ENDCASE ( N )
   5 P   76 CASE ELAST       ENDCASE ( L )
-  6 P   69 CASE EXIT        ENDCASE ( E )
-  7 P   65 CASE EABORT      ENDCASE ( A )
-  8 P   80 CASE PUT-LINE    ENDCASE ( P )
-  9 P   84 CASE EMPTY-BUFFERS       
- 10 P           DISPLAY     ENDCASE ( T )
- 11 P   BEEP ENDCASES REVB ;
- 12 P : DEPTH SP@ 12 +ORIGIN @ SWAP - 2 / ;
- 13 P ( IF NOTHING ON STACK, SHOW HELP )
- 14 P : SETSCR 0 DEPTH IF 70 ENDIF SCR ! ;  
+  6 P   83 CASE SAV         ENDCASE ( S )
+  7 P   81 CASE EABORT      ENDCASE ( Q )
+  8 P   86 CASE PUT-LINE    ENDCASE ( V )
+  9 P   90 CASE EMPTY-BUFFERS       
+ 10 P           DISPLAY     ENDCASE ( Z )
+ 11 P   72 CASE HLP DISPLAY ENDCASE ( H ) 
+ 12 P   BEEP ENDCASES REVB ;
+ 13 P : DEPTH SP@ 12 +ORIGIN @ SWAP - 2 / ;
+ 14 P : SETSCR 0 DEPTH IF #HLP ENDIF SCR ! ;  
  15 P -->
 
 69 SCR !
@@ -172,22 +172,22 @@ EDITOR
  14 P DUP ADDKEY ENDCASES
  15 P STOP @ UNTIL 125 EMIT 0 752 ! ; ;S
 
-70 SCR ! 
+#HLP SCR ! 
   0 P ( EDIT BY M. DOUGHERTY, HELP\ ) ;S
   2 P Arrows, Insert, BckSpc: standard
   3 P Return: next line, Tab: tab (2)
   4 P Clear: clear screen (Shf> Ctl>)
-  5 P Esc-T: undo scrn chn (empty-buf)
+  5 P Esc-Z: undo scrn chn (empty-buf)
   6 P Shf-Insert: insert whole line*
   7 P Shf-Delete: delete whole line*
   8 P Ctl-Insert: insert space
   9 P Ctl-BckSpc: delete
- 10 P Esc-S: change sides
+ 10 P Esc-R: rotate/sides ; Esc-H: help
  11 P Esc-N: next screen, save (flush)
  12 P Esc-L: last screen, save (flush)
- 13 P Esc-E: exit, save (flush)
- 14 P Esc-A: abort/exit (empty-buf)
- 15 P Esc-P: put last deleted line*    ===> change to Ctl-Ins !
+ 13 P Esc-S: save (flush)
+ 14 P Esc-Q: quit (empty-buf)
+ 15 P Esc-V: put last deleted line
   
  ( => add save, remove from all, block unsaved, type screen # )
  ( arr ins bck ret tab ^clr empTb )

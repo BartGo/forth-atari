@@ -8,7 +8,7 @@ EDITOR
 
 60 SCR ! 
   0 P ( EDIT BY M. DOUGHERTY, MICRO 57/FEB/83 )
-  1 P ( 27 LOAD to edit, 39 LOAD for assembly )
+  1 P : \ IN @ C/L / 1+ C/L * IN ! ; \ COMMENT
   2 P 0  VARIABLE CLINE     0 VARIABLE CCHAR
   3 P 3  VARIABLE LINEOFF   3 VARIABLE CHAROFF
   4 P 18 CONSTANT TOP-BOT   2 CONSTANT REDGE
@@ -18,7 +18,7 @@ EDITOR
   8 P : EREAD 16 0 DO I SCR @ (LINE) DROP
   9 P   UPDATE DROP LOOP 0 CLINE !
  10 P   0 CCHAR ! 0 SIDE ! ; 70 CONSTANT #HLP
- 11 P : ECLEAR 125 EMIT 1 752 C! ; ( CRSINH )
+ 11 P : ECLEAR 125 EMIT 1 752 C! ; \ CRSINH
  12 P : POINT-CURSOR 85 ! 84 C! ;
  13 P : CURSOR@ CLINE @ LINEOFF @ +
  14 P  CCHAR @ SIDE @ IF 32 - ENDIF CHAROFF @ + ;
@@ -72,7 +72,7 @@ NEXT-SCREEN
  11 P : MOVE-LEFT CCHAR @ 1 - SIDE @ IF
  12 P  DUP 31 = IF DROP 63 ENDIF ELSE
  13 P  DUP -1 = IF DROP 31 ENDIF ENDIF
- 14 P  CCHAR ! ;
+ 14 P  CCHAR ! ; 
  15 P : LEFT MOVE-LEFT SCREEN-CURSOR ; -->
 NEXT-SCREEN
   0 P ( EDIT )
@@ -93,10 +93,10 @@ NEXT-SCREEN
  15 P = IF 28 ENDIF DUP 13 = IF 29 ENDIF DROP ; -->
 NEXT-SCREEN
   0 P ( EDIT )
-  1 P : ENEXT FLUSH SCR @ 1 + SCR !
-  2 P   EREAD DISPLAY ;
-  3 P : ELAST FLUSH SCR @ 1 - SCR !
-  4 P   EREAD DISPLAY ;
+  1 P : SH ECLEAR IN @ >R BLK @ >R 0 IN ! 0 BLK !
+  2 P QUERY INTEPRET R> BLK ! R> IN ! ; \ REFORTH
+  3 P : ENEXT FLUSH SCR @ 1 + SCR ! EREAD DISPLAY ;
+  4 P : ELAST FLUSH SCR @ 1 - SCR ! EREAD DISPLAY ;  
   5 P : ADDR CLINE @ SCR @ (LINE) DROP
   6 P   CCHAR @ + ;
   7 P : ADDKEY DUP ADDR C! CURSOR EMIT RIGHT ;
@@ -152,9 +152,9 @@ NEXT-SCREEN
   6 P     83 CASE FLUSH       ENDCASE ( S )
   7 P     81 CASE EABORT      ENDCASE ( Q )
   8 P     86 CASE PUT-LINE    ENDCASE ( V )
-  9 P     90 CASE EMPTY-BUFFERS 
- 10 P                 DISPLAY ENDCASE ( Z )      
- 11 P     48 CASE BOOT ENDCASE ( 0 ) 
+  9 P     90 CASE EMPTY-BUFFERS DISPLAY ENDCASE ( Z ) 
+ 10 P     66 CASE SH DISPLAY  ENDCASE ( B )             
+ 11 P     48 CASE BOOT        ENDCASE ( 0 ) 
  12 P     72 CASE HLP DISPLAY ENDCASE ( H )          
  13 P   BEEP ENDCASES REVB ;
  14 P : DEPTH SP@ 12 +ORIGIN @ SWAP - 2 / ;
@@ -185,8 +185,8 @@ NEXT-SCREEN ( #HLP = 70 )
   6 P Shf-Insert: insert whole line*
   7 P Shf-Delete: delete whole line*
   8 P Ctl-Insert: insert space
-  9 P Ctl-BckSpc: delete  
- 10 P Esc-R: rotate/sides ; Esc-H: help
+  9 P Ctl-BckSpc: delete;  Esc-F: fsh
+ 10 P Esc-R: rotate/sides; Esc-H: help
  11 P Esc-N: next screen, save (flush)
  12 P Esc-L: last screen, save (flush)
  13 P Esc-S: save (flush) ; Esc-0: cold!

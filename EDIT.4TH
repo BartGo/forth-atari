@@ -77,15 +77,15 @@ EDITOR
   7 P  I CLINE ! WRITE-LINE LOOP CLINE !
   8 P  SIDE @ IF 32 ELSE 0 ENDIF CCHAR ! BOT
   9 P  WRITE-EXTRA CURSOR SCREEN-CURSOR ;
- 10 P : CASES( ?COMP CSP @ !CSP 4 ; IMMEDIATE
- 11 P : :: 4 ?PAIRS COMPILE OVER COMPILE =
+ 10 P : CASE ?COMP CSP @ !CSP 4 ; IMMEDIATE
+ 11 P : :> 4 ?PAIRS COMPILE OVER COMPILE =
  12 P  COMPILE 0BRANCH HERE 0 , COMPILE DROP 5 ; IMMEDIATE
- 13 P : ;; 5 ?PAIRS COMPILE BRANCH HERE 0 ,
+ 13 P : <: 5 ?PAIRS COMPILE BRANCH HERE 0 ,
  14 P  SWAP 2 [COMPILE] ENDIF 4 ; IMMEDIATE
  15 P : ANYK CR ." (Return)" KEY DROP ; -->
 63 CLEAR
   0 P ( EDIT - CASE, MOVEMENT )
-  1 P : )CASES 4 ?PAIRS COMPILE DROP
+  1 P : ESAC 4 ?PAIRS COMPILE DROP
   2 P   BEGIN SP@ CSP @ = 0= WHILE
   3 P   2 [COMPILE] ENDIF REPEAT
   4 P   CSP ! ; IMMEDIATE
@@ -114,9 +114,9 @@ EDITOR
  10 P : RETURN SCREEN-CURSOR SIDE @ IF
  11 P   32 ELSE 0 ENDIF CCHAR ! DOWN ;
  12 P : EABORT EMPTY-BUFFERS 1 STOP ! ;
- 13 P : KEYJOY 632 C@ DUP 15 = IF KEY SWAP ENDIF DUP 
- 14 P 11 = IF 30 ENDIF DUP 7 = IF 31 ENDIF DUP 14
- 15 P = IF 28 ENDIF DUP 13 = IF 29 ENDIF DROP ; -->
+ 13 P : KEYJOY 632 C@ CASE 15 :> KEY <:
+ 14 P   11 :> 30 <: 7 :> 31 <: 14:> 28 <: 
+ 15 P   13 :> 29 <: ESAC ; -->
 65 CLEAR
   0 P ( EDIT - REFORTH, SCREEN NAVG, HELP )
   1 P : SH CLS 0 CRSINH C! IN @ >R BLK @ >R 0 IN ! 
@@ -171,36 +171,36 @@ EDITOR
 68 CLEAR
   0 P ( EDIT - COMMANDS )
   1 P : REVB 712 @ 128 XOR 712 ! ; ( CLR4 )
-  2 P : ESC REVB KEY CASES(        
-  3 P     82 :: CHANGE-SIDE ;; ( R )
-  4 P     78 :: ENEXT       ;; ( N )
-  5 P     76 :: ELAST       ;; ( L )
-  6 P     83 :: FLUSH       ;; ( S )
-  7 P     81 :: EABORT      ;; ( Q )
-  8 P     86 :: PUT-LINE    ;; ( V )
-  9 P     90 :: EMPTY-BUFFERS DISPLAY ;; ( Z ) 
- 10 P     66 :: SH DISPLAY  ;; ( B )             
- 11 P     48 :: BOOT        ;; ( 0 ) 
- 12 P     72 :: HLP DISPLAY ;; ( H )          
- 13 P   BEEP )CASES REVB ;
+  2 P : ESC REVB KEY CASE        
+  3 P     82 :> CHANGE-SIDE <: ( R )
+  4 P     78 :> ENEXT       <: ( N )
+  5 P     76 :> ELAST       <: ( L )
+  6 P     83 :> FLUSH       <: ( S )
+  7 P     81 :> EABORT      <: ( Q )
+  8 P     86 :> PUT-LINE    <: ( V )
+  9 P     90 :> EMPTY-BUFFERS DISPLAY <: ( Z ) 
+ 10 P     66 :> SH DISPLAY  <: ( B )             
+ 11 P     48 :> BOOT        <: ( 0 ) 
+ 12 P     72 :> HLP DISPLAY <: ( H )          
+ 13 P   BEEP ESAC REVB ;
  14 P : DEPTH SP@ 12 +ORIGIN @ SWAP - 2 / ;
  15 P : SETSCR DEPTH 0= IF #HLP ENDIF SCR ! ;  -->
 69 CLEAR
   0 P ( EDIT - MAIN, END. ) : EDIT ( n -- ) 
   1 P SETSCR BLNK EREAD DISPLAY 0 STOP ! BEGIN 
-  2 P   KEYJOY CASES( 27 :: ESC ;; 
-  3 P   28 :: UP-CURSOR ;;
-  4 P   29 :: DOWN-CURSOR ;;
-  5 P   31 :: RIGHT-CURSOR ;;
-  6 P   30 :: LEFT-CURSOR ;;
-  7 P   155 :: RETURN ;;
-  8 P   255 :: INSERT ;;
-  9 P   254 :: DELETE ;;
- 10 P   157 :: INSERT-LINE ;;
- 11 P   156 :: DELETE-LINE ;;
- 12 P   126 :: DEL ;; 127 :: TAB ;;
- 13 P   125 :: CLEAR-SCR ;; 
- 14 P DUP ADDKEY )CASES STOP @ UNTIL 
+  2 P   KEYJOY CASE 27 :> ESC <: 
+  3 P   28 :> UP-CURSOR <:
+  4 P   29 :> DOWN-CURSOR <:
+  5 P   31 :> RIGHT-CURSOR <:
+  6 P   30 :> LEFT-CURSOR <:
+  7 P   155 :> RETURN <:
+  8 P   255 :> INSERT <:
+  9 P   254 :> DELETE <:
+ 10 P   157 :> INSERT-LINE <:
+ 11 P   156 :> DELETE-LINE <:
+ 12 P   126 :> DEL <: 127 :> TAB <:
+ 13 P   125 :> CLEAR-SCR <: 
+ 14 P DUP ADDKEY ESAC STOP @ UNTIL 
  15 P 125 EMIT 0 CRSINH ! ; ;S
 70 CLEAR ( CONST #HLP = 70 )
   0 P ( EDIT - HELP ONLY, END. ) ;S

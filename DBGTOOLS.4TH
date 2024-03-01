@@ -7,7 +7,12 @@
 ( TODO: make this permanent:  ASCII 0 7894 C! )
 (       to display modified Forth banner      )
 
+( TODO: create words to move error screens from 14/15 to 87-89 )
+(       see DECOMP MESSAGE to see that LIT 14 is hardcoded!    )
+
 DECIMAL EDITOR
+
+17 CLEAR ( casette load )
 
 21 SCR !
 00 P ( DEBUG - H./B?/FREE/.CON/.CUR )

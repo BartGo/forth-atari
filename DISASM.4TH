@@ -28,7 +28,7 @@ EDITOR
    4 P 5D , 5E , 7D , 7E , 9C , 9D ,
    5 P 9E , BC , BD , BE , DC , DD ,
    6 P DE , FC , FD , FE ,
-   7 P : SEARCH 1 + 0 DO OVER OVER I 2
+   7 P : SEEKD 1 + 0 DO OVER OVER I 2
    8 P     * + C@ - DUP 0= IF DROP ( **- C@ or @ - ? )
    9 P     DROP DROP I 1 LEAVE ELSE
   10 P     0 < (*) IF DROP DROP I 0 LEAVE
@@ -116,19 +116,24 @@ EDITOR
 
 
 85 SCR !
-   0 P : DISASSEMBLE POINTER ! CR ( /FD )
+   0 P : DIS POINTER ! CR ( /FD )
    1 P   BEGIN (*) CR
    2 P     POINTER @ DUP 0 D. 2 SPACES
-   3 P     C@ ' ONEMODE 2D SEARCH
+   3 P     C@ ' ONEMODE 2D SEEKD
    4 P       IF ( FOUND ) DUP ' ONENAME
    5 P          PRINTNAME 2 * 1+ '
    6 P          ONEMODE + C@ 4 /
    7 P       ELSE ( NOT ) DROP POINTER @
-   8 P          C@ ' MULTIMODE 16 SEARCH
+   8 P          C@ ' MULTIMODE 16 SEEKD
    9 P          CHKMODE CHKMODE CHKMODE
   10 P          SWAP ' MULTINAME
   11 P          PRINTNAME ENDIF
   12 P     DUP PRINTMODE PRINTADD
   13 P     ?TERMINAL OR
-  14 P   UNTIL ;
-  15 P : DIS DISASSEMBLE ; DECIMAL ;S
+  14 P   UNTIL ; : DISASSEMBLE DIS ;
+  15 P DECIMAL ;S
+
+86 CLEAR
+
+FLUSH
+

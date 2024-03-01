@@ -63,7 +63,7 @@ EDITOR
  10 P : WRITE-LINE CLINE @ LINEOFF @ + CHAROFF @ 1 -
  11 P  POINT-CURSOR ELINE ;
  12 P : WRITE-EXTRA EXTRAOFF @ LINEOFF @ + CHAROFF @ 1 -
- 13 P  POINT-CURSOR XLINE ;
+ 13 P  POINT-CURSOR XLINE ; : FRE 741 @ HERE - 1024 / ;
  14 P : TOP LINEOFF @ 1 - CHAROFF @ 1 -
  15 P  POINT-CURSOR HLINE ;  -->
 62 CLEAR 
@@ -71,8 +71,8 @@ EDITOR
   1 P : BOT LINEOFF @ 16 + CHAROFF @ 1 -
   2 P  POINT-CURSOR HLINE ; 
   3 P : ETITLE 0 CHAROFF @ POINT-CURSOR
-  4 P  ." Screen: " SCR ? ( 1 CHAROFF @ POINT-CURSOR )
-  5 P  ." Side: " SIDE ? ." Free: " 741 @ HERE - U. ;
+  4 P  ." | EDIT | Dr" OFFSET @ 0= 0= . ." Scr" SCR ?
+  5 P  ." Side" SIDE ? ." | Free " FRE U. ." |" ;
   6 P : DISPLAY ECLEAR ETITLE TOP CLINE @ 16 0 DO
   7 P  I CLINE ! WRITE-LINE LOOP CLINE !
   8 P  SIDE @ IF 32 ELSE 0 ENDIF CCHAR ! BOT
@@ -230,7 +230,7 @@ FLUSH
 
 ( TODO: change status line to include DR0/DR1, editor name, CAPS, INV )
 ( TODO: like this: EDIT|DR0/SCR20^|Chng|Caps|Inv|HELP )
-( ." |DR" OFFSET @ 0= 0= . ." /SCR" SCR ? )
+( ." | EDIT | DR" OFFSET @ 0= 0= . ." SCR" SCR ? ." SIDE" SIDE ? ." | FREE " 741 @ HERE - 1024 / U. ." |" )
 ( WHERE )
 ( TODO: top, bottom, left, right; insert / overwrite? )
 ( TODO: search / grep (current, all screens / scope )

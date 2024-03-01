@@ -2,24 +2,19 @@
 
 (  ** EDIT BY M. DOUGHERTY, MICRO 57/FEB/83 **  )
 (  * AN EDITOR FOR ATARI 8-BIT APX FIG-FORTH *  )
-( Cursor blink procedure: "Blinking Characters" )
-(   Ron Miller's FORTH version of a routine     )
-(   published in COMPUTE, December, 1981        )
-(   https://archive.org/details/waug-newsletter-april-1983/page/4/mode/1up?q=forth )
 
 ( Warning: Screens 60-70 will be destroyed by the below script! )
 ( These screens are floating point words and the second editor. )
 
 ( To prepare the code: )
 ( - run clean APX fig-Forth in Altirra )
-( - load fig-forth editor, debugger, assembler - by: 18 LOAD )
+( - optionally load fig-forth editor, debugger, assembler - by: 18 LOAD )
 ( - press CAPS to enable lowercase and paste the below )
 ( - FLUSH )
 ( - WHERE should show screen 0 if there were no errors )
 ( - check by 60 90 INDEX )
 ( To compile the code: )
 ( - boot the floppy prepared above )
-( - 39 LOAD for the assembler, needed for cursor blinking )
 ( - or 18 LOAD for debugger, assembler, fig editor )
 ( - then 60 LOAD to compile EDIT, only warning about DEPTH is expected )
 ( - optionally, SAVE - if you know what it does )
@@ -115,7 +110,7 @@ EDITOR
  11 P   32 ELSE 0 ENDIF CCHAR ! DOWN ;
  12 P : EABORT EMPTY-BUFFERS 1 STOP ! ;
  13 P : KEYJOY 632 C@ CASE 15 :> KEY <:
- 14 P   11 :> 30 <: 7 :> 31 <: 14:> 28 <: 
+ 14 P   11 :> 30 <: 7 :> 31 <: 14 :> 28 <: 
  15 P   13 :> 29 <: ESAC ; -->
 65 CLEAR
   0 P ( EDIT - REFORTH, SCREEN NAVG, HELP )
@@ -152,7 +147,7 @@ EDITOR
  14 P : INSERT-LINE INSERT-L DISPLAY ;
  15 P : DELETE-LINE DELETE-L DISPLAY ; -->
 67 CLEAR 
-  0 P ( EDIT - PUTLINE, TAB, BLINK )
+  0 P ( EDIT - PUTLINE, TAB )
   1 P : PUT-LINE INSERT-L SAV-BUF CLINE @
   2 P   L-A 64 CMOVE DISPLAY ;
   3 P : TAB 2 0 DO RIGHT-CURSOR LOOP ;
@@ -160,14 +155,14 @@ EDITOR
   5 P   CURSOR EMIT SCREEN-CURSOR ;
   6 P : CLEAR-SCR 16 0 DO I L-A 64 BLANKS
   7 P   LOOP DISPLAY ; 
-  8 P ( ** CURSOR BLINK ** ) HEX
-  9 P CODE (BLNK) 02F3 LDA,  2 # AND,
- 10 P 2 #  EOR, 02F3 STA, 15 # LDA,
- 11 P  021A STA, RTS,
- 12 P CODE BGO 15 # LDA, 
- 13 P 021A STA, NEXT JMP, 
- 14 P : BINIT ' (BLNK) 228 ! ; DECIMAL
- 15 P : BLNK BINIT BGO ; -->
+  8 P ( empty )
+  9 P ( empty )
+ 10 P ( empty )
+ 11 P ( empty )
+ 12 P ( empty )
+ 13 P ( empty )
+ 14 P ( empty )
+ 15 P -->
 68 CLEAR
   0 P ( EDIT - COMMANDS )
   1 P : REVB 712 @ 128 XOR 712 ! ; ( CLR4 )
@@ -187,7 +182,7 @@ EDITOR
  15 P : SETSCR DEPTH 0= IF #HLP ENDIF SCR ! ;  -->
 69 CLEAR
   0 P ( EDIT - MAIN, END. ) : EDIT ( n -- ) 
-  1 P SETSCR BLNK EREAD DISPLAY 0 STOP ! BEGIN 
+  1 P SETSCR EREAD DISPLAY 0 STOP ! BEGIN 
   2 P   KEYJOY CASE 27 :> ESC <: 
   3 P   28 :> UP-CURSOR <:
   4 P   29 :> DOWN-CURSOR <:

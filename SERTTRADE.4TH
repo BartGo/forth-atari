@@ -17,12 +17,18 @@
 ( starting at N3. The two groups are assumed to be the same size.
 
 
+
+FIXME: DISK ERROR
+=============================
+
+
+
 27 LOAD CR ( STANDARD LN EDITOR )
 DECIMAL EDITOR
 
-85 SCR ! 
+19 SCR ! 
 
- 0 P ( SERT&TRADE 1/2: COMPUTE 30NOV )
+ 0 P ( SERT&TRADE 1/2: COMPUTE 30NOV ) : TASK ;
  1 P : PAD-SWAP ( N1 --- / SWAP SCR W/ PAD )
  2 P	 DUP BLOCK PAD 1024 + 1024 CMOVE
  3 P 	 PAD SWAP BLOCK 1024 CMOVE UPDATE
@@ -39,7 +45,7 @@ DECIMAL EDITOR
 14 P	 UNTIL CNT @ B-DST @ <
 15 P	WHILE 1 STRT +! 1+ REPEAT DROP ; -->
 
-86 SCR !
+20 SCR !
 
  0 P ( SERT&TRADE 2/2: 1982 M. RILEY )
  1 P : ROOM? ( / IF ERROR, PRINT ‘NO ROOM IN DICT’ )
@@ -60,6 +66,6 @@ DECIMAL EDITOR
 
 FLUSH
 
-( 85 LOAD VLIST )
+( 19 LOAD VLIST )
 
 

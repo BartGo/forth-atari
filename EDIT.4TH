@@ -6,6 +6,8 @@
 ( Warning: Screens 60-70 will be destroyed by the below script! )
 ( These screens are floating point words and the second editor. )
 
+( FIXME: editing breaks when switching sides )
+
 ( To prepare the code: )
 ( - run clean APX fig-Forth in Altirra )
 ( - optionally load fig-forth editor, debugger, assembler - by: 18 LOAD )

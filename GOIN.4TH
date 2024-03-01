@@ -1,39 +1,40 @@
 EDITOR
-17 CLEAR
+
 19 SCR !
- 0 P ( GOES INTO 1/2 )
- 1 P : TASK ;
- 2 P : MYSELF LATEST PFA CFA , ; IMMEDIATE
- 3 P 0 VARIABLE GIN : GIN+ CR GIN @ 2+
- 4 P   DUP GIN ! SPACES ; : DIN CR GIN @ SPACES ;
- 5 P : GCHK DUP @ 2+ ' COMPILE =
- 6 P   IF  2+ DUP @ 2+ NFA ID. 2+
- 7 P   ELSE DUP @ 2+ DUP ' LIT =
- 8 P   OVER ' BRANCH  = OR OVER ' 0BRANCH = OR
- 9 P   OVER ' (LOOP)  = OR SWAP ' (+LOOP) = OR
-10 P   IF 2+ DUP @ SPACE . 2+ ELSE DUP @ 2+ ' CLIT =
-11 P   IF 2+ DUP C@ SPACE . 1+ ELSE DUP @ 2+ ' (.") =
-12 P    IF 2+ DUP COUNT TYPE 
-13 P    DUP C@ 1+ + ELSE 2+ THEN
-14 P      THEN THEN THEN -2 GIN +! ;
-15 P  -->
+ 0 P ( GOESINTO 1/2 ) ( GOIN word )
+ 1 P : :GOIN ; 0 VARIABLE GIN 
+ 2 P : GIN+ CR GIN @ 2+ DUP GIN ! SPACES ;
+ 3 P : DIN CR GIN @ SPACES ;
+ 4 P : GCHK DUP @ 2+ ' COMPILE =
+ 5 P   IF  2+ DUP @ 2+ NFA ID. 2+
+ 6 P   ELSE DUP @ 2+ DUP ' LIT =
+ 7 P   OVER ' BRANCH  = OR OVER ' 0BRANCH = OR
+ 8 P   OVER ' (LOOP)  = OR SWAP ' (+LOOP) = OR
+ 9 P   IF 2+ DUP @ SPACE . 2+ ELSE DUP @ 2+ ' CLIT =
+10 P   IF 2+ DUP C@ SPACE . 1+ ELSE DUP @ 2+ 
+11 P   ' (.") = IF 2+ DUP COUNT TYPE 
+12 P   DUP C@ 1+ + ELSE 2+ THEN THEN THEN THEN 
+15 P   -2 GIN +! ; -->
 
 20 SCR !
- 0 P ( GOES INTO 2/2 )
+ 0 P ( GOESINTO 2/2 ) ( ^^ use    )
+ 1 P : SELF LATEST PFA CFA , ; IMMEDIATE
  1 P : (GOESINTO) DUP CFA @ ' : CFA 
  2 P   @ = OVER ' ERROR = 0= AND
  3 P   IF BEGIN DUP @ DUP ' ;S CFA =
  4 P     OVER ' (;CODE) CFA = OR 0=
  5 P   WHILE 2+ DUP GIN+ NFA ID. KEY 
- 6 P     DUP 81 = IF SP! QUIT ELSE 13 =
- 7 P     IF MYSELF ELSE DROP THEN THEN
+ 6 P     DUP 81 = IF SP! QUIT ELSE 155 =
+ 7 P     IF SELF ELSE DROP THEN THEN
  8 P     GCHK REPEAT 2+ DIN NFA ID.
- 9 P   THEN DROP ;
+ 9 P   THEN DROP ; ( 81=Q, 155=RETURN )
 10 P : GOESINTO -FIND IF DROP 0 GIN !
-11 P   (GOESINTO) ELSE ." NOT FOUND" THEN ;
-12 P : GOIN GOESINTO ; ( GOIN myword ) 
-13 P : GOIN\ ;
-14 P ( Forth Dimension Vol 04 Nr 02 /RDA )
+11 P   (GOESINTO) ELSE ." NOT FOUND" CR THEN ;
+12 P : GOIN GOESINTO ; : ;GOIN ;
+13 P ( Decompiler by R. D. Ackerman )
+14 P ( -- Forth Dimension Vol14 Nr2 )
 15 P ;S
+
+17 CLEAR
 
 FLUSH

@@ -6,7 +6,7 @@
 ( and edits default screens - only adds, not overwrites )
 
 ( TODO: make this permanent:  ASCII 0 7894 C! )
-(       to display modified Forth banner      )
+(       to display modified Forth banner, do the same on SCR 45 )
 
 ( TODO: create words to move error screens from 14/15 to 87-89 )
 (       see DECOMP MESSAGE to see that LIT 14 is hardcoded!    )
@@ -14,7 +14,20 @@
 
 DECIMAL EDITOR
 
+16 CLEAR ( empty anyway )
 17 CLEAR ( casette load )
+
+18 SCR !
+00 P ( ** FULL LOAD - DEV TOOLS ** )
+01 P                     : :DEV ;
+02 E                     
+04 P ( LOAD DEBUG & GOIN )
+05 P    21 LOAD 19 LOAD
+07 P ( LOAD EDITOR & SEARCH )
+08 P    27 LOAD 35 LOAD
+13 P ( LOAD EDIT )
+14 P    60 LOAD
+15 P                     : ;DEV ; ;S
 
 19 SCR !
  0 P ( GOESINTO 1/2 )
@@ -66,15 +79,16 @@ DECIMAL EDITOR
 
 23 SCR !
 00 P ( DEBUG - STACK PRINTERS )
-
 10 P : .S ( -- ) DEPTH -DUP IF
 11 P     0 DO SP@ I 2 * + @ U. LOOP 
 12 P   ELSE ." Empty " CR THEN ;
 
 24 SCR !
 00 P ( DEBUG - DEFINITION TRACER )
+
 25 SCR !
 00 P ( DEBUG - DEFINITION TRACER )
+
 26 SCR !
 00 P ( DEBUG - DEFINITION TRACER )
 
@@ -96,16 +110,62 @@ DECIMAL EDITOR
 14 P   CR ." Usage: 21 44 SEARCH KEYWORD" 
 15 P CR CR ;S ( FD Vol03 Nr1 /WFR ) 
 
-18 SCR !
-00 P ( ** FULL LOAD - DEV TOOLS ** )
-01 E
-02 P : :DEV ;
-04 P ( LOAD DEBUG & GOIN )
-05 P    21 LOAD 19 LOAD
-07 P ( LOAD EDITOR & SEARCH )
-08 P    27 LOAD 35 LOAD
-13 P ( LOAD EDIT )
-14 P    60 LOAD
-15 P : ;DEV ; ;S
-  
+36 CLEAR ( DISK COPY 32K ) ( good for SERT / TRADE )
+37 CLEAR ( DISK COPY 32K ) ( good for SERT / TRADE )
+38 CLEAR ( empty anyway )
+
+( 39-59 - asm, graph, sound, dos object loader )
+
+( 60-70 - edit )
+
+( four empty in a row)
+71 CLEAR 
+72 CLEAR 
+73 CLEAR
+74 CLEAR
+
+( 75-78 Ragsdale Assembler )
+
+( two empty in a row )
+79 CLEAR
+80 CLEAR
+
+( 81, 82 -> DOS I/O, integrate with Fujinet? )
+( 83     -> Atr-850, -"-                     )
+
+( five consecutive screens to use - FUJINET! )
+84 CLEAR
+85 CLEAR ( intended for SERT/TRADE, use 36 )
+86 CLEAR ( intended for SERT/TRADE, use 37 )
+87 CLEAR ( DDISK )
+88 CLEAR ( DDISK )
+
+( 89 - DO NOT USE OR MARK AS NOT FULL )
+
+
+
+( TODO: BACKUP ERROR SCREENS )
+
+14 SCR ! 14 CLEAR
+0 P ( ERROR MESSAGES )
+1 P Stack empty
+2 P Dictionary full
+3 P Wrong address mode
+4 P Isn't unique
+5 P Value error
+6 P Disk address error
+7 P Stack full
+8 P Disk Error!
+
+15 SCR ! 15 CLEAR
+0 P ( ERROR MESSAGES )
+1 P Use only in Definitions
+2 P Execution only
+3 P Conditionals not paired
+4 P Definition not finished
+5 P In protected dictionary
+6 P Use only when loading
+7 P Off current screen
+8 P Declare VOCABULARY
+
 FLUSH

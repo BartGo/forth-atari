@@ -118,9 +118,28 @@ DECIMAL EDITOR
 
 ( 60-70 - edit )
 
-( four empty in a row)
-71 CLEAR 
+( four empty in a row, perfect for FN )
+71 SCR !
+ 0 P ( FujiNet Host List by Thom )    (  Atari Online #5961 )
+ 1 P HEX VOCABULARY FUJINET           : %C CONSTANT ; IMMEDIATE
+ 2 P 0300 %C DDEVIC 0301 %C DUNIT   0302 %C DCOMND 0303 %C DSTATS
+ 3 P 0304 %C DBUF   0306 %C DTIMLO  0307 %C DRESVD 0308 %C DBYT
+ 4 P 030A %C DAUX1  030B %C DAUX2   030A %C DAUX   E459 %C SIOV
+ 5 P CODE (DO-SIOV) XSAVE STX,        SIOV JSR, XSAVE LDX, NEXT JMP, 
+ 6 P : HOST-ARRAY <BUILDS 256 ALLOT   DOES> SWAP 32 * + ; 
+ 7 P HOST-ARRAY FLHBUF 
+ 8 P : (FLH) ( -- ) 70 DDEVIC C!      01 DUNIT  C!  F4   DCOMND C!
+ 9 P  40 DSTATS C! 0 FLHBUF DBUF !   0F DTIMLO C!  0100 DBYT    !
+10 P  0000 DAUX ! (DO-SIOV) ;        DECIMAL
+11 P : HEMIT ( n -- ) DUP 0= IF       DROP ELSE EMIT THEN ; 
+12 P 0 VARIABLE HOSTSLOT : .FLH"      ( n -- ) HOSTSLOT C! 32 0 DO
+13 P    HOSTSLOT C@ FLHBUF I +       C@ HEMIT LOOP ;
+14 P : FLH ( -- ) CR (FLH) 8 0 DO I   U. ." : " I .FLH" CR LOOP ; 
+15 P ;S
+
 72 CLEAR 
+( FujiNet ... )
+
 73 CLEAR
 74 CLEAR
 

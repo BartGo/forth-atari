@@ -145,7 +145,7 @@ DECIMAL EDITOR
 
 ( 75-78 Ragsdale Assembler )
 
-( two empty in a row )
+( two empty in a row - blinkcur here?? )
 79 CLEAR
 80 CLEAR
 

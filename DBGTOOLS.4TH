@@ -29,7 +29,7 @@
 06 P 27-34: EDITOR* (fig)
 07 P 35-38: empty
 08 P 39-49: ASSEMBLER* (Mullarky) 
-09 P 50-59: EDIT (Pantola)
+09 P 50-59: EDIT (Pantola) req. 75
 10 P 60-70: EDIT (Dougherty)
 11 P 71-74: FUJINET (-WIP-)
 12 P 75-78: ASSEMBLER (Ragsdale)
@@ -54,25 +54,25 @@
 12 P     UNTIL LOOP ; 
 13 P CR ." SEARCH is loaded." CR
 14 P ." Usage: 21 44 SEARCH KEYWORD" 
-15 P CR CR ;S ( FD Vol03 Nr1 /WFR ) 
+15 P ;S ( FD Vol03 Nr1 /WFR ) 
 
 18 SCR !
 00 P ( -- FULL LOAD - DEV TOOLS -- )
-01 P : :DEV ; CR CR ." LOADING..." CR
-02 P   21 LOAD ( DEBUG )
-03 P   19 LOAD ( GOESINTO )
-04 P   27 LOAD ( EDITOR )
-05 P   17 LOAD ( SEARCH ) 
-06 P   39 LOAD ( ASSEMBLER )
-07 P : ;DEV ; 
-08 P CR CR 
-09 P ." 50 LOAD for RP's EDIT"   CR 
-10 P ." 60 LOAD for MD's EDIT"    CR
-11 P ." 71 LOAD for TC's FUJINET" CR 
-12 P ." 16 LIST for INDEX" CR
-13 E
-14 E    
-15 P ;S
+01 P : :DEV ; 125 EMIT 
+02 P   CR ." DEBUG..."     21 LOAD 
+03 P   CR ." GOESINTO..."  19 LOAD 
+04 P   CR ." EDITOR..." 
+05 P   ( EDITOR ) CR SPACE 27 LOAD 
+06 P   ( SEARCH )          17 LOAD 
+07 P : ;DEV ; CR CR 
+08 P ." 16 LIST for directory" CR
+09 P ." 18 LIST for this list" CR
+10 P ." 39 LOAD for PLM's ASM" CR
+11 P ." 75 LOAD for WFR's ASM" CR
+12 P ." 60 LOAD for MD's EDIT" CR
+13 P ." 50 LOAD for RP's EDIT" CR 
+14 P ." 71 LOAD for TC's FUJINET" CR 
+15 P CR ;S
 
 19 SCR !
  0 P ( 1/2 GoesInto - Decomp by RDA )
@@ -166,6 +166,13 @@
 72 CLEAR 
 73 CLEAR
 74 CLEAR
+
+78 SCR ! ( for compatibility, END-CODE = C; )
+08 P : C; CURRENT @ CONTEXT ! ?EXEC ?CSP SMUDGE ; IMMEDIATE 
+
+50 SCR !
+00 P ( EDYTOR-FORTH by RP, [c] TA'92 ) 
+01 P : <=< OVER > >R < R> * ; ASSEMBLER
 
 84 CLEAR
 85 CLEAR

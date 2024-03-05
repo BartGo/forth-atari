@@ -14,21 +14,23 @@
 
 ( 18 LOAD ) DECIMAL EDITOR
 
+CR ." BACK UP ERROR MESSAGES" CR CR
 14 88 COPY
 15 89 COPY ( ignore this disk error )
 89 SCR !   ( mark with heart the last usable line )
  9 P
+CR
 
 16 CLEAR 16 SCR !
 00 P ( ------ DISC INDEX ------ ) ;S
 01 P 14-15: error messages
-02 P 17-17: SEARCH* (req. EDITOR* ) 
+02 P 17-17: SEARCH* (req. EDITOR*) 
 03 P 18-18: FULL LOAD dev tools (*)
 04 P 19-20: GOESINTO* decompiler
 05 P 21-26: DEBUG* words 
 06 P 27-34: EDITOR* (fig)
 07 P 35-38: empty
-08 P 39-49: ASSEMBLER* (Mullarky) 
+08 P 39-49: ASSEMBLER (Mullarky) 
 09 P 50-59: EDIT (Pantola) req. 75
 10 P 60-70: EDIT (Dougherty)
 11 P 71-74: FUJINET (-WIP-)
@@ -142,8 +144,9 @@
 37 CLEAR
 38 CLEAR
 
-58 79 COPY ( DOS object reader )
-59 80 COPY
+50 SCR !
+00 P ( EDYTOR-FORTH by RP, [c] TA'92 ) 
+01 P : <=< OVER > >R < R> * ; ASSEMBLER
 
 71 SCR !
  0 P ( FujiNet Host List by Thom )    (  Atari Online #5961 )
@@ -170,9 +173,8 @@
 78 SCR ! ( for compatibility, END-CODE = C; )
 08 P : C; CURRENT @ CONTEXT ! ?EXEC ?CSP SMUDGE ; IMMEDIATE 
 
-50 SCR !
-00 P ( EDYTOR-FORTH by RP, [c] TA'92 ) 
-01 P : <=< OVER > >R < R> * ; ASSEMBLER
+58 79 COPY ( DOS object reader )
+59 80 COPY
 
 84 CLEAR
 85 CLEAR

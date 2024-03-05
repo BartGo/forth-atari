@@ -216,11 +216,6 @@ EDITOR
  14 P Esc-Q: quit (empty-buf)
  15 P Esc-V: put last deleted line
 
-71 CLEAR
-72 CLEAR
-73 CLEAR
-74 CLEAR
-
 FLUSH
 
 ( *** CODE ENDS HERE *** ) 

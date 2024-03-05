@@ -23,7 +23,7 @@
 05 P 21-26: DEBUG* words 
 06 P 27-34: EDITOR* (fig)
 07 P 35-38: empty
-( ^^ SERT/TRADE HERE! )
+( ^^ SERT/TRADE and STEPPER HERE! )
 08 P 39-49: ASSEMBLER (Mullarky) 
 09 P 50-59: EDIT (Pantola) req. 75
 10 P 60-70: EDIT (Dougherty)

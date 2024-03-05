@@ -14,13 +14,6 @@
 
 ( 18 LOAD ) DECIMAL EDITOR
 
-CR ." BACK UP ERROR MESSAGES" CR CR
-14 88 COPY
-15 89 COPY ( ignore this disk error )
-89 SCR !   ( mark with heart the last usable line )
- 9 P
-CR
-
 16 CLEAR 16 SCR !
 00 P ( ------ DISC INDEX ------ ) ;S
 01 P 14-15: error messages
@@ -30,15 +23,16 @@ CR
 05 P 21-26: DEBUG* words 
 06 P 27-34: EDITOR* (fig)
 07 P 35-38: empty
+( ^^ SERT/TRADE HERE! )
 08 P 39-49: ASSEMBLER (Mullarky) 
 09 P 50-59: EDIT (Pantola) req. 75
 10 P 60-70: EDIT (Dougherty)
 11 P 71-74: FUJINET (-WIP-)
 12 P 75-78: ASSEMBLER (Ragsdale)
 13 P 79-83: OBJECT READER, IO, 850
-14 P 84-87: empty
-( SERT & TRADE HERE? )
-15 P 88-89: error message backup
+14 P 84-88: empty
+( ^^ 6502 DISASM HERE! )
+15 E
 
 17 CLEAR 17 SCR !
 00 P ( Search screens - req. EDITOR )
@@ -180,5 +174,6 @@ CR
 85 CLEAR
 86 CLEAR 
 87 CLEAR 
+88 CLEAR 
 
 FLUSH

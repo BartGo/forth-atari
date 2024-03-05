@@ -39,7 +39,7 @@
 15 P 88-89: error message backup
 
 17 CLEAR 17 SCR !
-00 P ( 1/1 Search screens )
+00 P ( Search screens - req. EDITOR )
 01 P DECIMAL 00 VARIABLE SRCHCNT
 02 P : BUMP ( ln nr and paging )
 03 P   1 SRCHCNT +! SRCHCNT @ 56 
@@ -58,17 +58,21 @@
 
 18 SCR !
 00 P ( -- FULL LOAD - DEV TOOLS -- )
-01 P                     : :DEV ;
-02 E                     
-04 E 
-05 P 21 LOAD 19 LOAD ( DEBUG & GOIN )
-07 P 
-08 P 27 LOAD 17 LOAD ( EDITOR & SEARCH )
-10 E
-11 P 39 LOAD         ( ASSEMBLER )
+01 P : :DEV ; CR CR ." LOADING..." CR
+02 P   21 LOAD ( DEBUG )
+03 P   19 LOAD ( GOESINTO )
+04 P   27 LOAD ( EDITOR )
+05 P   17 LOAD ( SEARCH ) 
+06 P   39 LOAD ( ASSEMBLER )
+07 P : ;DEV ; 
+08 P CR CR 
+09 P ." 50 LOAD for RP's EDIT"   CR 
+10 P ." 60 LOAD for MD's EDIT"    CR
+11 P ." 71 LOAD for TC's FUJINET" CR 
+12 P ." 16 LIST for INDEX" CR
 13 E
 14 E    
-15 P                     : ;DEV ; ;S
+15 P ;S
 
 19 SCR !
  0 P ( 1/2 GoesInto - Decomp by RDA )

@@ -30,9 +30,8 @@
 11 P 71-74: FUJINET (-WIP-)
 12 P 75-78: ASSEMBLER (Ragsdale)
 13 P 79-83: OBJECT READER, IO, 850
-14 P 84-88: empty
-( ^^ 6502 DISASM HERE! )
-15 E
+14 P 84-88: DIS (Mattes)
+15 P ( ------------------------- ) ;S
 
 17 CLEAR 17 SCR !
 00 P ( Search screens - req. EDITOR )

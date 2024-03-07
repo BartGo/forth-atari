@@ -10,14 +10,14 @@
 
 : TASK ;
 HEX EDITOR DEFINITIONS
-0 VARIABLE #SC ( screen )
-0 VARIABLE #LN ( & line )
+11 VARIABLE #SC ( starting scr-1 ) ( $11 )
+ 0 VARIABLE #LN ( & line )
 : LN+ ( -- ) #LN @ 1 + #LN ! ;
 : LN? ( -- ) #LN @ F = IF 17 ERROR THEN ;
 : PREPARE ( -- ) ( next scr )
   0 #LN !   
   #SC @ DUP DUP DUP
-  CLEAR SCR ! ." Preparing #" ? CR
+  CLEAR SCR ! ." Preparing #" . CR
   1 + #SC ! ;
 : Q ( -- ) ( new line: Q ccc )
   LN? #LN @ E LN+ ; 

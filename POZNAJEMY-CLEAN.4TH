@@ -12,7 +12,7 @@
 
 DECIMAL EDITOR DEFINITIONS
 
-20 VARIABLE #SC ( starting scr-1 ) 
+34 VARIABLE #SC ( starting scr-1 ) 
  0 VARIABLE #LN ( & line )
 : LN+ ( -- ) #LN @ 1 + #LN ! ;
 : LN? ( -- ) #LN @ 15 = IF 23 ERROR THEN ;

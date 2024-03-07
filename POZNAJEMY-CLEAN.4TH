@@ -17,9 +17,11 @@ DECIMAL EDITOR DEFINITIONS
 : LN+ ( -- ) #LN @ 1 + #LN ! ;
 : LN? ( -- ) #LN @ 15 = IF 23 ERROR THEN ;
 : PREPARE ( -- ) ( next scr )
+  CR ." Return to proceed..."
+  KEY DROP 125 EMIT
   0 #LN ! 
   #SC @ 1 + #SC ! #SC @ CLEAR #SC @ SCR !
-  ." Preparing #" #SC ? CR  ;
+  ." #" #SC ? CR ;
 : Q ( -- ) ( new line: Q ccc )
   LN? #LN @ EDITOR P
   LN+ ; 

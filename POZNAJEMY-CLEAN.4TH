@@ -2,73 +2,27 @@
 ( It empties and prepares SD floppy with listings from       )
 ( "Poznajemy Forth", together with some public domain tools. )
 ( To install:                                                )
-( - boot Altirra with Forth, paste the below, replace D1:    )
-(   with an empty image, size should be SD/90KB              )
-(                                                version 0.1 )
-
-( TODO: )
-( - complete listings and index                              )
-( - set up screen size so there are no empty screens between )
+( - boot Altirra with Forth, 18 LOAD, paste the below,       )
+(    replace D1: with an empty image, size should be SD/90KB )
+(                                                version 0.2 )
 
 : TASK ; ( -- )
 
-1   CONSTANT #DBG    			 ( debug mode )
-125 CONSTANT #CLS                ( "clear screen" character )
-10  CONSTANT #MXK    			 ( max "screen" for kernel )
-18  CONSTANT #LIBS    			 ( "screen" with FIG edit&dbg )
+EDITOR DEFINITIONS
 
-0   VARIABLE Ln                  ( used by editor's Quick-P )
-
-: P" ( -- ) 
-  [ ." ] ; IMMEDIATE      
-
-: R" ( -- ) 
-  [ ." ] CR ; IMMEDIATE       
-
-: D" ( -- )
-  #DBG IF R" THEN ; IMMEDIATE 
-
-: CLS #CLS EMIT ; ( -- ) 		 ( clear display )
-
-: ?Y ( n -- f )
-  KEY ASCII Y = ;				 ( return true if pressed Y )
-
-: CLEARS ( n m -- )
-  DO I CLEAR LOOP ;				 ( clear range of "screens" )
-
-: PREPARE ( -- )
-  DUP LOAD CR LIST CR ;          ( load and list )
-
-: INIT ( -- )
-  CLS CR						  
-  P" Insert an empty floppy "
-  P" and press Y to OVERWRITE:"  ( ask before first "screens" )
-  CR ?Y IF 0 #MXK CLEARS THEN ;  ( are emptied for the kernel )
-
-R" Please wait..." #LIBS LOAD    
-
-( -- CUT HERE -------------- )
-
-EDITOR
-  EDITOR DEFINITIONS
+0 VARIABLE #LN
 
 : SET-SCR ( n -- )
-  DUP CLEAR 					 ( set and clear screen )
-  SCR !
-  -1 Ln ! ;                      ( reset line nr )
-
+  DUP CLEAR SCR ! 0 #LN ! ;
+  
 : Q ( -- )
-  1 Ln +! [ Ln @ P ]             ( shortcut for EDITOR n P )
-  CR P" Entered line: " Ln ? ;
+  #LN @ P
+  #LN @ 1 + #LN ! ;
 
-P" Press any key..." KEY DROP
 EDITOR
-INIT
 
-( -- CUT HERE -------------- )
-
-20 SET-SCR 
-Q ( Poznajemy Forth - kod z ksiazki )
+20 SET-SCR
+Q ( ** Poznajemy Forth ** ) ;S
 Q (  1.0    --> screen=21 )
 Q (  2.0    --> screen=21 )
 Q (  3.0    --> screen=21 )
@@ -81,9 +35,9 @@ Q (  9.0    --> screen=21 )
 Q ( 10.0    --> screen=21 )
 Q ( 11.0    --> screen=21 )
 Q ( 12.0    --> screen=21 )
-Q ( Aneksy  --> screen=21 )
-Q ( screen PREPARE ) 
-Q ;S
+Q ( Aneksy  --> screen=21 ) 
+Q ( ** Public Domain Tools ** )
+
 
 21 SET-SCR 
 Q ( Poznajemy FORTH 1-2       )
@@ -94,7 +48,7 @@ Q : LICZBA NUMBER ;
 Q : KOT ; FORGET KOT
 Q : KOT CR ." Kot pije mleko" ;
 Q : NAPIS ( -- )
-Q   KOT ." i poluje na myszy" ;
+Q   KOT ."  i poluje na myszy" ;
 Q : TEST2 11 0 DO I . LOOP ; 
 Q : TEST3 7 0 DO ." A " LOOP ;
 Q : .USER ( -- )
@@ -132,11 +86,9 @@ Q     I DUP U* 15 D.R CR LOOP ;
 Q : RUN ( -- )
 Q   CR P" TEST:" CR TEST 
 Q   CR P" SZESCIAN:" 5 SZESCIAN
-Q   CR P" KWADRAT:" CR
-Q     7 KWADRAT
+Q   CR P" KWADRAT:" CR 7 KWADRAT
 Q   CR P" KWADRATY:" CR
-Q   45001 44980 KWADRATY CR ;
-Q ;S
+Q   45001 44980 KWADRATY CR ; ;S
 
 
 : 2DUP OVER OVER ;
@@ -1017,7 +969,7 @@ DIMX DIMY ARRAY UNIVERSUM
   
  
 3 2 1 7 X* . .  ( -11 23 ok )
-( wynik odpowiada −11 + 23i )
+( wynik odpowiada -11 + 23i )
   
 ====
 
@@ -1233,4 +1185,3 @@ CR ." QUICKSORT: " CR POKAZ CR
 ( DZIAŁA )
 
 ************************************
-

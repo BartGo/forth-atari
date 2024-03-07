@@ -65,7 +65,6 @@ Q    B/BUF . ( 128 )
 Q    C/L .   ( 64 ) ;
 Q ;S
 
-
 PREPARE
 Q ( SP!, .S )
 Q SP! : S0@ ( --- n )
@@ -160,7 +159,6 @@ Q      I AA @ *	3 .R
 Q    LOOP CR
 Q  LOOP ;
 Q  TABLICZKA ;S
-FORTH
 
 PREPARE
 Q ( 1/1 TABLICZKA2 )
@@ -175,12 +173,6 @@ Q      I J * 3 .R
 Q    LOOP CR LOOP ;
 Q : TABLICZKA2 ;
 Q TABLICZKA2 ;S
-FORTH
-
-( OK )
-
-
-( * 5.7 )
 
 PREPARE
 Q : IKSY BEGIN ." X" 1 - DUP 0= UNTIL ;
@@ -193,11 +185,6 @@ Q 128 1024 NWP .  ( wynik: 128 -- a nie 126, plus brak był kropki w listingu )
 Q 324 556 NWP .   ( wynik: 4 )
 Q 1933 821 NWP .    ( wynik: 1 )
 
-
-( * 5.8 )
-
-( poniższe sprawdzone z Salman / Tisserand / T )
-
 PREPARE
 Q ( ERATOS 1/2: WSTAW, USUN )
 Q 0 VARIABLE ERATOS 254 ALLOT
@@ -207,7 +194,6 @@ Q : USUN ( n --- ) 256 OVER DO
 Q     I 1 - ERATOS + 0 SWAP C!
 Q     DUP +LOOP DROP ;
 Q -->
-FORTH
 
 PREPARE
 Q ( ERATOS 2/2: PIERWSZE )
@@ -224,9 +210,7 @@ Q       USUN ( adr ) ( gdy n<>0 )
 Q     THEN LOOP DROP ;
 V
 Q PIERWSZE ;S
-FORTH
 
-( * 6.2 )  
 
 
 : QUERY TIB @ 80 EXPECT 0 IN ! ; 
@@ -240,11 +224,6 @@ DRUKUJ
 : INPUT CR QUERY BL WORD HERE NUMBER DROP ;  ( *Z CR ŁADNIEJ )
 INPUT .
 
-
-( * rozdział 7  - tu chyba nic )
-
-
-( * rozdział 8 )
 
 PREPARE
 Q ( 1/1 DATY )
@@ -264,8 +243,6 @@ Q CR LENINO   CR
 Q CR WARSZAWA CR
 Q ;S
 
-( OK )
-
 PREPARE
 Q ( 1/1 TENKOD, SILNIA, SILNIA2, SILNIA3, FACTORIAL [JB] )
 Q : TENKOD ( --- n ) CURRENT @ @ PFA CFA ; IMMEDIATE
@@ -282,9 +259,6 @@ Q   ELSE 1+ THEN ;
 Q 8 SILNIA  U.   8 SILNIA2 U. ( FAIL: COIN-OP/1.4S )
 Q 8 SILNIA3 U.   8 FACTORIAL U.
 Q ;S
-
-
-( * rozdział 9 )
 
 PREPARE
 Q ( 1/1 ARRAY, 2DARRAY )
@@ -316,7 +290,6 @@ Q 0 0 MATRIX2 C@ .   0 1 MATRIX2 C@ . 1 0 MATRIX2 C@ .   1 1 MATRIX2 C@ .
 Q 0 2 MATRIX2 C@ .   1 2 MATRIX2 C@ .
 Q ;S
 
-
 PREPARE
 Q ( 1/1 ARRAY2, ARRAY3 [JB] )
 Q : ARRAY2 ( n n --- ) ( n n ARRAY2 matrix )
@@ -346,7 +319,6 @@ V
 Q 15610. SEK
 Q ;S
 
-
 ( PONIŻSZE NAM NIE ZADZIAŁA JEŚLI NIE MAMY D*, JAK W "COMPLETE FORTH" )
 
 0 VARIABLE A_  0 VARIABLE B_
@@ -356,8 +328,6 @@ Q ;S
   D_ @ A_ @ U* DROP +
   C_ @ B_ @ U* DROP + ; 
 
-
-( --- )
 
 : FIX DPL @ 0< IF ( jeżeli liczba była pojedyncza)
 S->D 0 DPL ! ( przekształca ją w podwójną )
@@ -684,11 +654,6 @@ V
 Q : TEST-COMPLEX 3 2 1 7 X* . .  ; 
 Q ;S     ( -11 23 ok )
   
-====
-
-
-12.5 fn trig
-
 PREPARE 
 Q ( 1/2 FUNKCJE TRYGONOMETRYCZNE [FIXED] )
 Q : TABLICA <BUILDS
@@ -724,8 +689,6 @@ Q 30 TAN . (  5773 ) 45 TAN . ( 10000 )
 Q 30 COS . (  8660 ) ;S
 
 
-
-=====
 
 
   
@@ -859,3 +822,5 @@ CR ." QUICKSORT: " CR POKAZ CR
 ( DZIAŁA )
 
 ************************************
+
+FORTH

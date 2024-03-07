@@ -7,17 +7,15 @@
 (                                                version 0.2 )
 
 : TASK ; ( -- )
-
-EDITOR DEFINITIONS
-
+DECIMAL EDITOR DEFINITIONS
 0 VARIABLE #LN
-
+: LN@ #LN @ ;
 : SET-SCR ( n -- )
   DUP CLEAR SCR ! 0 #LN ! ;
-  
 : Q ( -- )
-  #LN @ P
-  #LN @ 1 + #LN ! ;
+  LN@ 16 = IF 23 ERROR THEN  
+  LN@ P
+  LN@ 1 + #LN ! ;
 
 EDITOR
 
@@ -36,6 +34,7 @@ Q ( 10.0    --> screen=21 )
 Q ( 11.0    --> screen=21 )
 Q ( 12.0    --> screen=21 )
 Q ( Aneksy  --> screen=21 ) 
+Q ..
 Q ( ** Public Domain Tools ** )
 
 

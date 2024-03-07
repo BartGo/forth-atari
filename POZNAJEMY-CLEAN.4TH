@@ -19,9 +19,9 @@ HEX EDITOR DEFINITIONS
   #SC @ 1 + #SC ! #SC @ CLEAR #SC @ SCR !
   ." Preparing #" #SC ? CR  ;
 : Q ( -- ) ( new line: Q ccc )
-  LN? #LN @ E LN+ ; 
-: V ( -- ) ( skip line: V )
   LN? #LN @ P LN+ ; 
+: V ( -- ) ( skip line: V )
+  LN? #LN @ E LN+ ; 
 
 ( *** /LOADING HELPER *** ) 
 

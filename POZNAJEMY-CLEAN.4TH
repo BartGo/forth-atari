@@ -15,10 +15,10 @@ HEX EDITOR DEFINITIONS
 : LN+ ( -- ) #LN @ 1 + #LN ! ;
 : LN? ( -- ) #LN @ F = IF 17 ERROR THEN ;
 : PREPARE ( -- ) ( next scr )
-  0 #LN !   
+  0 #LN ! 
+  1 + #SC ! 
   #SC @ DUP DUP DUP
-  CLEAR SCR ! ." Preparing #" . CR
-  1 + #SC ! ;
+  CLEAR SCR ! ." Preparing #" . CR  ;
 : Q ( -- ) ( new line: Q ccc )
   LN? #LN @ E LN+ ; 
 : V ( -- ) ( skip line: V )

@@ -16,9 +16,8 @@ HEX EDITOR DEFINITIONS
 : LN? ( -- ) #LN @ F = IF 17 ERROR THEN ;
 : PREPARE ( -- ) ( next scr )
   0 #LN ! 
-  1 + #SC ! 
-  #SC @ DUP DUP DUP
-  CLEAR SCR ! ." Preparing #" . CR  ;
+  #SC @ 1 + #SC ! #SC @ CLEAR #SC @ SCR !
+  ." Preparing #" #SC ? CR  ;
 : Q ( -- ) ( new line: Q ccc )
   LN? #LN @ E LN+ ; 
 : V ( -- ) ( skip line: V )

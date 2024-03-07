@@ -9,23 +9,27 @@
 ( *** LOADING HELPER *** ) 
 
 : TASK ;
-HEX EDITOR DEFINITIONS
-11 VARIABLE #SC ( starting scr-1 ) ( $11 )
+
+DECIMAL EDITOR DEFINITIONS
+
+20 VARIABLE #SC ( starting scr-1 ) 
  0 VARIABLE #LN ( & line )
 : LN+ ( -- ) #LN @ 1 + #LN ! ;
-: LN? ( -- ) #LN @ F = IF 17 ERROR THEN ;
+: LN? ( -- ) #LN @ 15 = IF 23 ERROR THEN ;
 : PREPARE ( -- ) ( next scr )
   0 #LN ! 
   #SC @ 1 + #SC ! #SC @ CLEAR #SC @ SCR !
   ." Preparing #" #SC ? CR  ;
 : Q ( -- ) ( new line: Q ccc )
-  LN? #LN @ P LN+ ; 
+  LN? #LN @ EDITOR P
+  LN+ ; 
 : V ( -- ) ( skip line: V )
-  LN? #LN @ E LN+ ; 
+  LN? #LN @ EDITOR E
+  LN+ ; 
 
 ( *** /LOADING HELPER *** ) 
 
-DECIMAL EDITOR
+EDITOR
 
 PREPARE
 Q ( ** Poznajemy Forth ** ) ;S
@@ -90,7 +94,6 @@ Q : SZESCIAN DUP OVER * * . ;
 Q : KWADRAT DUP * . ;
 Q : KWADRATY CR DO
 Q     I DUP U* 15 D.R CR LOOP ;
-V 
 Q   CR P" TEST:" CR TEST 
 Q   CR P" SZESCIAN:" 5 SZESCIAN
 Q   CR P" KWADRAT:" CR 7 KWADRAT
@@ -141,8 +144,8 @@ Q : KWADRAT2 DUP * ;
 Q : KWADRAT3
 Q   DO I KWADRAT2 DUP 32760
 Q     IF DROP LEAVE THEN . LOOP ;
-Q: TEST1 51 1 DO I . 2 +LOOP ;
-Q: TEST2 0 20 DO I . -1 +LOOP ; ;S
+Q : TEST1 51 1 DO I . 2 +LOOP ;
+Q : TEST2 0 20 DO I . -1 +LOOP ; ;S
 
 PREPARE
 Q 0 VARIABLE AA : TABLICZKA ( -- )

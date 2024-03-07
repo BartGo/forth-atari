@@ -47,9 +47,6 @@ Q ( 10.0    --> screen=21 )
 Q ( 11.0    --> screen=21 )
 Q ( 12.0    --> screen=21 )
 Q ( Aneksy  --> screen=21 ) 
-Q ..
-Q ( ** Public Domain Tools ** )
-
 
 PREPARE
 Q ( Poznajemy FORTH 1-2       )
@@ -95,10 +92,10 @@ Q : SZESCIAN DUP OVER * * . ;
 Q : KWADRAT DUP * . ;
 Q : KWADRATY CR DO
 Q     I DUP U* 15 D.R CR LOOP ;
-Q   CR P" TEST:" CR TEST 
-Q   CR P" SZESCIAN:" 5 SZESCIAN
-Q   CR P" KWADRAT:" CR 7 KWADRAT
-Q   CR P" KWADRATY:" CR
+Q   CR ." TEST:" CR TEST 
+Q   CR ." SZESCIAN:" 5 SZESCIAN
+Q   CR ." KWADRAT:" CR 7 KWADRAT
+Q   CR ." KWADRATY:" CR
 Q   45001 44980 KWADRATY CR  ;S
 
 PREPARE
@@ -117,8 +114,8 @@ Q    2SWAP ( n3 n4 n5 n6 n1 n2 ) ( – zamiana wykonana! )
 Q  ;                         ;S
 
 PREPARE
-Q : DUMP-INDEX
-Q   ' INDEX NFA ' TRIAD NFA OVER - DUMP ;
+Q ( DUMP-INDEX - ' NFA ' CFA )
+Q : DUMP-INDEX ' INDEX NFA ' TRIAD NFA OVER - DUMP ;
 Q HEX DUMP-INDEX DECIMAL
 
 PREPARE
@@ -149,6 +146,7 @@ Q : TEST1 51 1 DO I . 2 +LOOP ;
 Q : TEST2 0 20 DO I . -1 +LOOP ; ;S
 
 PREPARE
+Q ( 1/1 TABLICZKA )
 Q 0 VARIABLE AA : TABLICZKA ( -- )
 Q  125 EMIT CR CR 8 SPACES
 Q  ." TABLICZKA MNOZENIA"
@@ -161,10 +159,11 @@ Q    10 1 DO
 Q      I AA @ *	3 .R 					
 Q    LOOP CR
 Q  LOOP ;
-V
 Q  TABLICZKA ;S
+FORTH
 
 PREPARE
+Q ( 1/1 TABLICZKA2 )
 Q : J R> R> R> R R# ! >R >R >R R# @ ; 
 Q : TAB2 ( -- ) 125 EMIT CR CR 8 SPACES 
 Q  ." TABLICZKA MNOZENIA" CR CR 3 SPACES
@@ -174,8 +173,9 @@ Q  10 1 DO
 Q    I . ." |" 10 1 DO
 Q      I J * 3 .R
 Q    LOOP CR LOOP ;
-V
-Q TAB2 ;S
+Q : TABLICZKA2 ;
+Q TABLICZKA2 ;S
+FORTH
 
 ( OK )
 
@@ -207,6 +207,7 @@ Q : USUN ( n --- ) 256 OVER DO
 Q     I 1 - ERATOS + 0 SWAP C!
 Q     DUP +LOOP DROP ;
 Q -->
+FORTH
 
 PREPARE
 Q ( ERATOS 2/2: PIERWSZE )
@@ -223,7 +224,7 @@ Q       USUN ( adr ) ( gdy n<>0 )
 Q     THEN LOOP DROP ;
 V
 Q PIERWSZE ;S
- 
+FORTH
 
 ( * 6.2 )  
 
@@ -289,8 +290,8 @@ PREPARE
 Q ( 1/1 ARRAY, 2DARRAY )
 Q : ARRAY <BUILDS 2 * ALLOT DOES> SWAP 2 * + ;
 Q : 2DARRAY
-  <BUILDS DUP , * 2 * ALLOT DOES>
-  ROT OVER @ + ROT + 2 * + 2+ ;
+Q   <BUILDS DUP , * 2 * ALLOT DOES>
+Q   ROT OVER @ + ROT + 2 * + 2+ ;
 V
 Q 10 ARRAY LICZBY
 Q 7 LICZBY 7 LICZBY ! 7 LICZBY @ .

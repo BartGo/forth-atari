@@ -244,14 +244,20 @@ INPUT .
 
 PREPARE
 Q ( 1/1 DATY )
-Q : DATY ( n n n --- ) <BUILDS , , , DOES>
+Q : DATY ( n n n --- )
+Q   <BUILDS , , , DOES>
 Q   DUP 2+ DUP 2+ ? ? ? CR ;
 V
-Q 12  9 1683 DATY WIEDEN    4  4 1794 DATY RACLAWICE
-Q 18  6 1815 DATY WATERLOO  1  9 1870 DATY SEDAN
-Q 12 10 1943 DATY LENINO   15 09 1920 DATY WARSZAWA
-V
-Q WATERLOO CR LENINO CR WARSZAWA CR
+Q 12  9 1683 DATY WIEDEN
+Q  4  4 1794 DATY RACLAWICE
+Q 18  6 1815 DATY WATERLOO
+Q  1  9 1870 DATY SEDAN
+Q 12 10 1943 DATY LENINO
+Q 15 08 1920 DATY WARSZAWA
+V 
+Q CR WATERLOO CR
+Q CR LENINO   CR
+Q CR WARSZAWA CR
 Q ;S
 
 ( OK )
@@ -276,135 +282,71 @@ Q ;S
 
 ( * rozdział 9 )
 
-: ARRAY <BUILDS 2 * ALLOT DOES> SWAP 2 * + ;
+PREPARE
+Q ( 1/1 ARRAY, 2DARRAY )
+Q : ARRAY <BUILDS 2 * ALLOT DOES> SWAP 2 * + ;
+Q : 2DARRAY
+  <BUILDS DUP , * 2 * ALLOT DOES>
+  ROT OVER @ + ROT + 2 * + 2+ ;
+V
+Q 10 ARRAY LICZBY
+Q 7 LICZBY 7 LICZBY ! 7 LICZBY @ .
+V
+Q 4 5 2DARRAY PROSTOKAT
+Q ( TODO )
+Q ;S
 
-( uruchomienie: )
-10 ARRAY LICZBY
-7 LICZBY
-22 7 LICZBY !
-7 LICZBY @ .
-
-: 2DARRAY
-  <BUILDS
-    DUP ,       ( wpisuje wymiar Dim2 )
-    * 2 * ALLOT ( rezerwuje miejsce )
-  DOES>
-  ROT           ( przenosi wskaźnik i1 na szczyt stosu)
-  OVER @ +      ( mnoży i1 przez Dim2 )
-  ROT +         ( dodaje wskaźnik i2 )
-  2 * + 2+ ;    ( oblicza adres komórki [i1, i2] )
-
-( uruchomienie: )
-4 5 2DARRAY PROSTOKAT
-
-
-
-( PONIŻEJ NIE DZIAŁA W APX, NIE MA 0> W WIELU WERSJACH; DZIAŁA W VAL )
-( ALE TAM NIE MA R@, ZAMIAST TEGO UŻYWAMY R - ??? )
-
-: 0> 0 MAX ; ( HELPER )
-: MATDEF ( dim1 dim2 --- )
-         ( dim1 dim2 MATDEF Array-name  )
-         ( indl ind2 Array-name --- adr )
-  <BUILDS
-    OVER OVER SWAP , , * 2 * ALLOT
-  DOES> ( i1 i2 pfa+2 )
-  >R ( i1 i2 )
-  OVER OVER ( i1 12 i1 12 )
-  R @ ( i1 i2 i1 i2 dim1 )
-  R 2 + @ ( i1 12 i1 i2 dim1 dim2 )
-  ROT - 0> ROT
-  ROT - 0< ( ind1 ind2 f1 f2 )
-  * ( ind1 ind2 f )
-  IF
-    R @ * + 2 * R> 4 + ( przesunięcie pfa+6 ) ( * NIE R@ ALE R @ )
-    + ( adres )
-  ELSE
-    R> DROP DROP DROP
-    ." ZLE WSKAZNIKI" ( sygnał o błędzie )
-  THEN ;
-
-2 3 MATDEF MATRIX2
-
-11 0 0 MATRIX2 C!  22 0 1 MATRIX2 C!
-33 1 0 MATRIX2 C!  44 1 1 MATRIX2 C!
-55 0 2 MATRIX2 C!  66 1 2 MATRIX2 C!
-77 2 3 MATRIX2 C! ( WYKRYWA PRZEKROCZENIE )
-0 0 MATRIX2 C@ .   0 1 MATRIX2 C@ .
-1 0 MATRIX2 C@ .   1 1 MATRIX2 C@ .
-0 2 MATRIX2 C@ .   1 2 MATRIX2 C@ .
+PREPARE
+Q ( 1/1 MATDEF - valFORTH ) : 0> 0 MAX ; 
+Q : MATDEF ( dim1 dim2 --- )
+Q          ( dim1 dim2 MATDEF Array-name  )
+Q          ( indl ind2 Array-name --- adr )
+Q  <BUILDS OVER OVER SWAP , , * 2 * ALLOT
+Q  DOES> >R OVER OVER R @ R 2 + @ ROT - 0> ROT
+Q  ROT - 0< * IF R @ * + 2 * R> 4 + + 
+Q  ELSE R> DROP DROP DROP ." ZLE WSKAZNIKI" THEN ;
+Q 2 3 MATDEF MATRIX2
+Q 11 0 0 MATRIX2 C!  22 0 1 MATRIX2 C! 33 1 0 MATRIX2 C!  44 1 1 MATRIX2 C!
+Q 55 0 2 MATRIX2 C!  66 1 2 MATRIX2 C! 77 2 3 MATRIX2 C! ( WYKRYWA PRZEKROCZENIE )
+Q 0 0 MATRIX2 C@ .   0 1 MATRIX2 C@ . 1 0 MATRIX2 C@ .   1 1 MATRIX2 C@ .
+Q 0 2 MATRIX2 C@ .   1 2 MATRIX2 C@ .
+Q ;S
 
 
-( NIE UMIEM TEGO NAPRAWIĆ, NAWET Z SALMANA NIE DZIAŁA )
-: MATDISP ( --- ) ( MATDISP matrix )
-  [COMPILE] '
-  6 + DUP >R
-  4 - @
-  R> 2 - @ 0
-  DO
-    SWAP OVER 0
-	DO DUP @ . 2+ LOOP 
-    SWAP
-  LOOP DROP DROP ;
+PREPARE
+Q ( 1/1 ARRAY2, ARRAY3 [JB] )
+Q : ARRAY2 ( n n --- ) ( n n ARRAY2 matrix )
+Q   <BUILDS OVER , * ALLOT DOES>
+Q   DUP @ ROT * + + 2+ ;
+Q 2 3 ARRAY2 MATRIX
+Q 11 0 0 MATRIX C!  22 0 1 MATRIX C! 33 1 0 MATRIX C!  44 1 1 MATRIX C!
+Q 55 0 2 MATRIX C!  66 1 2 MATRIX C!
+Q 0 0 MATRIX C@ .   0 1 MATRIX C@ . 1 0 MATRIX C@ .   1 1 MATRIX C@ .
+Q 0 2 MATRIX C@ .   1 2 MATRIX C@ .
+Q : ARRAY3  <BUILDS OVER C, DUP C, * ALLOT
+Q   DOES> 1+ ROT OVER C@ * + + 1+ ;
+Q 2 3 ARRAY3 BUF   13 2 1 BUF C!
+Q 2 1 BUF C@ .
+Q ;S
 
-
-
-
-: ARRAY2 ( n n --- ) ( n n ARRAY2 matrix )
-  <BUILDS
-    OVER , * ALLOT
-  DOES>
-  DUP @ ROT * + + 2+ ;
-
-2 3 ARRAY2 MATRIX
-
-11 0 0 MATRIX C!  22 0 1 MATRIX C!
-33 1 0 MATRIX C!  44 1 1 MATRIX C!
-55 0 2 MATRIX C!  66 1 2 MATRIX C!
-0 0 MATRIX C@ .   0 1 MATRIX C@ .
-1 0 MATRIX C@ .   1 1 MATRIX C@ .
-0 2 MATRIX C@ .   1 2 MATRIX C@ .
-
-( OK )
-
-( co na to JB? )
-: ARRAY-JB  <BUILDS OVER C, DUP C, * ALLOT
-  DOES> 1+ ROT OVER C@ * + + 1+ ;
-2 3 ARRAY-JB BUF
-13 2 1 BUF C!
-2 1 BUF C@ .
-
-
-DECIMAL
-
-
-
-: SETNE <# # # 46 HOLD #S #> TYPE ;
-
-( uruchomienie: )
-123489. SETNE ( [Return] 1234.89 ok )
-
-: SEXTAL 6 BASE ! ;
-: XX # SEXTAL # DECIMAL 58 HOLD ;
-: SEK ( n --- )
-  CR <# XX XX #S #> TYPE CR ;
-
-( uruchomienie: )
-15610. SEK
-
-( OK )
-
-
-
-
+PREPARE
+Q ( 1/1 SETNE, SEXTAL, XX, SEK )
+Q DECIMAL
+Q : SETNE <# # # 46 HOLD #S #> TYPE ;
+V
+Q 123489. SETNE ( 1234.89 )
+Q : SEXTAL 6 BASE ! ;
+Q : XX # SEXTAL # DECIMAL 58 HOLD ;
+Q : SEK ( n --- ) CR <# XX XX #S #> TYPE CR ;
+V
+Q 15610. SEK
+Q ;S
 
 
 ( PONIŻSZE NAM NIE ZADZIAŁA JEŚLI NIE MAMY D*, JAK W "COMPLETE FORTH" )
 
-0 VARIABLE A_
-0 VARIABLE B_
-0 VARIABLE C_
-0 VARIABLE D_
+0 VARIABLE A_  0 VARIABLE B_
+0 VARIABLE C_  0 VARIABLE D_
 : D* A_ ! B_ ! C_ ! D_ !
   D_ @ B_ A_ U*
   D_ @ A_ @ U* DROP +

@@ -520,13 +520,13 @@ Q -->
 
 PREPARE
 Q ( 4/5 HETMANY:NAPRZOD,... )
-Q : NAPRZOD ( rząd --- rząd f )         ( f=1, gdy hetmana w rzędzie "rząd" )
-Q                                       ( można przesunąć do następnej kolumny )
+Q : NAPRZOD ( rzad --- rzad f )         ( f=1, gdy hetmana w rzedzie "rzad" )
+Q                                       ( mozna przesunąć do nastepnej kolumny )
 Q   DUP DUP WSPOLRZEDNA
 Q   C@ 1+ POSTAW BRZEG
 Q   IF 1 ELSE DUP USUN 0 THEN ;
-Q : PIERWSZA-WOLNA ( rząd --- rząd f )  ( f=1,gdy hetman może )
-Q                                       ( przejść do następnej kolumny w rzędzie )
+Q : PIERWSZA-WOLNA ( rząd --- rząd f )  ( f=1,gdy hetman moze )
+Q                                       ( przejsc do następnej kolumny w rzedzie )
 Q  BEGIN
 Q    NAPRZOD
 Q    IF WSZYSTKIE-WOLNE -DUP ELSE 0 1 THEN
@@ -549,10 +549,6 @@ Q : HETMANY ( --- )
 Q  9 0 SWAP POSTAW INIC 1 POZYCJA 2 DROP ; 
 Q ;S
 
-( --------------------------------------- )
-
-
-
 PREPARE
 Q ( 1/1 LICZBY ZESPOLONE )
 Q : COMPLEX <BUILDS , ,  DOES> ; 
@@ -561,31 +557,37 @@ Q : X! SWAP OVER ! 2+ ! ;
 Q : X+ ROT + >R + R> ;
 Q : X- ROT SWAP - >R - R> ;
 Q : X*' SWAP OVER * ROT ROT * SWAP ;
-Q : X* 2OVER 2OVER ROT * >R * R> - >R
-Q   ROT ROT * >R * R> + R> SWAP ;
-V 
+Q : X*
+Q   2OVER 2OVER ROT
+Q   * >R * R> - >R ROT ROT
+Q   * >R * R> + R> SWAP ;
+V
 Q : TEST-COMPLEX 3 2 1 7 X* . .  ; 
-Q ;S     ( -11 23 ok )
+V
+Q CR TEST-COMPLEX CR ( -11 23 ok )
+Q ;S     
   
 PREPARE 
-Q ( 1/2 FUNKCJE TRYGONOMETRYCZNE [FIXED] )
-Q : TABLICA <BUILDS
-Q 0 , 174 , 348 , 522 , 696 , 870 , 1044 , 1218 , 1390 , 1564 , 1736 ,
-Q 1908 , 2078 , 2248 , 2418 , 2588 ,  2756 , 2922 , 3090 , 3254 , 3420 ,
-Q 3582 , 3746 , 3906 , 4066 , 4226 , 4382 , 4538 , 4694 , 4848 , 5000 ,
-Q 5150 , 5298 , 5446 , 5590 , 5734 , 5876 , 6018 , 6156 , 6292 , 6426 ,
-Q 6560 , 6690 , 6818 , 6946 , 7070 , 7192 , 7312 , 7430 , 7546 , 7660 ,
-Q 7770 , 7880 , 7986 , 8090 , 8190 , 8290 , 8386 , 8480 , 8570 , 8660 ,
-Q 8746 , 8828 , 8910 , 8986 , 9062 , 9134 , 9204 , 9270 , 9334 , 9396 ,
-Q 9454 , 9510 , 9562 , 9612 , 9658 , 9702 , 9742 , 9780 , 9816 , 9848 ,
-Q 9876 , 9902 , 9924 , 9944 , 9960 , 9974 , 9986 , 9992 , 9998 , 10000 ,
+Q ( 1/2 FN TRYGONOMETRYCZNE )
+Q : TABLICA <BUILDS 0 ,
+Q  174 , 348  ,  522 ,  696 ,  870 , 1044 , 1218 , 1390 , 1564 , 
+Q 1736 , 1908 , 2078 , 2248 , 2418 , 2588 , 2756 , 2922 , 3090 , 
+Q 3254 , 3420 , 3582 , 3746 , 3906 , 4066 , 4226 , 4382 , 4538 , 
+Q 4694 , 4848 , 5000 , 5150 , 5298 , 5446 , 5590 , 5734 , 5876 , 
+Q 6018 , 6156 , 6292 , 6426 , 6560 , 6690 , 6818 , 6946 , 7070 , 
+Q 7192 , 7312 , 7430 , 7546 , 7660 , 7770 , 7880 , 7986 , 8090 , 
+Q 8190 , 8290 , 8386 , 8480 , 8570 , 8660 , 8746 , 8828 , 8910 , 
+Q 8986 , 9062 , 9134 , 9204 , 9270 , 9334 , 9396 , 9454 , 9510 ,
+Q 9562 , 9612 , 9658 , 9702 , 9742 , 9780 , 9816 , 9848 , 9876 ,
+Q 9902 , 9924 , 9944 , 9960 , 9974 , 9986 , 9992 , 9998 , 10000 ,
 Q DOES> SWAP 2 * + @ ;
 V
 Q 91 TABLICA SINTABLICA
 Q -->
 
+
 PREPARE
-Q ( 2/2 FUNKCJE TRYGONOMETRYCZNE [FIXED] )
+Q ( 2/2 FN FUNKCJE [FIXED] )
 Q : S180 DUP 90 > IF 180 SWAP - THEN SINTABLICA ;
 Q : SIN 360 MOD DUP 0< IF 360 + THEN
 Q   DUP 180 > IF 180 - S180 MINUS ELSE S180 THEN ;

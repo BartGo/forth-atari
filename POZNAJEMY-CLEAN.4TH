@@ -32,8 +32,10 @@ DECIMAL EDITOR DEFINITIONS
 
 EDITOR
 
+( TODO: DODAC SEARCH! )
+
 PREPARE
-Q ( ** Poznajemy Forth ** ) ;S
+Q (     ** Poznajemy Forth ** ) ;S
 Q (  1.0    --> screen=21 )
 Q (  2.0    --> screen=21 )
 Q (  3.0    --> screen=21 )
@@ -49,7 +51,7 @@ Q ( 12.0    --> screen=21 )
 Q ( Aneksy  --> screen=21 ) 
 
 PREPARE
-Q ( 1/1 TEST, KOT, NAPIS, ... )
+Q ( 1/1 TEST,KOT,NAPIS, ... )
 Q : TEST 30000 0 DO LOOP BEEP ; 
 Q : ZMIENNA VARIABLE ; : TU HERE ;
 Q : KASUJ DROP ; : LICZBA NUMBER ;
@@ -66,7 +68,7 @@ Q    C/L .   ( 64 ) ;
 Q ;S
 
 PREPARE
-Q ( 1/1 SP!, .S )
+Q ( 1/1 SP!,.S )
 Q SP! : S0@ ( --- n )
 Q   [ SP@ ] LITERAL ; 
 Q : .S ( --- )
@@ -81,7 +83,7 @@ Q 1 2 3 SWAP DUP .S
 Q ;S
 
 PREPARE
-Q ( 1/1 TEST, SZESCIAN, KWADRATY )
+Q ( 1/1 TEST,SZESCIAN,KWADRATY )
 Q : TEST ( -- ) 1 2 3 DUP .S  ( 1 2 3 3 ok )
 Q   DROP .S                   ( 1 2 3 ok )
 Q   SWAP .S                   ( 1 3 2 ok )
@@ -98,7 +100,7 @@ Q   CR ." KWADRATY:" CR
 Q   45001 44980 KWADRATY CR  ;S
 
 PREPARE
-Q ( 1/1 2DUP,2DROP,2SWAP,2OVER,2ROT, DUMP INDEX )
+Q ( 1/1 2DUP,2DROP,...,DUMP INDEX )
 Q : 2DUP OVER OVER ;                 : 2DROP DROP DROP ;
 Q : 2SWAP ROT >R ROT R> ;            : 2OVER >R >R 2DUP R> R> 2SWAP ;
 Q : 2ROT ( n1 n2 n3 n4 n5 n6 ... ) ( --- n3 n4 n5 n6 n1 n2 )
@@ -113,7 +115,7 @@ Q : DUMP-INDEX ' INDEX NFA ' TRIAD NFA OVER - DUMP ;
 Q ;S ( HEX DUMP-INDEX DECIMAL )
 
 PREPARE
-Q ( 1/1 PRZEDZIAL, IKSY, NWP )
+Q ( 1/1 PRZEDZIAL,IKSY,NWP )
 Q : PRZEDZIAL ( dolna-granica n gorna-granica )
 Q  OVER ( dol-gr n gor-gr n )
 Q  >    ( dol-gr n f1 )
@@ -238,7 +240,7 @@ Q CR WARSZAWA CR
 Q ;S
 
 PREPARE
-Q ( 1/1 SILNIA, SILNIA2, SILNIA3, ... )
+Q ( 1/1 SILNIA,SILNIA2,... )
 Q : TENKOD ( --- n ) CURRENT @ @ PFA CFA ; IMMEDIATE
 Q : SILNIA ( n --- ) 1 SWAP 1+ 1 DO I * LOOP ;
 Q : SILNIA2 ( n --- ) DUP 2 = IF ELSE
@@ -361,7 +363,7 @@ Q  <# # # # # 46 HOLD #S SIGN #> TYPE SPACE ;
 Q -->
 
 PREPARE
-Q ( 1/2 DBL - UD.,D-,D0=,D0<,D= )  
+Q ( 2/2 DBL - UD.,D-,D0=,D0<,D= )  
 Q : UD. <# #S #> TYPE ;
 Q : D- DMINUS D+ ;
 Q : D0= OR 0= ;               ( test na liczbę podwójną 0 )
@@ -379,7 +381,7 @@ Q ;S
 
 
 80 DUP CLEAR SCR !
-0 P ( PSY RASOWE -- PSY 1/4
+0 P ( 1/4 PSY RASOWE ) -->
 1 P bokser 165
 2 P cocker-spaniel 90
 3 P dog 163
@@ -392,10 +394,10 @@ Q ;S
 10 P ratler 32
 11 P chow-chow 172
 12 P pekińczyk 28
-13 P -->
+
 
 81 DUP CLEAR SCR !
-0 P ( CECHY PSOW -- PSY 2/4
+0 P ( 2/4 CECHY PSOW ) -->
 1 P Czy ma:
 2 P 1 wiecej niż 60 cm wzrostu?
 3 P 2 wydluzona glowe?
@@ -405,11 +407,10 @@ Q ;S
 7 P 6 stojace lub przyciete uszy?
 8 P 7 dlugie uszy?
 9 P 8 krepa lub mocna budowe?
-10 P -->
 
 
 82 DUP CLEAR SCR !
- 0 P ( PSY 3/4 )
+ 0 P ( 3/4 PSY )
  1 P : #PSY 80 ; : #CECHY 81 ; : HOME 125 EMIT ;
  2 P : CARRAY <BUILDS ALLOT DOES> + ;
  3 P 15 CARRAY CECHY : X CECHY C! ;
@@ -427,9 +428,9 @@ Q ;S
 15 P -->
 
 83 DUP CLEAR SCR !
- 0 P ( PSY 4/4 )
+ 0 P ( 4/4 PSY )
  1 P : DAJ BAJT @ 12 0 DO
- 2 P     DUP I CECHY C@ XOR 0=
+ 2 P     DUP I CECHY C@ OR 0=            ( ** XOR/OR zmienia logike szukania )
  3 P     IF I 1+ #PSY .LINE CR THEN
  4 P   LOOP DROP ;
  5 P : PSY ( -- ) HOME 12 1 DO
@@ -439,6 +440,7 @@ Q ;S
  9 P   CR DAJ DROP ;
 10 P PSY ( PSY .. 6 0 - ratler 32 )
 11 P ;S  ( .. 2 3 4 6 0 - foksterier 46 )
+( TODO: nie znajduje foksa! )
 
 PREPARE
 Q ( 1/1 WIEZE Z HANOI )
@@ -471,7 +473,7 @@ Q 5 HANOI           ;S
 ( --------------------------------------- )
 
 PREPARE
-Q ( 1/5 HETMANY - WEKTOR,LHET,POSTAW,USUN )
+Q ( 1/5 HETMANY:WEKTOR,LHET,... )
 Q 0 VARIABLE ROZWIAZANIE
 Q : WEKTOR
 Q   <BUILDS HERE OVER ERASE ALLOT
@@ -486,7 +488,7 @@ Q   0 POSTAW ; ( kasuje hetmana )
 Q -->
 
 PREPARE
-Q ( 2/5 HETMANY - WOLNE,WSZYSTKIE-WOLNE )
+Q ( 2/5 HETMANY:WOLNE,... )
 Q : WOLNE ( rząd n --- rząd f )
 Q   2DUP = >R
 Q   OVER WSPOLRZEDNA C@
@@ -500,7 +502,8 @@ Q     OVER I WOLNE AND
 Q   LOOP ;
 Q -->
 
-Q ( 3/5 HETMANY - BRZEG,DRUK,INIC )
+PREPARE
+Q ( 3/5 HETMANY:BRZEG,DRUK,INIC )
 Q : BRZEG ( rząd --- rząd f )
 Q  LHET OVER WSPOLRZEDNA C@ > ;
 Q : DRUK ( --- ) CR LHET 1 DO
@@ -515,7 +518,8 @@ Q : INIC ( --- )          ( inicjuje szachownice z hetmanami w rz. 0 )
 Q   LHET 1 DO I USUN LOOP 0 ROZWIAZANIE ! ;
 Q -->
 
-Q ( 4/5 HETMANY - NAPRZOD,PIERWSZA-WOLNA )
+PREPARE
+Q ( 4/5 HETMANY:NAPRZOD,... )
 Q : NAPRZOD ( rząd --- rząd f )         ( f=1, gdy hetmana w rzędzie "rząd" )
 Q                                       ( można przesunąć do następnej kolumny )
 Q   DUP DUP WSPOLRZEDNA
@@ -530,7 +534,7 @@ Q  UNTIL ;
 Q -->
 
 PREPARE
-Q ( 5/5 HETMANY - POZYCJA, HETMANY )
+Q ( 5/5 HETMANY:POZYCJA,HETMANY )
 Q : POZYCJA ( rząd --- f ) [ SMUDGE ]
 Q   LHET OVER > IF
 Q     BEGIN
@@ -546,6 +550,58 @@ Q  9 0 SWAP POSTAW INIC 1 POZYCJA 2 DROP ;
 Q ;S
 
 ( --------------------------------------- )
+
+
+
+PREPARE
+Q ( 1/1 LICZBY ZESPOLONE )
+Q : COMPLEX <BUILDS , ,  DOES> ; 
+Q : X@ DUP @ SWAP 2+ @ SWAP  ;
+Q : X! SWAP OVER ! 2+ ! ;
+Q : X+ ROT + >R + R> ;
+Q : X- ROT SWAP - >R - R> ;
+Q : X*' SWAP OVER * ROT ROT * SWAP ;
+Q : X* 2OVER 2OVER ROT * >R * R> - >R
+Q   ROT ROT * >R * R> + R> SWAP ;
+V 
+Q : TEST-COMPLEX 3 2 1 7 X* . .  ; 
+Q ;S     ( -11 23 ok )
+  
+PREPARE 
+Q ( 1/2 FUNKCJE TRYGONOMETRYCZNE [FIXED] )
+Q : TABLICA <BUILDS
+Q 0 , 174 , 348 , 522 , 696 , 870 , 1044 , 1218 , 1390 , 1564 , 1736 ,
+Q 1908 , 2078 , 2248 , 2418 , 2588 ,  2756 , 2922 , 3090 , 3254 , 3420 ,
+Q 3582 , 3746 , 3906 , 4066 , 4226 , 4382 , 4538 , 4694 , 4848 , 5000 ,
+Q 5150 , 5298 , 5446 , 5590 , 5734 , 5876 , 6018 , 6156 , 6292 , 6426 ,
+Q 6560 , 6690 , 6818 , 6946 , 7070 , 7192 , 7312 , 7430 , 7546 , 7660 ,
+Q 7770 , 7880 , 7986 , 8090 , 8190 , 8290 , 8386 , 8480 , 8570 , 8660 ,
+Q 8746 , 8828 , 8910 , 8986 , 9062 , 9134 , 9204 , 9270 , 9334 , 9396 ,
+Q 9454 , 9510 , 9562 , 9612 , 9658 , 9702 , 9742 , 9780 , 9816 , 9848 ,
+Q 9876 , 9902 , 9924 , 9944 , 9960 , 9974 , 9986 , 9992 , 9998 , 10000 ,
+Q DOES> SWAP 2 * + @ ;
+V
+Q 91 TABLICA SINTABLICA
+Q -->
+
+PREPARE
+Q ( 2/2 FUNKCJE TRYGONOMETRYCZNE [FIXED] )
+Q : S180 DUP 90 > IF 180 SWAP - THEN SINTABLICA ;
+Q : SIN 360 MOD DUP 0< IF 360 + THEN
+Q   DUP 180 > IF 180 - S180 MINUS ELSE S180 THEN ;
+Q : COS 90 + SIN ;
+Q : TAN DUP SIN SWAP COS DUP ABS 2920 >
+Q   IF 10000 SWAP */  ELSE DROP DROP ." ZA DUZE! " THEN ;
+V
+Q  0 SIN . (     0 ) 90 SIN . ( 10000 ) 
+Q 45 SIN . (  7070 ) 44 SIN . (  6946 )
+Q 44 TAN . (  9657 ) 46 SIN . (  7192 )
+Q 45 SIN . (  7070 ) 30 SIN . (  5000 )
+Q 89 SIN . (  9998 ) 0 TAN .  (     0 )
+Q 30 TAN . (  5773 ) 45 TAN . ( 10000 )
+Q 30 COS . (  8660 ) ;S
+
+
 
 
 ( NIE DZIAŁA JAKOŚ SUPER )
@@ -645,61 +701,6 @@ DIMX DIMY ARRAY UNIVERSUM
   AGAIN
   DRUK ;
 
-
-=============================================
-
-
- 
-
-12.4 liczby zespolone
-
-PREPARE
-Q ( 1/1 LICZBY ZESPOLONE )
-Q : COMPLEX <BUILDS , ,  DOES> ; 
-Q : X@ DUP @ SWAP 2+ @ SWAP  ;
-Q : X! SWAP OVER ! 2+ ! ;
-Q : X+ ROT + >R + R> ;
-Q : X- ROT SWAP - >R - R> ;
-Q : X*' SWAP OVER * ROT ROT * SWAP ;
-Q : X* 2OVER 2OVER ROT * >R * R> - >R
-Q   ROT ROT * >R * R> + R> SWAP ;
-V 
-Q : TEST-COMPLEX 3 2 1 7 X* . .  ; 
-Q ;S     ( -11 23 ok )
-  
-PREPARE 
-Q ( 1/2 FUNKCJE TRYGONOMETRYCZNE [FIXED] )
-Q : TABLICA <BUILDS
-Q 0 , 174 , 348 , 522 , 696 , 870 , 1044 , 1218 , 1390 , 1564 , 1736 ,
-Q 1908 , 2078 , 2248 , 2418 , 2588 ,  2756 , 2922 , 3090 , 3254 , 3420 ,
-Q 3582 , 3746 , 3906 , 4066 , 4226 , 4382 , 4538 , 4694 , 4848 , 5000 ,
-Q 5150 , 5298 , 5446 , 5590 , 5734 , 5876 , 6018 , 6156 , 6292 , 6426 ,
-Q 6560 , 6690 , 6818 , 6946 , 7070 , 7192 , 7312 , 7430 , 7546 , 7660 ,
-Q 7770 , 7880 , 7986 , 8090 , 8190 , 8290 , 8386 , 8480 , 8570 , 8660 ,
-Q 8746 , 8828 , 8910 , 8986 , 9062 , 9134 , 9204 , 9270 , 9334 , 9396 ,
-Q 9454 , 9510 , 9562 , 9612 , 9658 , 9702 , 9742 , 9780 , 9816 , 9848 ,
-Q 9876 , 9902 , 9924 , 9944 , 9960 , 9974 , 9986 , 9992 , 9998 , 10000 ,
-Q DOES> SWAP 2 * + @ ;
-V
-Q 91 TABLICA SINTABLICA
-Q -->
-
-PREPARE
-Q ( 2/2 FUNKCJE TRYGONOMETRYCZNE [FIXED] )
-Q : S180 DUP 90 > IF 180 SWAP - THEN SINTABLICA ;
-Q : SIN 360 MOD DUP 0< IF 360 + THEN
-Q   DUP 180 > IF 180 - S180 MINUS ELSE S180 THEN ;
-Q : COS 90 + SIN ;
-Q : TAN DUP SIN SWAP COS DUP ABS 2920 >
-Q   IF 10000 SWAP */  ELSE DROP DROP ." ZA DUZE! " THEN ;
-V
-Q  0 SIN . (     0 ) 90 SIN . ( 10000 ) 
-Q 45 SIN . (  7070 ) 44 SIN . (  6946 )
-Q 44 TAN . (  9657 ) 46 SIN . (  7192 )
-Q 45 SIN . (  7070 ) 30 SIN . (  5000 )
-Q 89 SIN . (  9998 ) 0 TAN .  (     0 )
-Q 30 TAN . (  5773 ) 45 TAN . ( 10000 )
-Q 30 COS . (  8660 ) ;S
 
 
 

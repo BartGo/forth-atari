@@ -6,6 +6,39 @@
 (    replace D1: with an empty image, size should be SD/90KB )
 (                                                version 0.2 )
 
+
+( TRACE: https://www.forth.org/fd/FD-V03N2.pdf p. 58 )
+
+( jeśli zrobię RP@ to poprzez UNRAVEL i ?ENOUGH można robić lepszą kontrolę parametrów )
+( https://www.forth.org/fd/FD-V06N2.pdf )
+
+( przyda się defer oraz IS ale nie wiem skąd )
+
+
+
+PREPARE
+Q ( 1/1 VECTORED EXECUTION EXAMPLE )
+Q (  adapted from: FD V/4/P17  )
+Q 0 VARIABLE 'WHO
+Q : WHO 'WHO @ CFA EXECUTE ;
+Q : WELCOME ( -- )
+Q  CR ." HELLO, DEAR " WHO
+Q     ." !" CR ;
+Q : WHO! 'WHO ! ; ( cfa -- )
+Q : DEFAULT ; ' DEFAULT WHO!
+Q : BARTOSZ ." BARTOSZ" ;
+Q : STEFAN  ." STEFAN"  ;
+Q WELCOME
+Q ' BARTOSZ WHO!
+Q WELCOME
+Q ' STEFAN  WHO!
+Q WELCOME ;S
+
+
+
+
+
+
 ( *** LOADING HELPER *** ) 
 
 : TASK ;
@@ -32,7 +65,39 @@ DECIMAL EDITOR DEFINITIONS
 
 EDITOR
 
-( TODO: DODAC SEARCH! )
+
+
+17 CLEAR 17 SCR !
+00 P ( 1/1 SEARCH - req. full EDITOR )
+01 P DECIMAL 00 VARIABLE SRCHCNT
+02 P : BUMP ( ln nr and paging )
+03 P   1 SRCHCNT +! SRCHCNT @ 56 
+04 P     > IF 0 SRCHCNT ! CR 
+05 P   THEN ;
+06 P : SEARCH ( FROM TO -- STRING )
+07 P   CR 01 TEXT 0 SRCHCNT !
+08 P   1+ SWAP DO FORTH I SCR !
+09 P     EDITOR TOP BEGIN
+10 P       1LINE IF 0 M SCR ? BUMP 
+11 P       THEN 1023 R# @ < 
+12 P     UNTIL LOOP ; 
+13 P CR ." SEARCH is loaded." CR
+14 P ." Usage: 21 44 SEARCH KEYWORD" 
+15 P ;S ( FD Vol03 Nr1 /WFR ) 
+
+13 CLEAR 13 SCR !
+0 P ( 1/1 FIG-EDITOR, minimal subset  )
+1 P ( As proposed in: FD III/2 p. 40  )
+3 P ( First, set edit screen: m SCR ! )
+2 P ( To put ccc to line n: n P ccc   )
+4 P : TEXT HERE C/L 1+ BLANKS WORD HERE
+5 P   PAD C/L 1+ CMOVE ; HEX
+6 P : LINE DUP FFF0 AND 17 ?ERROR
+7 P   SCR @ (LINE) DROP ; DECIMAL
+8 P : -MOVE LINE C/L CMOVE UPDATE ;
+9 P : P 1 TEXT PAD 1+ SWAP -MOVE ; ;S
+
+
 
 PREPARE
 Q (     ** Poznajemy Forth ** ) ;S
@@ -347,6 +412,9 @@ Q ;S
 
 ( PONIŻSZE NAM NIE ZADZIAŁA JEŚLI NIE MAMY D*, JAK W "COMPLETE FORTH" )
 
+( https://www.forth.org/fd/FD-V03N2.pdf ma też inną wersję, można sprawdzić: )
+( : D* DUP ROT * ROT ROT U* ROT + ; )
+
 PREPARE
 Q ( 1/2 DBL - D*, FIX, F. )  
 Q 0 VARIABLE A_  0 VARIABLE B_   0 VARIABLE C_  0 VARIABLE D_
@@ -456,8 +524,8 @@ Q : WIEZE [ SMUDGE ] DUP IF
 Q     TAM WIEZE DRUKUJ Z.POWROTEM WIEZE 
 Q   THEN DROP DROP DROP [ SMUDGE ] ;   
 Q : HANOI 1 3 ROT CR WIEZE ; ( n -- )
-V
 Q 5 HANOI           ;S
+Q ( Ciekawostka: FD II/2 p. 32 )
 
 
 

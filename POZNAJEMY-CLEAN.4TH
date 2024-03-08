@@ -49,7 +49,7 @@ Q ( 12.0    --> screen=21 )
 Q ( Aneksy  --> screen=21 ) 
 
 PREPARE
-Q ( Poznajemy FORTH 1-2       )
+Q ( 1/1 TEST, KOT, NAPIS, ... )
 Q : TEST 30000 0 DO LOOP BEEP ; 
 Q : ZMIENNA VARIABLE ; : TU HERE ;
 Q : KASUJ DROP ; : LICZBA NUMBER ;
@@ -66,7 +66,7 @@ Q    C/L .   ( 64 ) ;
 Q ;S
 
 PREPARE
-Q ( SP!, .S )
+Q ( 1/1 SP!, .S )
 Q SP! : S0@ ( --- n )
 Q   [ SP@ ] LITERAL ; 
 Q : .S ( --- )
@@ -81,14 +81,14 @@ Q 1 2 3 SWAP DUP .S
 Q ;S
 
 PREPARE
-Q : TEST ( -- )
-Q   1 2 3 DUP .S ( 1 2 3 3 ok )
-Q   DROP .S ( 1 2 3 ok )
-Q   SWAP .S ( 1 3 2 ok )
-Q   ROT .S ( 3 2 1 ok )
-Q   OVER .S ( 3 2 1 2 ok ) SP! ;
-Q : SZESCIAN DUP OVER * * . ;
-Q : KWADRAT DUP * . ;
+Q ( 1/1 TEST, SZESCIAN, KWADRATY )
+Q : TEST ( -- ) 1 2 3 DUP .S  ( 1 2 3 3 ok )
+Q   DROP .S                   ( 1 2 3 ok )
+Q   SWAP .S                   ( 1 3 2 ok )
+Q   ROT .S                    ( 3 2 1 ok )
+Q   OVER .S                   ( 3 2 1 2 ok )
+Q  SP! ;  : KWADRAT DUP * . ;
+Q : SZESCIAN DUP OVER * * . ; 
 Q : KWADRATY CR DO
 Q     I DUP U* 15 D.R CR LOOP ;
 Q   CR ." TEST:" CR TEST 
@@ -176,7 +176,7 @@ Q : TABLICZKA2 ;
 Q TABLICZKA2 ;S
 
 PREPARE
-Q ( ERATOS 1/2: WSTAW, USUN )
+Q ( 1/2 ERATOS - WSTAW, USUN )
 Q 0 VARIABLE ERATOS 254 ALLOT
 Q : WSTAW ( adr --- ) 256 1 DO 
 Q    I OVER C! 1+ LOOP DROP ;
@@ -186,7 +186,7 @@ Q     DUP +LOOP DROP ;
 Q -->
 
 PREPARE
-Q ( ERATOS 2/2: PIERWSZE )
+Q ( 2/2 ERATOS - PIERWSZE )
 Q : PIERWSZE ( --- )
 Q  ERATOS WSTAW CR ERATOS ( adr )
 Q  256 2     ( adr 256 2 )
@@ -203,7 +203,7 @@ Q PIERWSZE ;S
 
 
 PREPARE
-Q ( 1/1 QUERY, NAZWISKO?, DRUKUJ, INPUT )
+Q ( 1/1 NAZWISKO?, DRUKUJ, INPUT )
 Q : QUERY TIB @ 80 EXPECT 0 IN ! ; 
 Q : NAZWISKO? CR ." PODAJ SWOJE NAZWISKO: " CR QUERY ; 
 V
@@ -238,7 +238,7 @@ Q CR WARSZAWA CR
 Q ;S
 
 PREPARE
-Q ( 1/1 TENKOD, SILNIA, SILNIA2, SILNIA3, FACTORIAL [JB] )
+Q ( 1/1 SILNIA, SILNIA2, SILNIA3, ... )
 Q : TENKOD ( --- n ) CURRENT @ @ PFA CFA ; IMMEDIATE
 Q : SILNIA ( n --- ) 1 SWAP 1+ 1 DO I * LOOP ;
 Q : SILNIA2 ( n --- ) DUP 2 = IF ELSE
@@ -271,7 +271,8 @@ Q ;S
 ( TODO: LAYOUT )
 
 PREPARE
-Q ( 1/1 MATDEF - valFORTH ) : 0> 0 MAX ; 
+Q ( 1/1 MATDEF - valFORTH ) 
+Q : 0> 0 MAX ; 
 Q : MATDEF ( dim1 dim2 --- )    ( dim1 dim2 MATDEF Array-name  )
 Q                               ( indl ind2 Array-name --- adr )
 Q  <BUILDS OVER OVER SWAP , , * 2 * ALLOT
@@ -345,7 +346,7 @@ Q ;S
 ( PONIŻSZE NAM NIE ZADZIAŁA JEŚLI NIE MAMY D*, JAK W "COMPLETE FORTH" )
 
 PREPARE
-Q ( 1/2 DOUBLE - D*, FIX, F. )  
+Q ( 1/2 DBL - D*, FIX, F. )  
 Q 0 VARIABLE A_  0 VARIABLE B_   0 VARIABLE C_  0 VARIABLE D_
 Q : D* A_ ! B_ ! C_ ! D_ !       ( "COMPLETE FORTH" )
 Q   D_ @ B_ A_ U* D_ @ A_ @ U* DROP + C_ @ B_ @ U* DROP + ; 
@@ -407,37 +408,37 @@ Q ;S
 10 P -->
 
 
-PREPARE
-Q ( PSY 3/4 )
-Q : #PSY 80 ; : #CECHY 81 ; : HOME 125 EMIT ;
-Q : CARRAY <BUILDS ALLOT DOES> + ;
-Q 15 CARRAY CECHY : X CECHY C! ;
-Q 165 0 X 98 1 X 163 2 X 35 3 X
-Q  221 4 X 171 5 X 46 6 X 27 7 X
-Q  194 8 X 32 9 X 172 10 X 28 11 X
-Q 0 VARIABLE BAJT
-Q : BITY 1 SWAP 0 DO 2 * LOOP 
-Q   2 / BAJT @ OR BAJT ! ;
-Q : WLASNOSCI 0 BAJT ! BEGIN
-Q     QUERY BL WORD HERE NUMBER
-Q     DROP DUP MINUS 0<
-Q   WHILE 1 SWAP BITY CR DROP
-Q   REPEAT ; 
-Q -->
+82 DUP CLEAR SCR !
+ 0 P ( PSY 3/4 )
+ 1 P : #PSY 80 ; : #CECHY 81 ; : HOME 125 EMIT ;
+ 2 P : CARRAY <BUILDS ALLOT DOES> + ;
+ 3 P 15 CARRAY CECHY : X CECHY C! ;
+ 4 P 165 0 X 98 1 X 163 2 X 35 3 X
+ 5 P  221 4 X 171 5 X 46 6 X 27 7 X
+ 6 P  194 8 X 32 9 X 172 10 X 28 11 X
+ 7 P 0 VARIABLE BAJT
+ 8 P : BITY 1 SWAP 0 DO 2 * LOOP 
+ 9 P   2 / BAJT @ OR BAJT ! ;
+10 P : WLASNOSCI 0 BAJT ! BEGIN
+11 P     QUERY BL WORD HERE NUMBER
+12 P     DROP DUP MINUS 0<
+13 P   WHILE 1 SWAP BITY CR DROP
+14 P   REPEAT ; 
+15 P -->
 
-PREPARE
-Q ( PSY 4/4 )
-Q : DAJ BAJT @ 12 0 DO
-Q     DUP I CECHY C@ XOR 0=
-Q     IF I 1+ #PSY .LINE CR THEN
-Q   LOOP DROP ;
-Q : PSY ( -- ) HOME 12 1 DO
-Q     I #CECHY .LINE CR
-Q   LOOP CR ." Napisz liczby:" CR
-Q   WLASNOSCI CR CR CR ." To moze byc:"
-Q   CR DAJ DROP ;
-Q PSY ( PSY .. 6 0 - ratler 32 )
-Q ;S  ( .. 2 3 4 6 0 - foksterier 46 )
+83 DUP CLEAR SCR !
+ 0 P ( PSY 4/4 )
+ 1 P : DAJ BAJT @ 12 0 DO
+ 2 P     DUP I CECHY C@ XOR 0=
+ 3 P     IF I 1+ #PSY .LINE CR THEN
+ 4 P   LOOP DROP ;
+ 5 P : PSY ( -- ) HOME 12 1 DO
+ 6 P     I #CECHY .LINE CR
+ 7 P   LOOP CR ." Napisz liczby:" CR
+ 8 P   WLASNOSCI CR CR CR ." To moze byc:"
+ 9 P   CR DAJ DROP ;
+10 P PSY ( PSY .. 6 0 - ratler 32 )
+11 P ;S  ( .. 2 3 4 6 0 - foksterier 46 )
 
 PREPARE
 Q ( 1/1 WIEZE Z HANOI )

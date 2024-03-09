@@ -516,7 +516,7 @@ Q                                       ( mozna przesunac do nastepnej kolumny )
 Q   DUP DUP WSPOLRZEDNA
 Q   C@ 1+ POSTAW BRZEG
 Q   IF 1 ELSE DUP USUN 0 THEN ;
-Q : PIERWSZA-WOLNA ( rząd --- rząd f )  ( f=1,gdy hetman moze )
+Q : PIERWSZA-WOLNA ( rzad --- rzad f )  ( f=1,gdy hetman moze )
 Q                                       ( przejsc do nastepnej kolumny w rzedzie )
 Q  BEGIN
 Q    NAPRZOD
@@ -641,8 +641,8 @@ Q	      J 2+ DIMX MIN J 1 - 0 MAX DO
 Q         I J UNIVERSUM C@ 1 AND + ( 1+ *** chyba nie )
 Q       LOOP
 Q     LOOP
-Q     I J UNIVERSUM C@ 1 AND       ( liczba sąsiadów )
-Q     SWAP OVER - WERYFIKACJA      ( koduje przyszłość )
+Q     I J UNIVERSUM C@ 1 AND       ( liczba sasiadow )
+Q     SWAP OVER - WERYFIKACJA      ( koduje przyszlosc )
 Q     I J UNIVERSUM C!             ( 1+ ** chyba nie )
 Q     LOOP LOOP ; -->
 
@@ -660,7 +660,7 @@ Q     I J UNIVERSUM DUP C@ DUP
 Q     3 > IF DROP 0 ELSE
 Q       DUP 1 > IF DROP 1 THEN
 Q 	  THEN SWAP C!
-Q   LOOP LOOP ; -->                 ( wprowadza nową wartość )
+Q   LOOP LOOP ; -->                 ( wprowadza nową wartosc )
 
 PREPARE
 Q ( 5/5 LIFE:GRA,GRA1   )

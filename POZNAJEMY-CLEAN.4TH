@@ -16,28 +16,6 @@
 
 
 
-PREPARE
-Q ( 1/1 VECTORED EXECUTION EXAMPLE )
-Q (  adapted from: FD V/4/P17  )
-Q 0 VARIABLE 'WHO
-Q : WHO 'WHO @ CFA EXECUTE ;
-Q : WELCOME ( -- )
-Q  CR ." HELLO, DEAR " WHO
-Q     ." !" CR ;
-Q : WHO! 'WHO ! ; ( cfa -- )
-Q : DEFAULT ; ' DEFAULT WHO!
-Q : BARTOSZ ." BARTOSZ" ;
-Q : STEFAN  ." STEFAN"  ;
-Q WELCOME
-Q ' BARTOSZ WHO!
-Q WELCOME
-Q ' STEFAN  WHO!
-Q WELCOME ;S
-
-
-
-
-
 
 ( *** LOADING HELPER *** ) 
 
@@ -763,6 +741,24 @@ Q   DRUK ;
 Q ;S
 
 
+
+PREPARE
+Q ( 1/1 VECTORED EXECUTION EXAMPLE )
+Q (  adapted from: FD V/4/P17  )
+Q 0 VARIABLE 'WHO
+Q : WHO 'WHO @ CFA EXECUTE ;
+Q : WELCOME ( -- )
+Q  CR ." HELLO, DEAR " WHO
+Q     ." !" CR ;
+Q : WHO! 'WHO ! ; ( cfa -- )
+Q : DEFAULT ; ' DEFAULT WHO!
+Q : BARTOSZ ." BARTOSZ" ;
+Q : STEFAN  ." STEFAN"  ;
+Q WELCOME
+Q ' BARTOSZ WHO!
+Q WELCOME
+Q ' STEFAN  WHO!
+Q WELCOME ;S
 
 
   

@@ -45,38 +45,6 @@ EDITOR
 
 
 
-17 CLEAR 17 SCR !
-00 P ( 1/1 SEARCH - req. full EDITOR )
-01 P DECIMAL 00 VARIABLE SRCHCNT
-02 P : BUMP ( ln nr and paging )
-03 P   1 SRCHCNT +! SRCHCNT @ 56 
-04 P     > IF 0 SRCHCNT ! CR 
-05 P   THEN ;
-06 P : SEARCH ( FROM TO -- STRING )
-07 P   CR 01 TEXT 0 SRCHCNT !
-08 P   1+ SWAP DO FORTH I SCR !
-09 P     EDITOR TOP BEGIN
-10 P       1LINE IF 0 M SCR ? BUMP 
-11 P       THEN 1023 R# @ < 
-12 P     UNTIL LOOP ; 
-13 P CR ." SEARCH is loaded." CR
-14 P ." Usage: 21 44 SEARCH KEYWORD" 
-15 P ;S ( FD Vol03 Nr1 /WFR ) 
-
-13 CLEAR 13 SCR !
-0 P ( 1/1 FIG-EDITOR, minimal subset  )
-1 P ( As proposed in: FD III/2 p. 40  )
-3 P ( First, set edit screen: m SCR ! )
-2 P ( To put ccc to line n: n P ccc   )
-4 P : TEXT HERE C/L 1+ BLANKS WORD HERE
-5 P   PAD C/L 1+ CMOVE ; HEX
-6 P : LINE DUP FFF0 AND 17 ?ERROR
-7 P   SCR @ (LINE) DROP ; DECIMAL
-8 P : -MOVE LINE C/L CMOVE UPDATE ;
-9 P : P 1 TEXT PAD 1+ SWAP -MOVE ; ;S
-
-
-
 PREPARE
 Q (     ** Poznajemy Forth ** ) ;S
 Q (  1.0    --> screen=21 )
@@ -476,7 +444,7 @@ Q ;S
 83 DUP CLEAR SCR !
  0 P ( 4/4 PSY )
  1 P : DAJ BAJT @ 12 0 DO
- 2 P     DUP I CECHY C@ OR 0=            ( ** XOR/OR zmienia logike szukania )
+ 2 P     DUP I CECHY C@ OR 0= ( XOR/OR zmienia logike szukania )
  3 P     IF I 1+ #PSY .LINE CR THEN
  4 P   LOOP DROP ;
  5 P : PSY ( -- ) HOME 12 1 DO
@@ -627,9 +595,7 @@ Q 8986 , 9062 , 9134 , 9204 , 9270 , 9334 , 9396 , 9454 , 9510 ,
 Q 9562 , 9612 , 9658 , 9702 , 9742 , 9780 , 9816 , 9848 , 9876 ,
 Q 9902 , 9924 , 9944 , 9960 , 9974 , 9986 , 9992 , 9998 , 10000 ,
 Q DOES> SWAP 2 * + @ ;
-V
-Q 91 TABLICA SINTABLICA
-Q -->
+Q 91 TABLICA SINTABLICA -->
 
 
 PREPARE
@@ -737,28 +703,10 @@ Q   BEGIN
 Q     ?TERMINAL IF ;S THEN
 Q     DRUK PRZYGOTOWANIE TWORZENIE
 Q   AGAIN
-Q   DRUK ;
-Q ;S
+Q   DRUK ; ;S
 
 
 
-PREPARE
-Q ( 1/1 VECTORED EXECUTION EXAMPLE )
-Q (  adapted from: FD V/4/P17  )
-Q 0 VARIABLE 'WHO
-Q : WHO 'WHO @ CFA EXECUTE ;
-Q : WELCOME ( -- )
-Q  CR ." HELLO, DEAR " WHO
-Q     ." !" CR ;
-Q : WHO! 'WHO ! ; ( cfa -- )
-Q : DEFAULT ; ' DEFAULT WHO!
-Q : BARTOSZ ." BARTOSZ" ;
-Q : STEFAN  ." STEFAN"  ;
-Q WELCOME
-Q ' BARTOSZ WHO!
-Q WELCOME
-Q ' STEFAN  WHO!
-Q WELCOME ;S
 
 
   
@@ -892,5 +840,55 @@ CR ." QUICKSORT: " CR POKAZ CR
 ( DZIAŁA )
 
 ************************************
+
+
+PREPARE
+Q ( 1/1 SEARCH - req. full EDITOR )
+Q DECIMAL 00 VARIABLE SRCHCNT
+Q : BUMP ( ln nr and paging )
+Q   1 SRCHCNT +! SRCHCNT @ 56 
+Q     > IF 0 SRCHCNT ! CR 
+Q   THEN ;
+Q : SEARCH ( FROM TO -- STRING )
+Q   CR 01 TEXT 0 SRCHCNT !
+Q   1+ SWAP DO FORTH I SCR !
+Q     EDITOR TOP BEGIN
+Q       1LINE IF 0 M SCR ? BUMP 
+Q       THEN 1023 R# @ < 
+Q     UNTIL LOOP ; 
+Q CR ." SEARCH is loaded." CR
+Q ." Usage: 21 44 SEARCH KEYWORD" 
+Q ;S ( FD Vol03 Nr1 /WFR ) 
+
+PREPARE
+Q ( 1/1 FIG-EDITOR, minimal subset  )
+Q ( As proposed in: FD III/2 p. 40  )
+Q ( First, set edit screen: m SCR ! )
+Q ( To put ccc to line n: n P ccc   )
+Q : TEXT HERE C/L 1+ BLANKS WORD HERE
+Q   PAD C/L 1+ CMOVE ; HEX
+Q : LINE DUP FFF0 AND 17 ?ERROR
+Q   SCR @ (LINE) DROP ; DECIMAL
+Q : -MOVE LINE C/L CMOVE UPDATE ;
+Q : P 1 TEXT PAD 1+ SWAP -MOVE ; ;S
+
+
+PREPARE
+Q ( 1/1 VECTORED EXECUTION EXAMPLE )
+Q (  adapted from: FD V/4/P17  )
+Q 0 VARIABLE 'WHO
+Q : WHO 'WHO @ CFA EXECUTE ;
+Q : WELCOME ( -- )
+Q  CR ." HELLO, DEAR " WHO
+Q     ." !" CR ;
+Q : WHO! 'WHO ! ; ( cfa -- )
+Q : DEFAULT ; ' DEFAULT WHO!
+Q : BARTOSZ ." BARTOSZ" ;
+Q : STEFAN  ." STEFAN"  ;
+Q WELCOME
+Q ' BARTOSZ WHO!
+Q WELCOME
+Q ' STEFAN  WHO!
+Q WELCOME ;S
 
 FORTH

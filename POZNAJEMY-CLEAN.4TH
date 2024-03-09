@@ -9,12 +9,13 @@
 
 ( TRACE: https://www.forth.org/fd/FD-V03N2.pdf p. 58 )
 
-( jeśli zrobię RP@ to poprzez UNRAVEL i ?ENOUGH można robić lepszą kontrolę parametrów )
+( jesli zrobie RP@ to poprzez UNRAVEL i ?ENOUGH mozna _
+( robic lepsza kontrole parametrow )
 ( https://www.forth.org/fd/FD-V06N2.pdf )
 
-( przyda się defer oraz IS ale nie wiem skąd )
+( przyda sie defer oraz IS ale nie wiem skad )
 
-
+( edytory na druga strone? przynajmniej jeden na ta! )
 
 
 ( *** LOADING HELPER *** ) 
@@ -511,12 +512,12 @@ Q -->
 PREPARE
 Q ( 4/5 HETMANY:NAPRZOD,... )
 Q : NAPRZOD ( rzad --- rzad f )         ( f=1, gdy hetmana w rzedzie "rzad" )
-Q                                       ( mozna przesunąć do nastepnej kolumny )
+Q                                       ( mozna przesunac do nastepnej kolumny )
 Q   DUP DUP WSPOLRZEDNA
 Q   C@ 1+ POSTAW BRZEG
 Q   IF 1 ELSE DUP USUN 0 THEN ;
 Q : PIERWSZA-WOLNA ( rząd --- rząd f )  ( f=1,gdy hetman moze )
-Q                                       ( przejsc do następnej kolumny w rzedzie )
+Q                                       ( przejsc do nastepnej kolumny w rzedzie )
 Q  BEGIN
 Q    NAPRZOD
 Q    IF WSZYSTKIE-WOLNE -DUP ELSE 0 1 THEN
@@ -525,7 +526,7 @@ Q -->
 
 PREPARE
 Q ( 5/5 HETMANY:POZYCJA,HETMANY )
-Q : POZYCJA ( rząd --- f ) [ SMUDGE ]
+Q : POZYCJA ( rzad --- f ) [ SMUDGE ]
 Q   LHET OVER > IF
 Q     BEGIN
 Q       PIERWSZA-WOLNA IF
@@ -594,7 +595,7 @@ Q 30 COS . (  8660 ) ;S
 
 
 
-( NIE DZIAŁA JAKOŚ SUPER )
+( NIE DZIALA JAKOS SUPER )
 
 PREPARE
 
@@ -665,8 +666,8 @@ PREPARE
 Q ( 5/5 LIFE:GRA,GRA1   )
 Q : GRA ( n --- )
 Q   0 DO
-Q     DRUK                          ( wyświetla pokolenie N )
-Q     PRZYGOTOWANIE                 ( gasi pokolenie N i zostawia dane dla następnego )
+Q     DRUK                          ( wyswietla pokolenie N )
+Q     PRZYGOTOWANIE                 ( gasi pokol. N i zostawia dane dla nast. )
 Q     TWORZENIE                     ( tworzy pokolenie N+1 )
 Q   LOOP
 Q   DRUK ;                          ( drukuje ostatnie pokolenie )
@@ -789,10 +790,6 @@ Q : QUICKSORT
 Q   OVER OVER POCZ ! KON ! QUICK ;
 Q POCZATEK 4 0 QUICKSORT CR
 Q ." QUICKSORT: " CR POKAZ CR ;S
-
-( DZIAŁA )
-
-************************************
 
 
 PREPARE

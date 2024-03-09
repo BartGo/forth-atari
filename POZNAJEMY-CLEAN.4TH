@@ -61,33 +61,21 @@ Q ( 12.0    --> screen=21 )
 Q ( Aneksy  --> screen=21 ) 
 
 PREPARE
-Q ( 1/1 KOT,NAPIS,.S )
+Q ( 1/1 KOT,NAPIS,.S,...,KWADRATY )
 Q : KOT CR ." Kot pije mleko" ; 
 Q : NAPIS KOT ."  i poluje na myszy" ;
 Q : S0 18 +ORIGIN @ ; ( APX scr#85 )
 Q : .S ( --- )
-Q   2 SPACES SP@ S0 =
-Q   0= IF
+Q   2 SPACES SP@ S0 = 0= IF
 Q     SP@ 2 - S0 2 - 
-Q     DO I @ . -2 +LOOP
-Q   THEN ;
-Q 1 2 3 SWAP DUP .S
-Q ;S
-
-PREPARE
-Q ( 1/1 TEST,SZESCIAN,KWADRATY )
-Q : TEST ( -- ) 1 2 3
-Q   DUP  .S  ( 1 2 3 3 )
+Q     DO I @ . -2 +LOOP THEN ;
+Q : TEST ( -- ) 1 2 3  DUP  .S ( 1 2 3 3 )
 Q   DROP .S  ( 1 2 3 ) SWAP .S ( 1 3 2 )
 Q   ROT  .S  ( 3 2 1 ) OVER .S ( 3 2 1 2 )
 Q  SP! ;  : KWADRAT DUP * . ;
 Q : SZESCIAN DUP OVER * * . ; 
 Q : KWADRATY CR DO
 Q     I DUP U* 15 D.R CR LOOP ;
-Q   CR ." TEST:" CR TEST 
-Q   CR ." SZESCIAN:" 5 SZESCIAN
-Q   CR ." KWADRAT:" CR 7 KWADRAT
-Q   CR ." KWADRATY:" CR
 Q   45001 44980 KWADRATY CR  ;S
 
 PREPARE
@@ -108,17 +96,16 @@ Q ;S ( HEX DUMP-INDEX DECIMAL )
 PREPARE
 Q ( 1/1 PRZEDZIAL,IKSY,NWP )
 Q : PRZEDZIAL ( dolna-granica n gorna-granica )
-Q  OVER ( dol-gr n gor-gr n )
-Q  >    ( dol-gr n f1 )
-Q  >R   ( dol-gr n )
-Q  <    ( f2 )
-Q  R>   ( f2 f1 )
-Q  ;    ( f )  
+Q    OVER ( dol-gr n gor-gr n )
+Q    >    ( dol-gr n f1 )
+Q    >R   ( dol-gr n )
+Q    <    ( f2 )
+Q    R>   ( f2 f1 ) ; ( f )  
 Q 20 370 400 PRZEDZIAL .
 Q : IKSY BEGIN ." X" 1 - DUP 0= UNTIL ; 
 Q 4 IKSY
 Q : NWP BEGIN SWAP OVER MOD -DUP 0= UNTIL ;
-Q 128 1024 NWP .                  ( wynik: 128 a nie 126 )
+Q 128 1024 NWP . ( wynik: 128 a nie 126 jak w ksiazce )
 Q 324 556 NWP .  1933 821 NWP .   ( wyniki: 4, 1 )
 Q ;S
 
@@ -129,8 +116,8 @@ Q   0 1 ROT 0 CR DO
 Q     DUP 10 .R CR SWAP OVER + LOOP ;  
 Q : DFIBO ( n --- ) ( max n: 46 )
 Q   0. ROT 1. ROT 0 CR DO       
-Q    2DUP 14 D.R CR
-Q    2SWAP 2OVER D+ LOOP ;   
+Q     2DUP 14 D.R CR
+Q     2SWAP 2OVER D+ LOOP ;   
 Q : KWADRAT2 DUP * ;
 Q : KWADRAT3
 Q   DO I KWADRAT2 DUP 32760
@@ -195,33 +182,20 @@ V
 Q PIERWSZE ;S
 
 PREPARE
-Q ( 1/1 NAZWISKO?, DRUKUJ, INPUT )
+Q ( 1/1 NAZWISKO?, DRUKUJ, INPUT, DATY )
 Q : QUERY TIB @ 80 EXPECT 0 IN ! ; 
 Q : NAZWISKO? CR ." PODAJ SWOJE NAZWISKO: "
 Q   CR QUERY ; 
-Q NAZWISKO?
 Q : NAZWISKO? CR ." PODAJ SWOJE NAZWISKO: "
 Q   CR QUERY 155 WORD HERE ; 
 Q : DRUKUJ NAZWISKO? CR COUNT TYPE ;
-Q DRUKUJ
-Q : INPUT CR QUERY BL WORD HERE NUMBER DROP ;  
-Q INPUT . ;S
-
-PREPARE
-Q ( 1/1 DATY )
-Q : DATY ( n n n --- )
-Q   <BUILDS , , , DOES>
+Q : INPUT CR QUERY BL WORD HERE NUMBER DROP ; ;S 
+Q : DATY ( n n n --- ) <BUILDS , , , DOES>
 Q   DUP 2+ DUP 2+ ? ? ? CR ;
-V
-Q 12  9 1683 DATY WIEDEN
-Q  4  4 1794 DATY RACLAWICE
-Q 18  6 1815 DATY WATERLOO
-Q  1  9 1870 DATY SEDAN
-Q 12 10 1943 DATY LENINO
-Q 15 08 1920 DATY WARSZAWA
-Q CR WATERLOO CR
-Q CR LENINO   CR
-Q CR WARSZAWA CR ;S
+Q 12  9 1683 DATY WIEDEN    4  4 1794 DATY RACLAWICE
+Q 18  6 1815 DATY WATERLOO  1  9 1870 DATY SEDAN
+Q 12 10 1943 DATY LENINO   15 08 1920 DATY WARSZAWA
+Q ;S 
 
 PREPARE
 Q ( 1/1 SILNIA,SILNIA2,... )
@@ -285,33 +259,19 @@ Q    1 2 MATRIX2 C@ . CR
 Q CR ;S
 
 PREPARE
-Q ( 1/2 ARRAY2, ARRAY3 [JB] )
+Q ( 1/1 ARRAY2, ARRAY3 [JB] )
 Q : ARRAY2 ( n n --- ) ( n n ARRAY2 matrix )
-Q   <BUILDS OVER , * ALLOT DOES>
-Q   DUP @ ROT * + + 2+ ;
+Q   <BUILDS OVER , * ALLOT DOES> DUP @ ROT * + + 2+ ;
 Q : ARRAY3 ( n n --- ) ( n n ARRAY2 matrix )
-Q   <BUILDS OVER C, DUP C, * ALLOT
-Q   DOES> 1+ ROT OVER C@ * + + 1+ ;
-Q 2 3 ARRAY2 MATRIX  
-Q 2 3 ARRAY3 BUF     
-Q -->
-
-PREPARE
-Q ( 2/2 ARRAY2, ARRAY3 [JB] )
+Q   <BUILDS OVER C, DUP C, * ALLOT DOES> 1+ ROT OVER C@ * + + 1+ ;
+Q 2 3 ARRAY2 MATRIX   2 3 ARRAY3 BUF     
 Q 11 0 0 MATRIX C!  22 0 1 MATRIX C!
 Q 33 1 0 MATRIX C!  44 1 1 MATRIX C!
 Q 55 0 2 MATRIX C!  66 1 2 MATRIX C!
-Q CR
-Q    0 0 MATRIX C@ . CR
-Q    0 1 MATRIX C@ . CR
-Q    1 0 MATRIX C@ . CR
-Q    1 1 MATRIX C@ . CR
-Q    0 2 MATRIX C@ . CR
-Q    1 2 MATRIX C@ . CR
-Q CR
-Q 13 2 1 BUF C!
-Q    2 1 BUF C@ .    CR
-Q ;S
+Q    0 0 MATRIX C@ . CR  0 1 MATRIX C@ . CR
+Q    1 0 MATRIX C@ . CR  1 1 MATRIX C@ . CR
+Q    0 2 MATRIX C@ . CR  1 2 MATRIX C@ . CR CR
+Q 13 2 1 BUF C!          2 1 BUF C@ .    CR ;S
 
 PREPARE
 Q ( 1/1 SETNE, SEXTAL, XX, SEK )
@@ -371,7 +331,7 @@ Q     TAM WIEZE DRUKUJ Z.POWROTEM WIEZE
 Q   THEN DROP DROP DROP [ SMUDGE ] ;   
 Q : HANOI 1 3 ROT CR WIEZE ; ( n -- )
 Q 5 HANOI           ;S
-Q ( Ciekawostka: FD II/2 p. 32 )
+Q ( Patrz tez: FD II/2 p. 32 )
 
 PREPARE
 Q ( 1/5 HETMANY:WEKTOR,LHET,... )
@@ -422,12 +382,12 @@ Q -->
 PREPARE
 Q ( 4/5 HETMANY:NAPRZOD,... )
 Q : NAPRZOD ( rzad --- rzad f ) ( f=1, gdy hetmana w rz. "rzad" )
-Q           ( .. mozna przesunac do nastepnej kolumny )
+Q                     ( .. mozna przesunac do nastepnej kolumny )
 Q   DUP DUP WSPOLRZEDNA
 Q   C@ 1+ POSTAW BRZEG
 Q   IF 1 ELSE DUP USUN 0 THEN ;
-Q : PIERWSZA-WOLNA ( rzad --- rzad f )  ( f=1,gdy hetman moze )
-Q           ( .. przejsc do nastepnej kolumny w rzedzie )
+Q : PIERWSZA-WOLNA ( rzad --- rzad f )    ( f=1,gdy hetman moze )
+Q                   ( .. przejsc do nastepnej kolumny w rzedzie )
 Q  BEGIN
 Q    NAPRZOD
 Q    IF WSZYSTKIE-WOLNE -DUP ELSE 0 1 THEN
@@ -580,7 +540,7 @@ Q   AGAIN
 Q   DRUK ; ;S
 
 PREPARE
-Q ( 1/N SORT:ARRAY,WSTAW,POKAZ )
+Q ( 1/7 SORT:ARRAY,WSTAW,POKAZ )
 Q : ARRAY <BUILDS 2 * ALLOT
 Q   DOES> SWAP 2 * + ;
 Q 5 ARRAY LICZBY
@@ -591,7 +551,7 @@ Q : POKAZ 5 0 DO I LICZBY ? LOOP ;
 Q -->
 
 PREPARE
-Q ( 2/N SORT:POROWNAJ )
+Q ( 2/7 SORT:POROWNAJ )
 Q : POROWNAJ  ( n1 n2 --- )
 Q   DUP       ( n1 n2 n2 )
 Q   LICZBY @  ( n1 n2 L2 )
@@ -608,7 +568,7 @@ Q   LICZBY !  ( --- )
 Q   ELSE 2DROP 2DROP THEN ; -->
 
 PREPARE
-Q ( 3/N SORT:PRZEJRZYJ,EXSORT )
+Q ( 3/7 SORT:PRZEJRZYJ,EXSORT )
 Q : PRZEJRZYJ DUP 1+ NAST !
 Q   BEGIN OVER 1+ NAST @ >
 Q   WHILE DUP NAST @ POROWNAJ
@@ -622,7 +582,7 @@ Q WSTAW 4 0 EXSORT
 Q CR ." EXSORT: " CR POKAZ CR -->
 
 PREPARE
-Q ( 4/N SORT:PORBUB,..,BUBSORT )
+Q ( 4/7 SORT:PORBUB,..,BUBSORT )
 Q 0 VARIABLE KONIEC?
 Q : PORBUB ( n1 n2 -- )
 Q   DUP LICZBY @ ROT DUP LICZBY @
@@ -639,7 +599,7 @@ Q WSTAW 4 0 BUBSORT
 Q CR ." BUBSORT: " CR POKAZ CR -->
 
 PREPARE
-Q ( 5/N SORT:WSTAW,LEWY,PRAWY )
+Q ( 5/7 SORT:WSTAW,LEWY,PRAWY )
 Q 0 VARIABLE POCZ  0 VARIABLE KON
 Q 0 VARIABLE LW    0 VARIABLE PW
 Q : POCZATEK WSTAW ;
@@ -656,7 +616,7 @@ Q : CZYTAJ @ LICZBY @ ;
 Q : WSTAW @ LICZBY ! ; -->
 
 PREPARE
-Q ( 6/N SORT:ZAM,SORTUJ,KOMPARAND )
+Q ( 6/7 SORT:ZAM,SORTUJ,KOMPARAND )
 Q : ZAM
 Q   LW CZYTAJ PW CZYTAJ
 Q   LW WSTAW PW WSTAW
@@ -672,7 +632,7 @@ Q   LICZBY @ ;
 Q -->  
   
 PREPARE
-Q ( 7/N SORT:QUICK,QUICKSORT )
+Q ( 7/7 SORT:QUICK,QUICKSORT )
 Q : QUICK [ SMUDGE ]
 Q    KOMPARAND SORTUJ 
 Q    POCZ @ PW @ <
@@ -687,15 +647,12 @@ Q   OVER OVER POCZ ! KON ! QUICK ;
 Q POCZATEK 4 0 QUICKSORT CR
 Q ." QUICKSORT: " CR POKAZ CR ;S
 
-
-
 PREPARE
 Q ( 1/3 FIG-EDITOR, mini subset  )
 Q ( As proposed in: FD III/2 p. 40  )
 Q ( First, set edit screen: m SCR ! )
 Q ( To put ccc to line n: n P ccc   )
-Q VOCABULARY EDITOR
-Q EDITOR DEFINITIONS
+Q VOCABULARY EDITOR  EDITOR DEFINITIONS
 Q : TEXT HERE C/L 1+ BLANKS WORD HERE
 Q   PAD C/L 1+ CMOVE ; HEX
 Q : LINE DUP FFF0 AND 17 ?ERROR
@@ -732,7 +689,6 @@ Q       1LINE IF 0 M SCR ? BUMP
 Q       THEN 1023 R# @ < UNTIL LOOP ; 
 Q CR ." SEARCH (uppercase only) loaded." CR
 Q ." Usage: 21 44 SEARCH KEYWORD" CR CR FORTH ;S
-
 
 85 DUP CLEAR SCR !
 0 P ( 1/4 PSY RASOWE ) -->
@@ -806,5 +762,6 @@ Q ." Usage: 21 44 SEARCH KEYWORD" CR CR FORTH ;S
 8 P ;S 
 9 P       ( T H E   E N D )
 
+FLUSH
 
 FORTH

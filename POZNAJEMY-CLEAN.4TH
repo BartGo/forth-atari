@@ -660,17 +660,17 @@ Q     I J UNIVERSUM DUP C@ DUP
 Q     3 > IF DROP 0 ELSE
 Q       DUP 1 > IF DROP 1 THEN
 Q 	  THEN SWAP C!
-Q   LOOP LOOP ; -->                 ( wprowadza nową wartosc )
+Q   LOOP LOOP ; -->   
 
 PREPARE
 Q ( 5/5 LIFE:GRA,GRA1   )
 Q : GRA ( n --- )
 Q   0 DO
-Q     DRUK                          ( wyswietla pokolenie N )
-Q     PRZYGOTOWANIE                 ( gasi pokol. N i zostawia dane dla nast. )
-Q     TWORZENIE                     ( tworzy pokolenie N+1 )
+Q     DRUK   ( wysw. pokol. N )
+Q     PRZYGOTOWANIE ( gasi pokol. N i zostawia dane dla nast. )
+Q     TWORZENIE  ( tworzy pokol. N+1 )
 Q   LOOP
-Q   DRUK ;                          ( drukuje ostatnie pokolenie )
+Q   DRUK ; ( druk. ostatnie pokol. )
 Q : GRA1 ( -- )
 Q   BEGIN
 Q     ?TERMINAL IF ;S THEN
@@ -782,8 +782,7 @@ Q    POCZ @ PW @ <
 Q    IF
 Q      PW @ DUP KON ! POCZ @ QUICK
 Q    THEN
-Q    LW @ KON @ <
-Q    IF
+Q    LW @ KON @ < IF
 Q      KON @ LW @ DUP POCZ ! QUICK
 Q    THEN [ SMUDGE ] ;
 Q : QUICKSORT
@@ -791,9 +790,32 @@ Q   OVER OVER POCZ ! KON ! QUICK ;
 Q POCZATEK 4 0 QUICKSORT CR
 Q ." QUICKSORT: " CR POKAZ CR ;S
 
+PREPARE
+Q ( 1/3 FIG-EDITOR, minimal subset  )
+Q ( As proposed in: FD III/2 p. 40  )
+Q ( First, set edit screen: m SCR ! )
+Q ( To put ccc to line n: n P ccc   )
+Q : TEXT HERE C/L 1+ BLANKS WORD HERE
+Q   PAD C/L 1+ CMOVE ; HEX
+Q : LINE DUP FFF0 AND 17 ?ERROR
+Q   SCR @ (LINE) DROP ; DECIMAL
+Q : -MOVE LINE C/L CMOVE UPDATE ;
+Q : P 1 TEXT PAD 1+ SWAP -MOVE ; -->
 
 PREPARE
-Q ( 1/1 SEARCH - req. full EDITOR )
+Q ( 2/3 FIG-EDITOR, minimal subset  )
+Q ( Plus additional words for SEARCH)
+Q : TOP 0 R# ! ; 
+Q : #LOCATE R# @ C/L /MOD ;
+Q : #LEAD #LOCATE LINE SWAP ;
+Q : #LAG  #LEAD DUP >R + C/L R> - ;
+Q : M R# +! CR SPACE #LEAD TYPE
+Q   17 EMIT #LAG TYPE #LOCATE . DROP ;
+Q : 1LINE #LAG PAD COUNT MATCH R# +! ;
+Q -->
+
+PREPARE
+Q ( 3/3 SEARCH USING mini FIG-EDITOR )
 Q DECIMAL 00 VARIABLE SRCHCNT
 Q : BUMP ( ln nr and paging )
 Q   1 SRCHCNT +! SRCHCNT @ 56 
@@ -809,17 +831,6 @@ Q     UNTIL LOOP ;
 Q CR ." SEARCH is loaded." CR
 Q ." Usage: 21 44 SEARCH KEYWORD" ;S
 
-PREPARE
-Q ( 1/1 FIG-EDITOR, minimal subset  )
-Q ( As proposed in: FD III/2 p. 40  )
-Q ( First, set edit screen: m SCR ! )
-Q ( To put ccc to line n: n P ccc   )
-Q : TEXT HERE C/L 1+ BLANKS WORD HERE
-Q   PAD C/L 1+ CMOVE ; HEX
-Q : LINE DUP FFF0 AND 17 ?ERROR
-Q   SCR @ (LINE) DROP ; DECIMAL
-Q : -MOVE LINE C/L CMOVE UPDATE ;
-Q : P 1 TEXT PAD 1+ SWAP -MOVE ; ;S
 
 
 PREPARE

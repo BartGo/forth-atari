@@ -648,7 +648,7 @@ Q POCZATEK 4 0 QUICKSORT CR
 Q ." QUICKSORT: " CR POKAZ CR ;S
 
 PREPARE
-Q ( 1/3 FIG-EDITOR, mini subset  )
+Q ( 1/2 FIG-EDITOR, mini subset  )
 Q ( As proposed in: FD III/2 p. 40  )
 Q ( First, set edit screen: m SCR ! )
 Q ( To put ccc to line n: n P ccc   )
@@ -661,7 +661,7 @@ Q : -MOVE LINE C/L CMOVE UPDATE ;
 Q : P 1 TEXT PAD 1+ SWAP -MOVE ; -->
 
 PREPARE
-Q ( 2/3 FIG-EDITOR, mini subset  )
+Q ( 2/2 FIG-EDITOR, mini subset  )
 Q ( Plus additional words for SEARCH)
 Q : E LINE C/L BLANKS UPDATE ;
 Q : TOP 0 R# ! ; 
@@ -670,12 +670,14 @@ Q : #LEAD #LOCATE LINE SWAP ;
 Q : #LAG  #LEAD DUP >R + C/L R> - ;
 Q : M R# +! CR SPACE #LEAD TYPE
 Q   17 EMIT #LAG TYPE #LOCATE . DROP ;
-Q : 1LINE #LAG PAD COUNT MATCH R# +! ; CR
+Q : 1LINE #LAG PAD COUNT MATCH R# +! ;
+Q : CLEAR  SCR ! 10 0 DO FORTH I
+Q   EDITOR E LOOP ; CR
 Q ." EDITOR subset (incl. P, E) loaded."
-Q CR -->
+Q CR ;S
 
 PREPARE
-Q ( 3/3 SEARCH using above )
+Q ( 1/1 SEARCH using EDITOR subset )
 Q DECIMAL 00 VARIABLE SRCHCNT
 Q : BUMP ( ln nr and paging )
 Q   1 SRCHCNT +! SRCHCNT @ 56 

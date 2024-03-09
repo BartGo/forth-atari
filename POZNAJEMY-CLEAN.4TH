@@ -688,7 +688,7 @@ Q POCZATEK 4 0 QUICKSORT CR
 Q ." QUICKSORT: " CR POKAZ CR ;S
 
 PREPARE
-Q ( 1/3 FIG-EDITOR, minimal subset  )
+Q ( 1/3 FIG-EDITOR, mini subset  )
 Q ( As proposed in: FD III/2 p. 40  )
 Q ( First, set edit screen: m SCR ! )
 Q ( To put ccc to line n: n P ccc   )
@@ -702,7 +702,7 @@ Q : -MOVE LINE C/L CMOVE UPDATE ;
 Q : P 1 TEXT PAD 1+ SWAP -MOVE ; -->
 
 PREPARE
-Q ( 2/3 FIG-EDITOR, minimal subset  )
+Q ( 2/3 FIG-EDITOR, mini subset  )
 Q ( Plus additional words for SEARCH)
 Q : E LINE C/L BLANKS UPDATE ;
 Q : TOP 0 R# ! ; 
@@ -716,7 +716,7 @@ Q ." EDITOR subset (incl. P, E) loaded."
 Q CR -->
 
 PREPARE
-Q ( 3/3 SEARCH USING mini FIG-EDITOR )
+Q ( 3/3 SEARCH using above )
 Q DECIMAL 00 VARIABLE SRCHCNT
 Q : BUMP ( ln nr and paging )
 Q   1 SRCHCNT +! SRCHCNT @ 56 
@@ -730,24 +730,6 @@ Q       1LINE IF 0 M SCR ? BUMP
 Q       THEN 1023 R# @ < UNTIL LOOP ; 
 Q CR ." SEARCH (uppercase only) loaded." CR
 Q ." Usage: 21 44 SEARCH KEYWORD" CR CR FORTH ;S
-
-PREPARE
-Q ( 1/1 VECTORED EXECUTION EXAMPLE )
-Q (  adapted from: FD V/4/P17  )
-Q 0 VARIABLE 'WHO
-Q : WHO 'WHO @ CFA EXECUTE ;
-Q : WELCOME ( -- )
-Q  CR ." HELLO, DEAR " WHO
-Q     ." !" CR ;
-Q : WHO! 'WHO ! ; ( cfa -- )
-Q : DEFAULT ; ' DEFAULT WHO!
-Q : BARTOSZ ." BARTOSZ" ;
-Q : STEFAN  ." STEFAN"  ;
-Q WELCOME
-Q ' BARTOSZ WHO!
-Q WELCOME
-Q ' STEFAN  WHO!
-Q WELCOME ;S
 
 80 DUP CLEAR SCR !
 0 P ( 1/4 PSY RASOWE ) -->
@@ -808,5 +790,18 @@ Q WELCOME ;S
 10 P PSY ( PSY .. 6 0 - ratler 32 )
 11 P ;S  ( .. 2 3 4 6 0 - foksterier 46 )
 ( TODO: nie znajduje foksa! )
+
+89 SCR !
+0 P ( 1/1 VECTORED EXECUTION EXAMPLE )           (  adapted from: FD V/4/P17  )
+1 P 0 VARIABLE 'WHO : WHO 'WHO @ CFA EXECUTE ;
+2 P : WELCOME ( -- ) CR ." HELLO, DEAR " WHO ." !" CR ;
+3 P : WHO! 'WHO ! ; : DEFAULT ; 
+4 P : BARTOSZ ." BARTOSZ" ; : STEFAN  ." MATYLDA"  ;
+5 P ' DEFAULT WHO!   WELCOME
+6 P ' BARTOSZ WHO!   WELCOME
+7 P ' STEFAN  WHO!   WELCOME
+8 P ;S 
+9 P       ( T H E   E N D )
+
 
 FORTH

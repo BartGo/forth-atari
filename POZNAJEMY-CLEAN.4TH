@@ -795,6 +795,8 @@ Q ( 1/3 FIG-EDITOR, minimal subset  )
 Q ( As proposed in: FD III/2 p. 40  )
 Q ( First, set edit screen: m SCR ! )
 Q ( To put ccc to line n: n P ccc   )
+Q VOCABULARY EDITOR
+Q EDITOR DEFINITIONS
 Q : TEXT HERE C/L 1+ BLANKS WORD HERE
 Q   PAD C/L 1+ CMOVE ; HEX
 Q : LINE DUP FFF0 AND 17 ?ERROR
@@ -805,14 +807,16 @@ Q : P 1 TEXT PAD 1+ SWAP -MOVE ; -->
 PREPARE
 Q ( 2/3 FIG-EDITOR, minimal subset  )
 Q ( Plus additional words for SEARCH)
+Q : E LINE C/L BLANKS UPDATE ;
 Q : TOP 0 R# ! ; 
 Q : #LOCATE R# @ C/L /MOD ;
 Q : #LEAD #LOCATE LINE SWAP ;
 Q : #LAG  #LEAD DUP >R + C/L R> - ;
 Q : M R# +! CR SPACE #LEAD TYPE
 Q   17 EMIT #LAG TYPE #LOCATE . DROP ;
-Q : 1LINE #LAG PAD COUNT MATCH R# +! ;
-Q -->
+Q : 1LINE #LAG PAD COUNT MATCH R# +! ; CR
+Q ." EDITOR subset (incl. P, E) loaded."
+Q CR -->
 
 PREPARE
 Q ( 3/3 SEARCH USING mini FIG-EDITOR )
@@ -826,10 +830,9 @@ Q   CR 01 TEXT 0 SRCHCNT !
 Q   1+ SWAP DO FORTH I SCR !
 Q     EDITOR TOP BEGIN
 Q       1LINE IF 0 M SCR ? BUMP 
-Q       THEN 1023 R# @ < 
-Q     UNTIL LOOP ; 
-Q CR ." SEARCH is loaded." CR
-Q ." Usage: 21 44 SEARCH KEYWORD" ;S
+Q       THEN 1023 R# @ < UNTIL LOOP ; 
+Q CR ." SEARCH (uppercase only) loaded." CR
+Q ." Usage: 21 44 SEARCH KEYWORD" CR CR FORTH ;S
 
 
 

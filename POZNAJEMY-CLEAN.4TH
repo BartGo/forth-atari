@@ -676,101 +676,91 @@ Q 30 COS . (  8660 ) ;S
 
 ( NIE DZIAŁA JAKOŚ SUPER )
 
-10 CONSTANT DIMX
-10 CONSTANT DIMY
+PREPARE
 
-: ARRAY ( dimX dimY --- )
-  <BUILDS 
-    OVER ,  ( umieszcza dimY pod adresem pfa+2 )
-    * ALLOT ( rezerwuje dimX*dimY bajtów )
-  DOES>
-  DUP @  ( umieszcza dimX na stosie )
-  ROT *  ( oblicza dimY*dimX )
-  + + 2+ ( oblicza bezwzględny adres komórki )
- ;
+Q ( 1/5 LIFE:ARRAY,UNIVERSUM,J )
+Q 10 CONSTANT DIMX
+Q 10 CONSTANT DIMY
+Q : ARRAY ( dimX dimY --- )
+Q   <BUILDS 
+Q     OVER ,                    ( umieszcza dimY pod adresem pfa+2 )
+Q     * ALLOT                   ( rezerwuje dimX*dimY bajtów )
+Q   DOES>
+Q   DUP @                       ( umieszcza dimX na stosie )
+Q   ROT *                       ( oblicza dimY*dimX )
+Q   + + 2+ ;                    ( oblicza bezwzględny adres komórki )
+Q DIMX DIMY ARRAY UNIVERSUM
+Q : HOME 125 EMIT ;
+Q : J R> R> R> R R# !
+Q   >R >R >R R# @ ; -->
+
+PREPARE
+Q ( 2/5 LIFE:WSTAW,USUN,ZERUJ  )
+Q : WSTAW ( indX indY --- )
+Q   UNIVERSUM 1 SWAP C! ;
+Q : USUN ( indX indY --- )
+Q   UNIVERSUM 0 SWAP C! ;
+Q : ZERUJ ( --- )
+Q   DIMY 0 DO
+Q     DIMX 0 DO I J USUN LOOP
+Q   LOOP ;
+Q : WERYFIKACJA                  ( liczba stanu sąsiadów --- )
+Q  DUP 3 =                       ( liczba stanu f )
+Q  IF DROP 2+ ELSE
+Q    2 = 0=                      ( stan stan nr2 )
+Q    IF 4 + THEN
+Q  THEN ; -->
   
-DIMX DIMY ARRAY UNIVERSUM
+PREPARE
+Q ( 3/5 LIFE:PRZYGOTOWANIE   )
+Q : PRZYGOTOWANIE ( --- )
+Q   DIMY 0 DO
+Q     DIMX 0 DO
+Q       0 J 2+ DIMY MIN
+Q	J 1 - 0 MAX DO
+Q	  J 2+ DIMX MIN
+Q	  J 1 - 0 MAX
+Q         DO
+Q           I J UNIVERSUM C@ 1 AND + ( 1+ *** chyba nie )
+Q         LOOP
+Q       LOOP
+Q       I J UNIVERSUM C@ 1 AND       ( liczba sąsiadów )
+Q       SWAP OVER - WERYFIKACJA      ( koduje przyszłość )
+Q       I J UNIVERSUM C!             ( 1+ ** chyba nie )
+Q     LOOP LOOP ; -->
 
-: HOME 125 EMIT ;
+PREPARE
+Q ( 4/5 LIFE:DRUK,TWORZENIE   )
+Q : DRUK ( --- )
+Q   HOME DIMY 0 DO
+Q     DIMX 0 DO
+Q       I J UNIVERSUM C@
+Q       IF ." *" ELSE SPACE THEN
+Q     LOOP CR LOOP ;
+Q : TWORZENIE
+Q   DIMY 0 DO DIMX 0 DO
+Q     I J UNIVERSUM DUP C@ DUP
+Q     3 > IF DROP 0 ELSE
+Q       DUP 1 > IF DROP 1 THEN
+Q 	  THEN SWAP C!
+Q   LOOP LOOP ; -->                 ( wprowadza nową wartość )
 
-: J R> R> R> R R# ! >R >R >R R# @ ;
-
-: WSTAW ( indX indY --- )
-  UNIVERSUM 1 SWAP C! ;
-
-: USUN ( indX indY --- )
-  UNIVERSUM 0 SWAP C! ;
-
-: ZERUJ ( --- )
-  DIMY 0 DO
-    DIMX 0 DO
-      I J USUN
-    LOOP
-  LOOP ;
-
-: WERYFIKACJA ( liczba stanu sąsiadów --- )
-  DUP 3 = ( liczba stanu f )
-  IF DROP 2+ ELSE
-    2 = 0= ( stan stan nr2 )
-    IF 4 + THEN
-  THEN ;
-  
-: PRZYGOTOWANIE ( --- )
-  DIMY 0 DO
-    DIMX 0 DO
-      0
-	  J 2+ DIMY MIN
-	  J 1 - 0 MAX
-      DO
-	    J 2+ DIMX MIN
-		J 1 - 0 MAX
-        DO
-		  I J UNIVERSUM C@ 1 AND + ( 1+ *** chyba nie )
-        LOOP
-      LOOP
-      I J UNIVERSUM C@ 1 AND ( liczba sąsiadów )
-      SWAP OVER - WERYFIKACJA ( koduje przyszłość )
-      I J UNIVERSUM C! ( 1+ ** chyba nie )
-    LOOP
-  LOOP ;
-
-: DRUK ( --- )
-  HOME
-  DIMY 0 DO
-    DIMX 0 DO
-      I J UNIVERSUM C@
-      IF ." *" ELSE SPACE THEN
-    LOOP CR
-  LOOP ;
-
-: TWORZENIE
-  DIMY 0 DO
-    DIMX 0 DO
-      I J UNIVERSUM DUP C@
-	  DUP 3 >
-      IF DROP 0
-	  ELSE
-	    DUP 1 > IF DROP 1 THEN
-	  THEN
-      SWAP C! ( wprowadza nową wartość )
-    LOOP
-  LOOP ;
-
-: GRA ( n --- )
-  0 DO
-    DRUK ( wyświetla pokolenie N )
-    PRZYGOTOWANIE ( gasi pokolenie N i zostawia dane dla następnego )
-    TWORZENIE ( tworzy pokolenie N+1 )
-  LOOP
-  DRUK ; ( drukuje ostatnie pokolenie )
-
-: GRA1
-  BEGIN
-    ?TERMINAL IF ;S THEN
-    DRUK PRZYGOTOWANIE TWORZENIE
-  AGAIN
-  DRUK ;
-
+PREPARE
+Q ( 5/5 LIFE:GRA,GRA1   )
+Q : GRA ( n --- )
+Q   0 DO
+Q     DRUK                          ( wyświetla pokolenie N )
+Q     PRZYGOTOWANIE                 ( gasi pokolenie N i zostawia dane dla następnego )
+Q     TWORZENIE                     ( tworzy pokolenie N+1 )
+Q   LOOP
+Q   DRUK ;                          ( drukuje ostatnie pokolenie )
+Q : GRA1 ( -- )
+Q   BEGIN
+Q     ?TERMINAL IF ;S THEN
+Q     DRUK PRZYGOTOWANIE TWORZENIE
+Q   AGAIN
+Q   DRUK ;
+Q ;S
 
 
 

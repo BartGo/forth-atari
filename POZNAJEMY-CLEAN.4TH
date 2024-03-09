@@ -421,13 +421,13 @@ Q -->
 
 PREPARE
 Q ( 4/5 HETMANY:NAPRZOD,... )
-Q : NAPRZOD ( rzad --- rzad f )         ( f=1, gdy hetmana w rzedzie "rzad" )
-Q                                       ( mozna przesunac do nastepnej kolumny )
+Q : NAPRZOD ( rzad --- rzad f ) ( f=1, gdy hetmana w rz. "rzad" )
+Q           ( .. mozna przesunac do nastepnej kolumny )
 Q   DUP DUP WSPOLRZEDNA
 Q   C@ 1+ POSTAW BRZEG
 Q   IF 1 ELSE DUP USUN 0 THEN ;
 Q : PIERWSZA-WOLNA ( rzad --- rzad f )  ( f=1,gdy hetman moze )
-Q                                       ( przejsc do nastepnej kolumny w rzedzie )
+Q           ( .. przejsc do nastepnej kolumny w rzedzie )
 Q  BEGIN
 Q    NAPRZOD
 Q    IF WSZYSTKIE-WOLNE -DUP ELSE 0 1 THEN
@@ -687,6 +687,8 @@ Q   OVER OVER POCZ ! KON ! QUICK ;
 Q POCZATEK 4 0 QUICKSORT CR
 Q ." QUICKSORT: " CR POKAZ CR ;S
 
+
+
 PREPARE
 Q ( 1/3 FIG-EDITOR, mini subset  )
 Q ( As proposed in: FD III/2 p. 40  )
@@ -731,7 +733,8 @@ Q       THEN 1023 R# @ < UNTIL LOOP ;
 Q CR ." SEARCH (uppercase only) loaded." CR
 Q ." Usage: 21 44 SEARCH KEYWORD" CR CR FORTH ;S
 
-80 DUP CLEAR SCR !
+
+85 DUP CLEAR SCR !
 0 P ( 1/4 PSY RASOWE ) -->
 1 P bokser 165
 2 P cocker-spaniel 90
@@ -746,7 +749,7 @@ Q ." Usage: 21 44 SEARCH KEYWORD" CR CR FORTH ;S
 11 P chow-chow 172
 12 P pekińczyk 28
 
-81 DUP CLEAR SCR !
+86 DUP CLEAR SCR !
 0 P ( 2/4 CECHY PSOW ) -->
 1 P Czy ma:
 2 P 1 wiecej niż 60 cm wzrostu?
@@ -758,14 +761,14 @@ Q ." Usage: 21 44 SEARCH KEYWORD" CR CR FORTH ;S
 8 P 7 dlugie uszy?
 9 P 8 krepa lub mocna budowe?
 
-82 DUP CLEAR SCR !
+87 DUP CLEAR SCR !
  0 P ( 3/4 PSY )
- 1 P : #PSY 80 ; : #CECHY 81 ; : HOME 125 EMIT ;
+ 1 P : #PSY 85 ; : #CECHY 86 ; : HOME 125 EMIT ;
  2 P : CARRAY <BUILDS ALLOT DOES> + ;
  3 P 15 CARRAY CECHY : X CECHY C! ;
- 4 P 165 0 X 98 1 X 163 2 X 35 3 X
- 5 P  221 4 X 171 5 X 46 6 X 27 7 X
- 6 P  194 8 X 32 9 X 172 10 X 28 11 X
+ 4 P  165 0 X 98  1 X 163  2 X 35  3 X
+ 5 P  221 4 X 171 5 X 46   6 X 27  7 X
+ 6 P  194 8 X 32  9 X 172 10 X 28 11 X
  7 P 0 VARIABLE BAJT
  8 P : BITY 1 SWAP 0 DO 2 * LOOP 
  9 P   2 / BAJT @ OR BAJT ! ;
@@ -776,7 +779,7 @@ Q ." Usage: 21 44 SEARCH KEYWORD" CR CR FORTH ;S
 14 P   REPEAT ; 
 15 P -->
 
-83 DUP CLEAR SCR !
+88 DUP CLEAR SCR !
  0 P ( 4/4 PSY )
  1 P : DAJ BAJT @ 12 0 DO
  2 P     DUP I CECHY C@ OR 0= ( !! XOR/OR zmienia tryb )

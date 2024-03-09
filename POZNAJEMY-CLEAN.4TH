@@ -44,8 +44,6 @@ DECIMAL EDITOR DEFINITIONS
 
 EDITOR
 
-
-
 PREPARE
 Q (     ** Poznajemy Forth ** ) ;S
 Q (  1.0    --> screen=21 )
@@ -63,44 +61,25 @@ Q ( 12.0    --> screen=21 )
 Q ( Aneksy  --> screen=21 ) 
 
 PREPARE
-Q ( 1/1 TEST,KOT,NAPIS, ... )
-Q : TEST 30000 0 DO LOOP BEEP ; 
-Q : ZMIENNA VARIABLE ; : TU HERE ;
-Q : KASUJ DROP ; : LICZBA NUMBER ;
-Q : KOT ; FORGET KOT
-Q : KOT CR ." Kot pije mleko" ;
-Q : NAPIS ( -- )
-Q   KOT ."  i poluje na myszy" ;
-Q : TEST2 11 0 DO I . LOOP ; 
-Q : TEST3 7 0 DO ." A " LOOP ;
-Q : .USER ( -- )
-Q    B/SCR . ( 8 ) 
-Q    B/BUF . ( 128 ) 
-Q    C/L .   ( 64 ) ;
-Q ;S
-
-PREPARE
-Q ( 1/1 SP!,.S )
-Q SP! : S0@ ( --- n )
-Q   [ SP@ ] LITERAL ; 
+Q ( 1/1 KOT,NAPIS,.S )
+Q : KOT CR ." Kot pije mleko" ; 
+Q : NAPIS KOT ."  i poluje na myszy" ;
+Q : S0 18 +ORIGIN @ ; ( APX scr#85 )
 Q : .S ( --- )
-Q   2 SPACES
-Q   SP@ S0@ =
+Q   2 SPACES SP@ S0 =
 Q   0= IF
-Q     SP@ 2 - S0@ 2 - 
+Q     SP@ 2 - S0 2 - 
 Q     DO I @ . -2 +LOOP
 Q   THEN ;
-V
 Q 1 2 3 SWAP DUP .S
 Q ;S
 
 PREPARE
 Q ( 1/1 TEST,SZESCIAN,KWADRATY )
-Q : TEST ( -- ) 1 2 3 DUP .S  ( 1 2 3 3 ok )
-Q   DROP .S                   ( 1 2 3 ok )
-Q   SWAP .S                   ( 1 3 2 ok )
-Q   ROT .S                    ( 3 2 1 ok )
-Q   OVER .S                   ( 3 2 1 2 ok )
+Q : TEST ( -- ) 1 2 3
+Q   DUP  .S  ( 1 2 3 3 )
+Q   DROP .S  ( 1 2 3 ) SWAP .S ( 1 3 2 )
+Q   ROT  .S  ( 3 2 1 ) OVER .S ( 3 2 1 2 )
 Q  SP! ;  : KWADRAT DUP * . ;
 Q : SZESCIAN DUP OVER * * . ; 
 Q : KWADRATY CR DO
@@ -168,7 +147,7 @@ Q  CR CR 3 SPACES
 Q  10 1 DO I 3 .R LOOP CR
 Q  30 0 DO ." _" LOOP CR
 Q  10 1 DO I DUP AA ! 		
-Q    . ." |" 				
+Q    . ." |" 	
 Q    10 1 DO
 Q      I AA @ *	3 .R 					
 Q    LOOP CR
@@ -214,7 +193,6 @@ Q       USUN ( adr ) ( gdy n<>0 )
 Q     THEN LOOP DROP ;
 V
 Q PIERWSZE ;S
-
 
 PREPARE
 Q ( 1/1 NAZWISKO?, DRUKUJ, INPUT )
@@ -276,8 +254,6 @@ Q 4 5 2DARRAY PROSTOKAT
 Q ( TODO: przyklady uzycia )
 Q ;S
 
-( TODO: LAYOUT )
-
 PREPARE
 Q ( 1/1 MATDEF - valFORTH ) 
 Q : 0> 0 MAX ; 
@@ -337,7 +313,6 @@ Q 13 2 1 BUF C!
 Q    2 1 BUF C@ .    CR
 Q ;S
 
-
 PREPARE
 Q ( 1/1 SETNE, SEXTAL, XX, SEK )
 Q DECIMAL
@@ -350,8 +325,6 @@ Q : SEK ( n --- ) CR <# XX XX #S #> TYPE CR ;
 V
 Q 15610. SEK
 Q ;S
-
-
 
 PREPARE
 Q ( 1/2 DBL - D*, FIX, F. )  
@@ -383,68 +356,6 @@ Q 10 FIX D+
 Q F. 10.9651 
 Q ;S
 
-80 DUP CLEAR SCR !
-0 P ( 1/4 PSY RASOWE ) -->
-1 P bokser 165
-2 P cocker-spaniel 90
-3 P dog 163
-4 P doberman 35
-5 P bernardyn 221
-6 P owczarek alzacki 171
-7 P foksterier 46
-8 P seter 27
-9 P jamnik 194
-10 P ratler 32
-11 P chow-chow 172
-12 P pekińczyk 28
-
-
-81 DUP CLEAR SCR !
-0 P ( 2/4 CECHY PSOW ) -->
-1 P Czy ma:
-2 P 1 wiecej niż 60 cm wzrostu?
-3 P 2 wydluzona glowe?
-4 P 3 kwadratowy lub plaski pysk?
-5 P 4 obfita siersc?
-6 P 5 dlugi wlos?
-7 P 6 stojace lub przyciete uszy?
-8 P 7 dlugie uszy?
-9 P 8 krepa lub mocna budowe?
-
-
-82 DUP CLEAR SCR !
- 0 P ( 3/4 PSY )
- 1 P : #PSY 80 ; : #CECHY 81 ; : HOME 125 EMIT ;
- 2 P : CARRAY <BUILDS ALLOT DOES> + ;
- 3 P 15 CARRAY CECHY : X CECHY C! ;
- 4 P 165 0 X 98 1 X 163 2 X 35 3 X
- 5 P  221 4 X 171 5 X 46 6 X 27 7 X
- 6 P  194 8 X 32 9 X 172 10 X 28 11 X
- 7 P 0 VARIABLE BAJT
- 8 P : BITY 1 SWAP 0 DO 2 * LOOP 
- 9 P   2 / BAJT @ OR BAJT ! ;
-10 P : WLASNOSCI 0 BAJT ! BEGIN
-11 P     QUERY BL WORD HERE NUMBER
-12 P     DROP DUP MINUS 0<
-13 P   WHILE 1 SWAP BITY CR DROP
-14 P   REPEAT ; 
-15 P -->
-
-83 DUP CLEAR SCR !
- 0 P ( 4/4 PSY )
- 1 P : DAJ BAJT @ 12 0 DO
- 2 P     DUP I CECHY C@ OR 0= ( !! XOR/OR zmienia tryb )
- 3 P     IF I 1+ #PSY .LINE CR THEN
- 4 P   LOOP DROP ;
- 5 P : PSY ( -- ) HOME 12 1 DO
- 6 P     I #CECHY .LINE CR
- 7 P   LOOP CR ." Napisz liczby:" CR
- 8 P   WLASNOSCI CR CR CR ." To moze byc:"
- 9 P   CR DAJ DROP ;
-10 P PSY ( PSY .. 6 0 - ratler 32 )
-11 P ;S  ( .. 2 3 4 6 0 - foksterier 46 )
-( TODO: nie znajduje foksa! )
-
 PREPARE
 Q ( 1/1 WIEZE Z HANOI )
 Q : 3DUP >R 2DUP R ROT ROT R> ;
@@ -461,7 +372,6 @@ Q   THEN DROP DROP DROP [ SMUDGE ] ;
 Q : HANOI 1 3 ROT CR WIEZE ; ( n -- )
 Q 5 HANOI           ;S
 Q ( Ciekawostka: FD II/2 p. 32 )
-
 
 PREPARE
 Q ( 1/5 HETMANY:WEKTOR,LHET,... )
@@ -574,7 +484,6 @@ Q 9902 , 9924 , 9944 , 9960 , 9974 , 9986 , 9992 , 9998 , 10000 ,
 Q DOES> SWAP 2 * + @ ;
 Q 91 TABLICA SINTABLICA -->
 
-
 PREPARE
 Q ( 2/2 FN FUNKCJE [FIXED] )
 Q : S180 DUP 90 > IF 180 SWAP - THEN SINTABLICA ;
@@ -592,13 +501,7 @@ Q 89 SIN . (  9998 ) 0 TAN .  (     0 )
 Q 30 TAN . (  5773 ) 45 TAN . ( 10000 )
 Q 30 COS . (  8660 ) ;S
 
-
-
-
-( NIE DZIALA JAKOS SUPER )
-
 PREPARE
-
 Q ( 1/5 LIFE:ARRAY,UNIVERSUM,J )
 Q 10 CONSTANT DIMX
 Q 10 CONSTANT DIMY
@@ -678,9 +581,6 @@ Q     DRUK PRZYGOTOWANIE TWORZENIE
 Q   AGAIN
 Q   DRUK ; ;S
 
-
-
-
 PREPARE
 Q ( 1/N SORT:ARRAY,WSTAW,POKAZ )
 Q : ARRAY <BUILDS 2 * ALLOT
@@ -756,7 +656,6 @@ Q     1 - PW !
 Q   REPEAT DROP ;
 Q : CZYTAJ @ LICZBY @ ;
 Q : WSTAW @ LICZBY ! ; -->
-
 
 PREPARE
 Q ( 6/N SORT:ZAM,SORTUJ,KOMPARAND )
@@ -834,8 +733,6 @@ Q       THEN 1023 R# @ < UNTIL LOOP ;
 Q CR ." SEARCH (uppercase only) loaded." CR
 Q ." Usage: 21 44 SEARCH KEYWORD" CR CR FORTH ;S
 
-
-
 PREPARE
 Q ( 1/1 VECTORED EXECUTION EXAMPLE )
 Q (  adapted from: FD V/4/P17  )
@@ -853,5 +750,65 @@ Q ' BARTOSZ WHO!
 Q WELCOME
 Q ' STEFAN  WHO!
 Q WELCOME ;S
+
+80 DUP CLEAR SCR !
+0 P ( 1/4 PSY RASOWE ) -->
+1 P bokser 165
+2 P cocker-spaniel 90
+3 P dog 163
+4 P doberman 35
+5 P bernardyn 221
+6 P owczarek alzacki 171
+7 P foksterier 46
+8 P seter 27
+9 P jamnik 194
+10 P ratler 32
+11 P chow-chow 172
+12 P pekińczyk 28
+
+81 DUP CLEAR SCR !
+0 P ( 2/4 CECHY PSOW ) -->
+1 P Czy ma:
+2 P 1 wiecej niż 60 cm wzrostu?
+3 P 2 wydluzona glowe?
+4 P 3 kwadratowy lub plaski pysk?
+5 P 4 obfita siersc?
+6 P 5 dlugi wlos?
+7 P 6 stojace lub przyciete uszy?
+8 P 7 dlugie uszy?
+9 P 8 krepa lub mocna budowe?
+
+82 DUP CLEAR SCR !
+ 0 P ( 3/4 PSY )
+ 1 P : #PSY 80 ; : #CECHY 81 ; : HOME 125 EMIT ;
+ 2 P : CARRAY <BUILDS ALLOT DOES> + ;
+ 3 P 15 CARRAY CECHY : X CECHY C! ;
+ 4 P 165 0 X 98 1 X 163 2 X 35 3 X
+ 5 P  221 4 X 171 5 X 46 6 X 27 7 X
+ 6 P  194 8 X 32 9 X 172 10 X 28 11 X
+ 7 P 0 VARIABLE BAJT
+ 8 P : BITY 1 SWAP 0 DO 2 * LOOP 
+ 9 P   2 / BAJT @ OR BAJT ! ;
+10 P : WLASNOSCI 0 BAJT ! BEGIN
+11 P     QUERY BL WORD HERE NUMBER
+12 P     DROP DUP MINUS 0<
+13 P   WHILE 1 SWAP BITY CR DROP
+14 P   REPEAT ; 
+15 P -->
+
+83 DUP CLEAR SCR !
+ 0 P ( 4/4 PSY )
+ 1 P : DAJ BAJT @ 12 0 DO
+ 2 P     DUP I CECHY C@ OR 0= ( !! XOR/OR zmienia tryb )
+ 3 P     IF I 1+ #PSY .LINE CR THEN
+ 4 P   LOOP DROP ;
+ 5 P : PSY ( -- ) HOME 12 1 DO
+ 6 P     I #CECHY .LINE CR
+ 7 P   LOOP CR ." Napisz liczby:" CR
+ 8 P   WLASNOSCI CR CR CR ." To moze byc:"
+ 9 P   CR DAJ DROP ;
+10 P PSY ( PSY .. 6 0 - ratler 32 )
+11 P ;S  ( .. 2 3 4 6 0 - foksterier 46 )
+( TODO: nie znajduje foksa! )
 
 FORTH

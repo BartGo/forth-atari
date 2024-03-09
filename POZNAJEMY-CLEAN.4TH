@@ -634,19 +634,15 @@ Q  THEN ; -->
 PREPARE
 Q ( 3/5 LIFE:PRZYGOTOWANIE   )
 Q : PRZYGOTOWANIE ( --- )
-Q   DIMY 0 DO
-Q     DIMX 0 DO
-Q       0 J 2+ DIMY MIN
-Q	J 1 - 0 MAX DO
-Q	  J 2+ DIMX MIN
-Q	  J 1 - 0 MAX
-Q         DO
-Q           I J UNIVERSUM C@ 1 AND + ( 1+ *** chyba nie )
-Q         LOOP
+Q   DIMY 0 DO DIMX 0 DO
+Q     0 J 2+ DIMY MIN	J 1 - 0 MAX DO
+Q	      J 2+ DIMX MIN J 1 - 0 MAX DO
+Q         I J UNIVERSUM C@ 1 AND + ( 1+ *** chyba nie )
 Q       LOOP
-Q       I J UNIVERSUM C@ 1 AND       ( liczba sąsiadów )
-Q       SWAP OVER - WERYFIKACJA      ( koduje przyszłość )
-Q       I J UNIVERSUM C!             ( 1+ ** chyba nie )
+Q     LOOP
+Q     I J UNIVERSUM C@ 1 AND       ( liczba sąsiadów )
+Q     SWAP OVER - WERYFIKACJA      ( koduje przyszłość )
+Q     I J UNIVERSUM C!             ( 1+ ** chyba nie )
 Q     LOOP LOOP ; -->
 
 PREPARE
@@ -733,8 +729,7 @@ Q : PORBUB ( n1 n2 -- )
 Q   DUP LICZBY @ ROT DUP LICZBY @
 Q   ROT OVER OVER >
 Q   IF ROT LICZBY ! SWAP LICZBY !
-Q 	0 KONIEC? !
-Q   ELSE 2DROP 2DROP THEN ;
+Q 	0 KONIEC? ! ELSE 2DROP 2DROP THEN ;
 Q : PRZESUN BEGIN
 Q     DUP DUP 1+ PORBUB 1+ 
 Q   OVER OVER = UNTIL DROP DROP ;
@@ -806,7 +801,7 @@ Q DECIMAL 00 VARIABLE SRCHCNT
 Q : BUMP ( ln nr and paging )
 Q   1 SRCHCNT +! SRCHCNT @ 56 
 Q     > IF 0 SRCHCNT ! CR 
-Q   THEN ;
+Q   THEN ; ( FD Vol03 Nr1 /WFR ) 
 Q : SEARCH ( FROM TO -- STRING )
 Q   CR 01 TEXT 0 SRCHCNT !
 Q   1+ SWAP DO FORTH I SCR !
@@ -815,8 +810,7 @@ Q       1LINE IF 0 M SCR ? BUMP
 Q       THEN 1023 R# @ < 
 Q     UNTIL LOOP ; 
 Q CR ." SEARCH is loaded." CR
-Q ." Usage: 21 44 SEARCH KEYWORD" 
-Q ;S ( FD Vol03 Nr1 /WFR ) 
+Q ." Usage: 21 44 SEARCH KEYWORD" ;S
 
 PREPARE
 Q ( 1/1 FIG-EDITOR, minimal subset  )

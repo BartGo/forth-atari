@@ -415,7 +415,7 @@ Q     LOOP DROP CR
 Q   LOOP
 Q   1 ROZWIAZANIE +! CR ." Rozwiazanie nr "
 Q   ROZWIAZANIE ? CR ;
-Q : INIC ( --- )          ( inicjuje szachownice z hetmanami w rz. 0 ) 
+Q : INIC ( --- ) ( inicjuje szachownice z hetmanami w rz. 0 ) 
 Q   LHET 1 DO I USUN LOOP 0 ROZWIAZANIE ! ;
 Q -->
 
@@ -462,11 +462,9 @@ Q : X*
 Q   2OVER 2OVER ROT
 Q   * >R * R> - >R ROT ROT
 Q   * >R * R> + R> SWAP ;
-V
 Q : TEST-COMPLEX 3 2 1 7 X* . .  ; 
 V
-Q CR TEST-COMPLEX CR ( -11 23 ok )
-Q ;S     
+Q CR TEST-COMPLEX CR ( -11 23 ok ) ;S     
   
 PREPARE 
 Q ( 1/2 FN TRYGONOMETRYCZNE )

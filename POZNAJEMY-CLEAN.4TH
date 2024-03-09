@@ -218,19 +218,15 @@ Q PIERWSZE ;S
 PREPARE
 Q ( 1/1 NAZWISKO?, DRUKUJ, INPUT )
 Q : QUERY TIB @ 80 EXPECT 0 IN ! ; 
-Q : NAZWISKO? CR ." PODAJ SWOJE NAZWISKO: " CR QUERY ; 
-V
+Q : NAZWISKO? CR ." PODAJ SWOJE NAZWISKO: "
+Q   CR QUERY ; 
 Q NAZWISKO?
-V
-Q : NAZWISKO? CR ." PODAJ SWOJE NAZWISKO: " CR QUERY 155 WORD HERE ; 
+Q : NAZWISKO? CR ." PODAJ SWOJE NAZWISKO: "
+Q   CR QUERY 155 WORD HERE ; 
 Q : DRUKUJ NAZWISKO? CR COUNT TYPE ;
-V
 Q DRUKUJ
-V
 Q : INPUT CR QUERY BL WORD HERE NUMBER DROP ;  
-V
-Q INPUT .
-Q ;S
+Q INPUT . ;S
 
 PREPARE
 Q ( 1/1 DATY )
@@ -244,11 +240,9 @@ Q 18  6 1815 DATY WATERLOO
 Q  1  9 1870 DATY SEDAN
 Q 12 10 1943 DATY LENINO
 Q 15 08 1920 DATY WARSZAWA
-V 
 Q CR WATERLOO CR
 Q CR LENINO   CR
-Q CR WARSZAWA CR
-Q ;S
+Q CR WARSZAWA CR ;S
 
 PREPARE
 Q ( 1/1 SILNIA,SILNIA2,... )
@@ -356,16 +350,14 @@ V
 Q 15610. SEK
 Q ;S
 
-( PONIŻSZE NAM NIE ZADZIAŁA JEŚLI NIE MAMY D*, JAK W "COMPLETE FORTH" )
 
-( https://www.forth.org/fd/FD-V03N2.pdf ma też inną wersję, można sprawdzić: )
-( : D* DUP ROT * ROT ROT U* ROT + ; )
 
 PREPARE
 Q ( 1/2 DBL - D*, FIX, F. )  
 Q 0 VARIABLE A_  0 VARIABLE B_   0 VARIABLE C_  0 VARIABLE D_
 Q : D* A_ ! B_ ! C_ ! D_ !       ( "COMPLETE FORTH" )
 Q   D_ @ B_ A_ U* D_ @ A_ @ U* DROP + C_ @ B_ @ U* DROP + ; 
+Q   ( TODO: FD-V03N2.pdf: -- : D* DUP ROT * ROT ROT U* ROT + ; )
 Q : FIX DPL @ 0< IF              ( jezeli liczba byla pojedyncza)
 Q     S->D 0 DPL !               ( przekształca ją w podwójną )
 Q   THEN
@@ -380,19 +372,15 @@ PREPARE
 Q ( 2/2 DBL - UD.,D-,D0=,D0<,D= )  
 Q : UD. <# #S #> TYPE ;
 Q : D- DMINUS D+ ;
-Q : D0= OR 0= ;               ( test na liczbę podwójną 0 )
-Q : D0< SWAP DROP 0< ;        ( test na ujemną liczbę podwójna )
-Q : D= D- D0= ;               ( test na równość dwóch liczb podwójnych )
+Q : D0= OR 0= ;               ( test na liczbę podwojna 0 )
+Q : D0< SWAP DROP 0< ;        ( test na ujemna liczbę podwojna )
+Q : D= D- D0= ;               ( test na rownosc dwoch liczb podwojnych )
 V
 Q 0.04 FIX        0.3 FIX D+ 
 Q 0.625 FIX D+ 0.0001 FIX D+ 
 Q 10 FIX D+  
 Q F. 10.9651 
 Q ;S
-
-( WCALE NIE, TO NIE DZIAŁA!! )
-
-
 
 80 DUP CLEAR SCR !
 0 P ( 1/4 PSY RASOWE ) -->
@@ -444,7 +432,7 @@ Q ;S
 83 DUP CLEAR SCR !
  0 P ( 4/4 PSY )
  1 P : DAJ BAJT @ 12 0 DO
- 2 P     DUP I CECHY C@ OR 0= ( XOR/OR zmienia logike szukania )
+ 2 P     DUP I CECHY C@ OR 0= ( !! XOR/OR zmienia tryb )
  3 P     IF I 1+ #PSY .LINE CR THEN
  4 P   LOOP DROP ;
  5 P : PSY ( -- ) HOME 12 1 DO
@@ -473,18 +461,6 @@ Q : HANOI 1 3 ROT CR WIEZE ; ( n -- )
 Q 5 HANOI           ;S
 Q ( Ciekawostka: FD II/2 p. 32 )
 
-
-
-( 12.2 osiem hetmanów )
-( * błędy: brak dwukropków przed definicjami, )
-( * jeśli poprzednie słowo kończy się średnikiem, )
-( * definicja nastepnego zaczyna sie od ":" )
-( * brakowało też czasem spacji po definiowanym słowie )
-( * a przed nawiasem komentarza, lub po nawiasie )
-( * zaczynającym komentarz )
-( * poprawione wcięcia )
-
-( --------------------------------------- )
 
 PREPARE
 Q ( 1/5 HETMANY:WEKTOR,LHET,... )

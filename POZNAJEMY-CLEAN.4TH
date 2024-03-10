@@ -101,14 +101,13 @@ Q   DROP .S  ( 1 2 3 ) SWAP .S ( 1 3 2 )
 Q   ROT  .S  ( 3 2 1 ) OVER .S ( 3 2 1 2 )
 Q  SP! ;  : KWADRAT DUP * . ;
 Q : SZESCIAN DUP OVER * * . ; 
-Q : KWADRATY CR DO
-Q     I DUP U* 15 D.R CR LOOP ;
-Q   45001 44980 KWADRATY CR  ;S
+Q : KWADRATY CR DO I DUP U* 15 D.R CR LOOP ;
+Q  CR 45001 44980 KWADRATY CR  ;S
 
 PREPARE
 Q ( 1/1 2DUP,2DROP,...,DUMP INDEX )
-Q : 2DUP OVER OVER ;                 : 2DROP DROP DROP ;
-Q : 2SWAP ROT >R ROT R> ;            : 2OVER >R >R 2DUP R> R> 2SWAP ;
+Q : 2DUP OVER OVER ;       : 2DROP DROP DROP ;
+Q : 2SWAP ROT >R ROT R> ;  : 2OVER >R >R 2DUP R> R> 2SWAP ;
 Q : 2ROT ( n1 n2 n3 n4 n5 n6 ... ) ( --- n3 n4 n5 n6 n1 n2 )
 Q    >R ( n1 n2 n3 n4 n5 )         ( – przenosi n6 na stos powrotów )
 Q    >R ( n1 n2 n3 n4 )            ( – przenosi n5 na stos powrotów )
@@ -128,12 +127,11 @@ Q    >    ( dol-gr n f1 )
 Q    >R   ( dol-gr n )
 Q    <    ( f2 )
 Q    R>   ( f2 f1 ) ; ( f )  
-Q 20 370 400 PRZEDZIAL .
+Q ( 20 370 400 PRZEDZIAL . CR )
 Q : IKSY BEGIN ." X" 1 - DUP 0= UNTIL ; 
-Q 4 IKSY
 Q : NWP BEGIN SWAP OVER MOD -DUP 0= UNTIL ;
-Q 128 1024 NWP . ( wynik: 128 a nie 126 jak w ksiazce )
-Q 324 556 NWP .  1933 821 NWP .   ( wyniki: 4, 1 )
+Q ( 128 1024 NWP . CR ) ( 128 a nie 126 jak w ksiazce )
+Q ( 324  556 NWP . CR ) ( 1933 821 NWP . CR ) ( wyniki: 4, 1 )
 Q ;S
 
 PREPARE
@@ -179,7 +177,7 @@ Q  10 1 DO
 Q    I . ." |" 10 1 DO
 Q      I J * 3 .R
 Q    LOOP CR LOOP ;
-Q : TABLICZKA2 ;
+Q : TABLICZKA2 TAB2 ;
 Q TABLICZKA2 ;S
 
 PREPARE
@@ -216,7 +214,7 @@ Q   CR QUERY ;
 Q : NAZWISKO? CR ." PODAJ SWOJE NAZWISKO: "
 Q   CR QUERY 155 WORD HERE ; 
 Q : DRUKUJ NAZWISKO? CR COUNT TYPE ;
-Q : INPUT CR QUERY BL WORD HERE NUMBER DROP ; ;S 
+Q : INPUT CR QUERY BL WORD HERE NUMBER DROP ; 
 Q : DATY ( n n n --- ) <BUILDS , , , DOES>
 Q   DUP 2+ DUP 2+ ? ? ? CR ;
 Q 12  9 1683 DATY WIEDEN    4  4 1794 DATY RACLAWICE
@@ -226,20 +224,21 @@ Q ;S
 
 PREPARE
 Q ( 1/1 SILNIA,SILNIA2,... )
-Q : TENKOD ( --- n ) CURRENT @ @ PFA CFA ; IMMEDIATE
-Q : SILNIA ( n --- ) 1 SWAP 1+ 1 DO I * LOOP ;
-Q : SILNIA2 ( n --- ) DUP 2 = IF ELSE
-Q     DUP 1 - TENKOD LITERAL EXECUTE * THEN ;
-Q : SILNIA3 ( n --- ) [ SMUDGE ]
-Q   DUP 2 = IF ELSE
-Q     DUP 1 - SILNIA3 *
+Q : TENKOD ( -- n ) CURRENT @ @
+Q   PFA CFA ; IMMEDIATE
+Q : SILNIA ( n -- ) 
+Q   1 SWAP 1+ 1 DO I * LOOP ;
+Q : SILNIA2 ( n -- ) DUP 2 = IF ELSE 
+Q     DUP 1 - TENKOD LITERAL EXECUTE *
+Q   THEN ;
+Q : SILNIA3 ( n -- ) [ SMUDGE ]
+Q   DUP 2 = IF ELSE DUP 1 - SILNIA3 *
 Q   THEN [ SMUDGE ] ;
-Q : FACTORIAL ( JAN BIELECKI, "FORTH" )
-Q   DUP IF DUP 1 - [ SMUDGE ] FACTORIAL [ SMUDGE ] * 
-Q   ELSE 1+ THEN ;
-Q 8 SILNIA  U.   8 SILNIA2 U. ( FAIL: COIN-OP/1.4S )
-Q 8 SILNIA3 U.   8 FACTORIAL U.
-Q ;S
+Q : FACTORIAL ( J. BIELECKI, "FORTH" )
+Q   DUP IF DUP 1 - [ SMUDGE ] FACTORIAL 
+Q   [ SMUDGE ] * ELSE 1+ THEN ;
+Q 8 SILNIA  U.   8 SILNIA2 U. ( FAIL: 1.4S )
+Q 8 SILNIA3 U.   8 FACTORIAL U. ;S
 
 PREPARE
 Q ( 1/1 ARRAY, 2DARRAY )
@@ -326,7 +325,7 @@ Q : D= D- D0= ;               ( test na rownosc dwoch liczb podwojnych )
 V
 Q 0.04 FIX        0.3 FIX D+ 
 Q 0.625 FIX D+ 0.0001 FIX D+ 
-Q 10 FIX D+  
+Q 10 FIX D+  ( BUG: cos tu sie wywala !! ) 
 Q F. 10.9651 
 Q ;S
 
@@ -464,14 +463,14 @@ Q   DUP 180 > IF 180 - S180 MINUS ELSE S180 THEN ;
 Q : COS 90 + SIN ;
 Q : TAN DUP SIN SWAP COS DUP ABS 2920 >
 Q   IF 10000 SWAP */  ELSE DROP DROP ." ZA DUZE! " THEN ;
-V
+Q CR
 Q  0 SIN . (     0 ) 90 SIN . ( 10000 ) 
 Q 45 SIN . (  7070 ) 44 SIN . (  6946 )
 Q 44 TAN . (  9657 ) 46 SIN . (  7192 )
 Q 45 SIN . (  7070 ) 30 SIN . (  5000 )
 Q 89 SIN . (  9998 ) 0 TAN .  (     0 )
 Q 30 TAN . (  5773 ) 45 TAN . ( 10000 )
-Q 30 COS . (  8660 ) ;S
+Q 30 COS . (  8660 ) CR ;S
 
 PREPARE
 Q ( 1/5 LIFE:ARRAY,UNIVERSUM,J )
@@ -923,9 +922,9 @@ Q ." Usage: 21 44 SEARCH KEYWORD" CR CR FORTH ;S
  15 P Esc-V: put last deleted line
 
 
-( : C; CURRENT @ CONTEXT ! ?EXEC ?CSP SMUDGE ; IMMEDIATE  )
+( : C; CURRENT @ CONTEXT ! ?EXEC ?CSP SMUDGE ; IMMEDIATE   )
 71 CLEAR ( EDYTOR R. PANTOLY ZAJMIE 9-10 EKRANOW? APX ONLY )
-72 CLEAR
+72 CLEAR ( + DEASSEMBLER? BLINKING CHARS JAKO PRZYKŁAD!    )
 73 CLEAR
 74 CLEAR
 75 CLEAR 
@@ -939,18 +938,18 @@ Q ." Usage: 21 44 SEARCH KEYWORD" CR CR FORTH ;S
 83 CLEAR
 
 84 CLEAR 84 SCR !
-Q ( "Blinking Characters" RM COMPUTE 12/81 )
-Q ( "39 LOAD" to load req. assembler /APX/ )
-Q HEX CODE Blink ( -- )
-Q   02F3 LDA,  2 # AND, 2 #  EOR,
-Q   02F3 STA, 15 # LDA, 021A STA,
-Q RTS,
-Q CODE BlinkStart ( -- )
-Q   15 # LDA, 021A STA,
-Q NEXT JMP,
-Q : BlinkInit ( -- ) ' Blink 228 ! ;
-Q : BlinkCursor ( -- ) BlinkInit BlinkStart ;
-Q DECIMAL ;S
+ 0 P ( "Blinking Characters" RM COMPUTE 12/81 )
+ 1 P ( "39 LOAD" to load req. assembler /APX/ )
+ 2 P HEX CODE Blink ( -- )
+ 3 P   02F3 LDA,  2 # AND, 2 #  EOR,
+ 4 P   02F3 STA, 15 # LDA, 021A STA,
+ 5 P RTS,
+ 6 P CODE BlinkStart ( -- )
+ 7 P   15 # LDA, 021A STA,
+ 8 P NEXT JMP,
+ 9 P : BlinkInit ( -- ) ' Blink 228 ! ;
+10 P : BlinkCursor ( -- ) BlinkInit BlinkStart ;
+11 P DECIMAL ;S
 
 85 DUP CLEAR SCR !
 0 P ( 1/4 PSY RASOWE ) -->

@@ -662,7 +662,7 @@ Q POCZATEK 4 0 QUICKSORT CR
 Q ." QUICKSORT: " CR POKAZ CR ;S
 
 PREPARE
-Q ( 1/2 FIG-EDITOR, mini subset - APX/1.4S?  )  (Following: FD III/2 p.40 )
+Q ( 1/2 FIG-EDITOR, mini subset - APX/1.4S?  )  ( FD III/2 p.40 )
 Q ( First set edit screen: m SCR ! and to edit line n: n P ccc  )
 Q HEX VOCABULARY EDITOR EDITOR DEFINITIONS
 Q : TEXT HERE C/L 1+ BLANKS WORD HERE PAD C/L 1+ CMOVE ; 
@@ -680,17 +680,17 @@ Q CR DECIMAL -->
 
 PREPARE
 Q ( 2/2 SEARCH and WHERE, using EDITOR subset )
-Q DECIMAL 00 VARIABLE SRCHCNT
+Q (     ^ FD Vol03 Nr1 /WFR ) HEX 00 VARIABLE SRCHCNT  
 Q : WHERE DUP B/SCR / DUP SCR ! ." SCR # " DECIMAL .
 Q   SWAP C/L /MOD C/L * ROT BLOCK + CR C/L -TRAILING
 Q   TYPE CR HERE C@ - SPACES 1 2FE C! 1C EMIT 0 2FE
-Q   C! [COMPILE] EDITOR QUIT ;
+Q   C! [COMPILE] EDITOR QUIT ; DECIMAL
 Q : BUMP ( ln nr and paging ) 1 SRCHCNT +! SRCHCNT @ 56 
-Q   > IF 0 SRCHCNT ! CR THEN ; ( FD Vol03 Nr1 /WFR ) 
+Q   > IF 0 SRCHCNT ! CR THEN ; 
 Q : SEARCH ( FROM TO -- STRING ) CR 01 TEXT 0 SRCHCNT !
 Q   1+ SWAP DO FORTH I SCR ! EDITOR TOP BEGIN
 Q     1LINE IF 0 M SCR ? BUMP THEN 1023 R# @ < UNTIL LOOP ; 
-Q CR ." SEARCH (uppercase only) loaded." CR
+Q CR ." SEARCH (uppercase only) loaded." CR 
 Q ." Usage: 21 44 SEARCH KEYWORD" CR CR FORTH ;S
 
 ( >> https://github.com/BartGo/forth-atari/blob/main/DBGTOOLS.4TH )

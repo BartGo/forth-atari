@@ -440,7 +440,7 @@ V
 Q CR TEST-COMPLEX CR ( -11 23 ok ) ;S     
   
 PREPARE 
-Q ( 1/2 FN TRYGONOMETRYCZNE )
+Q ( 1/2 FN TRYGONOMETRYCZNE - APX/1.4S )
 Q : TABLICA <BUILDS 0 ,
 Q  174 , 348  ,  522 ,  696 ,  870 , 1044 , 1218 , 1390 , 1564 , 
 Q 1736 , 1908 , 2078 , 2248 , 2418 , 2588 , 2756 , 2922 , 3090 , 
@@ -476,14 +476,14 @@ PREPARE
 Q ( 1/5 LIFE:ARRAY,UNIVERSUM,J )
 Q 10 CONSTANT DIMX
 Q 10 CONSTANT DIMY
-Q : ARRAY ( dimX dimY --- )
+Q : ARRAY     ( dimX dimY --- )
 Q   <BUILDS 
-Q     OVER ,                    ( umieszcza dimY pod adresem pfa+2 )
-Q     * ALLOT                   ( rezerwuje dimX*dimY bajtów )
+Q     OVER ,  ( umieszcza dimY pod adresem pfa+2 )
+Q     * ALLOT ( rezerwuje dimX*dimY bajtów )
 Q   DOES>
-Q   DUP @                       ( umieszcza dimX na stosie )
-Q   ROT *                       ( oblicza dimY*dimX )
-Q   + + 2+ ;                    ( oblicza bezwzględny adres komórki )
+Q   DUP @     ( umieszcza dimX na stosie )
+Q   ROT *     ( oblicza dimY*dimX )
+Q   + + 2+ ;  ( oblicza bezwzgledny adres komorki )
 Q DIMX DIMY ARRAY UNIVERSUM
 Q : HOME 125 EMIT ;
 Q : J R> R> R> R R# !
@@ -553,7 +553,7 @@ Q   AGAIN
 Q   DRUK ; ;S
 
 PREPARE
-Q ( 1/7 SORT:ARRAY,WSTAW,POKAZ )
+Q ( 1/7 SORT:ARRAY,WSTAW,POKAZ - APX/1.4S? )
 Q : ARRAY <BUILDS 2 * ALLOT
 Q   DOES> SWAP 2 * + ;
 Q 5 ARRAY LICZBY
@@ -661,7 +661,7 @@ Q POCZATEK 4 0 QUICKSORT CR
 Q ." QUICKSORT: " CR POKAZ CR ;S
 
 PREPARE
-Q ( 1/2 FIG-EDITOR, mini subset  )  (Following: FD III/2 p.40 )
+Q ( 1/2 FIG-EDITOR, mini subset - APX/1.4S?  )  (Following: FD III/2 p.40 )
 Q ( First set edit screen: m SCR ! and to edit line n: n P ccc  )
 Q HEX VOCABULARY EDITOR EDITOR DEFINITIONS
 Q : TEXT HERE C/L 1+ BLANKS WORD HERE PAD C/L 1+ CMOVE ; 
@@ -671,8 +671,8 @@ Q : -MOVE LINE C/L CMOVE UPDATE ; : P 1 TEXT PAD 1+ SWAP -MOVE ;
 Q : E LINE C/L BLANKS UPDATE ; : TOP 0 R# ! ; 
 Q : #LOCATE R# @ C/L /MOD ; : #LEAD #LOCATE LINE SWAP ;
 Q : #LAG  #LEAD DUP >R + C/L R> - ;
-Q : M R# +! CR SPACE #LEAD TYPE 17 EMIT #LAG TYPE #LOCATE . DROP ;
-Q : 1LINE #LAG PAD COUNT MATCH R# +! ;
+Q : M R# +! CR SPACE #LEAD TYPE 17 EMIT #LAG TYPE #LOCATE
+Q   . DROP ; : 1LINE #LAG PAD COUNT MATCH R# +! ;
 Q : CLEAR  SCR ! 10 0 DO FORTH I EDITOR E LOOP ; 
 Q CR ." EDITOR subset (incl. P, E) loaded."
 Q CR DECIMAL -->
@@ -695,7 +695,7 @@ Q ." Usage: 21 44 SEARCH KEYWORD" CR CR FORTH ;S
 ( >> https://github.com/BartGo/forth-atari/blob/main/DBGTOOLS.4TH )
 
 58 SCR !
- 0 P ( 1/2 GoesInto - Decomp by RDA )
+ 0 P ( 1/2 GoesInto - Decomp by RDA - APX only? )
  1 P ( -- Forth Dimension Vol14 Nr2 )
  2 P   0 VARIABLE GIN 
  3 P : MYSELF LATEST PFA CFA , ; IMMEDIATE
@@ -735,7 +735,7 @@ Q ." Usage: 21 44 SEARCH KEYWORD" CR CR FORTH ;S
 ( >> https://github.com/BartGo/forth-atari/blob/main/EDIT.4TH )
 
 60 CLEAR
-  0 P ( EDIT BY M. DOUGHERTY, MICRO 57/FEB/83 )
+  0 P ( EDIT - BY M. DOUGHERTY- APX FORTH ONLY )
   1 P : TASK ; 752 CONSTANT CRSINH 70 CONSTANT #HLP 
   2 P 0  VARIABLE CLINE     0 VARIABLE CCHAR
   3 P 3  VARIABLE LINEOFF   3 VARIABLE CHAROFF
@@ -752,7 +752,7 @@ Q ." Usage: 21 44 SEARCH KEYWORD" CR CR FORTH ;S
  14 P  CCHAR @ SIDE @ IF 32 - ENDIF CHAROFF @ + ;
  15 P : CURSOR CURSOR@ POINT-CURSOR ; -->
 61 CLEAR
-  0 P ( EDIT ) 
+  0 P ( EDIT - SCREEN-CURSOR, ..., TOP ) 
   1 P : SCREEN-CURSOR CURSOR@ SWAP 40 * + 106 C@ 256 *
   2 P  960 - + DUP C@ 128 XOR SWAP C! ;
   3 P : HLINE 34 0 DO TOP-BOT EMIT LOOP ;
@@ -923,7 +923,7 @@ Q ." Usage: 21 44 SEARCH KEYWORD" CR CR FORTH ;S
 
 
 ( : C; CURRENT @ CONTEXT ! ?EXEC ?CSP SMUDGE ; IMMEDIATE  )
-71 CLEAR ( EDYTOR R. PANTOLY ZAJMIE 9-10 EKRANOW? )
+71 CLEAR ( EDYTOR R. PANTOLY ZAJMIE 9-10 EKRANOW? APX ONLY )
 72 CLEAR
 73 CLEAR
 74 CLEAR

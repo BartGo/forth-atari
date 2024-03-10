@@ -71,6 +71,8 @@ DECIMAL
 
 EDITOR
 
+89 16 CLEARS
+
 PREPARE
 Q (     ** Poznajemy Forth ** ) ;S
 Q (  1.0    -- screen=21 )
@@ -660,6 +662,70 @@ Q   OVER OVER POCZ ! KON ! QUICK ;
 Q POCZATEK 4 0 QUICKSORT CR
 Q ." QUICKSORT: " CR POKAZ CR ;S
 
+
+
+54 DUP CLEAR SCR !
+0 P ( 1/4 PSY RASOWE ) -->
+1 P bokser 165
+2 P cocker-spaniel 90
+3 P dog 163
+4 P doberman 35
+5 P bernardyn 221
+6 P owczarek alzacki 171
+7 P foksterier 46
+8 P seter 27
+9 P jamnik 194
+10 P ratler 32
+11 P chow-chow 172
+12 P pekińczyk 28
+
+55 DUP CLEAR SCR !
+0 P ( 2/4 CECHY PSOW ) -->
+1 P Czy ma:
+2 P 1 wiecej niż 60 cm wzrostu?
+3 P 2 wydluzona glowe?
+4 P 3 kwadratowy lub plaski pysk?
+5 P 4 obfita siersc?
+6 P 5 dlugi wlos?
+7 P 6 stojace lub przyciete uszy?
+8 P 7 dlugie uszy?
+9 P 8 krepa lub mocna budowe?
+
+56 DUP CLEAR SCR !
+ 0 P ( 3/4 PSY )
+ 1 P : #PSY 54 ; : #CECHY 55 ; : HOME 125 EMIT ;
+ 2 P : CARRAY <BUILDS ALLOT DOES> + ;
+ 3 P 15 CARRAY CECHY : X CECHY C! ;
+ 4 P  165 0 X 98  1 X 163  2 X 35  3 X
+ 5 P  221 4 X 171 5 X 46   6 X 27  7 X
+ 6 P  194 8 X 32  9 X 172 10 X 28 11 X
+ 7 P 0 VARIABLE BAJT
+ 8 P : BITY 1 SWAP 0 DO 2 * LOOP 
+ 9 P   2 / BAJT @ OR BAJT ! ;
+10 P : WLASNOSCI 0 BAJT ! BEGIN
+11 P     QUERY BL WORD HERE NUMBER
+12 P     DROP DUP MINUS 0<
+13 P   WHILE 1 SWAP BITY CR DROP
+14 P   REPEAT ; 
+15 P -->
+
+57 DUP CLEAR SCR !
+ 0 P ( 4/4 PSY )
+ 1 P : DAJ BAJT @ 12 0 DO
+ 2 P     DUP I CECHY C@ OR 0= ( !! XOR/OR zmienia tryb )
+ 3 P     IF I 1+ #PSY .LINE CR THEN
+ 4 P   LOOP DROP ;
+ 5 P : PSY ( -- ) HOME 12 1 DO
+ 6 P     I #CECHY .LINE CR
+ 7 P   LOOP CR ." Napisz liczby:" CR
+ 8 P   WLASNOSCI CR CR CR ." To moze byc:"
+ 9 P   CR DAJ DROP ;
+10 P PSY ( PSY .. 6 0 - ratler 32 )
+11 P ;S  ( .. 2 3 4 6 0 - foksterier 46 )
+( TODO: nie znajduje foksa! )
+
+58 #SC !
+
 PREPARE
 Q ( 1/2 FIG-EDITOR, mini subset - APX/1.4S?  )  ( FD III/2 p.40 )
 Q ( First set edit screen: m SCR ! and to edit line n: n P ccc  )
@@ -693,42 +759,6 @@ Q CR ." SEARCH (uppercase only) loaded." CR
 Q ." Usage: 21 44 SEARCH KEYWORD" CR CR FORTH ;S
 
 ( >> https://github.com/BartGo/forth-atari/blob/main/DBGTOOLS.4TH )
-
-58 SCR !
- 0 P ( 1/2 GoesInto - Decomp by RDA - APX only? )
- 1 P ( -- Forth Dimension Vol14 Nr2 )
- 2 P   0 VARIABLE GIN 
- 3 P : MYSELF LATEST PFA CFA , ; IMMEDIATE
- 4 P : GIN+ CR GIN @ 2+ DUP GIN ! SPACES ;
- 5 P : GCHK DUP @ 2+ ' COMPILE =
- 6 P   IF  2+ DUP @ 2+ NFA ID. 2+
- 7 P   ELSE DUP @ 2+ DUP ' LIT =
- 8 P   OVER ' BRANCH  = OR OVER ' 0BRANCH = OR
- 9 P   OVER ' (LOOP)  = OR SWAP ' (+LOOP) = OR
-10 P   IF 2+ DUP @ SPACE . 2+ ELSE DUP @ 2+ ' CLIT =
-11 P   IF 2+ DUP C@ SPACE . 1+ ELSE DUP @ 2+ 
-12 P   ' (.") = IF 2+ DUP COUNT TYPE 
-13 P   DUP C@ 1+ + ELSE 2+ THEN THEN THEN THEN 
-14 P   -2 GIN +! ; 
-15 P : DIN CR GIN @ SPACES ; -->
-
-59 SCR !
- 0 P ( 2/2 Use: "GOIN x" RET/SPC/Q ) 
- 1 P : (GOESINTO) DUP CFA @ ' : CFA 
- 2 P   @ = OVER ' ERROR = 0= AND
- 3 P   IF BEGIN DUP @ DUP ' ;S CFA =
- 4 P     OVER ' (;CODE) CFA = OR 0=
- 5 P   WHILE 2+ DUP GIN+ NFA ID. KEY 
- 6 P     DUP 81 = IF SP! QUIT ELSE 155 =
- 7 P     IF MYSELF ELSE DROP THEN THEN
- 8 P     GCHK REPEAT 2+ DIN NFA ID.
- 9 P   THEN DROP ; ( 81=Q, 155=RETURN )
-10 P : GOESINTO -FIND IF DROP 0 GIN !
-11 P   (GOESINTO) ELSE ." NOT FOUND" CR THEN ;
-12 E
-13 P : GOIN GOESINTO ; 
-14 E
-15 P ;S 
 
 
 
@@ -922,8 +952,9 @@ Q ." Usage: 21 44 SEARCH KEYWORD" CR CR FORTH ;S
  15 P Esc-V: put last deleted line
 
 
-( : C; CURRENT @ CONTEXT ! ?EXEC ?CSP SMUDGE ; IMMEDIATE   )
+
 71 CLEAR ( EDYTOR R. PANTOLY ZAJMIE 9-10 EKRANOW? APX ONLY )
+         ( : C; CURRENT @ CONTEXT ! ?EXEC ?CSP SMUDGE ; IMMEDIATE   )
 72 CLEAR ( + DEASSEMBLER? BLINKING CHARS JAKO PRZYKŁAD!    )
 73 CLEAR
 74 CLEAR
@@ -936,8 +967,50 @@ Q ." Usage: 21 44 SEARCH KEYWORD" CR CR FORTH ;S
 81 CLEAR
 82 CLEAR
 83 CLEAR
+84 CLEAR
+85 CLEAR
 
-84 CLEAR 84 SCR !
+
+
+86 SCR !
+ 0 P ( 1/2 GoesInto - Decomp by RDA - APX only? )
+ 1 P ( -- Forth Dimension Vol14 Nr2 )
+ 2 P   0 VARIABLE GIN 
+ 3 P : MYSELF LATEST PFA CFA , ; IMMEDIATE
+ 4 P : GIN+ CR GIN @ 2+ DUP GIN ! SPACES ;
+ 5 P : GCHK DUP @ 2+ ' COMPILE =
+ 6 P   IF  2+ DUP @ 2+ NFA ID. 2+
+ 7 P   ELSE DUP @ 2+ DUP ' LIT =
+ 8 P   OVER ' BRANCH  = OR OVER ' 0BRANCH = OR
+ 9 P   OVER ' (LOOP)  = OR SWAP ' (+LOOP) = OR
+10 P   IF 2+ DUP @ SPACE . 2+ ELSE DUP @ 2+ ' CLIT =
+11 P   IF 2+ DUP C@ SPACE . 1+ ELSE DUP @ 2+ 
+12 P   ' (.") = IF 2+ DUP COUNT TYPE 
+13 P   DUP C@ 1+ + ELSE 2+ THEN THEN THEN THEN 
+14 P   -2 GIN +! ; 
+15 P : DIN CR GIN @ SPACES ; -->
+
+87 SCR !
+ 0 P ( 2/2 Use: "GOIN x" RET/SPC/Q ) 
+ 1 P : (GOESINTO) DUP CFA @ ' : CFA 
+ 2 P   @ = OVER ' ERROR = 0= AND
+ 3 P   IF BEGIN DUP @ DUP ' ;S CFA =
+ 4 P     OVER ' (;CODE) CFA = OR 0=
+ 5 P   WHILE 2+ DUP GIN+ NFA ID. KEY 
+ 6 P     DUP 81 = IF SP! QUIT ELSE 155 =
+ 7 P     IF MYSELF ELSE DROP THEN THEN
+ 8 P     GCHK REPEAT 2+ DIN NFA ID.
+ 9 P   THEN DROP ; ( 81=Q, 155=RETURN )
+10 P : GOESINTO -FIND IF DROP 0 GIN !
+11 P   (GOESINTO) ELSE ." NOT FOUND" CR THEN ;
+12 E
+13 P : GOIN GOESINTO ; 
+14 E
+15 P ;S 
+
+
+
+88 CLEAR 88 SCR !
  0 P ( "Blinking Characters" RM COMPUTE 12/81 )
  1 P ( "39 LOAD" to load req. assembler /APX/ )
  2 P HEX CODE Blink ( -- )
@@ -950,66 +1023,6 @@ Q ." Usage: 21 44 SEARCH KEYWORD" CR CR FORTH ;S
  9 P : BlinkInit ( -- ) ' Blink 228 ! ;
 10 P : BlinkCursor ( -- ) BlinkInit BlinkStart ;
 11 P DECIMAL ;S
-
-85 DUP CLEAR SCR !
-0 P ( 1/4 PSY RASOWE ) -->
-1 P bokser 165
-2 P cocker-spaniel 90
-3 P dog 163
-4 P doberman 35
-5 P bernardyn 221
-6 P owczarek alzacki 171
-7 P foksterier 46
-8 P seter 27
-9 P jamnik 194
-10 P ratler 32
-11 P chow-chow 172
-12 P pekińczyk 28
-
-86 DUP CLEAR SCR !
-0 P ( 2/4 CECHY PSOW ) -->
-1 P Czy ma:
-2 P 1 wiecej niż 60 cm wzrostu?
-3 P 2 wydluzona glowe?
-4 P 3 kwadratowy lub plaski pysk?
-5 P 4 obfita siersc?
-6 P 5 dlugi wlos?
-7 P 6 stojace lub przyciete uszy?
-8 P 7 dlugie uszy?
-9 P 8 krepa lub mocna budowe?
-
-87 DUP CLEAR SCR !
- 0 P ( 3/4 PSY )
- 1 P : #PSY 85 ; : #CECHY 86 ; : HOME 125 EMIT ;
- 2 P : CARRAY <BUILDS ALLOT DOES> + ;
- 3 P 15 CARRAY CECHY : X CECHY C! ;
- 4 P  165 0 X 98  1 X 163  2 X 35  3 X
- 5 P  221 4 X 171 5 X 46   6 X 27  7 X
- 6 P  194 8 X 32  9 X 172 10 X 28 11 X
- 7 P 0 VARIABLE BAJT
- 8 P : BITY 1 SWAP 0 DO 2 * LOOP 
- 9 P   2 / BAJT @ OR BAJT ! ;
-10 P : WLASNOSCI 0 BAJT ! BEGIN
-11 P     QUERY BL WORD HERE NUMBER
-12 P     DROP DUP MINUS 0<
-13 P   WHILE 1 SWAP BITY CR DROP
-14 P   REPEAT ; 
-15 P -->
-
-88 DUP CLEAR SCR !
- 0 P ( 4/4 PSY )
- 1 P : DAJ BAJT @ 12 0 DO
- 2 P     DUP I CECHY C@ OR 0= ( !! XOR/OR zmienia tryb )
- 3 P     IF I 1+ #PSY .LINE CR THEN
- 4 P   LOOP DROP ;
- 5 P : PSY ( -- ) HOME 12 1 DO
- 6 P     I #CECHY .LINE CR
- 7 P   LOOP CR ." Napisz liczby:" CR
- 8 P   WLASNOSCI CR CR CR ." To moze byc:"
- 9 P   CR DAJ DROP ;
-10 P PSY ( PSY .. 6 0 - ratler 32 )
-11 P ;S  ( .. 2 3 4 6 0 - foksterier 46 )
-( TODO: nie znajduje foksa! )
 
 89 CLEAR 89 SCR !
 0 P ( 1/1 VECTORED EXECUTE EXAMPLE )

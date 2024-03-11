@@ -246,10 +246,10 @@ Q   * THEN ;
 Q : SILNIA3 ( n -- ) [ SMUDGE ]
 Q   DUP 2 = IF ELSE DUP 1 - SILNIA3 *
 Q   THEN [ SMUDGE ] ;
-Q : FACTORIAL                         ( J. BIELECKI, "FORTH" )
-Q   DUP IF DUP 1 -                    [ SMUDGE ] FACTORIAL 
+Q : FACTORIAL ( J. BIELECKI "FORTH" )
+Q   DUP IF DUP 1 - [ SMUDGE ] FACTORIAL 
 Q   [ SMUDGE ] * ELSE 1+ THEN ;
-Q 8 SILNIA  U.  8 SILNIA2 U.          ( FAIL: 1.4S )
+Q 8 SILNIA  U.  8 SILNIA2 U. ( NIE 1.4S )
 Q 8 SILNIA3 U.  8 FACTORIAL U. ;S
 
 PREPARE
@@ -1022,8 +1022,6 @@ Q ." Usage: 21 44 SEARCH KEYWORD"     CR CR FORTH ;S
 13 P : GOIN GOESINTO ; 
 14 E
 15 P ;S 
-
-
 
 88 CLEAR 88 SCR !
  0 P ( "Blinking Characters" RM COMPUTE 12/81 )

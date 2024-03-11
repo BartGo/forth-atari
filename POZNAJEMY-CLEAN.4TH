@@ -49,6 +49,16 @@ HEX  VOCABULARY EDITOR  EDITOR DEFINITIONS
   EDITOR E LOOP ;
 : CLEARS DO I CLEAR FLUSH LOOP ; CR
 ." EDITOR subset (incl. P, E) loaded."
+
+: S+ SCR @ 1 + SCR ! ; ( TODO: boundary check )
+: S- SCR @ 1 - SCR ! ; ( TODO: boundary check )
+: (LINE/2) >R C/L 2 / B/BUF */MOD R> B/SCR *
+  + BLOCK + C/L 2 / ;
+: LI DECIMAL CR ( n -- ) SCR !
+  32 0 DO CR I SCR @ (LINE/2) -TRAILING TYPE LOOP CR 
+  ." <-- SCR#" SCR ? ;
+
+
 CR 
 
 DECIMAL
@@ -77,27 +87,27 @@ EDITOR
 
 PREPARE
 Q ( **** Poznajemy Forth **** )
-Q (  1.0    -- screen=21      )         (                           ) 
-Q (  2.0    -- screen=21      )         (                           ) 
-Q (  3.0    -- screen=21      )         (                           ) 
-Q (  4.0    -- screen=21      )         (                           ) 
-Q (  5.0    -- screen=21      )         (                           ) 
-Q (  6.0    -- screen=21      )         (                           ) 
-Q (  7.0    -- screen=21      )         (                           ) 
-Q (  8.0    -- screen=21      )         (                           ) 
-Q (  9.0    -- screen=21      )         (                           ) 
-Q ( 10.0    -- screen=21      )         (                           ) 
-Q ( 11.0    -- screen=21      )         (                           ) 
-Q ( 12.0    -- screen=21      )         (                           ) 
-Q ( Aneksy  -- screen=21      )         (                           )           
+Q (  1.0    -- screen=21      )       (                           ) 
+Q (  2.0    -- screen=21      )       (                           ) 
+Q (  3.0    -- screen=21      )       (                           ) 
+Q (  4.0    -- screen=21      )       (                           ) 
+Q (  5.0    -- screen=21      )       (                           ) 
+Q (  6.0    -- screen=21      )       (                           ) 
+Q (  7.0    -- screen=21      )       (                           ) 
+Q (  8.0    -- screen=21      )       (                           ) 
+Q (  9.0    -- screen=21      )       (                           ) 
+Q ( 10.0    -- screen=21      )       (                           ) 
+Q ( 11.0    -- screen=21      )       (                           ) 
+Q ( 12.0    -- screen=21      )       (                           ) 
+Q ( Aneksy  -- screen=21      )       (                           )           
 Q ;S
 
 PREPARE
-Q ( 1/1 KOT, NAPIS, ..., KWADRATY )     ( "PF" rozdzialy 2.1-3.4.3  ) 
+Q ( 1/1 KOT, NAPIS, KWADRATY    )     ( "PF" rozdzialy 2.1-3.4.3  ) 
 Q : KOT CR ." Kot pije mleko" ; 
 Q : NAPIS KOT SPACE
 Q   ." i poluje na myszy" ;
-Q : S0 18 +ORIGIN @ ; ( APX s#85 )
+Q : S0 18 +ORIGIN @ ;                 ( APX s#85 )
 Q : .S ( --- ) 2 SPACES SP@ S0 =
 Q     0= IF SP@ 2 - S0 2 - DO
 Q       I @ . -2 +LOOP THEN ;
@@ -110,7 +120,7 @@ Q : KWADRATY CR DO I DUP U* 15        D.R CR LOOP ;
 Q  CR 45001 44980 KWADRATY CR  ;S
 
 PREPARE
-Q ( 1/1 2DUP,2DROP,...,DUMP INDEX )   ( "PF" rozdzialy 3.5-4        )
+Q ( 1/1 2DUP,2DROP,...,DUMP-INDEX )   ( "PF" rozdzialy 3.5-4        )
 Q : 2DUP OVER OVER ;                  : 2DROP DROP DROP ;
 Q : 2SWAP ROT >R ROT R> ; : 2OVER     >R >R 2DUP R> R> 2SWAP ;
 Q : 2ROT ( n1 n2 n3 n4 n5 n6 ... )    ( --- n3 n4 n5 n6 n1 n2 )

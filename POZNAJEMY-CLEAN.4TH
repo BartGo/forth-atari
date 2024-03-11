@@ -73,9 +73,10 @@ EDITOR
 
 89 16 CLEARS
 
+
 PREPARE
 Q (     ** Poznajemy Forth ** ) ;S
-Q (  1.0    -- screen=21 )
+Q (  1.0    -- screen=21 )            (                         ) 
 Q (  2.0    -- screen=21 )
 Q (  3.0    -- screen=21 )
 Q (  4.0    -- screen=21 )
@@ -87,53 +88,57 @@ Q (  9.0    -- screen=21 )
 Q ( 10.0    -- screen=21 )
 Q ( 11.0    -- screen=21 )
 Q ( 12.0    -- screen=21 )
-Q ( Aneksy  -- screen=21 ) 
+Q ( Aneksy  -- screen=21 )            (                         ) 
 
 PREPARE
-Q ( 1/1 KOT,NAPIS,.S,...,KWADRATY )
+Q ( 1/1 KOT,NAPIS,.S,...,KWADRATY )   ( PF rozdzial xx.xx-yy.xx ) 
 Q : KOT CR ." Kot pije mleko" ; 
-Q : NAPIS KOT ."  i poluje na myszy" ;
-Q : S0 18 +ORIGIN @ ; ( APX scr#85 )
-Q : .S ( --- )
-Q   2 SPACES SP@ S0 = 0= IF
-Q     SP@ 2 - S0 2 - 
-Q     DO I @ . -2 +LOOP THEN ;
-Q : TEST ( -- ) 1 2 3  DUP  .S ( 1 2 3 3 )
-Q   DROP .S  ( 1 2 3 ) SWAP .S ( 1 3 2 )
-Q   ROT  .S  ( 3 2 1 ) OVER .S ( 3 2 1 2 )
+Q : NAPIS KOT SPACE
+Q   ." i poluje na myszy" ;
+Q : S0 18 +ORIGIN @ ; ( APX s#85 )
+Q : .S ( --- ) 2 SPACES SP@ S0 =
+Q     0= IF SP@ 2 - S0 2 - DO
+Q       I @ . -2 +LOOP THEN ;
+Q : TEST ( -- ) 1 2 3   DUP  .S       ( 1 2 3 3 )
+Q   DROP .S   ( 1 2 3 ) SWAP .S       ( 1 3 2 )
+Q   ROT  .S   ( 3 2 1 ) OVER .S       ( 3 2 1 2 )
 Q  SP! ;  : KWADRAT DUP * . ;
 Q : SZESCIAN DUP OVER * * . ; 
-Q : KWADRATY CR DO I DUP U* 15 D.R CR LOOP ;
+Q : KWADRATY CR DO I DUP U* 15
+Q   D.R CR LOOP ;
 Q  CR 45001 44980 KWADRATY CR  ;S
 
 PREPARE
-Q ( 1/1 2DUP,2DROP,...,DUMP INDEX )
-Q : 2DUP OVER OVER ;       : 2DROP DROP DROP ;
-Q : 2SWAP ROT >R ROT R> ;  : 2OVER >R >R 2DUP R> R> 2SWAP ;
-Q : 2ROT ( n1 n2 n3 n4 n5 n6 ... ) ( --- n3 n4 n5 n6 n1 n2 )
-Q    >R ( n1 n2 n3 n4 n5 )         ( – przenosi n6 na stos powrotów )
-Q    >R ( n1 n2 n3 n4 )            ( – przenosi n5 na stos powrotów )
-Q    2SWAP ( n3 n4 n1 n2 )         ( – zamienia pary liczb )
-Q    R> ( n3 n4 n1 n2 n5 )         ( – przenosi z powrotem n5 )
-Q    R> ( n3 n4 n1 n2 n5 n6 )      ( – przenosi z powrotem n6 )
-Q    2SWAP ; ( n3 n4 n5 n6 n1 n2 ) ( – zamiana wykonana! )
-Q ( DUMP-INDEX - ' NFA ' CFA )
-Q : DUMP-INDEX ' INDEX NFA ' TRIAD NFA OVER - DUMP ;
-Q ;S ( HEX DUMP-INDEX DECIMAL )
+Q ( 1/1 2DUP,2DROP,...,DUMP INDEX )   ( PF rozdzial xx.xx-yy.xx )
+Q : 2DUP OVER OVER ;                  : 2DROP DROP DROP ;
+Q : 2SWAP ROT >R ROT R> ; : 2OVER     >R >R 2DUP R> R> 2SWAP ;
+Q : 2ROT ( n1 n2 n3 n4 n5 n6 ... )    ( --- n3 n4 n5 n6 n1 n2 )
+Q    >R ( n1 n2 n3 n4 n5 )            ( – n6 na stos powrotow )
+Q    >R ( n1 n2 n3 n4 )               ( – n5 na stos powrotow )
+Q    2SWAP ( n3 n4 n1 n2 )            ( – zamienia pary liczb )
+Q    R> ( n3 n4 n1 n2 n5 )            ( – przenosi z powrotem n5 )
+Q    R> ( n3 n4 n1 n2 n5 n6 )         ( – przenosi z powrotem n6 )
+Q    2SWAP ; ( n3 n4 n5 n6 n1 n2 )    ( – zamiana wykonana! )
+Q : DUMP-INDEX ' INDEX NFA ' TRIAD    ( HEX DUMP-INDEX DECIMAL ) 
+Q   NFA OVER - DUMP ;                 ( ^ przykla uzycia       )
+Q ;S 
 
 PREPARE
 Q ( 1/1 PRZEDZIAL,IKSY,NWP )
-Q : PRZEDZIAL ( dolna-granica n gorna-granica )
-Q    OVER ( dol-gr n gor-gr n )
-Q    >    ( dol-gr n f1 )
-Q    >R   ( dol-gr n )
-Q    <    ( f2 )
-Q    R>   ( f2 f1 ) ; ( f )  
+Q : PRZEDZIAL                         ( dolna-gr. n gorna-gran. )
+Q    OVER                             ( dol-gr n gor-gr n )
+Q    > >R                             ( dol-gr n f1 ) ( dol-gr n )
+Q    <  R> ;                          ( f2 ) ( f2 f1 ) ( f )  
 Q ( 20 370 400 PRZEDZIAL . CR )
-Q : IKSY BEGIN ." X" 1 - DUP 0= UNTIL ; 
-Q : NWP BEGIN SWAP OVER MOD -DUP 0= UNTIL ;
-Q ( 128 1024 NWP . CR ) ( 128 a nie 126 jak w ksiazce )
-Q ( 324  556 NWP . CR ) ( 1933 821 NWP . CR ) ( wyniki: 4, 1 )
+Q : IKSY BEGIN
+Q     ." X" 1 - DUP 0=
+Q  UNTIL ; 
+Q : NWP BEGIN
+Q     SWAP OVER MOD -DUP 0=
+Q  UNTIL ;
+Q ( 128 1024 NWP . CR )               
+Q ( 324  556 NWP . CR )               
+Q ( 1933 821 NWP . CR )
 Q ;S
 
 PREPARE
@@ -148,9 +153,11 @@ Q     2SWAP 2OVER D+ LOOP ;
 Q : KWADRAT2 DUP * ;
 Q : KWADRAT3
 Q   DO I KWADRAT2 DUP 32760
-Q     IF DROP LEAVE THEN . LOOP ;
+Q     IF DROP LEAVE THEN
+Q   . LOOP ;
 Q : TEST1 51 1 DO I . 2 +LOOP ;
-Q : TEST2 0 20 DO I . -1 +LOOP ; ;S
+Q : TEST2 0 20 DO I . -1 +LOOP ;
+Q ;S
 
 PREPARE
 Q ( 1/1 TABLICZKA )
@@ -171,15 +178,18 @@ Q  TABLICZKA ;S
 PREPARE
 Q ( 1/1 TABLICZKA2 )
 Q : J R> R> R> R R# ! >R >R >R R# @ ; 
-Q : TAB2 ( -- ) 125 EMIT CR CR 8 SPACES 
-Q  ." TABLICZKA MNOZENIA" CR CR 3 SPACES
-Q  10 1 DO I 3 .R LOOP CR
-Q  30 0 DO ." _" LOOP CR 
-Q  10 1 DO
-Q    I . ." |" 10 1 DO
-Q      I J * 3 .R
-Q    LOOP CR LOOP ;
-Q : TABLICZKA2 TAB2 ;
+Q : TAB2 ( -- ) 125 EMIT
+Q   CR CR 8 SPACES 
+Q   ." TABLICZKA MNOZENIA"
+Q   CR CR 3 SPACES
+Q   10 1 DO I 3 .R LOOP CR
+Q   30 0 DO ." _" LOOP CR 
+Q   10 1 DO
+Q     I . ." |" 10 1 DO
+Q       I J * 3 .R
+Q     LOOP CR
+Q   LOOP ; : TABLICZKA2 TAB2 ;
+V
 Q TABLICZKA2 ;S
 
 PREPARE
@@ -211,18 +221,20 @@ Q PIERWSZE ;S
 PREPARE
 Q ( 1/1 NAZWISKO?, DRUKUJ, INPUT, DATY )
 Q : QUERY TIB @ 80 EXPECT 0 IN ! ; 
-Q : NAZWISKO? CR ." PODAJ SWOJE NAZWISKO: "
+Q : NAZWISKO?
+Q   CR ." PODAJ SWOJE NAZWISKO: "
 Q   CR QUERY ; 
-Q : NAZWISKO? CR ." PODAJ SWOJE NAZWISKO: "
+Q : NAZWISKO?
+Q   CR ." PODAJ SWOJE NAZWISKO: "
 Q   CR QUERY 155 WORD HERE ; 
 Q : DRUKUJ NAZWISKO? CR COUNT TYPE ;
-Q : INPUT CR QUERY BL WORD HERE NUMBER DROP ; 
-Q : DATY ( n n n --- ) <BUILDS , , , DOES>
+Q : INPUT CR QUERY BL WORD HERE
+Q   NUMBER DROP ; 
+Q : DATY <BUILDS , , , DOES>          ( n n n --- )
 Q   DUP 2+ DUP 2+ ? ? ? CR ;
-Q 12  9 1683 DATY WIEDEN    4  4 1794 DATY RACLAWICE
-Q 18  6 1815 DATY WATERLOO  1  9 1870 DATY SEDAN
-Q 12 10 1943 DATY LENINO   15 08 1920 DATY WARSZAWA
-Q ;S 
+Q 12  9 1683 DATY WIEDEN               4  4 1794 DATY RACLAWICE
+Q 18  6 1815 DATY WATERLOO             1  9 1870 DATY SEDAN
+Q 12 10 1943 DATY LENINO              15 08 1920 DATY WARSZAWA ;S 
 
 PREPARE
 Q ( 1/1 SILNIA,SILNIA2,... )
@@ -231,20 +243,21 @@ Q   PFA CFA ; IMMEDIATE
 Q : SILNIA ( n -- ) 
 Q   1 SWAP 1+ 1 DO I * LOOP ;
 Q : SILNIA2 ( n -- ) DUP 2 = IF ELSE 
-Q     DUP 1 - TENKOD LITERAL EXECUTE *
-Q   THEN ;
+Q     DUP 1 - TENKOD LITERAL EXECUTE 
+Q   * THEN ;
 Q : SILNIA3 ( n -- ) [ SMUDGE ]
 Q   DUP 2 = IF ELSE DUP 1 - SILNIA3 *
 Q   THEN [ SMUDGE ] ;
-Q : FACTORIAL ( J. BIELECKI, "FORTH" )
-Q   DUP IF DUP 1 - [ SMUDGE ] FACTORIAL 
+Q : FACTORIAL                         ( J. BIELECKI, "FORTH" )
+Q   DUP IF DUP 1 -                    [ SMUDGE ] FACTORIAL 
 Q   [ SMUDGE ] * ELSE 1+ THEN ;
-Q 8 SILNIA  U.   8 SILNIA2 U. ( FAIL: 1.4S )
-Q 8 SILNIA3 U.   8 FACTORIAL U. ;S
+Q 8 SILNIA  U.                        8 SILNIA2 U. ( FAIL: 1.4S )
+Q 8 SILNIA3 U.                        8 FACTORIAL U. ;S
 
 PREPARE
 Q ( 1/1 ARRAY, 2DARRAY )
-Q : ARRAY <BUILDS 2 * ALLOT DOES> SWAP 2 * + ;
+Q : ARRAY <BUILDS 2 * ALLOT DOES>
+Q   SWAP 2 * + ;
 Q : 2DARRAY
 Q   <BUILDS DUP , * 2 * ALLOT DOES>
 Q   ROT OVER @ + ROT + 2 * + 2+ ;
@@ -259,34 +272,34 @@ Q ;S
 PREPARE
 Q ( 1/1 MATDEF - valFORTH ) 
 Q : 0> 0 MAX ; 
-Q : MATDEF <BUILDS OVER OVER SWAP , , * 2 * ALLOT
-Q    DOES> >R OVER OVER R @ R 2 + @ ROT - 0> ROT
-Q    ROT - 0< * IF R @ * + 2 * R> 4 + + 
-Q    ELSE R> DROP DROP DROP ." ZLE WSKAZNIKI" THEN ;
-Q 2 3 MATDEF MATRIX2                 CR CR
-Q 11 0 0 MATRIX2 C!  22 0 1 MATRIX2 C!
-Q 33 1 0 MATRIX2 C!  44 1 1 MATRIX2 C!
-Q 55 0 2 MATRIX2 C!  66 1 2 MATRIX2 C!
-Q 77 2 3 MATRIX2 C! ( PRZEKROCZONE!! )
-Q    0 0 MATRIX2 C@ . CR  0 1 MATRIX2 C@ . CR
-Q    1 0 MATRIX2 C@ . CR  1 1 MATRIX2 C@ . CR
-Q    0 2 MATRIX2 C@ . CR  1 2 MATRIX2 C@ . CR
+Q : MATDEF <BUILDS OVER OVER           SWAP , , * 2 * ALLOT
+Q    DOES> >R OVER OVER R @ R          2 + @ ROT - 0> ROT
+Q    ROT - 0< * IF R @ * + 2 *         R> 4 + + 
+Q    ELSE R> DROP DROP DROP            ." ZLE WSKAZNIKI" THEN ;
+Q 2 3 MATDEF MATRIX2                   CR CR
+Q 11 0 0 MATRIX2 C!                    22 0 1 MATRIX2 C!
+Q 33 1 0 MATRIX2 C!                    44 1 1 MATRIX2 C!
+Q 55 0 2 MATRIX2 C!                    66 1 2 MATRIX2 C!
+Q 77 2 3 MATRIX2 C! ( PRZEKROCZONE )
+Q    0 0 MATRIX2 C@                    . CR  0 1 MATRIX2 C@ . CR
+Q    1 0 MATRIX2 C@                    . CR  1 1 MATRIX2 C@ . CR
+Q    0 2 MATRIX2 C@                    . CR  1 2 MATRIX2 C@ . CR
 Q CR ;S
 
 PREPARE
 Q ( 1/1 ARRAY2, ARRAY3 [JB] )
-Q : ARRAY2 ( n n --- ) ( n n ARRAY2 matrix )
-Q   <BUILDS OVER , * ALLOT DOES> DUP @ ROT * + + 2+ ;
-Q : ARRAY3 ( n n --- ) ( n n ARRAY2 matrix )
-Q   <BUILDS OVER C, DUP C, * ALLOT DOES> 1+ ROT OVER C@ * + + 1+ ;
+Q : ARRAY2 ( n n --- )                 ( n n ARRAY2 matrix )
+Q   <BUILDS OVER , * ALLOT DOES>       DUP @ ROT * + + 2+ ;
+Q : ARRAY3 ( n n --- )     <BUILDS     ( n n ARRAY2 matrix )
+Q   OVER C, DUP C, * ALLOT   DOES>     1+ ROT OVER C@ * + + 1+ ;
 Q 2 3 ARRAY2 MATRIX   2 3 ARRAY3 BUF     
-Q 11 0 0 MATRIX C!  22 0 1 MATRIX C!
-Q 33 1 0 MATRIX C!  44 1 1 MATRIX C!
-Q 55 0 2 MATRIX C!  66 1 2 MATRIX C!
-Q    0 0 MATRIX C@ . CR  0 1 MATRIX C@ . CR
-Q    1 0 MATRIX C@ . CR  1 1 MATRIX C@ . CR
-Q    0 2 MATRIX C@ . CR  1 2 MATRIX C@ . CR CR
-Q 13 2 1 BUF C!          2 1 BUF C@ .    CR ;S
+Q 11 0 0 MATRIX C!                     22 0 1 MATRIX C!
+Q 33 1 0 MATRIX C!                     44 1 1 MATRIX C!
+Q 55 0 2 MATRIX C!                     66 1 2 MATRIX C!
+Q    0 0 MATRIX C@ . CR                0 1 MATRIX C@ . CR
+Q    1 0 MATRIX C@ . CR                1 1 MATRIX C@ . CR
+Q    0 2 MATRIX C@ . CR                1 2 MATRIX C@ . CR CR
+Q 13 2 1 BUF C!                        2 1 BUF C@ .    CR ;S
 
 PREPARE
 Q ( 1/1 SETNE, SEXTAL, XX, SEK )
@@ -296,23 +309,24 @@ V
 Q 123489. SETNE ( 1234.89 )
 Q : SEXTAL 6 BASE ! ;
 Q : XX # SEXTAL # DECIMAL 58 HOLD ;
-Q : SEK ( n --- ) CR <# XX XX #S #> TYPE CR ;
+Q : SEK ( n --- ) 
+Q   CR <# XX XX #S #> TYPE CR ;
 V
 Q 15610. SEK
 Q ;S
 
 PREPARE
 Q ( 1/2 DBL - D*, FIX, F. )  
-Q 0 VARIABLE A_  0 VARIABLE B_   0 VARIABLE C_  0 VARIABLE D_
-Q : D* A_ ! B_ ! C_ ! D_ !       ( "COMPLETE FORTH" )
+Q 0 VARIABLE A_  0 VARIABLE B_        0 VARIABLE C_  0 VARIABLE D_
+Q : D* A_ ! B_ ! C_ ! D_ !            ( "COMPLETE FORTH" )
 Q   D_ @ B_ A_ U* D_ @ A_ @ U* DROP + C_ @ B_ @ U* DROP + ; 
 Q   ( TODO: FD-V03N2.pdf: -- : D* DUP ROT * ROT ROT U* ROT + ; )
-Q : FIX DPL @ 0< IF              ( jezeli liczba byla pojedyncza)
-Q     S->D 0 DPL !               ( przekształca ją w podwójną )
+Q : FIX DPL @ 0< IF                   ( jezeli liczba byla pojed.
+Q     S->D 0 DPL !                    ( przeksztalca ja w podw. )
 Q   THEN
-Q   DPL @ DUP 4 < IF 4 SWAP DO 10. D* LOOP 
+Q   DPL @ DUP 4 < IF 4 SWAP           DO 10. D* LOOP 
 Q   ELSE
-Q     4 > IF ." Poza zakresem" 2DROP THEN THEN ; 
+Q     4 > IF ." Poza zakresem" 2DROP  THEN THEN ; 
 Q : F. SWAP OVER DABS
 Q  <# # # # # 46 HOLD #S SIGN #> TYPE SPACE ;
 Q -->
@@ -321,9 +335,9 @@ PREPARE
 Q ( 2/2 DBL - UD.,D-,D0=,D0<,D= )  
 Q : UD. <# #S #> TYPE ;
 Q : D- DMINUS D+ ;
-Q : D0= OR 0= ;               ( test na liczbę podwojna 0 )
-Q : D0< SWAP DROP 0< ;        ( test na ujemna liczbę podwojna )
-Q : D= D- D0= ;               ( test na rownosc dwoch liczb podwojnych )
+Q : D0= OR 0= ;                       ( test na liczbę podw. 0 )
+Q : D0< SWAP DROP 0< ;                ( " ujemna liczbę podw. )
+Q : D= D- D0= ;                       ( " rownosc dwoch liczb podw. )
 V
 Q 0.04 FIX        0.3 FIX D+ 
 Q 0.625 FIX D+ 0.0001 FIX D+ 
@@ -342,11 +356,11 @@ Q   SWAP ROT 1 - ;
 Q : DRUKUJ 3DUP DROP SWAP
 Q   . ." NA " . ." ," ;
 Q : WIEZE [ SMUDGE ] DUP IF 
-Q     TAM WIEZE DRUKUJ Z.POWROTEM WIEZE 
+Q     TAM WIEZE DRUKUJ
+Q     Z.POWROTEM WIEZE 
 Q   THEN DROP DROP DROP [ SMUDGE ] ;   
-Q : HANOI 1 3 ROT CR WIEZE ; ( n -- )
-Q 5 HANOI           ;S
-Q ( Patrz tez: FD II/2 p. 32 )
+Q : HANOI 1 3 ROT CR WIEZE ;           ( n -- )
+Q 5 HANOI           ;S                 ( Patrz tez: FD II/2 p. 32 )
 
 PREPARE
 Q ( 1/5 HETMANY:WEKTOR,LHET,... )
@@ -358,21 +372,21 @@ Q 1024 WEKTOR WSPOLRZEDNA
 Q : LHET ( --- liczba hetmanów+1 )
 Q   0 WSPOLRZEDNA C@ ;
 Q : POSTAW ( rząd kolumna --- )
-Q   SWAP WSPOLRZEDNA C! ; ( umieszcza hetmana )
+Q   SWAP WSPOLRZEDNA C! ;              ( umieszcza hetmana )
 Q : USUN ( rząd --- )
-Q   0 POSTAW ; ( kasuje hetmana )
+Q   0 POSTAW ;                         ( kasuje hetmana )
 Q -->
 
 PREPARE
 Q ( 2/5 HETMANY:WOLNE,... )
-Q : WOLNE ( rząd n --- rząd f )
+Q : WOLNE                              ( rząd n --- rząd f )
 Q   2DUP = >R
 Q   OVER WSPOLRZEDNA C@
 Q   OVER WSPOLRZEDNA C@ -
 Q   ROT ROT - ABS OVER ABS =
 Q   SWAP 0= OR 0=
 Q   R> OR ;
-Q : WSZYSTKIE-WOLNE ( rząd --- rząd f )
+Q : WSZYSTKIE-WOLNE                    ( rząd --- rząd f )
 Q   1 OVER 1 DO
 Q     OVER I WOLNE AND
 Q   LOOP ;
@@ -386,44 +400,46 @@ Q : DRUK ( --- ) CR LHET 1 DO
 Q     I WSPOLRZEDNA C@ LHET 1
 Q     DO DUP I =
 Q       IF ." X " ELSE ." . " THEN
-Q     LOOP DROP CR
-Q   LOOP
+Q     LOOP DROP CR LOOP
 Q   1 ROZWIAZANIE +! CR ." Rozwiazanie nr "
-Q   ROZWIAZANIE ? CR ;
-Q : INIC ( --- ) ( inicjuje szachownice z hetmanami w rz. 0 ) 
+Q   ROZWIAZANIE ?    CR ;
+Q : INIC ( --- )                       ( inic. sz. z hetm. w rz. 0 ) 
 Q   LHET 1 DO I USUN LOOP 0 ROZWIAZANIE ! ;
 Q -->
 
 PREPARE
 Q ( 4/5 HETMANY:NAPRZOD,... )
-Q : NAPRZOD ( rzad --- rzad f ) ( f=1, gdy hetmana w rz. "rzad" )
-Q                     ( .. mozna przesunac do nastepnej kolumny )
+Q : NAPRZOD ( rzad --- rzad f )       ( f=1, gdy het. w rz. "rzad" )
+Q                                     ( mozna przes. do nast. kol. )
 Q   DUP DUP WSPOLRZEDNA
 Q   C@ 1+ POSTAW BRZEG
 Q   IF 1 ELSE DUP USUN 0 THEN ;
-Q : PIERWSZA-WOLNA ( rzad --- rzad f )    ( f=1,gdy hetman moze )
-Q                   ( .. przejsc do nastepnej kolumny w rzedzie )
+Q : PIERWSZA-WOLNA ( rz --- rz f )    ( f=1,gdy hetman moze )
+Q                                     ( przejsc do nast. kol. w rz )
 Q  BEGIN
 Q    NAPRZOD
-Q    IF WSZYSTKIE-WOLNE -DUP ELSE 0 1 THEN
+Q    IF WSZYSTKIE-WOLNE -DUP
+Q    ELSE 0 1 THEN
 Q  UNTIL ;
 Q -->
 
 PREPARE
 Q ( 5/5 HETMANY:POZYCJA,HETMANY )
-Q : POZYCJA ( rzad --- f ) [ SMUDGE ]
-Q   LHET OVER > IF
-Q     BEGIN
-Q       PIERWSZA-WOLNA IF
-Q	  1+ POZYCJA -DUP
-Q	ELSE
-Q	  1 - 0 1
-Q       THEN
-Q    UNTIL
-Q  ELSE DRUK 1 - 0 THEN [ SMUDGE ] ;
+Q : POZYCJA ( rzad --- f )
+Q   [ SMUDGE ]
+Q     LHET OVER > IF
+Q       BEGIN
+Q         PIERWSZA-WOLNA IF
+Q	    1+ POZYCJA -DUP
+Q	  ELSE
+Q	    1 - 0 1
+Q         THEN
+Q      UNTIL
+Q    ELSE DRUK 1 - 0 THEN
+Q  [ SMUDGE ] ;
 Q : HETMANY ( --- )
-Q  9 0 SWAP POSTAW INIC 1 POZYCJA 2 DROP ; 
-Q ;S
+Q   9 0 SWAP POSTAW INIC
+Q   1 POZYCJA 2 DROP ;        ;S
 
 PREPARE
 Q ( 1/1 LICZBY ZESPOLONE )
@@ -459,33 +475,33 @@ Q 91 TABLICA SINTABLICA -->
 
 PREPARE
 Q ( 2/2 FN FUNKCJE [FIXED] )
-Q : S180 DUP 90 > IF 180 SWAP - THEN SINTABLICA ;
-Q : SIN 360 MOD DUP 0< IF 360 + THEN
-Q   DUP 180 > IF 180 - S180 MINUS ELSE S180 THEN ;
+Q : S180 DUP 90 > IF 180 SWAP -        THEN SINTABLICA ;
+Q : SIN 360 MOD DUP 0< IF 360 +        THEN DUP 180 > IF 
+Q     180 - S180 MINUS ELSE S180       THEN ;
 Q : COS 90 + SIN ;
-Q : TAN DUP SIN SWAP COS DUP ABS 2920 >
-Q   IF 10000 SWAP */  ELSE DROP DROP ." ZA DUZE! " THEN ;
+Q : TAN DUP SIN SWAP COS DUP ABS 2920
+Q   > IF 10000 SWAP */  ELSE DROP      DROP ." ZA DUZE! " THEN ;
 Q CR
-Q  0 SIN . (     0 ) 90 SIN . ( 10000 ) 
-Q 45 SIN . (  7070 ) 44 SIN . (  6946 )
-Q 44 TAN . (  9657 ) 46 SIN . (  7192 )
-Q 45 SIN . (  7070 ) 30 SIN . (  5000 )
-Q 89 SIN . (  9998 ) 0 TAN .  (     0 )
-Q 30 TAN . (  5773 ) 45 TAN . ( 10000 )
-Q 30 COS . (  8660 ) CR ;S
+Q  0 SIN . (     0 )                   90 SIN . ( 10000 ) 
+Q 45 SIN . (  7070 )                   44 SIN . (  6946 )
+Q 44 TAN . (  9657 )                   46 SIN . (  7192 )
+Q 45 SIN . (  7070 )                   30 SIN . (  5000 )
+Q 89 SIN . (  9998 )                   0 TAN .  (     0 )
+Q 30 TAN . (  5773 )                   45 TAN . ( 10000 )
+Q 30 COS . (  8660 )                   CR ;S
 
 PREPARE
 Q ( 1/5 LIFE:ARRAY,UNIVERSUM,J )
 Q 10 CONSTANT DIMX
 Q 10 CONSTANT DIMY
-Q : ARRAY     ( dimX dimY --- )
-Q   <BUILDS 
-Q     OVER ,  ( umieszcza dimY pod adresem pfa+2 )
-Q     * ALLOT ( rezerwuje dimX*dimY bajtów )
-Q   DOES>
-Q   DUP @     ( umieszcza dimX na stosie )
-Q   ROT *     ( oblicza dimY*dimX )
-Q   + + 2+ ;  ( oblicza bezwzgledny adres komorki )
+Q : ARRAY                              ( dimX dimY --- )
+Q   <BUILDS                            
+Q     OVER ,                           ( dimY pod adresem pfa+2 )
+Q     * ALLOT                          ( dimX*dimY bajtów )
+Q   DOES>                              
+Q   DUP @                              ( dimX na stosie )
+Q   ROT *                              ( dimY*dimX )
+Q   + + 2+ ;                           ( bezwzgledny adres komorki )
 Q DIMX DIMY ARRAY UNIVERSUM
 Q : HOME 125 EMIT ;
 Q : J R> R> R> R R# !
@@ -501,10 +517,10 @@ Q : ZERUJ ( --- )
 Q   DIMY 0 DO
 Q     DIMX 0 DO I J USUN LOOP
 Q   LOOP ;
-Q : WERYFIKACJA                  ( liczba stanu sąsiadów --- )
-Q  DUP 3 =                       ( liczba stanu f )
-Q  IF DROP 2+ ELSE
-Q    2 = 0=                      ( stan stan nr2 )
+Q : WERYFIKACJA                       ( liczba stanu sąsiadów --- )
+Q  DUP 3 =                            ( liczba stanu f )
+Q  IF DROP 2+ ELSE                    
+Q    2 = 0=                           ( stan stan nr2 )
 Q    IF 4 + THEN
 Q  THEN ; -->
   
@@ -512,14 +528,14 @@ PREPARE
 Q ( 3/5 LIFE:PRZYGOTOWANIE   )
 Q : PRZYGOTOWANIE ( --- )
 Q   DIMY 0 DO DIMX 0 DO
-Q     0 J 2+ DIMY MIN	J 1 - 0 MAX DO
-Q	      J 2+ DIMX MIN J 1 - 0 MAX DO
-Q         I J UNIVERSUM C@ 1 AND + ( 1+ *** chyba nie )
-Q       LOOP
-Q     LOOP
-Q     I J UNIVERSUM C@ 1 AND       ( liczba sasiadow )
-Q     SWAP OVER - WERYFIKACJA      ( koduje przyszlosc )
-Q     I J UNIVERSUM C!             ( 1+ ** chyba nie )
+Q     0 J 2+ DIMY MIN	J 1 - 0 MAX    DO
+Q	      J 2+ DIMX MIN J 1 - 0 MAX    DO
+Q         I J UNIVERSUM C@ 1 AND +    ( 1+ *** chyba nie )
+Q       LOOP                          
+Q     LOOP                            
+Q     I J UNIVERSUM C@ 1 AND          ( liczba sasiadow )
+Q     SWAP OVER - WERYFIKACJA         ( koduje przyszlosc )
+Q     I J UNIVERSUM C!                ( 1+ ** chyba nie )
 Q     LOOP LOOP ; -->
 
 PREPARE
@@ -693,9 +709,9 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 
 56 DUP CLEAR SCR !
  0 P ( 3/4 PSY )
- 1 P : #PSY 54 ; : #CECHY 55 ; : HOME 125 EMIT ;
+ 1 P : #PSY 54 ; : #CECHY 55 ;         : HOME 125 EMIT ;
  2 P : CARRAY <BUILDS ALLOT DOES> + ;
- 3 P 15 CARRAY CECHY : X CECHY C! ;
+ 3 P 15 CARRAY CECHY                   : X CECHY C! ;
  4 P  165 0 X 98  1 X 163  2 X 35  3 X
  5 P  221 4 X 171 5 X 46   6 X 27  7 X
  6 P  194 8 X 32  9 X 172 10 X 28 11 X
@@ -712,51 +728,52 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 57 DUP CLEAR SCR !
  0 P ( 4/4 PSY )
  1 P : DAJ BAJT @ 12 0 DO
- 2 P     DUP I CECHY C@ OR 0= ( !! XOR/OR zmienia tryb )
+ 2 P     DUP I CECHY C@ OR 0=         ( !! XOR/OR zmienia tryb? )
  3 P     IF I 1+ #PSY .LINE CR THEN
  4 P   LOOP DROP ;
  5 P : PSY ( -- ) HOME 12 1 DO
  6 P     I #CECHY .LINE CR
  7 P   LOOP CR ." Napisz liczby:" CR
- 8 P   WLASNOSCI CR CR CR ." To moze byc:"
- 9 P   CR DAJ DROP ;
-10 P PSY ( PSY .. 6 0 - ratler 32 )
-11 P ;S  ( .. 2 3 4 6 0 - foksterier 46 )
+ 8 P   WLASNOSCI CR CR
+ 9 P   CR ." To moze byc:"
+10 P   CR DAJ DROP ;
+11 P PSY ( .. 6 0 - ratler 32 )
+12 P ;S  ( .. 2 3 4 6 0 - foks. 46 )
+
 ( TODO: nie znajduje foksa! )
 
 58 #SC !
 
 PREPARE
-Q ( 1/2 FIG-EDITOR, mini subset - APX/1.4S?  )  ( FD III/2 p.40 )
-Q ( First set edit screen: m SCR ! and to edit line n: n P ccc  )
-Q HEX VOCABULARY EDITOR EDITOR DEFINITIONS
-Q : TEXT HERE C/L 1+ BLANKS WORD HERE PAD C/L 1+ CMOVE ; 
-Q : LINE DUP FFF0 AND 17 ?ERROR SCR @ (LINE) DROP ; 
-Q : MARK 10 0 DO I LINE UPDATE DROP LOOP ;
-Q : -MOVE LINE C/L CMOVE UPDATE ; : P 1 TEXT PAD 1+ SWAP -MOVE ; 
-Q : E LINE C/L BLANKS UPDATE ; : TOP 0 R# ! ; 
-Q : #LOCATE R# @ C/L /MOD ; : #LEAD #LOCATE LINE SWAP ;
+Q ( 1/2 FIG-EDITOR, mini subset )     ( FD III/2 p.40 )
+Q ( First set edit screen: m SCR ! )  (  to edit line n: n P ccc  )
+Q HEX VOCABULARY EDITOR               EDITOR DEFINITIONS
+Q : TEXT HERE C/L 1+ BLANKS WORD      HERE PAD C/L 1+ CMOVE ; 
+Q : LINE DUP FFF0 AND 17 ?ERROR       SCR @ (LINE) DROP ; 
+Q : MARK 10 0 DO I LINE UPDATE        DROP LOOP ;
+Q : -MOVE LINE C/L CMOVE UPDATE ;     : P 1 TEXT PAD 1+ SWAP -MOVE ; 
+Q : E LINE C/L BLANKS UPDATE ;        : TOP 0 R# ! ; 
+Q : #LOCATE R# @ C/L /MOD ;           : #LEAD #LOCATE LINE SWAP ;
 Q : #LAG  #LEAD DUP >R + C/L R> - ;
-Q : M R# +! CR SPACE #LEAD TYPE 17 EMIT #LAG TYPE #LOCATE
-Q   . DROP ; : 1LINE #LAG PAD COUNT MATCH R# +! ;
-Q : CLEAR  SCR ! 10 0 DO FORTH I EDITOR E LOOP ; 
-Q CR ." EDITOR subset (incl. P, E) loaded."
-Q CR DECIMAL -->
+Q : M R# +! CR SPACE #LEAD TYPE 17    EMIT #LAG TYPE #LOCATE . DROP ;
+Q : 1LINE #LAG PAD COUNT MATCH R# +!  ;
+Q : CLEAR  SCR ! 10 0                 DO FORTH I EDITOR E LOOP ; 
+Q CR ." EDITOR subset (incl. P, E) loaded."       CR DECIMAL -->
 
 PREPARE
-Q ( 2/2 SEARCH and WHERE, using EDITOR subset )
-Q (     ^ FD Vol03 Nr1 /WFR ) HEX 00 VARIABLE SRCHCNT  
-Q : WHERE DUP B/SCR / DUP SCR ! ." SCR # " DECIMAL .
-Q   SWAP C/L /MOD C/L * ROT BLOCK + CR C/L -TRAILING
+Q ( 2/2 SEARCH/WHERE w/ EDITOR wrds ) ( FD Vol03 Nr1 /WFR )
+Q HEX 00 VARIABLE SRCHCNT  
+Q : WHERE DUP B/SCR / DUP SCR ! ."    SCR # " DECIMAL .
+Q   SWAP C/L /MOD C/L * ROT BLOCK +   CR C/L -TRAILING
 Q   TYPE CR HERE C@ - SPACES 1 2FE C! 1C EMIT 0 2FE
-Q   C! [COMPILE] EDITOR QUIT ; DECIMAL
-Q : BUMP ( ln nr and paging ) 1 SRCHCNT +! SRCHCNT @ 56 
+Q   C! [COMPILE] EDITOR QUIT ;        DECIMAL
+Q : BUMP ( ln nr and paging )         1 SRCHCNT +! SRCHCNT @ 56 
 Q   > IF 0 SRCHCNT ! CR THEN ; 
-Q : SEARCH ( FROM TO -- STRING ) CR 01 TEXT 0 SRCHCNT !
-Q   1+ SWAP DO FORTH I SCR ! EDITOR TOP BEGIN
-Q     1LINE IF 0 M SCR ? BUMP THEN 1023 R# @ < UNTIL LOOP ; 
+Q : SEARCH ( FROM TO -- STRING )      CR 01 TEXT 0 SRCHCNT !
+Q   1+ SWAP DO FORTH I SCR ! EDITOR   TOP BEGIN
+Q     1LINE IF 0 M SCR ? BUMP THEN    1023 R# @ < UNTIL LOOP ; 
 Q CR ." SEARCH (uppercase only) loaded." CR 
-Q ." Usage: 21 44 SEARCH KEYWORD" CR CR FORTH ;S
+Q ." Usage: 21 44 SEARCH KEYWORD"     CR CR FORTH ;S
 
 ( >> https://github.com/BartGo/forth-atari/blob/main/DBGTOOLS.4TH )
 
@@ -765,22 +782,22 @@ Q ." Usage: 21 44 SEARCH KEYWORD" CR CR FORTH ;S
 ( >> https://github.com/BartGo/forth-atari/blob/main/EDIT.4TH )
 
 60 CLEAR
-  0 P ( EDIT - BY M. DOUGHERTY- APX FORTH ONLY )
-  1 P : TASK ; 752 CONSTANT CRSINH 70 CONSTANT #HLP 
-  2 P 0  VARIABLE CLINE     0 VARIABLE CCHAR
-  3 P 3  VARIABLE LINEOFF   3 VARIABLE CHAROFF
-  4 P 18 CONSTANT TOP-BOT   2 CONSTANT REDGE
-  5 P 22 CONSTANT LEDGE     0 VARIABLE SIDE 
-  6 P 17 VARIABLE EXTRAOFF  0 VARIABLE STOP
+  0 P ( EDIT - BY M. DOUGHERTY )       ( APX FORTH ONLY )
+  1 P : TASK ; 752 CONSTANT CRSINH     70 CONSTANT #HLP 
+  2 P 0  VARIABLE CLINE                0 VARIABLE CCHAR
+  3 P 3  VARIABLE LINEOFF              3 VARIABLE CHAROFF
+  4 P 18 CONSTANT TOP-BOT              2 CONSTANT REDGE
+  5 P 22 CONSTANT LEDGE                0 VARIABLE SIDE 
+  6 P 17 VARIABLE EXTRAOFF             0 VARIABLE STOP
   7 P 0  VARIABLE SAV-BUF  64 ALLOT 
-  8 P : EREAD 16 0 DO I SCR @ (LINE) DROP
+  8 P : EREAD 16 0 DO I SCR @ (LINE)   DROP
   9 P   UPDATE DROP LOOP 0 CLINE !
  10 P   0 CCHAR ! 0 SIDE ! ; 
- 11 P : CLS 125 EMIT ; : ECLEAR CLS 1 CRSINH C! ; 
+ 11 P : CLS 125 EMIT ; : ECLEAR CLS 1  CRSINH C! ; 
  12 P : POINT-CURSOR 85 ! 84 C! ;
  13 P : CURSOR@ CLINE @ LINEOFF @ +
- 14 P  CCHAR @ SIDE @ IF 32 - ENDIF CHAROFF @ + ;
- 15 P : CURSOR CURSOR@ POINT-CURSOR ; -->
+ 14 P   CCHAR @ SIDE @ IF 32 - ENDIF   CHAROFF @ + ;
+ 15 P : CURSOR CURSOR@ POINT-CURSOR ;  -->
 61 CLEAR
   0 P ( EDIT - SCREEN-CURSOR, ..., TOP ) 
   1 P : SCREEN-CURSOR CURSOR@ SWAP 40 * + 106 C@ 256 *

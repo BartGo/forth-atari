@@ -38,7 +38,7 @@ HEX  VOCABULARY EDITOR  EDITOR DEFINITIONS
 : -MOVE LINE C/L CMOVE UPDATE ;
 : P 1 TEXT PAD 1+ SWAP -MOVE ; 
 : E LINE C/L BLANKS UPDATE ;
- TOP 0 R# ! ; 
+: TOP 0 R# ! ; 
 : #LOCATE R# @ C/L /MOD ;
 : #LEAD #LOCATE LINE SWAP ;
 : #LAG  #LEAD DUP >R + C/L R> - ;
@@ -90,7 +90,7 @@ Q (  9.0    -- screen=21 )
 Q ( 10.0    -- screen=21 )
 Q ( 11.0    -- screen=21 )
 Q ( 12.0    -- screen=21 )
-Q ( Aneksy  -- screen=21 )            (                         ) 
+Q ( Aneksy  -- screen=21 )           
 
 PREPARE
 Q ( 1/1 KOT,NAPIS,.S,...,KWADRATY )   ( PF rozdzial xx.xx-yy.xx ) 
@@ -106,8 +106,7 @@ Q   DROP .S   ( 1 2 3 ) SWAP .S       ( 1 3 2 )
 Q   ROT  .S   ( 3 2 1 ) OVER .S       ( 3 2 1 2 )
 Q  SP! ;  : KWADRAT DUP * . ;
 Q : SZESCIAN DUP OVER * * . ; 
-Q : KWADRATY CR DO I DUP U* 15
-Q   D.R CR LOOP ;
+Q : KWADRATY CR DO I DUP U* 15        D.R CR LOOP ;
 Q  CR 45001 44980 KWADRATY CR  ;S
 
 PREPARE
@@ -194,11 +193,17 @@ Q TABLICZKA2 ;S
 PREPARE
 Q ( 1/2 ERATOS - WSTAW, USUN )
 Q 0 VARIABLE ERATOS 254 ALLOT
-Q : WSTAW ( adr --- ) 256 1 DO 
-Q    I OVER C! 1+ LOOP DROP ;
-Q : USUN ( n --- ) 256 OVER DO
+Q : WSTAW ( adr --- )
+Q   256 1 DO 
+Q     I OVER C! 1+
+Q   LOOP
+Q   DROP ;
+Q : USUN ( n --- )
+Q   256 OVER DO
 Q     I 1 - ERATOS + 0 SWAP C!
-Q     DUP +LOOP DROP ;
+Q     DUP
+Q  +LOOP
+Q  DROP ;
 Q -->
 
 PREPARE
@@ -213,7 +218,8 @@ Q     +      ( adr adr+I-1 )
 Q     C@     ( adr n )
 Q     -DUP IF DUP . 
 Q       USUN ( adr ) ( gdy n<>0 )
-Q     THEN LOOP DROP ;
+Q     THEN
+Q  LOOP DROP ;
 V
 Q PIERWSZE ;S
 
@@ -399,9 +405,8 @@ Q       IF ." X " ELSE ." . " THEN
 Q     LOOP DROP CR LOOP
 Q   1 ROZWIAZANIE +! CR ." Rozwiazanie nr "
 Q   ROZWIAZANIE ?    CR ;
-Q : INIC ( --- )                       ( inic. sz. z hetm. w rz. 0 ) 
-Q   LHET 1 DO I USUN LOOP 0 ROZWIAZANIE ! ;
-Q -->
+Q : INIC ( --- ) ( inic. sz. z hetm. w rz. 0 ) 
+Q   LHET 1 DO I USUN LOOP 0 ROZWIAZANIE ! ; -->
 
 PREPARE
 Q ( 4/5 HETMANY:NAPRZOD,... )
@@ -410,8 +415,8 @@ Q                                     ( mozna przes. do nast. kol. )
 Q   DUP DUP WSPOLRZEDNA
 Q   C@ 1+ POSTAW BRZEG
 Q   IF 1 ELSE DUP USUN 0 THEN ;
-Q : PIERWSZA-WOLNA ( rz --- rz f )    ( f=1,gdy hetman moze )
-Q                                     ( przejsc do nast. kol. w rz )
+Q : PIERWSZA-WOLNA ( rz --- rz f )    ( f=1,gdy hetman moze ... )
+Q   ( ... przejsc do nast. kol. w rz )
 Q  BEGIN
 Q    NAPRZOD
 Q    IF WSZYSTKIE-WOLNE -DUP
@@ -426,12 +431,10 @@ Q   [ SMUDGE ]
 Q     LHET OVER > IF
 Q       BEGIN
 Q         PIERWSZA-WOLNA IF
-Q	    1+ POZYCJA -DUP
-Q	  ELSE
-Q	    1 - 0 1
-Q         THEN
-Q      UNTIL
-Q    ELSE DRUK 1 - 0 THEN
+Q	          1+ POZYCJA -DUP
+Q	        ELSE 1 - 0 1 THEN
+Q       UNTIL
+Q     ELSE DRUK 1 - 0 THEN
 Q  [ SMUDGE ] ;
 Q : HETMANY ( --- )
 Q   9 0 SWAP POSTAW INIC

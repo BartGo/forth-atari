@@ -579,19 +579,20 @@ Q -->
 
 PREPARE
 Q ( 2/7 SORT:POROWNAJ )
-Q : POROWNAJ  ( n1 n2 --- )
-Q   DUP       ( n1 n2 n2 )
-Q   LICZBY @  ( n1 n2 L2 )
-Q   ROT DUP   ( n2 L2 n1 n1 )
-Q   LICZBY @  ( n2 L2 n1 L1 )
-Q   ROT       ( n2 n1 L1 L2 )
-Q   OVER OVER ( n2 n1 L1 L2 L1 L2 )
-Q   >         ( n2 n1 L1 L2 f )
-Q   IF        ( n2 n1 L1 L2 )
-Q   ROT       ( n2 L1 L2 n1 ) 
-Q   LICZBY !  ( n2 Li )
-Q   SWAP      ( L1 n2 )
-Q   LICZBY !  ( --- )
+Q : POROWNAJ ( n1 n2 --- )
+Q   DUP      ( n1 n2 n2 )
+Q   LICZBY @ ( n1 n2 L2 )
+Q   ROT DUP  ( n2 L2 n1 n1 )
+Q   LICZBY @ ( n2 L2 n1 L1 )
+Q   ROT      ( n2 n1 L1 L2 )
+Q   OVER     
+Q   OVER ( n2 n1 L1 L2 L1 L2 )
+Q   >    ( n2 n1 L1 L2 f )
+Q   IF   ( n2 n1 L1 L2 )
+Q     ROT      ( n2 L1 L2 n1 ) 
+Q     LICZBY ! ( n2 Li )
+Q     SWAP     ( L1 n2 )
+Q     LICZBY ! ( --- )
 Q   ELSE 2DROP 2DROP THEN ; -->
 
 PREPARE
@@ -704,10 +705,10 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 9 P 8 krepa lub mocna budowe?
 
 56 DUP CLEAR SCR !
- 0 P ( 3/4 PSY )
- 1 P : #PSY 54 ; : #CECHY 55 ;         : HOME 125 EMIT ;
+ 0 P ( 3/4 PSY ) : HOME 125 EMIT ;
+ 1 P : #PSY 54 ; : #CECHY 55 ;         
  2 P : CARRAY <BUILDS ALLOT DOES> + ;
- 3 P 15 CARRAY CECHY                   : X CECHY C! ;
+ 3 P 15 CARRAY CECHY : X CECHY C! ;
  4 P  165 0 X 98  1 X 163  2 X 35  3 X
  5 P  221 4 X 171 5 X 46   6 X 27  7 X
  6 P  194 8 X 32  9 X 172 10 X 28 11 X
@@ -724,17 +725,19 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 57 DUP CLEAR SCR !
  0 P ( 4/4 PSY )
  1 P : DAJ BAJT @ 12 0 DO
- 2 P     DUP I CECHY C@ OR 0=         ( !! XOR/OR zmienia tryb? )
- 3 P     IF I 1+ #PSY .LINE CR THEN
- 4 P   LOOP DROP ;
- 5 P : PSY ( -- ) HOME 12 1 DO
- 6 P     I #CECHY .LINE CR
- 7 P   LOOP CR ." Napisz liczby:" CR
- 8 P   WLASNOSCI CR CR
- 9 P   CR ." To moze byc:"
-10 P   CR DAJ DROP ;
-11 P PSY ( .. 6 0 - ratler 32 )
-12 P ;S  ( .. 2 3 4 6 0 - foks. 46 )
+ 2 P     DUP I CECHY C@ OR          ( !! XOR/OR zmienia tryb? )
+ 3 P     0= IF
+ 4 P       I 1+ #PSY .LINE CR
+ 5 P     THEN
+ 6 P   LOOP DROP ;
+ 7 P : PSY ( -- ) HOME 12 1 DO
+ 8 P     I #CECHY .LINE CR
+ 9 P   LOOP CR ." Napisz liczby:"
+10 P   CR WLASNOSCI CR CR
+11 P   CR ." To moze byc:"
+12 P   CR DAJ DROP ;
+13 P PSY ( .. 6 0 - ratler 32 )
+14 P ;S  ( .. 2 3 4 6 0 - foks. 46 )
 
 ( TODO: nie znajduje foksa! )
 
@@ -956,11 +959,11 @@ Q ." Usage: 21 44 SEARCH KEYWORD"     CR CR FORTH ;S
   6 P Shf-Insert: insert whole line*
   7 P Shf-Delete: delete whole line*
   8 P Ctl-Insert: insert space
-  9 P Ctl-BckSpc: delete;  Esc-B: sh
+  9 P Ctl-BckSpc: delete;  Esc-0: cold
  10 P Esc-R: rotate/sides; Esc-H: help
  11 P Esc-N: next screen, save (flush)
  12 P Esc-L: last screen, save (flush)
- 13 P Esc-S: save (flush) ; Esc-0: cold!
+ 13 P Esc-S: save (flush) ; Esc-B: 4th
  14 P Esc-Q: quit (empty-buf)
  15 P Esc-V: put last deleted line
 

@@ -120,7 +120,7 @@ Q    R> ( n3 n4 n1 n2 n5 )            ( – przenosi z powrotem n5 )
 Q    R> ( n3 n4 n1 n2 n5 n6 )         ( – przenosi z powrotem n6 )
 Q    2SWAP ; ( n3 n4 n5 n6 n1 n2 )    ( – zamiana wykonana! )
 Q : DUMP-INDEX ' INDEX NFA ' TRIAD    ( HEX DUMP-INDEX DECIMAL ) 
-Q   NFA OVER - DUMP ;                 ( ^ przykla uzycia       )
+Q   NFA OVER - DUMP ;                 ( ^ przyklad uzycia      )
 Q ;S 
 
 PREPARE
@@ -223,9 +223,6 @@ Q ( 1/1 NAZWISKO?, DRUKUJ, INPUT, DATY )
 Q : QUERY TIB @ 80 EXPECT 0 IN ! ; 
 Q : NAZWISKO?
 Q   CR ." PODAJ SWOJE NAZWISKO: "
-Q   CR QUERY ; 
-Q : NAZWISKO?
-Q   CR ." PODAJ SWOJE NAZWISKO: "
 Q   CR QUERY 155 WORD HERE ; 
 Q : DRUKUJ NAZWISKO? CR COUNT TYPE ;
 Q : INPUT CR QUERY BL WORD HERE
@@ -234,7 +231,8 @@ Q : DATY <BUILDS , , , DOES>          ( n n n --- )
 Q   DUP 2+ DUP 2+ ? ? ? CR ;
 Q 12  9 1683 DATY WIEDEN               4  4 1794 DATY RACLAWICE
 Q 18  6 1815 DATY WATERLOO             1  9 1870 DATY SEDAN
-Q 12 10 1943 DATY LENINO              15 08 1920 DATY WARSZAWA ;S 
+Q 12 10 1943 DATY LENINO              15 08 1920 DATY WARSZAWA
+Q ;S 
 
 PREPARE
 Q ( 1/1 SILNIA,SILNIA2,... )
@@ -251,8 +249,8 @@ Q   THEN [ SMUDGE ] ;
 Q : FACTORIAL                         ( J. BIELECKI, "FORTH" )
 Q   DUP IF DUP 1 -                    [ SMUDGE ] FACTORIAL 
 Q   [ SMUDGE ] * ELSE 1+ THEN ;
-Q 8 SILNIA  U.                        8 SILNIA2 U. ( FAIL: 1.4S )
-Q 8 SILNIA3 U.                        8 FACTORIAL U. ;S
+Q 8 SILNIA  U.  8 SILNIA2 U.          ( FAIL: 1.4S )
+Q 8 SILNIA3 U.  8 FACTORIAL U. ;S
 
 PREPARE
 Q ( 1/1 ARRAY, 2DARRAY )

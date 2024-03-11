@@ -73,27 +73,27 @@ DECIMAL
 
 EDITOR
 
-89 16 CLEARS
-
-
-PREPARE
-Q (     ** Poznajemy Forth ** ) ;S
-Q (  1.0    -- screen=21 )            (                         ) 
-Q (  2.0    -- screen=21 )
-Q (  3.0    -- screen=21 )
-Q (  4.0    -- screen=21 )
-Q (  5.0    -- screen=21 )
-Q (  6.0    -- screen=21 )
-Q (  7.0    -- screen=21 )
-Q (  8.0    -- screen=21 )
-Q (  9.0    -- screen=21 )
-Q ( 10.0    -- screen=21 )
-Q ( 11.0    -- screen=21 )
-Q ( 12.0    -- screen=21 )
-Q ( Aneksy  -- screen=21 )           
+( 89 16 CLEARS )
 
 PREPARE
-Q ( 1/1 KOT,NAPIS,.S,...,KWADRATY )   ( PF rozdzial xx.xx-yy.xx ) 
+Q ( **** Poznajemy Forth **** )
+Q (  1.0    -- screen=21      )         (                           ) 
+Q (  2.0    -- screen=21      )         (                           ) 
+Q (  3.0    -- screen=21      )         (                           ) 
+Q (  4.0    -- screen=21      )         (                           ) 
+Q (  5.0    -- screen=21      )         (                           ) 
+Q (  6.0    -- screen=21      )         (                           ) 
+Q (  7.0    -- screen=21      )         (                           ) 
+Q (  8.0    -- screen=21      )         (                           ) 
+Q (  9.0    -- screen=21      )         (                           ) 
+Q ( 10.0    -- screen=21      )         (                           ) 
+Q ( 11.0    -- screen=21      )         (                           ) 
+Q ( 12.0    -- screen=21      )         (                           ) 
+Q ( Aneksy  -- screen=21      )         (                           )           
+Q ;S
+
+PREPARE
+Q ( 1/1 KOT, NAPIS, ..., KWADRATY )     ( "PF" rozdzialy 2.1-3.4.3  ) 
 Q : KOT CR ." Kot pije mleko" ; 
 Q : NAPIS KOT SPACE
 Q   ." i poluje na myszy" ;
@@ -110,7 +110,7 @@ Q : KWADRATY CR DO I DUP U* 15        D.R CR LOOP ;
 Q  CR 45001 44980 KWADRATY CR  ;S
 
 PREPARE
-Q ( 1/1 2DUP,2DROP,...,DUMP INDEX )   ( PF rozdzial xx.xx-yy.xx )
+Q ( 1/1 2DUP,2DROP,...,DUMP INDEX )   ( "PF" rozdzialy 3.5-4        )
 Q : 2DUP OVER OVER ;                  : 2DROP DROP DROP ;
 Q : 2SWAP ROT >R ROT R> ; : 2OVER     >R >R 2DUP R> R> 2SWAP ;
 Q : 2ROT ( n1 n2 n3 n4 n5 n6 ... )    ( --- n3 n4 n5 n6 n1 n2 )
@@ -124,41 +124,29 @@ Q : DUMP-INDEX ' INDEX NFA ' TRIAD    ( HEX DUMP-INDEX DECIMAL )
 Q   NFA OVER - DUMP ;  ;S             ( ^ przyklad uzycia      )
 
 PREPARE
-Q ( 1/1 PRZEDZIAL,IKSY,NWP )
+Q ( 1/1 PRZEDZIAL, FIBO, ... )        ( "PF" rozdzialy 3.5-5.5      )
 Q : PRZEDZIAL                         ( dolna-gr. n gorna-gran. )
 Q    OVER                             ( dol-gr n gor-gr n )
 Q    > >R                             ( dol-gr n f1 ) ( dol-gr n )
 Q    <  R> ;                          ( f2 ) ( f2 f1 ) ( f )  
 Q ( 20 370 400 PRZEDZIAL . CR )
-Q : IKSY BEGIN
-Q     ." X" 1 - DUP 0=
-Q  UNTIL ; 
-Q : NWP BEGIN
-Q     SWAP OVER MOD -DUP 0=
-Q  UNTIL ;
-Q ( 128 1024 NWP . CR )               
-Q ( 324  556 NWP . CR )               
-Q ( 1933 821 NWP . CR ) ;S
-
-PREPARE
-Q ( 1/1 FIBO,DFIBO,KWADRAT,... )
 Q : FIBO ( n --- ) ( max n: 23 )
 Q   0 1 ROT 0 CR DO
 Q     DUP 10 .R CR SWAP OVER + LOOP ;  
 Q : DFIBO ( n --- ) ( max n: 46 )
 Q   0. ROT 1. ROT 0 CR DO       
 Q     2DUP 14 D.R CR
-Q     2SWAP 2OVER D+ LOOP ;   
+Q     2SWAP 2OVER D+ LOOP ; 
 Q : KWADRAT2 DUP * ;
-Q : KWADRAT3
-Q   DO I KWADRAT2 DUP 32760
-Q     IF DROP LEAVE THEN
-Q   . LOOP ;
-Q : TEST1 51 1 DO I . 2 +LOOP ;
-Q : TEST2 0 20 DO I . -1 +LOOP ; ;S
+Q : KWADRAT3 DO I KWADRAT2 DUP 32760
+Q     IF DROP LEAVE THEN . LOOP ; ;S
 
 PREPARE
-Q ( 1/1 TABLICZKA )
+Q ( 1/1 TEST1, PRZEDZIAL, FIBO, ... )  ( "PF" rozdzialy 5.5-5.6    )
+Q : TEST1 51 1 DO I . 2 +LOOP ;        : TEST2 0 20 DO I . -1 +LOOP ; 
+Q : IKSY BEGIN ." X" 1 - DUP 0= UNTIL ; 
+Q : NWP BEGIN SWAP OVER MOD -DUP 0= UNTIL ;
+Q ( 128 1024 NWP . CR ) ( 324  556 NWP . CR ) ( 1933 821 NWP . CR )
 Q 0 VARIABLE AA : TABLICZKA ( -- )
 Q  125 EMIT CR CR 8 SPACES
 Q  ." TABLICZKA MNOZENIA"
@@ -166,15 +154,13 @@ Q  CR CR 3 SPACES
 Q  10 1 DO I 3 .R LOOP CR
 Q  30 0 DO ." _" LOOP CR
 Q  10 1 DO I DUP AA ! 		
-Q    . ." |" 	
-Q    10 1 DO
+Q    . ." |" 10 1 DO
 Q      I AA @ *	3 .R 					
-Q    LOOP CR
-Q  LOOP ;
+Q    LOOP CR LOOP ;
 Q  TABLICZKA ;S
 
 PREPARE
-Q ( 1/1 TABLICZKA2 )
+Q ( 1/1 TABLICZKA2 )                   ( "PF" rozdzialy 5.6-5.6    )
 Q : J R> R> R> R R# ! >R >R >R R# @ ; 
 Q : TAB2 ( -- ) 125 EMIT
 Q   CR CR 8 SPACES 

@@ -120,8 +120,7 @@ Q    R> ( n3 n4 n1 n2 n5 )            ( – przenosi z powrotem n5 )
 Q    R> ( n3 n4 n1 n2 n5 n6 )         ( – przenosi z powrotem n6 )
 Q    2SWAP ; ( n3 n4 n5 n6 n1 n2 )    ( – zamiana wykonana! )
 Q : DUMP-INDEX ' INDEX NFA ' TRIAD    ( HEX DUMP-INDEX DECIMAL ) 
-Q   NFA OVER - DUMP ;                 ( ^ przyklad uzycia      )
-Q ;S 
+Q   NFA OVER - DUMP ;  ;S             ( ^ przyklad uzycia      )
 
 PREPARE
 Q ( 1/1 PRZEDZIAL,IKSY,NWP )
@@ -138,8 +137,7 @@ Q     SWAP OVER MOD -DUP 0=
 Q  UNTIL ;
 Q ( 128 1024 NWP . CR )               
 Q ( 324  556 NWP . CR )               
-Q ( 1933 821 NWP . CR )
-Q ;S
+Q ( 1933 821 NWP . CR ) ;S
 
 PREPARE
 Q ( 1/1 FIBO,DFIBO,KWADRAT,... )
@@ -156,8 +154,7 @@ Q   DO I KWADRAT2 DUP 32760
 Q     IF DROP LEAVE THEN
 Q   . LOOP ;
 Q : TEST1 51 1 DO I . 2 +LOOP ;
-Q : TEST2 0 20 DO I . -1 +LOOP ;
-Q ;S
+Q : TEST2 0 20 DO I . -1 +LOOP ; ;S
 
 PREPARE
 Q ( 1/1 TABLICZKA )
@@ -232,7 +229,7 @@ Q   DUP 2+ DUP 2+ ? ? ? CR ;
 Q 12  9 1683 DATY WIEDEN               4  4 1794 DATY RACLAWICE
 Q 18  6 1815 DATY WATERLOO             1  9 1870 DATY SEDAN
 Q 12 10 1943 DATY LENINO              15 08 1920 DATY WARSZAWA
-Q ;S 
+Q ( WARSZAWA ) ;S 
 
 PREPARE
 Q ( 1/1 SILNIA,SILNIA2,... )
@@ -264,8 +261,7 @@ Q 10 ARRAY LICZBY
 Q 7 LICZBY 7 LICZBY ! 7 LICZBY @ .
 V
 Q 4 5 2DARRAY PROSTOKAT
-Q ( TODO: przyklady uzycia )
-Q ;S
+Q ( TODO: przyklady uzycia ) ;S
 
 PREPARE
 Q ( 1/1 MATDEF - valFORTH ) 
@@ -311,7 +307,7 @@ Q : SEK ( n --- )
 Q   CR <# XX XX #S #> TYPE CR ;
 V
 Q 15610. SEK
-Q ;S
+Q CR ;S
 
 PREPARE
 Q ( 1/2 DBL - D*, FIX, F. )  
@@ -341,7 +337,7 @@ Q 0.04 FIX        0.3 FIX D+
 Q 0.625 FIX D+ 0.0001 FIX D+ 
 Q 10 FIX D+  ( BUG: cos tu sie wywala !! ) 
 Q F. 10.9651 
-Q ;S
+Q CR ;S
 
 PREPARE
 Q ( 1/1 WIEZE Z HANOI )
@@ -691,7 +687,7 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 9 P jamnik 194
 10 P ratler 32
 11 P chow-chow 172
-12 P pekińczyk 28
+12 P pekinczyk 28
 
 55 DUP CLEAR SCR !
 0 P ( 2/4 CECHY PSOW ) -->

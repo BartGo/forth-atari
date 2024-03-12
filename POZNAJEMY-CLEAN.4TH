@@ -7,11 +7,11 @@
 ( Collected, formatted and tuned by BartGo.                  )
 (                                                            )
 ( To install:                                                )
-( - boot Altirra with Forth, past below part LOADING HELPER  )
 ( - use a clean copy of APX Forth, CRC F64B50DA or E6B43BB4  )
-( - make sure you have another copy as this will be purged   )
-( - to ensure a clean "install", you can do: 89 16 CLEARS    )
-( - depress CAPS, paste the code below /LOADING HELPER       )
+( - make sure you have another copy as this ATR be purged!   )
+( - boot Altirra with it, depress CAPS, paste LOADING HELPER )
+( - to ensure a clean "install", do then: 89 16 CLEARS       )
+( - paste the code below /LOADING HELPER                     )
 ( - reboot, enjoy new screens 16-89                          )
 ( ********************************************************** )
 ( ********************************************************** )
@@ -164,10 +164,9 @@ Q     DUP 10 .R CR SWAP OVER + LOOP ;
 Q : DFIBO ( n --- ) ( max n: 46 )
 Q   0. ROT 1. ROT 0 CR DO       
 Q     2DUP 14 D.R CR
-Q     2SWAP 2OVER D+ LOOP ; 
-Q : KWADRAT2 DUP * ;
-Q : KWADRAT3 DO I KWADRAT2 DUP 32760
-Q     IF DROP LEAVE THEN . LOOP ; ;S
+Q     2SWAP 2OVER D+ LOOP ;           : KWADRAT2 DUP * ; 
+Q : KWADRAT3 DO I KWADRAT2 DUP 32760 IF DROP LEAVE THEN . LOOP ;
+Q ( -- ) ;S
 
 PREPARE
 Q ( 1/1 TEST1, PRZEDZIAL, FIBO, ... )  ( "PF" rozdzialy 5.5-5.6    )
@@ -176,16 +175,15 @@ Q : IKSY BEGIN ." X" 1 - DUP 0= UNTIL ;
 Q : NWP BEGIN SWAP OVER MOD -DUP 0= UNTIL ;
 Q ( 128 1024 NWP . CR ) ( 324  556 NWP . CR ) ( 1933 821 NWP . CR )
 Q 0 VARIABLE AA : TABLICZKA ( -- )
-Q  125 EMIT CR CR 8 SPACES
-Q  ." TABLICZKA MNOZENIA"
-Q  CR CR 3 SPACES
-Q  10 1 DO I 3 .R LOOP CR
-Q  30 0 DO ." _" LOOP CR
-Q  10 1 DO I DUP AA ! 		
-Q    . ." |" 10 1 DO
-Q      I AA @ *	3 .R 					
-Q    LOOP CR LOOP ;
-Q  TABLICZKA ;S
+Q   125 EMIT CR CR 8 SPACES
+Q   ." TABLICZKA MNOZENIA"
+Q   CR CR 3 SPACES
+Q   10 1 DO I 3 .R LOOP CR
+Q   30 0 DO ." _" LOOP CR
+Q   10 1 DO I DUP AA ! 		
+Q     . ." |" 10 1 DO
+Q       I AA @ *	3 .R 					
+Q     LOOP CR LOOP ; TABLICZKA ;S
 
 PREPARE
 Q ( 1/1 TABLICZKA2 )                   ( "PF" rozdzialy 5.6-5.6    )
@@ -201,7 +199,6 @@ Q     I . ." |" 10 1 DO
 Q       I J * 3 .R
 Q     LOOP CR
 Q   LOOP ; : TABLICZKA2 TAB2 ;
-V
 Q TABLICZKA2 ;S
 
 PREPARE
@@ -255,13 +252,10 @@ Q ( WARSZAWA ) ;S
 
 PREPARE
 Q ( 1/1 SILNIA,SILNIA2,... )
-Q : TENKOD ( -- n ) CURRENT @ @
-Q   PFA CFA ; IMMEDIATE
-Q : SILNIA ( n -- ) 
-Q   1 SWAP 1+ 1 DO I * LOOP ;
-Q : SILNIA2 ( n -- ) DUP 2 = IF ELSE 
-Q     DUP 1 - TENKOD LITERAL EXECUTE 
-Q   * THEN ;
+Q : TENKOD ( -- n ) CURRENT @ @       PFA CFA ; IMMEDIATE
+Q : SILNIA ( n -- )                   1 SWAP 1+ 1 DO I * LOOP ;
+Q : SILNIA2 ( n -- ) DUP 2 = IF ELSE
+Q   DUP 1 - TENKOD LITERAL EXECUTE    * THEN ;
 Q : SILNIA3 ( n -- ) [ SMUDGE ]
 Q   DUP 2 = IF ELSE DUP 1 - SILNIA3 *
 Q   THEN [ SMUDGE ] ;
@@ -282,8 +276,7 @@ V
 Q 10 ARRAY LICZBY
 Q 7 LICZBY 7 LICZBY ! 7 LICZBY @ .
 V
-Q 4 5 2DARRAY PROSTOKAT
-Q ( TODO: przyklady uzycia ) ;S
+Q 4 5 2DARRAY PROSTOKAT ;S
 
 PREPARE
 Q ( 1/1 MATDEF - valFORTH ) 
@@ -364,19 +357,19 @@ Q CR ;S
 PREPARE
 Q ( 1/1 WIEZE Z HANOI )
 Q : 3DUP >R 2DUP R ROT ROT R> ;
-Q : TAM 3DUP ROT ROT OVER + 6 SWAP -
-Q   ROT 1 - ;
+Q : TAM 3DUP ROT ROT OVER + 6
+Q   SWAP - ROT 1 - ;
 Q : Z.POWROTEM 
 Q   3DUP SWAP ROT OVER + 6 SWAP -
 Q   SWAP ROT 1 - ;
 Q : DRUKUJ 3DUP DROP SWAP
-Q   . ." NA " . ." ," ;
+Q   . ." NA " . ." ," CR ;
 Q : WIEZE [ SMUDGE ] DUP IF 
 Q     TAM WIEZE DRUKUJ
-Q     Z.POWROTEM WIEZE 
-Q   THEN DROP DROP DROP [ SMUDGE ] ;   
-Q : HANOI 1 3 ROT CR WIEZE ;           ( n -- )
-Q 5 HANOI           ;S                 ( Patrz tez: FD II/2 p. 32 )
+Q     Z.POWROTEM WIEZE THEN
+Q   DROP DROP DROP [ SMUDGE ] ;
+Q : HANOI 1 3 ROT CR WIEZE ;      ( patrz tez: FD II/2 p. 32 )
+Q 5 HANOI ( n -- ) ;S
 
 PREPARE
 Q ( 1/5 HETMANY:WEKTOR,LHET,... )
@@ -605,9 +598,8 @@ Q   ROT      ( n2 n1 L1 L2 )
 Q   OVER     
 Q   OVER ( n2 n1 L1 L2 L1 L2 )
 Q   >    ( n2 n1 L1 L2 f )
-Q   IF   ( n2 n1 L1 L2 )
-Q     ROT      ( n2 L1 L2 n1 ) 
-Q     LICZBY ! ( n2 Li )
+Q   IF ROT     ( n2 L1 L2 n1 ) 
+Q     LICZBY ! ( n2 L1 )
 Q     SWAP     ( L1 n2 )
 Q     LICZBY ! ( --- )
 Q   ELSE 2DROP 2DROP THEN ; -->
@@ -762,36 +754,38 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 
 PREPARE
 Q ( 1/2 FIG-EDITOR, mini subset )     ( FD III/2 p.40 )
-Q ( First set edit screen: m SCR ! )  (  to edit line n: n P ccc  )
+Q ( First set edit screen: m SCR ! )  (  edit line n: n P ccc  )
 Q HEX VOCABULARY EDITOR               EDITOR DEFINITIONS
 Q : TEXT HERE C/L 1+ BLANKS WORD      HERE PAD C/L 1+ CMOVE ; 
 Q : LINE DUP FFF0 AND 17 ?ERROR       SCR @ (LINE) DROP ; 
 Q : MARK 10 0 DO I LINE UPDATE        DROP LOOP ;
-Q : -MOVE LINE C/L CMOVE UPDATE ;     : P 1 TEXT PAD 1+ SWAP -MOVE ; 
-Q : E LINE C/L BLANKS UPDATE ;        : TOP 0 R# ! ; 
-Q : #LOCATE R# @ C/L /MOD ;           : #LEAD #LOCATE LINE SWAP ;
+Q : -MOVE LINE C/L CMOVE UPDATE ;   : P 1 TEXT PAD 1+ SWAP -MOVE ; 
+Q : E LINE C/L BLANKS UPDATE ;      : TOP 0 R# ! ; 
+Q : #LOCATE R# @ C/L /MOD ;         : #LEAD #LOCATE LINE SWAP ;
 Q : #LAG  #LEAD DUP >R + C/L R> - ;
-Q : M R# +! CR SPACE #LEAD TYPE 17    EMIT #LAG TYPE #LOCATE . DROP ;
+Q : M R# +! CR SPACE #LEAD TYPE 17 EMIT #LAG TYPE #LOCATE . DROP ;
 Q : 1LINE #LAG PAD COUNT MATCH R# +!  ;
 Q : COPY   B/SCR * OFFSET @ + SWAP    B/SCR * B/SCR OVER +
 Q   SWAP DO DUP FORTH I BLOCK 2 - ! 1+ UPDATE LOOP DROP FLUSH ;
-Q : CLEAR  SCR ! 10 0                 DO FORTH I EDITOR E LOOP ; 
-Q CR ." EDITOR subset (incl. P, E) loaded." CR DECIMAL -->
+Q -->
+
 
 PREPARE
-Q ( 2/2 SEARCH/WHERE w/ EDITOR wrds ) ( FD Vol03 Nr1 /WFR )
-Q HEX 00 VARIABLE SRCHCNT  
+Q ( 2/2 SEARCH w/ EDITOR wrds ) ( FD Vol03 Nr1 /WFR )
+Q : CLEAR  SCR ! 10 0                 DO FORTH I EDITOR E LOOP ; 
 Q : WHERE DUP B/SCR / DUP SCR ! ."    SCR # " DECIMAL .
 Q   SWAP C/L /MOD C/L * ROT BLOCK +   CR C/L -TRAILING
 Q   TYPE CR HERE C@ - SPACES 1 2FE C! 1C EMIT 0 2FE
-Q   C! [COMPILE] EDITOR QUIT ;        DECIMAL
+Q   C! [COMPILE] EDITOR QUIT ;     0 VARIABLE SRCHCNT      
+Q CR ." EDITOR subset (incl. P, E) loaded."  
+Q  CR DECIMAL
 Q : BUMP ( ln nr and paging )         1 SRCHCNT +! SRCHCNT @ 56 
 Q   > IF 0 SRCHCNT ! CR THEN ; 
 Q : SEARCH ( FROM TO -- STRING )      CR 01 TEXT 0 SRCHCNT !
 Q   1+ SWAP DO FORTH I SCR ! EDITOR   TOP BEGIN
 Q     1LINE IF 0 M SCR ? BUMP THEN    1023 R# @ < UNTIL LOOP ; 
 Q CR ." SEARCH (uppercase only) loaded." CR 
-Q ." Usage: 21 44 SEARCH KEYWORD"     CR CR FORTH ;S
+Q ." Usage: 21 44 SEARCH KEYWORD"     CR CR FORTH DECIMAL ;S
 
 60 CLEAR
   0 P ( EDIT - BY M. DOUGHERTY )       ( APX FORTH ONLY )

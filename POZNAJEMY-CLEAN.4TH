@@ -1,30 +1,43 @@
+( ********************************************************** )
+( ********************************************************** )
 ( This is a batch for Atari 800XL's APX Extended Fig-Forth.  )
-( It empties and prepares SD floppy with listings from       )
-( "Poznajemy Forth", together with some public domain tools. )
+( It prepares SD floppy with listings from "Poznajemy Forth" )
+( and adds some public domain tools, published in the 1980s. )
+(                                                            )
+( Collected, formatted and tuned by BartGo.                  )
+(                                                            )
 ( To install:                                                )
-( - boot Altirra with Forth, 18 LOAD, paste the below,       )
-(    replace D1: with an empty image, size should be SD/90KB )
-(                                                version 0.2 )
+( - boot Altirra with Forth, past below part LOADING HELPER  )
+( - use a clean copy of APX Forth, CRC F64B50DA or E6B43BB4  )
+( - make sure you have another copy as this will be purged   )
+( - to ensure a clean "install", you can do: 89 16 CLEARS    )
+( - depress CAPS, paste the code below /LOADING HELPER       )
+( - reboot, enjoy new screens 16-89                          )
+( ********************************************************** )
+( ********************************************************** )
 
 
-( TRACE: https://www.forth.org/fd/FD-V03N2.pdf p. 58 )
+( NICE TO ADD / TODO: -------------------------------------- )
+( TRACE: https://www.forth.org/fd/FD-V03N2.pdf p. 58         )
+( RP@/UNRAVEL/?ENOUGH: https://www.forth.org/fd/FD-V06N2.pdf )
+( DEFER/IS                                                   )
 
-( jesli zrobie RP@ to poprzez UNRAVEL i ?ENOUGH mozna _
-( robic lepsza kontrole parametrow )
-( https://www.forth.org/fd/FD-V06N2.pdf )
-
-( przyda sie defer oraz IS ale nie wiem skad )
-
-( edytory na druga strone? przynajmniej jeden na ta! )
+( DEPENDING ON OTHER CODE: --------------------------------- )
+( >> https://github.com/BartGo/forth-atari/blob/main/DBGTOOLS.4TH )
+( >> https://github.com/BartGo/forth-atari/blob/main/EDIT.4TH )
 
 
+( ********************** )
+( ********************** )
 ( *** LOADING HELPER *** ) 
+( ********************** )
+( ********************** )
 
 : TASK ;
 
-( DODAĆ COPY ?! )
+HEX CR
 
-HEX  VOCABULARY EDITOR  EDITOR DEFINITIONS
+VOCABULARY EDITOR  EDITOR DEFINITIONS
 : TEXT HERE C/L 1+ BLANKS WORD HERE
   PAD C/L 1+ CMOVE ; 
 : LINE DUP FFF0 AND 17 ?ERROR
@@ -49,24 +62,20 @@ HEX  VOCABULARY EDITOR  EDITOR DEFINITIONS
   EDITOR E LOOP ;
 : CLEARS DO I CLEAR FLUSH LOOP ; CR
 ." EDITOR subset (incl. P, E) loaded."
+: COPY   B/SCR * OFFSET @ + SWAP
+         B/SCR * B/SCR OVER +
+         SWAP DO DUP FORTH I
+         BLOCK 2 - ! 1+ UPDATE
+         LOOP DROP FLUSH ;
 
-: S+ SCR @ 1 + SCR ! ; ( TODO: boundary check )
-: S- SCR @ 1 - SCR ! ; ( TODO: boundary check )
-: (LINE/2) >R C/L 2 / B/BUF */MOD R> B/SCR *
-  + BLOCK + C/L 2 / ;
-: LI DECIMAL CR ( n -- ) SCR !
-  32 0 DO CR I SCR @ (LINE/2) -TRAILING TYPE LOOP CR 
-  ." <-- SCR#" SCR ? ;
+DECIMAL CR
 
-
-CR 
-
-DECIMAL
+( ADDITIONAL WORDS TO SIMPLIFY CODE PASTING AND BROWSING)
 
 15 VARIABLE #SC ( starting scr-1 ) 
  0 VARIABLE #LN ( & line )
 : LN+ ( -- ) #LN @ 1 + #LN ! ;
-: LN? ( -- ) #LN @ 15 = IF 23 ERROR ABORT THEN ;
+: LN? ( -- ) #LN @ 15 = IF 23 ERROR COLD THEN ;
 : PREPARE ( -- ) ( next scr )
   CR CR
   0 #LN ! 
@@ -78,12 +87,21 @@ DECIMAL
 : V ( -- ) ( skip line: V )
   LN? #LN @ EDITOR E
   LN+ ; 
+: S+ SCR @ 1 + SCR ! ; ( no boundary check! )
+: S- SCR @ 1 - SCR ! ; ( no boundary check! )
+: (LINE/2) >R C/L 2 / B/BUF */MOD R> B/SCR *
+  + BLOCK + C/L 2 / ;
+: LI CR ( n -- ) SCR !
+  32 0 DO CR I SCR @ (LINE/2) -TRAILING TYPE LOOP CR 
+  ." ^^^ SCR#" SCR ? ;
 
-( *** /LOADING HELPER *** ) 
+( ********************** )
+( ********************** )
+( *** /LOADING HELPER ** ) 
+( ********************** )
+( ********************** )
 
 EDITOR
-
-( 89 16 CLEARS )
 
 PREPARE
 Q ( **** Poznajemy Forth **** )
@@ -755,8 +773,10 @@ Q : #LOCATE R# @ C/L /MOD ;           : #LEAD #LOCATE LINE SWAP ;
 Q : #LAG  #LEAD DUP >R + C/L R> - ;
 Q : M R# +! CR SPACE #LEAD TYPE 17    EMIT #LAG TYPE #LOCATE . DROP ;
 Q : 1LINE #LAG PAD COUNT MATCH R# +!  ;
+Q : COPY   B/SCR * OFFSET @ + SWAP    B/SCR * B/SCR OVER +
+Q   SWAP DO DUP FORTH I BLOCK 2 - ! 1+ UPDATE LOOP DROP FLUSH ;
 Q : CLEAR  SCR ! 10 0                 DO FORTH I EDITOR E LOOP ; 
-Q CR ." EDITOR subset (incl. P, E) loaded."       CR DECIMAL -->
+Q CR ." EDITOR subset (incl. P, E) loaded." CR DECIMAL -->
 
 PREPARE
 Q ( 2/2 SEARCH/WHERE w/ EDITOR wrds ) ( FD Vol03 Nr1 /WFR )
@@ -772,12 +792,6 @@ Q   1+ SWAP DO FORTH I SCR ! EDITOR   TOP BEGIN
 Q     1LINE IF 0 M SCR ? BUMP THEN    1023 R# @ < UNTIL LOOP ; 
 Q CR ." SEARCH (uppercase only) loaded." CR 
 Q ." Usage: 21 44 SEARCH KEYWORD"     CR CR FORTH ;S
-
-( >> https://github.com/BartGo/forth-atari/blob/main/DBGTOOLS.4TH )
-
-
-
-( >> https://github.com/BartGo/forth-atari/blob/main/EDIT.4TH )
 
 60 CLEAR
   0 P ( EDIT - BY M. DOUGHERTY )       ( APX FORTH ONLY )

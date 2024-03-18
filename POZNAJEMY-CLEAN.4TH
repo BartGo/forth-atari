@@ -72,7 +72,7 @@ DECIMAL CR
 
 ( ADDITIONAL WORDS TO SIMPLIFY CODE PASTING AND BROWSING)
 
-15 VARIABLE #SC ( starting scr-1 ) #SC SCR !
+11 VARIABLE #SC ( starting scr-1 )
  0 VARIABLE #LN ( & line )
 : LN+ ( -- ) #LN @ 1 + #LN ! ;
 : LN? ( -- ) #LN @ 15 = IF 23 ERROR COLD THEN ;
@@ -92,6 +92,8 @@ DECIMAL CR
 	-TRAILING TYPE
   LOOP CR ." --- SCR#" SCR ? CR CR ;
 
+#SC SCR !
+
 ( ********************** )
 ( ********************** )
 ( *** /LOADING HELPER ** ) 
@@ -102,7 +104,7 @@ EDITOR
 
 
 
-PREPARE
+PREPARE ( scr 12 )
 Q ( 1/2 FIG-EDITOR, mini subset )     ( FD III/2 p.40 )
 Q ( First set edit screen: m SCR ! )  (  edit line n: n P ccc  )
 Q HEX VOCABULARY EDITOR               EDITOR DEFINITIONS
@@ -138,8 +140,9 @@ Q CR ." SEARCH (uppercase only) loaded." CR
 Q ." Usage: 21 44 SEARCH KEYWORD"     CR CR FORTH DECIMAL ;S
 
 
+17 SCR ! ( skip error screens 14-15 )
 
-PREPARE
+PREPARE ( scr 16 )
 Q ( *** Poznajemy Forth  1/2 *** )
 Q (  12 LOAD /pd tools        / 2s Fig-EDIT/MINI, SEARCH       )
 Q (  18 LOAD /rozdz 2.1-3.4.3 / 1s KOT, NAPIS, KWADRATY        ) 
@@ -173,7 +176,7 @@ Q (  74 LOAD /pd tools        / .. EDIT /R.Pantola      :asmWR )
 Q (  84 LOAD /pd tools        / 5s DIS disassembler            )
 
 
-PREPARE
+PREPARE ( scr 18 )
 Q ( 1/1 KOT, NAPIS, KWADRATY  )
 Q : KOT CR ." Kot pije mleko" ; 
 Q : NAPIS KOT SPACE

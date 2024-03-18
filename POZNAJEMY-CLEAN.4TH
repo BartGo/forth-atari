@@ -92,7 +92,7 @@ DECIMAL CR
 	-TRAILING TYPE
   LOOP CR ." --- SCR#" SCR ? CR CR ;
 
-#SC SCR !
+#SC @ SCR !
 
 ( ********************** )
 ( ********************** )
@@ -105,8 +105,8 @@ EDITOR
 
 
 PREPARE ( scr 12 )
-Q ( 1/2 FIG-EDITOR, mini subset )     ( FD III/2 p.40 )
-Q ( First set edit screen: m SCR ! )  (  edit line n: n P ccc  )
+Q ( 1/2 FIG-EDITOR, mini subset - FD III/2 p.40 )
+Q ( First set edit screen: m SCR ! then edit line n: n P ccc  )
 Q HEX VOCABULARY EDITOR               EDITOR DEFINITIONS
 Q : TEXT HERE C/L 1+ BLANKS WORD      HERE PAD C/L 1+ CMOVE ; 
 Q : LINE DUP FFF0 AND 17 ?ERROR       SCR @ (LINE) DROP ; 
@@ -140,7 +140,9 @@ Q CR ." SEARCH (uppercase only) loaded." CR
 Q ." Usage: 21 44 SEARCH KEYWORD"     CR CR FORTH DECIMAL ;S
 
 
-17 SCR ! ( skip error screens 14-15 )
+( skip error screens 14-15, move to 16  )
+
+15 SCR ! 
 
 PREPARE ( scr 16 )
 Q ( *** Poznajemy Forth  1/2 *** )
@@ -169,11 +171,11 @@ Q (  41 LOAD /..              / 5s LIFE                        )
 Q (  46 LOAD /..              / 7s SORTOWANIE                  )
 Q (  53 LOAD /..              / 4s PSY                         )
 Q (  57 LOAD /pd tools        / 2s GOIN decompiler             )
-Q (  59 LOAD /pd tools        / 1s VECTORED EXEC exmpl         )
 Q (  60 LOAD /pd tools        / 11 EDIT /M.Dougherty           )
-Q (  73 LOAD /pd tools        / 1s BLINKING asm exmpl   :asmPM )
-Q (  74 LOAD /pd tools        / .. EDIT /R.Pantola      :asmWR )
+Q (  70 LOAD /pd tools        / .. EDIT /R.Pantola      :asmWR )
+Q (  83 LOAD /pd tools        / 1s VECTORED EXEC exmpl         )
 Q (  84 LOAD /pd tools        / 5s DIS disassembler            )
+Q (  89 LOAD /pd tools        / 1s BLINKING asm exmpl   :asmPM )
 
 
 PREPARE ( scr 18 )
@@ -854,25 +856,27 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 14 E
 15 P ;S 
 
-59 CLEAR 
-0 P ( 1/1 VECTORED EXEC )
-1 P (     adapted from: FD V/4/P17 )
-2 P 0 VARIABLE 'WHO 
-3 P : WHO 'WHO @ CFA EXECUTE ;
-4 P : WELCOME ( -- ) CR 
-5 P   ." HELLO, DEAR " WHO ." !" CR ;
-6 P : WHO! 'WHO ! ;
-7 P : DEFAULT ; 
-8 P : BARTOSZ ." BARTOSZ" ;
-9 P : STEFAN  ." MATYLDA"  ;
-10 P ' DEFAULT WHO!   WELCOME
-11 P ' BARTOSZ WHO!   WELCOME
-12 P ' STEFAN  WHO!   WELCOME
-13 P ;S 
+
+59 CLEAR ( CONST #HLP = 59 )
+  0 P ( EDIT - HELP ) -->
+  2 P Arrows, Insert, BckSpc: standard
+  3 P Return: next line, Tab: tab (2)
+  4 P Clear: clear screen (Shf> Ctl>)
+  5 P Esc-Z: undo scrn chn (empty-buf)
+  6 P Shf-Insert: insert whole line*
+  7 P Shf-Delete: delete whole line*
+  8 P Ctl-Insert: insert space
+  9 P Ctl-BckSpc: delete;  Esc-0: cold
+ 10 P Esc-R: rotate/sides; Esc-H: help
+ 11 P Esc-N: next screen, save (flush)
+ 12 P Esc-L: last screen, save (flush)
+ 13 P Esc-S: save (flush) ; Esc-B: 4th
+ 14 P Esc-Q: quit (empty-buf)
+ 15 P Esc-V: put last deleted line
 
 60 CLEAR
   0 P ( EDIT - BY M. DOUGHERTY )       ( APX FORTH ONLY )
-  1 P : TASK ; 752 CONSTANT CRSINH     70 CONSTANT #HLP 
+  1 P : TASK ; 752 CONSTANT CRSINH     59 CONSTANT #HLP 
   2 P 0  VARIABLE CLINE                0 VARIABLE CCHAR
   3 P 3  VARIABLE LINEOFF              3 VARIABLE CHAROFF
   4 P 18 CONSTANT TOP-BOT              2 CONSTANT REDGE
@@ -1050,81 +1054,20 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
  14 P DUP ADDKEY CEND STOP @ UNTIL 
  15 P 125 EMIT 0 CRSINH ! ; : /EDIT ; ;S
  
-70 CLEAR ( CONST #HLP = 70 )
-  0 P ( EDIT - HELP ONLY, END. ) ;S
-  2 P Arrows, Insert, BckSpc: standard
-  3 P Return: next line, Tab: tab (2)
-  4 P Clear: clear screen (Shf> Ctl>)
-  5 P Esc-Z: undo scrn chn (empty-buf)
-  6 P Shf-Insert: insert whole line*
-  7 P Shf-Delete: delete whole line*
-  8 P Ctl-Insert: insert space
-  9 P Ctl-BckSpc: delete;  Esc-0: cold
- 10 P Esc-R: rotate/sides; Esc-H: help
- 11 P Esc-N: next screen, save (flush)
- 12 P Esc-L: last screen, save (flush)
- 13 P Esc-S: save (flush) ; Esc-B: 4th
- 14 P Esc-Q: quit (empty-buf)
- 15 P Esc-V: put last deleted line
 
 
-
-71 SCR !
- 0 P ( 1/2 GoesInto - Decomp by RDA - APX only? )
- 1 P ( -- Forth Dimension Vol14 Nr2 )
- 2 P   0 VARIABLE GIN 
- 3 P : MYSELF LATEST PFA CFA , ; IMMEDIATE
- 4 P : GIN+ CR GIN @ 2+ DUP GIN ! SPACES ;
- 5 P : GCHK DUP @ 2+ ' COMPILE =
- 6 P   IF  2+ DUP @ 2+ NFA ID. 2+
- 7 P   ELSE DUP @ 2+ DUP ' LIT =
- 8 P   OVER ' BRANCH  = OR OVER ' 0BRANCH = OR
- 9 P   OVER ' (LOOP)  = OR SWAP ' (+LOOP) = OR
-10 P   IF 2+ DUP @ SPACE . 2+ ELSE DUP @ 2+ ' CLIT =
-11 P   IF 2+ DUP C@ SPACE . 1+ ELSE DUP @ 2+ 
-12 P   ' (.") = IF 2+ DUP COUNT TYPE 
-13 P   DUP C@ 1+ + ELSE 2+ THEN THEN THEN THEN 
-14 P   -2 GIN +! ; 
-15 P : DIN CR GIN @ SPACES ; -->
-
-72 SCR !
- 0 P ( 2/2 Use: "GOIN x" RET/SPC/Q ) 
- 1 P : (GOESINTO) DUP CFA @ ' : CFA 
- 2 P   @ = OVER ' ERROR = 0= AND
- 3 P   IF BEGIN DUP @ DUP ' ;S CFA =
- 4 P     OVER ' (;CODE) CFA = OR 0=
- 5 P   WHILE 2+ DUP GIN+ NFA ID. KEY 
- 6 P     DUP 81 = IF SP! QUIT ELSE 155 =
- 7 P     IF MYSELF ELSE DROP THEN THEN
- 8 P     GCHK REPEAT 2+ DIN NFA ID.
- 9 P   THEN DROP ; ( 81=Q, 155=RETURN )
-10 P : GOESINTO -FIND IF DROP 0 GIN !
-11 P   (GOESINTO) ELSE ." NOT FOUND" CR THEN ;
-12 E
-13 P : GOIN GOESINTO ; 
-14 E
-15 P ;S 
-
-73 CLEAR 73 SCR !
- 0 P ( "Blinking Characters" RM COMPUTE 12/81 )
- 1 P ( "39 LOAD" to load req. assembler /APX/ )
- 2 P HEX CODE Blink ( -- )
- 3 P   02F3 LDA,  2 # AND, 2 #  EOR,
- 4 P   02F3 STA, 15 # LDA, 021A STA,
- 5 P RTS,
- 6 P CODE BlinkStart ( -- )
- 7 P   15 # LDA, 021A STA,
- 8 P NEXT JMP,
- 9 P : BlinkInit ( -- ) ' Blink 228 ! ;
-10 P : BlinkCursor ( -- ) BlinkInit BlinkStart ;
-11 P DECIMAL ;S
 
 
 
 ( EDYTOR R. PANTOLY ZAJMIE 9-10 EKRANOW? APX ONLY )
 ( : C; CURRENT @ CONTEXT ! ?EXEC ?CSP SMUDGE ; IMMEDIATE   )
 ( + DEASSEMBLER? BLINKING CHARS JAKO PRZYKŁAD!    )
+( czy zmieści się WFR asm ? ) 
 
+70 CLEAR
+71 CLEAR
+72 CLEAR
+73 CLEAR
 74 CLEAR
 75 CLEAR 
 76 CLEAR
@@ -1134,10 +1077,24 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 80 CLEAR
 81 CLEAR
 82 CLEAR
+
+
+
 83 CLEAR
+0 P ( 1/1 VECTORED EXEC )
+1 P (     adapted from: FD V/4/P17 )
+2 P 0 VARIABLE 'WHO 
+3 P : WHO 'WHO @ CFA EXECUTE ;
+4 P : WELCOME ( -- ) CR 
+5 P   ." HELLO, DEAR " WHO ." !" CR ;
+6 P : WHO! 'WHO ! ; : DEFAULT ; 
+7 P : BARTOSZ ." BARTOSZ" ;
+8 P : STEFAN  ." MATYLDA"  ;
+9 P ' DEFAULT WHO!   WELCOME
+10 P ' BARTOSZ WHO!   WELCOME
+11 P ' STEFAN  WHO!   WELCOME ;S 
 
-
-84 SCR !
+84 CLEAR
    0 P ( 1/5 FORTH DISASSEMBLER ) HEX
    1 P   0 VARIABLE POINTER 0 VARIABLE MULTIMODE 
    2 P   -2 ALLOT 1D , 1E , 3C , 3D , 3E , 5C , 
@@ -1155,7 +1112,7 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
   14 P   ENCLOSE IN +! OVER - >R +
   15 P   HERE R CMOVE R> ALLOT ; -->
 
-85 SCR !
+85 CLEAR
    0 P ( 2/5 FORTH DISASSEMBLER )
    1 P   0 VARIABLE MULTINAME -2 ALLOT
    2 P   STRING ORAASLBITANDROLJMPEORLSR    
@@ -1173,7 +1130,7 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
   14 P   STRING INXNOPBEQSED???
   15 P -->
 
-86 SCR !
+86 CLEAR
    0 P ( 3/5 FORTH DISASSEMBLER )
    1 P   0 VARIABLE ONEMODE -2 ALLOT
    2 P     2C00 , 2C08 , 280A , 3010 ,
@@ -1191,7 +1148,7 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
   14 P     STRING ,X,Y,X)Y..##0PX).Y().AIMRE
   15 P -->
 
-87 SCR !
+87 CLEAR
    0 P ( 4/5 FORTH DISASSEMBLER )
    1 P   0 VARIABLE LENGTH -2 ALLOT
    2 P     2 C, 2 C, 1 C, 1 C, 2 C, 1 C,
@@ -1209,7 +1166,7 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
   14 P     @ 0 D. DROP ENDIF ENDIF ; 
   15 P --> (  TEST: ' ASMWORD DIS )
 
-88 SCR !
+88 CLEAR
    0 P ( 5/5 FORTH DISASSEMBLER )
    1 P : DIS POINTER ! CR BEGIN CR
    2 P     POINTER @ DUP 0 D. 2 SPACES
@@ -1227,8 +1184,23 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
   14 P   UNTIL ; : DISASSEMBLE DIS ;
   15 P DECIMAL ( ' SOMEWORD DIS ) ;S
 
+89 SCR !
+( not a complete screen - no clear )
+ 0 P ( "Blinking Characters" RM COMPUTE 12/81 )
+ 1 P ( "39 LOAD" to load req. assembler /APX/ )
+ 2 P HEX CODE Blink ( -- )
+ 3 P   02F3 LDA,  2 # AND, 2 #  EOR,
+ 4 P   02F3 STA, 15 # LDA, 021A STA,
+ 5 P RTS,
+ 6 P CODE BlinkStart ( -- )
+ 7 P   15 # LDA, 021A STA,
+ 8 P NEXT JMP,
+ 9 P : BlinkInit ( -- ) ' Blink 228 ! ;
+10 P : BlinkCursor ( -- ) BlinkInit BlinkStart ; DECIMAL ;S
 
 
 FLUSH
-
 FORTH
+KEY DROP
+BOOT
+

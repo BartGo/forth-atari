@@ -61,39 +61,36 @@ VOCABULARY EDITOR  EDITOR DEFINITIONS
 : CLEAR  SCR ! 10 0 DO FORTH I
   EDITOR E LOOP ;
 : CLEARS DO I CLEAR FLUSH LOOP ; CR
+: COPY B/SCR * OFFSET @ + SWAP
+       B/SCR * B/SCR OVER +
+       SWAP DO DUP FORTH I
+       BLOCK 2 - ! 1+ UPDATE
+       LOOP DROP FLUSH ;
 ." EDITOR subset (incl. P, E) loaded."
-: COPY   B/SCR * OFFSET @ + SWAP
-         B/SCR * B/SCR OVER +
-         SWAP DO DUP FORTH I
-         BLOCK 2 - ! 1+ UPDATE
-         LOOP DROP FLUSH ;
 
 DECIMAL CR
 
 ( ADDITIONAL WORDS TO SIMPLIFY CODE PASTING AND BROWSING)
 
-15 VARIABLE #SC ( starting scr-1 ) 
+15 VARIABLE #SC ( starting scr-1 ) #SC SCR !
  0 VARIABLE #LN ( & line )
 : LN+ ( -- ) #LN @ 1 + #LN ! ;
 : LN? ( -- ) #LN @ 15 = IF 23 ERROR COLD THEN ;
 : PREPARE ( -- ) ( next scr )
-  CR CR
-  0 #LN ! 
-  #SC @ 1 + #SC ! #SC @ CLEAR #SC @ SCR !
-  ." #" #SC ? CR ;
+  CR CR 0 #LN ! 
+  SCR @ 1 + SCR ! 
+  SCR @ CLEAR
+  ." #" SCR ? CR ;
 : Q ( -- ) ( new line: Q ccc )
-  LN? #LN @ EDITOR P
-  LN+ ; 
+  LN? #LN @ EDITOR P LN+ ; 
 : V ( -- ) ( skip line: V )
-  LN? #LN @ EDITOR E
-  LN+ ; 
-: S+ SCR @ 1 + SCR ! ; ( no boundary check! )
-: S- SCR @ 1 - SCR ! ; ( no boundary check! )
+  LN? #LN @ EDITOR E LN+ ; 
 : (LINE/2) >R C/L 2 / B/BUF */MOD R> B/SCR *
   + BLOCK + C/L 2 / ;
-: LI CR ( n -- ) SCR !
-  32 0 DO CR I SCR @ (LINE/2) -TRAILING TYPE LOOP CR 
-  ." << SCR#" SCR ? ;
+: LI CR ( n -- ) SCR ! 32 0 DO
+    CR I SCR @ (LINE/2)
+	-TRAILING TYPE
+  LOOP CR ." --- SCR#" SCR ? CR CR ;
 
 ( ********************** )
 ( ********************** )
@@ -129,10 +126,10 @@ Q (  41 LOAD /..              / 5s LIFE                        )
 Q (  46 LOAD /..              / 7s SORTOWANIE                  )
 Q (  53 LOAD /..              / 4s PSY                         )
 Q (  57 LOAD /..              / 2s Fig-EDIT/MINI, SEARCH       )
-Q (  59 LOAD /..              / 1s VECTORED EXECUTION          )
+Q (  59 LOAD /..              / 1s VECTORED EXEC               )
 Q (  60 LOAD /..              / 11 EDIT /M.Dougherty           )
 Q (  71 LOAD /..              / 2s GOIN decompiler             )
-Q (  73 LOAD /..              / 1s Blinking        asmPM       )
+Q (  73 LOAD /..              / 1s BLINKING        asmPM       )
 Q (  74 LOAD /..              / nn EDIT /R.Pantola asmWR       )
 Q (  czy zmiesci sie deasm?   / ..                             )
 
@@ -141,17 +138,17 @@ Q ( 1/1 KOT, NAPIS, KWADRATY  )
 Q : KOT CR ." Kot pije mleko" ; 
 Q : NAPIS KOT SPACE
 Q   ." i poluje na myszy" ;
-Q : S0 18 +ORIGIN @ ;             ( APX s#85 )
+Q : S0 18 +ORIGIN @ ; ( APX s#85 )
 Q : .S ( --- ) 2 SPACES SP@ S0 =
 Q     0= IF SP@ 2 - S0 2 - DO
 Q       I @ . -2 +LOOP THEN ;
-Q : TEST ( -- ) 1 2 3   DUP  .S   ( 1 2 3 3 )
-Q   DROP .S   ( 1 2 3 ) SWAP .S   ( 1 3 2 )
-Q   ROT  .S   ( 3 2 1 ) OVER .S   ( 3 2 1 2 )
+Q : TEST ( -- ) 1 2 3   DUP  .S         ( 1 2 3 3 )
+Q   DROP .S   ( 1 2 3 ) SWAP .S         ( 1 3 2 )
+Q   ROT  .S   ( 3 2 1 ) OVER .S         ( 3 2 1 2 )
 Q  SP! ;  : KWADRAT DUP * . ;
 Q : SZESCIAN DUP OVER * * . ; 
-Q : KWADRATY CR DO I DUP U* 15    D.R CR LOOP ;
-Q  CR 45001 44980 KWADRATY CR  ;S
+Q : KWADRATY CR DO I DUP U* 15            D.R CR LOOP ;
+Q ( 45001 44980 KWADRATY ) ;S
 
 PREPARE
 Q ( 1/1 2DUP,2DROP,...        )   
@@ -164,8 +161,10 @@ Q    2SWAP ( n3 n4 n1 n2 )            ( – zamienia pary liczb )
 Q    R> ( n3 n4 n1 n2 n5 )            ( – przenosi z powrotem n5 )
 Q    R> ( n3 n4 n1 n2 n5 n6 )         ( – przenosi z powrotem n6 )
 Q    2SWAP ; ( n3 n4 n5 n6 n1 n2 )    ( – zamiana wykonana! )
-Q : DUMP-INDEX ' INDEX NFA ' TRIAD    ( HEX DUMP-INDEX DECIMAL ) 
-Q   NFA OVER - DUMP ;  ;S             ( ^ przyklad uzycia      )
+Q : DUMP-INDEX ' INDEX NFA ' TRIAD    
+Q   NFA OVER - DUMP ;  ;S             
+Q ( HEX DUMP-INDEX DECIMAL ) 
+Q   ^ przyklad uzycia      )
 
 PREPARE
 Q ( 1/1 PRZEDZIAL, FIBO, ...  )        
@@ -186,10 +185,11 @@ Q ( -- ) ;S
 
 PREPARE
 Q ( 1/1 TEST1, NWP, TABLICZKA )
-Q : TEST1 51 1 DO I . 2 +LOOP ;        : TEST2 0 20 DO I . -1 +LOOP ; 
+Q : TEST1 51  1 DO I .  2 +LOOP ; 
+Q : TEST2  0 20 DO I . -1 +LOOP ; 
 Q : IKSY BEGIN ." X" 1 - DUP 0= UNTIL ; 
 Q : NWP BEGIN SWAP OVER MOD -DUP 0= UNTIL ;
-Q ( 128 1024 NWP . CR ) ( 324  556 NWP . CR ) ( 1933 821 NWP . CR )
+Q ( 128 1024 NWP . CR 324 556 NWP . CR 1933 821 NWP . CR )
 Q 0 VARIABLE AA : TABLICZKA ( -- )
 Q   125 EMIT CR CR 8 SPACES
 Q   ." TABLICZKA MNOZENIA"
@@ -203,7 +203,8 @@ Q     LOOP CR LOOP ; TABLICZKA ;S
 
 PREPARE
 Q ( 1/1 TABLICZKA2 ) 
-Q : J R> R> R> R R# ! >R >R >R R# @ ; 
+Q : J R> R> R> R R# !
+      >R >R >R R# @ ; 
 Q : TAB2 ( -- ) 125 EMIT
 Q   CR CR 8 SPACES 
 Q   ." TABLICZKA MNOZENIA"
@@ -214,7 +215,8 @@ Q   10 1 DO
 Q     I . ." |" 10 1 DO
 Q       I J * 3 .R
 Q     LOOP CR
-Q   LOOP ; : TABLICZKA2 TAB2 ;
+Q   LOOP ;
+Q : TABLICZKA2 TAB2 ;
 Q TABLICZKA2 ;S
 
 PREPARE
@@ -251,7 +253,7 @@ V
 Q PIERWSZE ;S
 
 PREPARE
-Q ( 1/1 NAZWISKO?, DRUKUJ, INPUT, DATY )
+Q ( 1/1 NAZWISKO?, DRUKUJ, ...)
 Q : QUERY TIB @ 80 EXPECT 0 IN ! ; 
 Q : NAZWISKO?
 Q   CR ." PODAJ SWOJE NAZWISKO: "
@@ -259,24 +261,29 @@ Q   CR QUERY 155 WORD HERE ;
 Q : DRUKUJ NAZWISKO? CR COUNT TYPE ;
 Q : INPUT CR QUERY BL WORD HERE
 Q   NUMBER DROP ; 
-Q : DATY <BUILDS , , , DOES>          ( n n n --- )
+Q : DATY <BUILDS , , , DOES>              ( n n n --- )
 Q   DUP 2+ DUP 2+ ? ? ? CR ;
-Q 12  9 1683 DATY WIEDEN               4  4 1794 DATY RACLAWICE
-Q 18  6 1815 DATY WATERLOO             1  9 1870 DATY SEDAN
-Q 12 10 1943 DATY LENINO              15 08 1920 DATY WARSZAWA
-Q ( WARSZAWA ) ;S 
+Q 12  9 1683 DATY WIEDEN               
+Q  4  4 1794 DATY RACLAWICE
+Q 18  6 1815 DATY WATERLOO
+Q  1  9 1870 DATY SEDAN
+Q 12 10 1943 DATY LENINO
+Q 15 08 1920 DATY WARSZAWA ;S 
 
 PREPARE
 Q ( 1/1 SILNIA,SILNIA2,... )
-Q : TENKOD ( -- n ) CURRENT @ @       PFA CFA ; IMMEDIATE
-Q : SILNIA ( n -- )                   1 SWAP 1+ 1 DO I * LOOP ;
-Q : SILNIA2 ( n -- ) DUP 2 = IF ELSE
-Q   DUP 1 - TENKOD LITERAL EXECUTE    * THEN ;
+Q : TENKOD ( -- n ) CURRENT @ @
+Q   PFA CFA ; IMMEDIATE
+Q : SILNIA ( n -- )
+Q   1 SWAP 1+ 1 DO I * LOOP ;
+Q : SILNIA2 ( n -- ) DUP 2 = IF
+Q   ELSE DUP 1 - TENKOD LITERAL
+Q   EXECUTE * THEN ;
 Q : SILNIA3 ( n -- ) [ SMUDGE ]
 Q   DUP 2 = IF ELSE DUP 1 - SILNIA3 *
 Q   THEN [ SMUDGE ] ;
-Q : FACTORIAL ( J. BIELECKI "FORTH" )
-Q   DUP IF DUP 1 - [ SMUDGE ] FACTORIAL 
+Q : FACTORIAL ( JB ) DUP IF DUP
+Q   1 - [ SMUDGE ] FACTORIAL 
 Q   [ SMUDGE ] * ELSE 1+ THEN ;
 Q 8 SILNIA  U.  8 SILNIA2 U. ( NIE 1.4S )
 Q 8 SILNIA3 U.  8 FACTORIAL U. ;S
@@ -286,8 +293,10 @@ Q ( 1/1 ARRAY, 2DARRAY )
 Q : ARRAY <BUILDS 2 * ALLOT DOES>
 Q   SWAP 2 * + ;
 Q : 2DARRAY
-Q   <BUILDS DUP , * 2 * ALLOT DOES>
-Q   ROT OVER @ + ROT + 2 * + 2+ ;
+Q   <BUILDS
+Q     DUP , * 2 * ALLOT
+Q   DOES>
+Q     ROT OVER @ + ROT + 2 * + 2+ ;
 V
 Q 10 ARRAY LICZBY
 Q 7 LICZBY 7 LICZBY ! 7 LICZBY @ .
@@ -480,8 +489,8 @@ V
 Q CR TEST-COMPLEX CR ( -11 23 ok ) ;S     
   
 PREPARE 
-Q ( 1/2 FN TRYGONOMETRYCZNE - APX/1.4S )
-Q : TABLICA <BUILDS 0 ,
+Q ( 1/2 FN TRYGONOMETRYCZNE )
+Q : TABLICA <BUILDS 0 ,              
 Q  174 , 348  ,  522 ,  696 ,  870 , 1044 , 1218 , 1390 , 1564 , 
 Q 1736 , 1908 , 2078 , 2248 , 2418 , 2588 , 2756 , 2922 , 3090 , 
 Q 3254 , 3420 , 3582 , 3746 , 3906 , 4066 , 4226 , 4382 , 4538 , 
@@ -492,7 +501,7 @@ Q 8190 , 8290 , 8386 , 8480 , 8570 , 8660 , 8746 , 8828 , 8910 ,
 Q 8986 , 9062 , 9134 , 9204 , 9270 , 9334 , 9396 , 9454 , 9510 ,
 Q 9562 , 9612 , 9658 , 9702 , 9742 , 9780 , 9816 , 9848 , 9876 ,
 Q 9902 , 9924 , 9944 , 9960 , 9974 , 9986 , 9992 , 9998 , 10000 ,
-Q DOES> SWAP 2 * + @ ;
+Q DOES> SWAP 2 * + @ ;            ( APX/1.4S )
 Q 91 TABLICA SINTABLICA -->
 
 PREPARE
@@ -805,7 +814,7 @@ Q ." Usage: 21 44 SEARCH KEYWORD"     CR CR FORTH DECIMAL ;S
 
 
 59 CLEAR 59 SCR !
-0 P ( 1/1 VECTORED EXECUTE EXAMPLE )
+0 P ( 1/1 VECTORED EXEC )
 1 P (     adapted from: FD V/4/P17 )
 2 P 0 VARIABLE 'WHO 
 3 P : WHO 'WHO @ CFA EXECUTE ;
@@ -1077,8 +1086,97 @@ Q ." Usage: 21 44 SEARCH KEYWORD"     CR CR FORTH DECIMAL ;S
 81 CLEAR
 82 CLEAR
 83 CLEAR
-84 CLEAR
-85 CLEAR
+
+
+84 SCR !
+   0 P ( 1/5 FORTH DISASSEMBLER ) HEX
+   1 P   0 VARIABLE POINTER 0 VARIABLE MULTIMODE 
+   2 P   -2 ALLOT 1D , 1E , 3C , 3D , 3E , 5C , 
+   3 P   5D , 5E , 7D , 7E , 9C , 9D ,
+   4 P   9E , BC , BD , BE , DC , DD ,
+   5 P   DE , FC , FD , FE ,
+   6 P : SEEKD 1 + 0 DO OVER OVER I 2
+   7 P   * + C@ - DUP 0= IF DROP
+   8 P   DROP DROP I 1 LEAVE ELSE  
+   9 P   0 < IF DROP DROP I 0 LEAVE   
+  10 P   ENDIF ENDIF LOOP ;   
+  11 P : STRING ( COMPILE TEXT )    
+  12 P   BL BLK @ IF BLK @ BLOCK ELSE
+  13 P   TIB @ ENDIF IN @ + SWAP
+  14 P   ENCLOSE IN +! OVER - >R +
+  15 P   HERE R CMOVE R> ALLOT ; -->
+
+85 SCR !
+   0 P ( 2/5 FORTH DISASSEMBLER )
+   1 P   0 VARIABLE MULTINAME -2 ALLOT
+   2 P   STRING ORAASLBITANDROLJMPEORLSR    
+   3 P   STRING ADCRORSTYSTASTXLDYLDALDX    
+   4 P   STRING CPYCMPDECCPXSBCINC    
+   5 P : CHKMODE DROP DUP 2 * '
+   6 P   MULTIMODE + @ POINTER @ C@ -
+   7 P   4 /MOD SWAP IF SWAP 1+ SWAP ENDIF ; 
+   8 P 0 VARIABLE ONENAME -2 ALLOT
+   9 P   STRING BRKPHPASLBPLCLCJSRPLPROL
+  10 P   STRING BMISECRTIPHALSRBVCCLIRTS
+  11 P   STRING PLARORJMPBVSSEIDEYTXABCC
+  12 P   STRING STXTYATXSLDYLDXTAYTAXBCS
+  13 P   STRING LDXCLVTSXLDXINYDEXBNECLD
+  14 P   STRING INXNOPBEQSED???
+  15 P -->
+
+86 SCR !
+   0 P ( 3/5 FORTH DISASSEMBLER )
+   1 P   0 VARIABLE ONEMODE -2 ALLOT
+   2 P     2C00 , 2C08 , 280A , 3010 ,
+   3 P     2C18 , 1020 , 2C28 , 282A ,
+   4 P     3030 , 2C38 , 2C40 , 2C48 ,
+   5 P     284A , 3050 , 2C58 , 2C60 ,
+   6 P     2C68 , 286A , 246C , 3070 ,
+   7 P     2C78 , 2C88 , 2C8A , 3090 ,
+   8 P     2096 , 2C98 , 2C9A , 14A0 ,
+   9 P     14A2 , 2CA8 , 2CAA , 30B0 ,
+  10 P     20B6 , 2CB8 , 2CBA , 04BE ,
+  11 P     2CC8 , 2CCA , 30D0 , 2CD8 ,
+  12 P     2CE8 , 2CEA , 30F0 , 2CF8 , 00FF , 
+  13 P   0 VARIABLE MODE -2 ALLOT
+  14 P     STRING ,X,Y,X)Y..##0PX).Y().AIMRE
+  15 P -->
+
+87 SCR !
+   0 P ( 4/5 FORTH DISASSEMBLER )
+   1 P   0 VARIABLE LENGTH -2 ALLOT
+   2 P     2 C, 2 C, 1 C, 1 C, 2 C, 1 C,
+   3 P     1 C, 1 C, 1 C, 2 C, 0 C, 0 C,
+   4 P     1 C, 0 C,
+   5 P : .NAME SPACE SWAP 3 * + 3 TYPE 2 SPACES ;
+   6 P : .MODE 2 * ' MODE + 2 TYPE 2 SPACES ;           
+   7 P : .ADD POINTER @ C@ DUP 20
+   8 P     = OVER 40 = OR OVER 4C = OR
+   9 P     OVER 60 = OR SWAP 6C = OR
+  10 P     SWAP ' LENGTH + C@ 1 POINTER
+  11 P     +! POINTER @ OVER POINTER +!
+  12 P     OVER 0= IF DROP DROP ELSE
+  13 P     OVER 1 = IF C@ . DROP ELSE
+  14 P     @ 0 D. DROP ENDIF ENDIF ; 
+  15 P --> (  TEST: ' ASMWORD DIS )
+
+88 SCR !
+   0 P ( 5/5 FORTH DISASSEMBLER )
+   1 P : DIS POINTER ! CR BEGIN CR
+   2 P     POINTER @ DUP 0 D. 2 SPACES
+   3 P     C@ ' ONEMODE 2D SEEKD
+   4 P       IF ( FOUND ) DUP ' ONENAME
+   5 P          .NAME 2 * 1+ '
+   6 P          ONEMODE + C@ 4 /
+   7 P       ELSE ( NOT ) DROP POINTER @
+   8 P          C@ ' MULTIMODE 16 SEEKD
+   9 P          CHKMODE CHKMODE CHKMODE
+  10 P          SWAP ' MULTINAME
+  11 P          .NAME ENDIF
+  12 P     DUP .MODE .ADD
+  13 P     ?TERMINAL OR ( ANTIC 3/84 )
+  14 P   UNTIL ; : DISASSEMBLE DIS ;
+  15 P DECIMAL ( ' SOMEWORD DIS ) ;S
 
 
 FLUSH

@@ -82,9 +82,11 @@ DECIMAL CR
   SCR @ CLEAR
   ." #" SCR ? CR ;
 : Q ( -- ) ( new line: Q ccc )
-  LN? #LN @ EDITOR P LN+ ; 
+  LN? #LN @ EDITOR P
+  ( new line after P!) LN+ ; 
 : V ( -- ) ( skip line: V )
-  LN? #LN @ EDITOR E LN+ ; 
+  LN? #LN @ EDITOR E
+  ( new line after P!) LN+ ; 
 : (LINE/2) >R C/L 2 / B/BUF */MOD R> B/SCR *
   + BLOCK + C/L 2 / ;
 : LI CR ( n -- ) SCR ! 32 0 DO
@@ -105,7 +107,7 @@ EDITOR
 
 
 PREPARE ( scr 12 )
-Q ( 1/2 FIG-EDITOR, mini subset - FD III/2 p.40 )
+Q ( 1/2 FIG-EDITOR, mini subset -- FD III/2 p.40 )
 Q ( First set edit screen: m SCR ! then edit line n: n P ccc  )
 Q HEX VOCABULARY EDITOR               EDITOR DEFINITIONS
 Q : TEXT HERE C/L 1+ BLANKS WORD      HERE PAD C/L 1+ CMOVE ; 
@@ -123,21 +125,21 @@ Q -->
 
 
 PREPARE
-Q ( 2/2 SEARCH w/ EDITOR wrds ) ( FD Vol03 Nr1 /WFR )
+Q ( 2/2 SEARCH w/ EDITOR wrds -- FD Vol03 Nr1 /WFR )
 Q : CLEAR  SCR ! 10 0                 DO FORTH I EDITOR E LOOP ; 
 Q : WHERE DUP B/SCR / DUP SCR ! ."    SCR # " DECIMAL .
 Q   SWAP C/L /MOD C/L * ROT BLOCK +   CR C/L -TRAILING
 Q   TYPE CR HERE C@ - SPACES 1 2FE C! 1C EMIT 0 2FE
 Q   C! [COMPILE] EDITOR QUIT ;     0 VARIABLE SRCHCNT      
-Q CR ." EDITOR subset (incl. P, E) loaded."  
+Q CR CR ." EDITOR subset (incl. P, E) loaded."  
 Q  CR DECIMAL
 Q : BUMP ( ln nr and paging )         1 SRCHCNT +! SRCHCNT @ 56 
 Q   > IF 0 SRCHCNT ! CR THEN ; 
 Q : SEARCH ( FROM TO -- STRING )      CR 01 TEXT 0 SRCHCNT !
 Q   1+ SWAP DO FORTH I SCR ! EDITOR   TOP BEGIN
 Q     1LINE IF 0 M SCR ? BUMP THEN    1023 R# @ < UNTIL LOOP ; 
-Q CR ." SEARCH (uppercase only) loaded." CR 
-Q ." Usage: 21 44 SEARCH KEYWORD"     CR CR FORTH DECIMAL ;S
+Q CR ." SEARCH (case-sensitive) loaded." CR 
+Q ." Example: 16 18 SEARCH KOT"     CR CR FORTH DECIMAL ;S
 
 
 ( skip error screens 14-15, move to 16  )
@@ -1203,4 +1205,3 @@ FLUSH
 FORTH
 KEY DROP
 BOOT
-

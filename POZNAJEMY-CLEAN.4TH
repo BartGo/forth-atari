@@ -93,7 +93,7 @@ DECIMAL CR
   + BLOCK + C/L 2 / ;
 : LI CR ( n -- ) SCR !
   32 0 DO CR I SCR @ (LINE/2) -TRAILING TYPE LOOP CR 
-  ." ^^^ SCR#" SCR ? ;
+  ." << SCR#" SCR ? ;
 
 ( ********************** )
 ( ********************** )
@@ -105,40 +105,55 @@ EDITOR
 
 PREPARE
 Q ( **** Poznajemy Forth **** )
-Q (  1.0    -- screen=21      )       (                           ) 
-Q (  2.0    -- screen=21      )       (                           ) 
-Q (  3.0    -- screen=21      )       (                           ) 
-Q (  4.0    -- screen=21      )       (                           ) 
-Q (  5.0    -- screen=21      )       (                           ) 
-Q (  6.0    -- screen=21      )       (                           ) 
-Q (  7.0    -- screen=21      )       (                           ) 
-Q (  8.0    -- screen=21      )       (                           ) 
-Q (  9.0    -- screen=21      )       (                           ) 
-Q ( 10.0    -- screen=21      )       (                           ) 
-Q ( 11.0    -- screen=21      )       (                           ) 
-Q ( 12.0    -- screen=21      )       (                           ) 
-Q ( Aneksy  -- screen=21      )       (                           )           
-Q ;S
+Q (  18 LOAD /rozdz 2.1-3.4.3 )   ( 1s KOT, NAPIS, KWADRATY  ) 
+Q (  19 LOAD /rozdz 3.5-4     )   ( 1s 2DUP, 2DROP, ...      )
+Q (  20 LOAD /rozdz 3.5-5.5   )   ( 1s PRZEDZIAL, FIBO, ...  )
+Q (  21 LOAD /rozdz 5.5-5.6   )   ( 1s TEST1, NWP, TABLICZKA )  
+Q (  22 LOAD /..              )   ( 1s TABLICZKA2            )
+Q (  23 LOAD /..              )   ( 2s ERATOS - WSTAW, USUN  )
+Q (  25 LOAD /..              )   ( 1s NAZWISKO?, ..., DATY  )
+Q (  26 LOAD /..              )   ( 1s SILNIA, SILNIA2, ...  )
+Q (  27 LOAD /..              )   ( 1s ARRAY, 2DARRAY        )
+Q (  28 LOAD /..              )   ( 1s MATDEF /valFORTH      ) 
+Q (  29 LOAD /..              )   ( 1s ARRAY2, ARRAY3 [JB]   )
+Q (  30 LOAD /..              )   ( 1s SETNE, SEXTAL, X, ... )
+Q (  31 LOAD /..              )   ( 2s DBL - D*, FIX, F., ...)  
+Q (  33 LOAD /..              )   ( 1s 3DUP, TAM, ..., HANOI )  
+Q (  33 LOAD /..              )   ( 5s HETMANY               )
 
 PREPARE
-Q ( 1/1 KOT, NAPIS, KWADRATY    )     ( "PF" rozdzialy 2.1-3.4.3  ) 
+Q (  38 LOAD /..              )   ( 1s ZESPOLONE             )
+Q (  39 LOAD /..              )   ( 2s FUNKCJE               )
+Q (  41 LOAD /..              )	  ( 5s LIFE                  )
+Q (  46 LOAD /..              )   ( 7s SORTOWANIE            )
+Q (  53 LOAD /..              )   ( 4s PSY                   )
+Q (  57 LOAD /..              )   ( 2s Fig-EDIT/MINI, SEARCH )
+Q (  59 LOAD /..              )	  ( 1s VECTORED EXECUTION    )
+Q (  60 LOAD /..              )   ( 11 EDIT /M.Dougherty     )
+Q (  71 LOAD /..              )   ( 2s GOIN decompiler       )
+Q (  73 LOAD /..              )	  ( 1s Blinking        asmPM )
+Q (  74 LOAD /..              )	  ( nn EDIT /R.Pantola asmWR )
+Q (  czy zmiesci sie deasm?   )
+
+PREPARE
+Q ( 1/1 KOT, NAPIS, KWADRATY  )
 Q : KOT CR ." Kot pije mleko" ; 
 Q : NAPIS KOT SPACE
 Q   ." i poluje na myszy" ;
-Q : S0 18 +ORIGIN @ ;                 ( APX s#85 )
+Q : S0 18 +ORIGIN @ ;             ( APX s#85 )
 Q : .S ( --- ) 2 SPACES SP@ S0 =
 Q     0= IF SP@ 2 - S0 2 - DO
 Q       I @ . -2 +LOOP THEN ;
-Q : TEST ( -- ) 1 2 3   DUP  .S       ( 1 2 3 3 )
-Q   DROP .S   ( 1 2 3 ) SWAP .S       ( 1 3 2 )
-Q   ROT  .S   ( 3 2 1 ) OVER .S       ( 3 2 1 2 )
+Q : TEST ( -- ) 1 2 3   DUP  .S   ( 1 2 3 3 )
+Q   DROP .S   ( 1 2 3 ) SWAP .S   ( 1 3 2 )
+Q   ROT  .S   ( 3 2 1 ) OVER .S   ( 3 2 1 2 )
 Q  SP! ;  : KWADRAT DUP * . ;
 Q : SZESCIAN DUP OVER * * . ; 
-Q : KWADRATY CR DO I DUP U* 15        D.R CR LOOP ;
+Q : KWADRATY CR DO I DUP U* 15    D.R CR LOOP ;
 Q  CR 45001 44980 KWADRATY CR  ;S
 
 PREPARE
-Q ( 1/1 2DUP,2DROP,...,DUMP-INDEX )   ( "PF" rozdzialy 3.5-4        )
+Q ( 1/1 2DUP,2DROP,...        )   
 Q : 2DUP OVER OVER ;                  : 2DROP DROP DROP ;
 Q : 2SWAP ROT >R ROT R> ; : 2OVER     >R >R 2DUP R> R> 2SWAP ;
 Q : 2ROT ( n1 n2 n3 n4 n5 n6 ... )    ( --- n3 n4 n5 n6 n1 n2 )
@@ -152,7 +167,7 @@ Q : DUMP-INDEX ' INDEX NFA ' TRIAD    ( HEX DUMP-INDEX DECIMAL )
 Q   NFA OVER - DUMP ;  ;S             ( ^ przyklad uzycia      )
 
 PREPARE
-Q ( 1/1 PRZEDZIAL, FIBO, ... )        ( "PF" rozdzialy 3.5-5.5      )
+Q ( 1/1 PRZEDZIAL, FIBO, ...  )        
 Q : PRZEDZIAL                         ( dolna-gr. n gorna-gran. )
 Q    OVER                             ( dol-gr n gor-gr n )
 Q    > >R                             ( dol-gr n f1 ) ( dol-gr n )
@@ -169,7 +184,7 @@ Q : KWADRAT3 DO I KWADRAT2 DUP 32760 IF DROP LEAVE THEN . LOOP ;
 Q ( -- ) ;S
 
 PREPARE
-Q ( 1/1 TEST1, PRZEDZIAL, FIBO, ... )  ( "PF" rozdzialy 5.5-5.6    )
+Q ( 1/1 TEST1, NWP, TABLICZKA )
 Q : TEST1 51 1 DO I . 2 +LOOP ;        : TEST2 0 20 DO I . -1 +LOOP ; 
 Q : IKSY BEGIN ." X" 1 - DUP 0= UNTIL ; 
 Q : NWP BEGIN SWAP OVER MOD -DUP 0= UNTIL ;
@@ -186,7 +201,7 @@ Q       I AA @ *	3 .R
 Q     LOOP CR LOOP ; TABLICZKA ;S
 
 PREPARE
-Q ( 1/1 TABLICZKA2 )                   ( "PF" rozdzialy 5.6-5.6    )
+Q ( 1/1 TABLICZKA2 ) 
 Q : J R> R> R> R R# ! >R >R >R R# @ ; 
 Q : TAB2 ( -- ) 125 EMIT
 Q   CR CR 8 SPACES 
@@ -279,7 +294,7 @@ V
 Q 4 5 2DARRAY PROSTOKAT ;S
 
 PREPARE
-Q ( 1/1 MATDEF - valFORTH ) 
+Q ( 1/1 MATDEF /valFORTH  ) 
 Q : 0> 0 MAX ; 
 Q : MATDEF <BUILDS OVER OVER           SWAP , , * 2 * ALLOT
 Q    DOES> >R OVER OVER R @ R          2 + @ ROT - 0> ROT
@@ -686,7 +701,7 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 
 
 
-54 DUP CLEAR SCR !
+53 DUP CLEAR SCR !
 0 P ( 1/4 PSY RASOWE ) -->
 1 P bokser 165
 2 P cocker-spaniel 90
@@ -701,7 +716,7 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 11 P chow-chow 172
 12 P pekinczyk 28
 
-55 DUP CLEAR SCR !
+54 DUP CLEAR SCR !
 0 P ( 2/4 CECHY PSOW ) -->
 1 P Czy ma:
 2 P 1 wiecej niż 60 cm wzrostu?
@@ -713,9 +728,9 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 8 P 7 dlugie uszy?
 9 P 8 krepa lub mocna budowe?
 
-56 DUP CLEAR SCR !
+55 DUP CLEAR SCR !
  0 P ( 3/4 PSY ) : HOME 125 EMIT ;
- 1 P : #PSY 54 ; : #CECHY 55 ;         
+ 1 P : #PSY 53 ; : #CECHY 54 ;         
  2 P : CARRAY <BUILDS ALLOT DOES> + ;
  3 P 15 CARRAY CECHY : X CECHY C! ;
  4 P  165 0 X 98  1 X 163  2 X 35  3 X
@@ -731,7 +746,7 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 14 P   REPEAT ; 
 15 P -->
 
-57 DUP CLEAR SCR !
+56 DUP CLEAR SCR !
  0 P ( 4/4 PSY )
  1 P : DAJ BAJT @ 12 0 DO
  2 P     DUP I CECHY C@ OR          ( !! XOR/OR zmienia tryb? )
@@ -786,6 +801,23 @@ Q   1+ SWAP DO FORTH I SCR ! EDITOR   TOP BEGIN
 Q     1LINE IF 0 M SCR ? BUMP THEN    1023 R# @ < UNTIL LOOP ; 
 Q CR ." SEARCH (uppercase only) loaded." CR 
 Q ." Usage: 21 44 SEARCH KEYWORD"     CR CR FORTH DECIMAL ;S
+
+
+59 CLEAR 59 SCR !
+0 P ( 1/1 VECTORED EXECUTE EXAMPLE )
+1 P (     adapted from: FD V/4/P17 )
+2 P 0 VARIABLE 'WHO 
+3 P : WHO 'WHO @ CFA EXECUTE ;
+4 P : WELCOME ( -- ) CR 
+5 P   ." HELLO, DEAR " WHO ." !" CR ;
+6 P : WHO! 'WHO ! ;
+7 P : DEFAULT ; 
+8 P : BARTOSZ ." BARTOSZ" ;
+9 P : STEFAN  ." MATYLDA"  ;
+10 P ' DEFAULT WHO!   WELCOME
+11 P ' BARTOSZ WHO!   WELCOME
+12 P ' STEFAN  WHO!   WELCOME
+13 P ;S 
 
 60 CLEAR
   0 P ( EDIT - BY M. DOUGHERTY )       ( APX FORTH ONLY )
@@ -976,26 +1008,7 @@ Q ." Usage: 21 44 SEARCH KEYWORD"     CR CR FORTH DECIMAL ;S
 
 
 
-71 CLEAR ( EDYTOR R. PANTOLY ZAJMIE 9-10 EKRANOW? APX ONLY )
-         ( : C; CURRENT @ CONTEXT ! ?EXEC ?CSP SMUDGE ; IMMEDIATE   )
-72 CLEAR ( + DEASSEMBLER? BLINKING CHARS JAKO PRZYKŁAD!    )
-73 CLEAR
-74 CLEAR
-75 CLEAR 
-76 CLEAR
-77 CLEAR
-78 CLEAR
-79 CLEAR
-80 CLEAR
-81 CLEAR
-82 CLEAR
-83 CLEAR
-84 CLEAR
-85 CLEAR
-
-
-
-86 SCR !
+71 SCR !
  0 P ( 1/2 GoesInto - Decomp by RDA - APX only? )
  1 P ( -- Forth Dimension Vol14 Nr2 )
  2 P   0 VARIABLE GIN 
@@ -1013,7 +1026,7 @@ Q ." Usage: 21 44 SEARCH KEYWORD"     CR CR FORTH DECIMAL ;S
 14 P   -2 GIN +! ; 
 15 P : DIN CR GIN @ SPACES ; -->
 
-87 SCR !
+72 SCR !
  0 P ( 2/2 Use: "GOIN x" RET/SPC/Q ) 
  1 P : (GOESINTO) DUP CFA @ ' : CFA 
  2 P   @ = OVER ' ERROR = 0= AND
@@ -1031,7 +1044,7 @@ Q ." Usage: 21 44 SEARCH KEYWORD"     CR CR FORTH DECIMAL ;S
 14 E
 15 P ;S 
 
-88 CLEAR 88 SCR !
+73 CLEAR 73 SCR !
  0 P ( "Blinking Characters" RM COMPUTE 12/81 )
  1 P ( "39 LOAD" to load req. assembler /APX/ )
  2 P HEX CODE Blink ( -- )
@@ -1045,23 +1058,27 @@ Q ." Usage: 21 44 SEARCH KEYWORD"     CR CR FORTH DECIMAL ;S
 10 P : BlinkCursor ( -- ) BlinkInit BlinkStart ;
 11 P DECIMAL ;S
 
-89 CLEAR 89 SCR !
-0 P ( 1/1 VECTORED EXECUTE EXAMPLE )
-1 P (     adapted from: FD V/4/P17 )
-2 P 0 VARIABLE 'WHO 
-3 P : WHO 'WHO @ CFA EXECUTE ;
-4 P : WELCOME ( -- ) CR 
-5 P   ." HELLO, DEAR " WHO ." !" CR ;
-6 P : WHO! 'WHO ! ;
-7 P : DEFAULT ; 
-8 P : BARTOSZ ." BARTOSZ" ;
-9 P : STEFAN  ." MATYLDA"  ;
-10 P ' DEFAULT WHO!   WELCOME
-11 P ' BARTOSZ WHO!   WELCOME
-12 P ' STEFAN  WHO!   WELCOME
-13 P ;S 
-14 P       ( T H E   E N D )
-15 P ;S
+
+
+
+
+71 CLEAR ( EDYTOR R. PANTOLY ZAJMIE 9-10 EKRANOW? APX ONLY )
+         ( : C; CURRENT @ CONTEXT ! ?EXEC ?CSP SMUDGE ; IMMEDIATE   )
+72 CLEAR ( + DEASSEMBLER? BLINKING CHARS JAKO PRZYKŁAD!    )
+73 CLEAR
+74 CLEAR
+75 CLEAR 
+76 CLEAR
+77 CLEAR
+78 CLEAR
+79 CLEAR
+80 CLEAR
+81 CLEAR
+82 CLEAR
+83 CLEAR
+84 CLEAR
+85 CLEAR
+
 
 FLUSH
 

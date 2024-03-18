@@ -80,7 +80,7 @@ DECIMAL CR
   CR CR 0 #LN ! 
   SCR @ 1 + SCR ! 
   SCR @ CLEAR
-  ." #" SCR ? CR ;
+  DECIMAL ." #" SCR ? CR ;
 : Q ( -- ) ( new line: Q ccc )
   LN? #LN @ EDITOR P
   ( new line after P!) LN+ ; 
@@ -121,25 +121,24 @@ Q : M R# +! CR SPACE #LEAD TYPE 17 EMIT #LAG TYPE #LOCATE . DROP ;
 Q : 1LINE #LAG PAD COUNT MATCH R# +!  ;
 Q : COPY   B/SCR * OFFSET @ + SWAP    B/SCR * B/SCR OVER +
 Q   SWAP DO DUP FORTH I BLOCK 2 - ! 1+ UPDATE LOOP DROP FLUSH ;
-Q -->
-
+Q : CLEAR  SCR ! 10 0 DO FORTH I EDITOR E LOOP ; -->
 
 PREPARE
 Q ( 2/2 SEARCH w/ EDITOR wrds -- FD Vol03 Nr1 /WFR )
-Q : CLEAR  SCR ! 10 0                 DO FORTH I EDITOR E LOOP ; 
-Q : WHERE DUP B/SCR / DUP SCR ! ."    SCR # " DECIMAL .
+Q : WHERE DUP B/SCR / DUP SCR ! ."    SCR # " DECIMAL . HEX
 Q   SWAP C/L /MOD C/L * ROT BLOCK +   CR C/L -TRAILING
 Q   TYPE CR HERE C@ - SPACES 1 2FE C! 1C EMIT 0 2FE
 Q   C! [COMPILE] EDITOR QUIT ;     0 VARIABLE SRCHCNT      
-Q CR CR ." EDITOR subset (incl. P, E) loaded."  
-Q  CR DECIMAL
+Q CR CR ." EDITOR subset (incl. P, E) loaded." CR DECIMAL
 Q : BUMP ( ln nr and paging )         1 SRCHCNT +! SRCHCNT @ 56 
-Q   > IF 0 SRCHCNT ! CR THEN ; 
-Q : SEARCH ( FROM TO -- STRING )      CR 01 TEXT 0 SRCHCNT !
-Q   1+ SWAP DO FORTH I SCR ! EDITOR   TOP BEGIN
-Q     1LINE IF 0 M SCR ? BUMP THEN    1023 R# @ < UNTIL LOOP ; 
-Q CR ." SEARCH (case-sensitive) loaded." CR 
-Q ." Example: 16 18 SEARCH KOT"     CR CR FORTH DECIMAL ;S
+Q   > IF 0 SRCHCNT ! CR THEN ; : SEARCH ( FROM TO -- STRING )
+Q   CR 01 TEXT 0 SRCHCNT ! 1+ SWAP DO FORTH I SCR ! EDITOR TOP
+Q   BEGIN 1LINE IF 0 M SCR ? BUMP THEN    1023 R# @ < UNTIL LOOP ; 
+Q  CR ." SEARCH (case-sensitive) loaded." CR 
+Q ." Example: 16 18 SEARCH KOT"     CR CR FORTH 
+Q : (LINE/2) >R C/L 2 / B/BUF */MOD R> B/SCR * + BLOCK + C/L
+Q   2 / ; : LI CR ( n -- ) SCR ! 32 0 DO CR I SCR @ (LINE/2)
+Q   -TRAILING TYPE LOOP CR ." --- SCR#" SCR ? CR CR ; ;S
 
 
 ( skip error screens 14-15, move to 16  )
@@ -148,36 +147,36 @@ Q ." Example: 16 18 SEARCH KOT"     CR CR FORTH DECIMAL ;S
 
 PREPARE ( scr 16 )
 Q ( *** Poznajemy Forth  1/2 *** )
-Q (  12 LOAD /pd tools        / 2s Fig-EDIT/MINI, SEARCH       )
-Q (  18 LOAD /rozdz 2.1-3.4.3 / 1s KOT, NAPIS, KWADRATY        ) 
-Q (  19 LOAD /rozdz 3.5-4     / 1s 2DUP, 2DROP, ...            )
-Q (  20 LOAD /rozdz 3.5-5.5   / 1s PRZEDZIAL, FIBO, ...        )
-Q (  21 LOAD /rozdz 5.5-5.6   / 1s TEST1, NWP, TABLICZKA       )  
-Q (  22 LOAD /..              / 1s TABLICZKA2                  )
-Q (  23 LOAD /..              / 2s ERATOS - WSTAW, USUN        )
-Q (  25 LOAD /..              / 1s NAZWISKO?, ..., DATY        )
-Q (  26 LOAD /..              / 1s SILNIA, SILNIA2, ...        )
-Q (  27 LOAD /..              / 1s ARRAY, 2DARRAY              )
-Q (  28 LOAD /..              / 1s MATDEF /valFORTH            ) 
-Q (  29 LOAD /..              / 1s ARRAY2, ARRAY3 [JB]         )
-Q (  30 LOAD /..              / 1s SETNE, SEXTAL, X, ...       )
-Q (  31 LOAD /..              / 2s DBL - D*, FIX, F., ...      )  
-
-PREPARE
-Q ( *** Poznajemy Forth  2/2 *** )
-Q (  33 LOAD /..              / 1s 3DUP, TAM, ..., HANOI       )  
-Q (  34 LOAD /..              / 5s HETMANY                     )
-Q (  38 LOAD /..              / 1s ZESPOLONE                   )
-Q (  39 LOAD /..              / 2s FUNKCJE                     )
-Q (  41 LOAD /..              / 5s LIFE                        )
-Q (  46 LOAD /..              / 7s SORTOWANIE                  )
-Q (  53 LOAD /..              / 4s PSY                         )
-Q (  57 LOAD /pd tools        / 2s GOIN decompiler             )
-Q (  60 LOAD /pd tools        / 11 EDIT /M.Dougherty           )
-Q (  70 LOAD /pd tools        / .. EDIT /R.Pantola      :asmWR )
-Q (  83 LOAD /pd tools        / 1s VECTORED EXEC exmpl         )
-Q (  84 LOAD /pd tools        / 5s DIS disassembler            )
-Q (  89 LOAD /pd tools        / 1s BLINKING asm exmpl   :asmPM )
+Q (  12 LOAD /pd tools        / 2s   Fig-EDIT/MINI, SEARCH       )
+Q (  18 LOAD /rozdz 2.1-3.4.3 / 1s   KOT, NAPIS, KWADRATY        ) 
+Q (  19 LOAD /rozdz 3.5-4     / 1s   2DUP, 2DROP, ...            )
+Q (  20 LOAD /rozdz 3.5-5.5   / 1s   PRZEDZIAL, FIBO, ...        )
+Q (  21 LOAD /rozdz 5.5-5.6   / 1s   TEST1, NWP, TABLICZKA       )  
+Q (  22 LOAD /..              / 1s   TABLICZKA2                  )
+Q (  23 LOAD /..              / 2s   ERATOS - WSTAW, USUN        )
+Q (  25 LOAD /..              / 1s   NAZWISKO?, ..., DATY        )
+Q (  26 LOAD /..              / 1s   SILNIA, SILNIA2, ...        )
+Q (  27 LOAD /..              / 1s   ARRAY, 2DARRAY              )
+Q (  28 LOAD /..              / 1s   MATDEF /valFORTH            ) 
+Q (  29 LOAD /..              / 1s   ARRAY2, ARRAY3 [JB]         )
+Q (  30 LOAD /..              / 1s   SETNE, SEXTAL, X, ...       )
+Q (  31 LOAD /..              / 2s   DBL - D*, FIX, F., ...      )  
+															     
+PREPARE                                                          
+Q ( *** Poznajemy Forth  2/2 *** )                               
+Q (  33 LOAD /..              / 1s   3DUP, TAM, ..., HANOI       )  
+Q (  34 LOAD /..              / 5s   HETMANY                     )
+Q (  38 LOAD /..              / 1s   ZESPOLONE                   )
+Q (  39 LOAD /..              / 2s   FUNKCJE                     )
+Q (  41 LOAD /..              / 5s   LIFE                        )
+Q (  46 LOAD /..              / 7s   SORTOWANIE                  )
+Q (  53 LOAD /..              / 4s   PSY                         )
+Q (  57 LOAD /pd tools        / 2s   GOIN decompiler             )
+Q (  60 LOAD /pd tools        / 11   EDIT /M.Dougherty           )
+Q (  70 LOAD /pd tools        / ..   EDIT /R.Pantola      :asmWR )
+Q (  83 LOAD /pd tools        / 1s   VECTORED EXEC exmpl         )
+Q (  84 LOAD /pd tools        / 5s   DIS disassembler            )
+Q (  89 LOAD /pd tools        / 1s   BLINKING asm exmpl   :asmPM )
 
 
 PREPARE ( scr 18 )
@@ -416,8 +415,8 @@ PREPARE
 Q ( 2/2 DBL - UD.,D-,D0=,D0<,D= )  
 Q : UD. <# #S #> TYPE ;
 Q : D- DMINUS D+ ;
-Q : D0= OR 0= ;                       ( test na liczbę podw. 0   )
-Q : D0< SWAP DROP 0< ;                ( " ujemna liczbę podw.    )
+Q : D0= OR 0= ;                       ( test na liczbe podw. 0   )
+Q : D0< SWAP DROP 0< ;                ( " ujemna liczbe podw.    )
 Q : D= D- D0= ;                       ( " rownosc dwoch lb podw. )
 V
 Q 0.04 FIX        0.3 FIX D+ 
@@ -450,24 +449,24 @@ Q : WEKTOR
 Q   <BUILDS HERE OVER ERASE ALLOT
 Q   DOES> + ;
 Q 1024 WEKTOR WSPOLRZEDNA
-Q : LHET ( --- liczba hetmanów+1 )
+Q : LHET ( --- liczba hetmanow+1 )
 Q   0 WSPOLRZEDNA C@ ;
-Q : POSTAW ( rząd kolumna --- )
+Q : POSTAW ( rzad kolumna --- )
 Q   SWAP WSPOLRZEDNA C! ;              ( umieszcza hetmana )
-Q : USUN ( rząd --- )
+Q : USUN ( rzad --- )
 Q   0 POSTAW ;                         ( kasuje hetmana )
 Q -->
 
 PREPARE
 Q ( 2/5 HETMANY:WOLNE,... )
-Q : WOLNE                              ( rząd n --- rząd f )
+Q : WOLNE                              ( rzad n --- rzad f )
 Q   2DUP = >R
 Q   OVER WSPOLRZEDNA C@
 Q   OVER WSPOLRZEDNA C@ -
 Q   ROT ROT - ABS OVER ABS =
 Q   SWAP 0= OR 0=
 Q   R> OR ;
-Q : WSZYSTKIE-WOLNE                    ( rząd --- rząd f )
+Q : WSZYSTKIE-WOLNE                    ( rzad --- rzad f )
 Q   1 OVER 1 DO
 Q     OVER I WOLNE AND
 Q   LOOP ;
@@ -475,7 +474,7 @@ Q -->
 
 PREPARE
 Q ( 3/5 HETMANY:BRZEG,DRUK,INIC )
-Q : BRZEG ( rząd --- rząd f )
+Q : BRZEG ( rzad --- rzad f )
 Q  LHET OVER WSPOLRZEDNA C@ > ;
 Q : DRUK ( --- ) CR LHET 1 DO
 Q     I WSPOLRZEDNA C@ LHET 1
@@ -575,7 +574,7 @@ Q 10 CONSTANT DIMY
 Q : ARRAY                            ( dimX dimY --- )
 Q   <BUILDS                            
 Q     OVER ,                         ( dimY pod adresem pfa+2 )
-Q     * ALLOT                        ( dimX*dimY bajtów )
+Q     * ALLOT                        ( dimX*dimY bajtow )
 Q   DOES>                             
 Q   DUP @                            ( dimX na stosie )
 Q   ROT *                            ( dimY*dimX )
@@ -776,7 +775,7 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 54 DUP CLEAR SCR !
 0 P ( 2/4 CECHY PSOW ) -->
 1 P Czy ma:
-2 P 1 wiecej niż 60 cm wzrostu?
+2 P 1 wiecej niz 60 cm wzrostu?
 3 P 2 wydluzona glowe?
 4 P 3 kwadratowy lub plaski pysk?
 5 P 4 obfita siersc?
@@ -1063,8 +1062,8 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 
 ( EDYTOR R. PANTOLY ZAJMIE 9-10 EKRANOW? APX ONLY )
 ( : C; CURRENT @ CONTEXT ! ?EXEC ?CSP SMUDGE ; IMMEDIATE   )
-( + DEASSEMBLER? BLINKING CHARS JAKO PRZYKŁAD!    )
-( czy zmieści się WFR asm ? ) 
+( + DEASSEMBLER? BLINKING CHARS JAKO PRZYKLAD!    )
+( czy zmiesci sie WFR asm ? ) 
 
 70 CLEAR
 71 CLEAR
@@ -1203,5 +1202,3 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 
 FLUSH
 FORTH
-KEY DROP
-BOOT

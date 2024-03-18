@@ -100,8 +100,48 @@ DECIMAL CR
 
 EDITOR
 
+
+
+PREPARE
+Q ( 1/2 FIG-EDITOR, mini subset )     ( FD III/2 p.40 )
+Q ( First set edit screen: m SCR ! )  (  edit line n: n P ccc  )
+Q HEX VOCABULARY EDITOR               EDITOR DEFINITIONS
+Q : TEXT HERE C/L 1+ BLANKS WORD      HERE PAD C/L 1+ CMOVE ; 
+Q : LINE DUP FFF0 AND 17 ?ERROR       SCR @ (LINE) DROP ; 
+Q : MARK 10 0 DO I LINE UPDATE        DROP LOOP ;
+Q : -MOVE LINE C/L CMOVE UPDATE ;   : P 1 TEXT PAD 1+ SWAP -MOVE ; 
+Q : E LINE C/L BLANKS UPDATE ;      : TOP 0 R# ! ; 
+Q : #LOCATE R# @ C/L /MOD ;         : #LEAD #LOCATE LINE SWAP ;
+Q : #LAG  #LEAD DUP >R + C/L R> - ;
+Q : M R# +! CR SPACE #LEAD TYPE 17 EMIT #LAG TYPE #LOCATE . DROP ;
+Q : 1LINE #LAG PAD COUNT MATCH R# +!  ;
+Q : COPY   B/SCR * OFFSET @ + SWAP    B/SCR * B/SCR OVER +
+Q   SWAP DO DUP FORTH I BLOCK 2 - ! 1+ UPDATE LOOP DROP FLUSH ;
+Q -->
+
+
+PREPARE
+Q ( 2/2 SEARCH w/ EDITOR wrds ) ( FD Vol03 Nr1 /WFR )
+Q : CLEAR  SCR ! 10 0                 DO FORTH I EDITOR E LOOP ; 
+Q : WHERE DUP B/SCR / DUP SCR ! ."    SCR # " DECIMAL .
+Q   SWAP C/L /MOD C/L * ROT BLOCK +   CR C/L -TRAILING
+Q   TYPE CR HERE C@ - SPACES 1 2FE C! 1C EMIT 0 2FE
+Q   C! [COMPILE] EDITOR QUIT ;     0 VARIABLE SRCHCNT      
+Q CR ." EDITOR subset (incl. P, E) loaded."  
+Q  CR DECIMAL
+Q : BUMP ( ln nr and paging )         1 SRCHCNT +! SRCHCNT @ 56 
+Q   > IF 0 SRCHCNT ! CR THEN ; 
+Q : SEARCH ( FROM TO -- STRING )      CR 01 TEXT 0 SRCHCNT !
+Q   1+ SWAP DO FORTH I SCR ! EDITOR   TOP BEGIN
+Q     1LINE IF 0 M SCR ? BUMP THEN    1023 R# @ < UNTIL LOOP ; 
+Q CR ." SEARCH (uppercase only) loaded." CR 
+Q ." Usage: 21 44 SEARCH KEYWORD"     CR CR FORTH DECIMAL ;S
+
+
+
 PREPARE
 Q ( *** Poznajemy Forth  1/2 *** )
+Q (  12 LOAD /pd tools        / 2s Fig-EDIT/MINI, SEARCH       )
 Q (  18 LOAD /rozdz 2.1-3.4.3 / 1s KOT, NAPIS, KWADRATY        ) 
 Q (  19 LOAD /rozdz 3.5-4     / 1s 2DUP, 2DROP, ...            )
 Q (  20 LOAD /rozdz 3.5-5.5   / 1s PRZEDZIAL, FIBO, ...        )
@@ -115,23 +155,23 @@ Q (  28 LOAD /..              / 1s MATDEF /valFORTH            )
 Q (  29 LOAD /..              / 1s ARRAY2, ARRAY3 [JB]         )
 Q (  30 LOAD /..              / 1s SETNE, SEXTAL, X, ...       )
 Q (  31 LOAD /..              / 2s DBL - D*, FIX, F., ...      )  
+
+PREPARE
+Q ( *** Poznajemy Forth  2/2 *** )
 Q (  33 LOAD /..              / 1s 3DUP, TAM, ..., HANOI       )  
 Q (  34 LOAD /..              / 5s HETMANY                     )
-														       
-PREPARE                                                        
-Q ( *** Poznajemy Forth  2/2 *** )
 Q (  38 LOAD /..              / 1s ZESPOLONE                   )
 Q (  39 LOAD /..              / 2s FUNKCJE                     )
 Q (  41 LOAD /..              / 5s LIFE                        )
 Q (  46 LOAD /..              / 7s SORTOWANIE                  )
 Q (  53 LOAD /..              / 4s PSY                         )
-Q (  57 LOAD /..              / 2s Fig-EDIT/MINI, SEARCH       )
-Q (  59 LOAD /..              / 1s VECTORED EXEC               )
-Q (  60 LOAD /..              / 11 EDIT /M.Dougherty           )
-Q (  71 LOAD /..              / 2s GOIN decompiler             )
-Q (  73 LOAD /..              / 1s BLINKING        asmPM       )
-Q (  74 LOAD /..              / nn EDIT /R.Pantola asmWR       )
-Q (  czy zmiesci sie deasm?   / ..                             )
+Q (  57 LOAD /pd tools        / 2s GOIN decompiler             )
+Q (  59 LOAD /pd tools        / 1s VECTORED EXEC exmpl         )
+Q (  60 LOAD /pd tools        / 11 EDIT /M.Dougherty           )
+Q (  73 LOAD /pd tools        / 1s BLINKING asm exmpl   :asmPM )
+Q (  74 LOAD /pd tools        / .. EDIT /R.Pantola      :asmWR )
+Q (  84 LOAD /pd tools        / 5s DIS disassembler            )
+
 
 PREPARE
 Q ( 1/1 KOT, NAPIS, KWADRATY  )
@@ -351,11 +391,11 @@ Q CR ;S
 
 PREPARE
 Q ( 1/2 DBL - D*, FIX, F. )  
-Q 0 VARIABLE A_  0 VARIABLE B_        0 VARIABLE C_  0 VARIABLE D_
-Q : D* A_ ! B_ ! C_ ! D_ !            ( "COMPLETE FORTH" )
+Q 0 VARIABLE A_  0 VARIABLE B_       0 VARIABLE C_  0 VARIABLE D_
+Q : D* A_ ! B_ ! C_ ! D_ !           ( "COMPLETE FORTH" )
 Q   D_ @ B_ A_ U* D_ @ A_ @ U* DROP + C_ @ B_ @ U* DROP + ; 
-Q   ( TODO: FD-V03N2.pdf: -- : D* DUP ROT * ROT ROT U* ROT + ; )
-Q : FIX DPL @ 0< IF                   ( jezeli liczba byla pojed.
+Q   ( ? FD-V03N2.pdf: -- : D* DUP ROT * ROT ROT U* ROT + ;  )
+Q : FIX DPL @ 0< IF                   ( jezeli lb byla pojed.   )
 Q     S->D 0 DPL !                    ( przeksztalca ja w podw. )
 Q   THEN
 Q   DPL @ DUP 4 < IF 4 SWAP           DO 10. D* LOOP 
@@ -369,9 +409,9 @@ PREPARE
 Q ( 2/2 DBL - UD.,D-,D0=,D0<,D= )  
 Q : UD. <# #S #> TYPE ;
 Q : D- DMINUS D+ ;
-Q : D0= OR 0= ;                       ( test na liczbę podw. 0 )
-Q : D0< SWAP DROP 0< ;                ( " ujemna liczbę podw. )
-Q : D= D- D0= ;                       ( " rownosc dwoch liczb podw. )
+Q : D0= OR 0= ;                       ( test na liczbę podw. 0   )
+Q : D0< SWAP DROP 0< ;                ( " ujemna liczbę podw.    )
+Q : D= D- D0= ;                       ( " rownosc dwoch lb podw. )
 V
 Q 0.04 FIX        0.3 FIX D+ 
 Q 0.625 FIX D+ 0.0001 FIX D+ 
@@ -442,13 +482,13 @@ Q   LHET 1 DO I USUN LOOP 0 ROZWIAZANIE ! ; -->
 
 PREPARE
 Q ( 4/5 HETMANY:NAPRZOD,... )
-Q : NAPRZOD ( rzad --- rzad f )       ( f=1, gdy het. w rz. "rzad" )
-Q                                     ( mozna przes. do nast. kol. )
+Q : NAPRZOD ( rzad --- rzad f )     ( f=1, gdy het. w rz. "rzad" )
+Q                                   ( mozna przes. do nast. kol. )
 Q   DUP DUP WSPOLRZEDNA
 Q   C@ 1+ POSTAW BRZEG
 Q   IF 1 ELSE DUP USUN 0 THEN ;
-Q : PIERWSZA-WOLNA ( rz --- rz f )    ( f=1,gdy hetman moze ... )
-Q   ( ... przejsc do nast. kol. w rz )
+Q : PIERWSZA-WOLNA ( rz --- rz f )  ( f=1,gdy hetman moze ... )
+Q   ( ... przejsc do nast. kol. w rz                          )
 Q  BEGIN
 Q    NAPRZOD
 Q    IF WSZYSTKIE-WOLNE -DUP
@@ -525,14 +565,14 @@ PREPARE
 Q ( 1/5 LIFE:ARRAY,UNIVERSUM,J )
 Q 10 CONSTANT DIMX
 Q 10 CONSTANT DIMY
-Q : ARRAY                              ( dimX dimY --- )
+Q : ARRAY                            ( dimX dimY --- )
 Q   <BUILDS                            
-Q     OVER ,                           ( dimY pod adresem pfa+2 )
-Q     * ALLOT                          ( dimX*dimY bajtów )
-Q   DOES>                              
-Q   DUP @                              ( dimX na stosie )
-Q   ROT *                              ( dimY*dimX )
-Q   + + 2+ ;                           ( bezwzgledny adres komorki )
+Q     OVER ,                         ( dimY pod adresem pfa+2 )
+Q     * ALLOT                        ( dimX*dimY bajtów )
+Q   DOES>                             
+Q   DUP @                            ( dimX na stosie )
+Q   ROT *                            ( dimY*dimX )
+Q   + + 2+ ;                         ( bezwzgledny adres komorki )
 Q DIMX DIMY ARRAY UNIVERSUM
 Q : HOME 125 EMIT ;
 Q : J R> R> R> R R# !
@@ -548,10 +588,10 @@ Q : ZERUJ ( --- )
 Q   DIMY 0 DO
 Q     DIMX 0 DO I J USUN LOOP
 Q   LOOP ;
-Q : WERYFIKACJA                       ( liczba stanu sąsiadów --- )
-Q  DUP 3 =                            ( liczba stanu f )
+Q : WERYFIKACJA                     ( liczba stanu sasiadow --- )
+Q  DUP 3 =                          ( liczba stanu f )
 Q  IF DROP 2+ ELSE                    
-Q    2 = 0=                           ( stan stan nr2 )
+Q    2 = 0=                         ( stan stan nr2 )
 Q    IF 4 + THEN
 Q  THEN ; -->
   
@@ -775,45 +815,43 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 
 ( TODO: nie znajduje foksa! )
 
-58 #SC !
+57 CLEAR
+ 0 P ( 1/2 GoesInto - Decomp by RDA - APX only? )
+ 1 P ( -- Forth Dimension Vol14 Nr2 )
+ 2 P   0 VARIABLE GIN 
+ 3 P : MYSELF LATEST PFA CFA , ; IMMEDIATE
+ 4 P : GIN+ CR GIN @ 2+ DUP GIN ! SPACES ;
+ 5 P : GCHK DUP @ 2+ ' COMPILE =
+ 6 P   IF  2+ DUP @ 2+ NFA ID. 2+
+ 7 P   ELSE DUP @ 2+ DUP ' LIT =
+ 8 P   OVER ' BRANCH  = OR OVER ' 0BRANCH = OR
+ 9 P   OVER ' (LOOP)  = OR SWAP ' (+LOOP) = OR
+10 P   IF 2+ DUP @ SPACE . 2+ ELSE DUP @ 2+ ' CLIT =
+11 P   IF 2+ DUP C@ SPACE . 1+ ELSE DUP @ 2+ 
+12 P   ' (.") = IF 2+ DUP COUNT TYPE 
+13 P   DUP C@ 1+ + ELSE 2+ THEN THEN THEN THEN 
+14 P   -2 GIN +! ; 
+15 P : DIN CR GIN @ SPACES ; -->
 
-PREPARE
-Q ( 1/2 FIG-EDITOR, mini subset )     ( FD III/2 p.40 )
-Q ( First set edit screen: m SCR ! )  (  edit line n: n P ccc  )
-Q HEX VOCABULARY EDITOR               EDITOR DEFINITIONS
-Q : TEXT HERE C/L 1+ BLANKS WORD      HERE PAD C/L 1+ CMOVE ; 
-Q : LINE DUP FFF0 AND 17 ?ERROR       SCR @ (LINE) DROP ; 
-Q : MARK 10 0 DO I LINE UPDATE        DROP LOOP ;
-Q : -MOVE LINE C/L CMOVE UPDATE ;   : P 1 TEXT PAD 1+ SWAP -MOVE ; 
-Q : E LINE C/L BLANKS UPDATE ;      : TOP 0 R# ! ; 
-Q : #LOCATE R# @ C/L /MOD ;         : #LEAD #LOCATE LINE SWAP ;
-Q : #LAG  #LEAD DUP >R + C/L R> - ;
-Q : M R# +! CR SPACE #LEAD TYPE 17 EMIT #LAG TYPE #LOCATE . DROP ;
-Q : 1LINE #LAG PAD COUNT MATCH R# +!  ;
-Q : COPY   B/SCR * OFFSET @ + SWAP    B/SCR * B/SCR OVER +
-Q   SWAP DO DUP FORTH I BLOCK 2 - ! 1+ UPDATE LOOP DROP FLUSH ;
-Q -->
+58 CLEAR
+ 0 P ( 2/2 Use: "GOIN x" RET/SPC/Q ) 
+ 1 P : (GOESINTO) DUP CFA @ ' : CFA 
+ 2 P   @ = OVER ' ERROR = 0= AND
+ 3 P   IF BEGIN DUP @ DUP ' ;S CFA =
+ 4 P     OVER ' (;CODE) CFA = OR 0=
+ 5 P   WHILE 2+ DUP GIN+ NFA ID. KEY 
+ 6 P     DUP 81 = IF SP! QUIT ELSE 155 =
+ 7 P     IF MYSELF ELSE DROP THEN THEN
+ 8 P     GCHK REPEAT 2+ DIN NFA ID.
+ 9 P   THEN DROP ; ( 81=Q, 155=RETURN )
+10 P : GOESINTO -FIND IF DROP 0 GIN !
+11 P   (GOESINTO) ELSE ." NOT FOUND" CR THEN ;
+12 E
+13 P : GOIN GOESINTO ; 
+14 E
+15 P ;S 
 
-
-PREPARE
-Q ( 2/2 SEARCH w/ EDITOR wrds ) ( FD Vol03 Nr1 /WFR )
-Q : CLEAR  SCR ! 10 0                 DO FORTH I EDITOR E LOOP ; 
-Q : WHERE DUP B/SCR / DUP SCR ! ."    SCR # " DECIMAL .
-Q   SWAP C/L /MOD C/L * ROT BLOCK +   CR C/L -TRAILING
-Q   TYPE CR HERE C@ - SPACES 1 2FE C! 1C EMIT 0 2FE
-Q   C! [COMPILE] EDITOR QUIT ;     0 VARIABLE SRCHCNT      
-Q CR ." EDITOR subset (incl. P, E) loaded."  
-Q  CR DECIMAL
-Q : BUMP ( ln nr and paging )         1 SRCHCNT +! SRCHCNT @ 56 
-Q   > IF 0 SRCHCNT ! CR THEN ; 
-Q : SEARCH ( FROM TO -- STRING )      CR 01 TEXT 0 SRCHCNT !
-Q   1+ SWAP DO FORTH I SCR ! EDITOR   TOP BEGIN
-Q     1LINE IF 0 M SCR ? BUMP THEN    1023 R# @ < UNTIL LOOP ; 
-Q CR ." SEARCH (uppercase only) loaded." CR 
-Q ." Usage: 21 44 SEARCH KEYWORD"     CR CR FORTH DECIMAL ;S
-
-
-59 CLEAR 59 SCR !
+59 CLEAR 
 0 P ( 1/1 VECTORED EXEC )
 1 P (     adapted from: FD V/4/P17 )
 2 P 0 VARIABLE 'WHO 
@@ -846,6 +884,7 @@ Q ." Usage: 21 44 SEARCH KEYWORD"     CR CR FORTH DECIMAL ;S
  13 P : CURSOR@ CLINE @ LINEOFF @ +
  14 P   CCHAR @ SIDE @ IF 32 - ENDIF   CHAROFF @ + ;
  15 P : CURSOR CURSOR@ POINT-CURSOR ;  -->
+
 61 CLEAR
   0 P ( EDIT - SCREEN-CURSOR, ..., TOP ) 
   1 P : SCREEN-CURSOR CURSOR@ SWAP 40 * + 106 C@ 256 *
@@ -863,6 +902,7 @@ Q ." Usage: 21 44 SEARCH KEYWORD"     CR CR FORTH DECIMAL ;S
  13 P  POINT-CURSOR XLINE ; : FRE 741 @ HERE - 1024 / ;
  14 P : TOP LINEOFF @ 1 - CHAROFF @ 1 -
  15 P  POINT-CURSOR HLINE ;  -->
+
 62 CLEAR 
   0 P ( EDIT - DISPLAY, CASE )
   1 P : BOT LINEOFF @ 16 + CHAROFF @ 1 -
@@ -880,6 +920,7 @@ Q ." Usage: 21 44 SEARCH KEYWORD"     CR CR FORTH DECIMAL ;S
  13 P : IS 5 ?PAIRS COMPILE BRANCH HERE 0 ,
  14 P  SWAP 2 [COMPILE] ENDIF 4 ; IMMEDIATE
  15 P : ANYK CR ." (Return)" KEY DROP ; -->
+
 63 CLEAR
   0 P ( EDIT - CASE, MOVEMENT )
   1 P : CEND 4 ?PAIRS COMPILE DROP
@@ -897,6 +938,7 @@ Q ." Usage: 21 44 SEARCH KEYWORD"     CR CR FORTH DECIMAL ;S
  13 P  DUP -1 = IF DROP 31 ENDIF ENDIF
  14 P  CCHAR ! ; 
  15 P : LEFT MOVE-LEFT SCREEN-CURSOR ; -->
+
 64 CLEAR 
   0 P ( EDIT - MOVEMENT, KEYJOY )
   1 P : LEFT-CURSOR SCREEN-CURSOR LEFT ;
@@ -914,6 +956,7 @@ Q ." Usage: 21 44 SEARCH KEYWORD"     CR CR FORTH DECIMAL ;S
  13 P : KEYJOY 632 C@ CASES 15 CASE KEY IS
  14 P   11 CASE 30 IS 7 CASE 31 IS 14 CASE 28 IS 
  15 P   13 CASE 29 IS CEND ; -->
+
 65 CLEAR
   0 P ( EDIT - REFORTH, SCREEN NAVG, HELP )
   1 P : SH CLS 0 CRSINH C! IN @ >R BLK @ >R 0 IN ! 
@@ -931,6 +974,7 @@ Q ." Usage: 21 44 SEARCH KEYWORD"     CR CR FORTH DECIMAL ;S
  13 P   63 ELSE 31 ENDIF INSERT-CHAR WRITE-LINE
  14 P   CURSOR SCREEN-CURSOR ; : HLP SCR @ 70 = IF
  15 P   HLPM @ SCR ! ELSE SCR @ HLPM ! #HLP SCR ! ENDIF ; -->
+
 66 CLEAR
   0 P ( EDIT - DELETE, INSERT )
   1 P : DELETE-CHAR ADDR SWAP CCHAR @ -
@@ -948,6 +992,7 @@ Q ." Usage: 21 44 SEARCH KEYWORD"     CR CR FORTH DECIMAL ;S
  13 P   -1 +LOOP ENDIF CLINE @ L-A 64 BLANKS ;
  14 P : INSERT-LINE INSERT-L DISPLAY ;
  15 P : DELETE-LINE DELETE-L DISPLAY ; -->
+
 67 CLEAR 
   0 P ( EDIT - PUTLINE, TAB )
   1 P : PUT-LINE INSERT-L SAV-BUF CLINE @
@@ -965,6 +1010,7 @@ Q ." Usage: 21 44 SEARCH KEYWORD"     CR CR FORTH DECIMAL ;S
  13 P ( empty )
  14 P ( empty )
  15 P -->
+ 
 68 CLEAR
   0 P ( EDIT - COMMANDS )
   1 P : REVB 712 @ 128 XOR 712 ! ; ( CLR4 )
@@ -982,6 +1028,7 @@ Q ." Usage: 21 44 SEARCH KEYWORD"     CR CR FORTH DECIMAL ;S
  13 P   BEEP CEND REVB ;
  14 P : DEPTH SP@ 12 +ORIGIN @ SWAP - 2 / ;
  15 P : SETSCR DEPTH 0= IF #HLP ENDIF SCR ! ;  -->
+ 
 69 CLEAR
   0 P ( EDIT - MAIN, END. ) : EDIT ( n -- ) 
   1 P SETSCR EREAD DISPLAY 0 STOP ! BEGIN 
@@ -999,6 +1046,7 @@ Q ." Usage: 21 44 SEARCH KEYWORD"     CR CR FORTH DECIMAL ;S
  13 P   125 CASE CLEAR-SCR IS 
  14 P DUP ADDKEY CEND STOP @ UNTIL 
  15 P 125 EMIT 0 CRSINH ! ; : /EDIT ; ;S
+ 
 70 CLEAR ( CONST #HLP = 70 )
   0 P ( EDIT - HELP ONLY, END. ) ;S
   2 P Arrows, Insert, BckSpc: standard
@@ -1070,12 +1118,10 @@ Q ." Usage: 21 44 SEARCH KEYWORD"     CR CR FORTH DECIMAL ;S
 
 
 
+( EDYTOR R. PANTOLY ZAJMIE 9-10 EKRANOW? APX ONLY )
+( : C; CURRENT @ CONTEXT ! ?EXEC ?CSP SMUDGE ; IMMEDIATE   )
+( + DEASSEMBLER? BLINKING CHARS JAKO PRZYKŁAD!    )
 
-
-71 CLEAR ( EDYTOR R. PANTOLY ZAJMIE 9-10 EKRANOW? APX ONLY )
-         ( : C; CURRENT @ CONTEXT ! ?EXEC ?CSP SMUDGE ; IMMEDIATE   )
-72 CLEAR ( + DEASSEMBLER? BLINKING CHARS JAKO PRZYKŁAD!    )
-73 CLEAR
 74 CLEAR
 75 CLEAR 
 76 CLEAR
@@ -1177,6 +1223,7 @@ Q ." Usage: 21 44 SEARCH KEYWORD"     CR CR FORTH DECIMAL ;S
   13 P     ?TERMINAL OR ( ANTIC 3/84 )
   14 P   UNTIL ; : DISASSEMBLE DIS ;
   15 P DECIMAL ( ' SOMEWORD DIS ) ;S
+
 
 
 FLUSH

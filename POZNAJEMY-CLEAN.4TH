@@ -115,7 +115,7 @@ EDITOR
 PREPARE ( scr 12 )
 Q ( 1/2 FIG-EDITOR, mini subset -- FD III/2 p.40 )
 Q ( First set edit screen: m SCR ! then edit line n: n P ccc  )
-Q : HEX DECIMAL 5 712 ! HEX ; :  DECIMAL DECIMAL 0 712 ! ;
+Q CR CR : HEX DECIMAL 5 712 ! HEX ; :  DECIMAL DECIMAL 0 712 ! ;
 Q HEX VOCABULARY EDITOR               EDITOR DEFINITIONS
 Q : TEXT HERE C/L 1+ BLANKS WORD      HERE PAD C/L 1+ CMOVE ; 
 Q : LINE DUP FFF0 AND 17 ?ERROR       SCR @ (LINE) DROP ; 
@@ -136,7 +136,7 @@ Q : WHERE DUP B/SCR / DUP SCR ! ."    SCR # " . HEX
 Q   SWAP C/L /MOD C/L * ROT BLOCK +   CR C/L -TRAILING
 Q   TYPE CR HERE C@ - SPACES 1 2FE C! 1C EMIT 0 2FE
 Q   C! [COMPILE] EDITOR QUIT ;     0 VARIABLE SRCHCNT      
-Q CR CR ." EDITOR subset (incl. P, E) loaded." CR DECIMAL
+Q CR ." EDITOR subset (incl. P, E) loaded." CR DECIMAL
 Q : BUMP ( ln nr and paging )         1 SRCHCNT +! SRCHCNT @ 56 
 Q   > IF 0 SRCHCNT ! CR THEN ; : SEARCH ( FROM TO -- STRING )
 Q   CR 01 TEXT 0 SRCHCNT ! 1+ SWAP DO FORTH I SCR ! EDITOR TOP
@@ -145,7 +145,7 @@ Q  CR ." SEARCH (case-sensitive) loaded." CR
 Q ." Example: 16 18 SEARCH KOT"     CR CR FORTH 
 Q : (LINE/2) >R C/L 2 / B/BUF */MOD R> B/SCR * + BLOCK + C/L
 Q   2 / ; : LI CR ( n -- ) SCR ! 32 0 DO CR I SCR @ (LINE/2)
-Q   -TRAILING TYPE LOOP CR ." --- SCR#" SCR ? CR CR ; ;S
+Q   -TRAILING TYPE LOOP CR ." === SCR#" SCR ? CR CR ; ;S
 
 
 ( skip error screens 14-15, move to 16  )
@@ -160,7 +160,7 @@ Q (  19 LOAD /rozdz 3.5-4     / 1s   2DUP, 2DROP, ...            )
 Q (  20 LOAD /rozdz 3.5-5.5   / 1s   PRZEDZIAL, FIBO, ...        )
 Q (  21 LOAD /rozdz 5.5-5.6   / 1s   TEST1, NWP, TABLICZKA       )  
 Q (  22 LOAD /..              / 1s   TABLICZKA2                  )
-Q (  23 LOAD /..              / 2s   ERATOS - WSTAW, USUN        )
+Q (  23 LOAD /..              / 2s   ERATOS, ..., PIERWSZE       ) 
 Q (  25 LOAD /..              / 1s   NAZWISKO?, ..., DATY        )
 Q (  26 LOAD /..              / 1s   SILNIA, SILNIA2, ...        )
 Q (  27 LOAD /..              / 1s   ARRAY, 2DARRAY              )
@@ -173,14 +173,15 @@ PREPARE
 Q ( *** Poznajemy Forth  2/2 *** )                               
 Q (  33 LOAD /..              / 1s   3DUP, TAM, ..., HANOI       )  
 Q (  34 LOAD /..              / 5s   HETMANY                     )
-Q (  38 LOAD /..              / 1s   ZESPOLONE                   )
-Q (  39 LOAD /..              / 2s   FUNKCJE                     )
-Q (  41 LOAD /..              / 5s   LIFE                        )
-Q (  46 LOAD /..              / 7s   SORTOWANIE                  )
-Q (  53 LOAD /..              / 4s   PSY                         )
+Q (  xx LOAD /..              / 1s   ZESPOLONE                   )
+Q (  xx LOAD /..              / 2s   FUNKCJE                     )
+Q (  xx LOAD /..              / 5s   LIFE                        )
+Q (  xx LOAD /..              / 7s   SORTOWANIE                  )
+Q (  xx LOAD /..              / 4s   PSY                         )
 Q (  57 LOAD /pd tools        / 2s   GOIN decompiler             )
 Q (  60 LOAD /pd tools        / 11   EDIT /M.Dougherty           )
-Q (  70 LOAD /pd tools        / 12   EDIT /R.Pantola incl. asmWR )
+Q (  70 LOAD /pd tools        / 3s   RAGSDALE ASSEMBLER  [asmWR] )
+Q (  73 LOAD /pd tools        / 9s   EDIT /R.Pantola req: asmWR  )
 Q (  83 LOAD /pd tools        / 1s   VECTORED EXEC exmpl         )
 Q (  84 LOAD /pd tools        / 5s   DIS disassembler            )
 Q (  89 LOAD /pd tools        / 1s   BLINKING asm exmpl req:asmPM)
@@ -214,10 +215,12 @@ Q    2SWAP ( n3 n4 n1 n2 )            ( – zamienia pary liczb )
 Q    R> ( n3 n4 n1 n2 n5 )            ( – przenosi z powrotem n5 )
 Q    R> ( n3 n4 n1 n2 n5 n6 )         ( – przenosi z powrotem n6 )
 Q    2SWAP ; ( n3 n4 n5 n6 n1 n2 )    ( – zamiana wykonana! )
+Q ;S
+Q ( *** DUMP-INDEX: req. DEBUG )
 Q : DUMP-INDEX ' INDEX NFA ' TRIAD    
-Q   NFA OVER - DUMP ;  ;S             
-Q ( HEX DUMP-INDEX DECIMAL ) 
-Q   ^ przyklad uzycia      )
+Q   NFA OVER - DUMP ;         
+Q ( HEX DUMP-INDEX DECIMAL ) ;S
+
 
 PREPARE
 Q ( 1/1 PRZEDZIAL, FIBO, ...  )        
@@ -257,7 +260,7 @@ Q     LOOP CR LOOP ; TABLICZKA ;S
 PREPARE
 Q ( 1/1 TABLICZKA2 ) 
 Q : J R> R> R> R R# !
-      >R >R >R R# @ ; 
+Q     >R >R >R R# @ ; 
 Q : TAB2 ( -- ) 125 EMIT
 Q   CR CR 8 SPACES 
 Q   ." TABLICZKA MNOZENIA"
@@ -441,7 +444,7 @@ Q : Z.POWROTEM
 Q   3DUP SWAP ROT OVER + 6 SWAP -
 Q   SWAP ROT 1 - ;
 Q : DRUKUJ 3DUP DROP SWAP
-Q   . ." NA " . ." ," CR ;
+Q   . ." NA " . ." ," ;
 Q : WIEZE [ SMUDGE ] DUP IF 
 Q     TAM WIEZE DRUKUJ
 Q     Z.POWROTEM WIEZE THEN
@@ -901,7 +904,7 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
  15 P : CURSOR CURSOR@ POINT-CURSOR ;  -->
 
 61 CLEAR
-  0 P ( EDIT - SCREEN-CURSOR, ..., TOP ) 
+  0 P ( EDIT - SCREEN-CURSOR, ..., 2TOP ) 
   1 P : SCREEN-CURSOR CURSOR@ SWAP 40 * + 106 C@ 256 *
   2 P  960 - + DUP C@ 128 XOR SWAP C! ;
   3 P : HLINE 34 0 DO TOP-BOT EMIT LOOP ;
@@ -915,7 +918,7 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
  11 P  POINT-CURSOR ELINE ;
  12 P : WRITE-EXTRA EXTRAOFF @ LINEOFF @ + CHAROFF @ 1 -
  13 P  POINT-CURSOR XLINE ; : FRE 741 @ HERE - 1024 / ;
- 14 P : TOP LINEOFF @ 1 - CHAROFF @ 1 -
+ 14 P : 2TOP LINEOFF @ 1 - CHAROFF @ 1 -
  15 P  POINT-CURSOR HLINE ;  -->
 
 62 CLEAR 
@@ -925,7 +928,7 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
   3 P : ETITLE 0 CHAROFF @ POINT-CURSOR
   4 P  ." EDIT / Dr" OFFSET @ 0= 0= . ." Scr" SCR ?
   5 P  ." Side" SIDE ? ." / Free " FRE U. ; ( BUG? )
-  6 P : DISPLAY ECLEAR ETITLE TOP CLINE @ 16 0 DO
+  6 P : DISPLAY ECLEAR ETITLE 2TOP CLINE @ 16 0 DO
   7 P  I CLINE ! WRITE-LINE LOOP CLINE !
   8 P  SIDE @ IF 32 ELSE 0 ENDIF CCHAR ! BOT
   9 P  WRITE-EXTRA CURSOR SCREEN-CURSOR ;
@@ -1120,7 +1123,7 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 15 P ' ASSEMBLER 6 + 32 +ORIGIN !     BASE ! FORTH ;S
 
 73 CLEAR
- 0 P ( EDYTOR-FORTH, autor: Roland Pantola, [c] 1992 T.A. )
+ 0 P ( EDYTOR-FORTH /Roland Pantola ) ( [c] 1992 Tajemnice Atari )
  1 P : MAC  -FIND 0= 0 ?ERROR DROP 32 C, , ; IMMEDIATE
  2 P : <=< OVER > >R < R> * ; ASSEMBLER DEFINITIONS : C; CURRENT
  3 P @ CONTEXT ! ?EXEC ?CSP SMUDGE ;  IMMEDIATE  FORTH DEFINITIONS
@@ -1153,7 +1156,7 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 12 P 96 # AND, .A LSR, .A LSR,       .A LSR, .A LSR, .A LSR, TAX,
 13 P XSAVE 2+ )Y LDA,                255 96 - # AND, #C ,X ORA,
 14 P XSAVE 2+ )Y STA, 0 # CPY,       0= UNTIL, XSAVE LDX,
-15 P POPTWO JMP, C;					 -->
+15 P POPTWO JMP, C;	-->
 
 75 CLEAR
  0 P ( EDYTOR-FORTH c.d. )
@@ -1290,7 +1293,7 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
  5 P DO I 8 * BLOCK 32 -TRAILING     OVER @ DUP 8224 = 0= * IF CR
  6 P I . SPACE TYPE ELSE 2DROP ENDIF ?TERMINAL IF LEAVE ENDIF
  7 P LOOP EMPTY-BUFFERS ;            : IND 1 INDE ;
- 8 P CR ." EDYTOR-FORTH loaded, to edit screen n: 'n E.'" CR 
+ 8 P CR ." EDYTOR-FORTH loaded, use: screen L." CR 
  9 P ( END ) ;S
   
  
@@ -1300,9 +1303,10 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
  2 P 0 VARIABLE 'param
  3 P : WHO 'param @ CFA EXECUTE ;
  4 P : WELCOME ( -- )
- 5 P   CR ." HELLO, DEAR " WHO ." !" ;
+ 5 P   CR ." HELLO, DEAR "
+ 6 P   WHO ." !" ;
  7 P : DEFAULT ; ' DEFAULT 'param !
- 8 P : BARTOSZ ." BARTOSZ" ;
+ 8 P : BARTOSZ  ." BARTOSZ" ;
  9 P : MATYLDA  ." MATYLDA"  ;
 10 P CR WELCOME
 11 P CR ' BARTOSZ 'param ! WELCOME

@@ -115,7 +115,7 @@ EDITOR
 
 
 PREPARE ( scr 12 )
-Q ( 1/2 FIG-EDITOR, mini subset -- FD III/2 p.40 ) : TASK ; CR CR
+Q ( 1/2 FIG-EDITOR, subset -- FD III/2 p.40 ) : TASK ; CR CR HEX
 Q SPACE  : HEX DECIMAL 5 712 ! HEX ; :  DECIMAL DECIMAL 0 712 ! ;
 Q : (LINE/2) >R C/L 2 / B/BUF */MOD R> B/SCR * + BLOCK + C/L
 Q   2 / ; : LI CR ( n -- ) SCR ! 32 0 DO CR I SCR @ (LINE/2)
@@ -147,7 +147,7 @@ Q : BUMP ( ln nr and paging )         1 SRCHCNT +! SRCHCNT @ 56
 Q   > IF 0 SRCHCNT ! CR THEN ; : SEARCH ( FROM TO -- STRING )
 Q   CR 01 TEXT 0 SRCHCNT ! 1+ SWAP DO FORTH I SCR ! EDITOR TOP
 Q   BEGIN 1LINE IF 0 M SCR ? BUMP THEN    1023 R# @ < UNTIL LOOP ; 
-Q  CR ." SEARCH (case-sensitive) loaded, try: 16 18 SEARCH KOT" CR ;S
+Q  CR ." SEARCH loaded, try: 16 18 SEARCH KOT" CR ;S
 
 
 ( skip error screens 14-15, move to 16  )

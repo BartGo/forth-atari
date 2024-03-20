@@ -27,7 +27,6 @@
 ( >> https://github.com/BartGo/forth-atari/blob/main/EDIT.4TH )
 
 
-
 ( ********************** )
 ( ********************** )
 ( *** LOADING HELPER *** ) 
@@ -112,11 +111,10 @@ DECIMAL CR
 EDITOR
 
 
-
 PREPARE ( scr 12 )
-Q ( 1/2 FIG-EDITOR, mini subset -- FD III/2 p.40 ) : TASK ;
+Q ( 1/2 FIG-EDITOR, mini subset -- FD III/2 p.40 ) CR CR
 Q ( First set edit screen: m SCR ! then edit line n: n P ccc  )
-Q CR CR : HEX DECIMAL 5 712 ! HEX ; :  DECIMAL DECIMAL 0 712 ! ;
+Q SPACE  : HEX DECIMAL 5 712 ! HEX ; :  DECIMAL DECIMAL 0 712 ! ;
 Q HEX VOCABULARY EDITOR               EDITOR DEFINITIONS
 Q : TEXT HERE C/L 1+ BLANKS WORD      HERE PAD C/L 1+ CMOVE ; 
 Q : LINE DUP FFF0 AND 17 ?ERROR       SCR @ (LINE) DROP ; 
@@ -133,7 +131,7 @@ Q   DO DUP FORTH I BLOCK 2 - ! 1+ UPDATE LOOP DROP FLUSH ; -->
 PREPARE
 Q ( 2/2 SEARCH w/ EDITOR wrds -- FD Vol03 Nr1 /WFR )
 Q : CLEAR  SCR ! 10 0 DO FORTH I EDITOR E LOOP ;
-Q : WHERE DUP B/SCR / DUP SCR ! ."    SCR # " DECIMAL .
+Q : WHERE DUP B/SCR / DUP SCR ! ."    SCR # " . 
 Q   SWAP C/L /MOD C/L * ROT BLOCK +   CR C/L -TRAILING
 Q   TYPE CR HERE C@ - SPACES 1 2FE C! 1C EMIT 0 2FE
 Q   C! [COMPILE] EDITOR QUIT ;     0 VARIABLE SRCHCNT      
@@ -154,39 +152,38 @@ Q   -TRAILING TYPE LOOP CR ." === SCR#" SCR ? CR CR ; ;S
 15 SCR ! 
 
 PREPARE ( scr 16 )
-Q ( *** Poznajemy Forth  1/2 *** )
-Q (  12 LOAD /pd tools        / 2s   Fig-EDIT/MINI, SEARCH       )
-Q (  18 LOAD /rozdz 2.1-3.4.3 / 1s   KOT, NAPIS, KWADRATY        ) 
-Q (  19 LOAD /rozdz 3.5-4     / 1s   2DUP, 2DROP, ...            )
-Q (  20 LOAD /rozdz 3.5-5.5   / 1s   PRZEDZIAL, FIBO, ...        )
-Q (  21 LOAD /rozdz 5.5-5.6   / 1s   TEST1, NWP, TABLICZKA       )  
-Q (  22 LOAD /..              / 1s   TABLICZKA2                  )
-Q (  23 LOAD /..              / 2s   ERATOS, ..., PIERWSZE       ) 
-Q (  25 LOAD /..              / 1s   NAZWISKO?, ..., DATY        )
-Q (  26 LOAD /..              / 1s   SILNIA, SILNIA2, ...        )
-Q (  27 LOAD /..              / 1s   ARRAY, 2DARRAY              )
-Q (  28 LOAD /..              / 1s   MATDEF /valFORTH            ) 
-Q (  29 LOAD /..              / 1s   ARRAY2, ARRAY3 [JB]         )
-Q (  30 LOAD /..              / 1s   SETNE, SEXTAL, X, ...       )
-Q (  31 LOAD /..              / 2s   DBL - D*, FIX, F., ...      )  
+Q ( ** Poznajemy FORTH 1/2 ** )       ;S
+Q #12 Fig-EDIT/MINI, SEARCH           fig/fd III/2/p40[2]
+Q #18 KOT, NAPIS, KWADRATY            pF 2.1-3.4.3    [1]
+Q #19 2DUP, 2DROP, ... DUMP[debug]    pF 3.5-4        [1]
+Q #20 PRZEDZIAL, FIBO, ...            pF 3.5-5.5      [1]
+Q #21 TEST1, NWP, TABLICZKA           pF 5.5-5.6      [1]
+Q #22 TABLICZKA2                      pF              [1]
+Q #23 ERATOS, ..., PIERWSZE           pF              [2]
+Q #25 NAZWISKO?, ..., DATY            pF              [1]
+Q #26 SILNIA, SILNIA2, ...            pF              [1]
+Q #27 ARRAY, 2DARRAY                  pF              [1]
+Q #28 MATDEF /valFORTH                pF              [1]
+Q #29 ARRAY2, ARRAY3 [JB]             pF              [1]
+Q #30 SETNE, SEXTAL, X, ...           pF              [1]
+Q #31 DBL - D*, FIX, F., ...          pF              [2]
 															     
 PREPARE                                                          
-Q ( *** Poznajemy Forth  2/2 *** )                               
-Q (  33 LOAD /..              / 1s   3DUP, TAM, ..., HANOI       )  
-Q (  34 LOAD /..              / 5s   HETMANY                     )
-Q (  xx LOAD /..              / 1s   ZESPOLONE                   )
-Q (  xx LOAD /..              / 2s   FUNKCJE                     )
-Q (  xx LOAD /..              / 5s   LIFE                        )
-Q (  xx LOAD /..              / 7s   SORTOWANIE                  )
-Q (  xx LOAD /..              / 4s   PSY                         )
-Q (  57 LOAD /pd tools        / 2s   GOIN decompiler             )
-Q (  60 LOAD /pd tools        / 11   EDIT /M.Dougherty           )
-Q (  70 LOAD /pd tools        / 3s   RAGSDALE ASSEMBLER  [asmWR] )
-Q (  73 LOAD /pd tools        / 9s   EDIT /R.Pantola req: asmWR  )
-Q (  83 LOAD /pd tools        / 1s   VECTORED EXEC exmpl         )
-Q (  84 LOAD /pd tools        / 5s   DIS disassembler            )
-Q (  89 LOAD /pd tools        / 1s   BLINKING asm exmpl req:asmPM)
-
+Q ( ** Poznajemy FORTH 2/2 ** )       ;S
+Q #33 3DUP, TAM, ..., HANOI           pF              [1]
+Q #34 HETMANY                         pF              [5]
+Q #39 ZESPOLONE                       pF              [1]
+Q #40 FUNKCJE                         pF              [2]
+Q #42 LIFE                            pF              [5]
+Q #47 SORTOWANIE                      pF              [7]
+Q #53 PSY                             pF              [4]
+Q #57 GOIN decompiler                 fd vol14/nr2    [2]
+Q #59 EDIT /M.Dougherty  (or: #60)    micro 57/feb/83 [9]
+Q #70 RAGSDALE ASSEMBLER   [asmWR]    fig             [3]
+Q #73 EDIT /R.Pantola    re:asmWR     ta              [9]
+Q #83 VECTORED EXEC exmpl             fd v4p17&v3nr1  [1]
+Q #84 DIS disassembler                antic 3/84      [5]
+Q #89 BLINKING asm exmpl re:asmPM     compute 12/81   [1]
 
 PREPARE ( scr 18 )
 Q ( 1/1 KOT, NAPIS, KWADRATY  )
@@ -1299,20 +1296,22 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
   
  
 83 CLEAR
- 0 P ( 1/1 VECTORED EXECUCTION  )
+ 0 P ( 1/1 VECTORED EX, .CON/.CUR )
  1 P ( adapted from: FD V/4/P17 )
  2 P 0 VARIABLE 'param
  3 P : WHO 'param @ CFA EXECUTE ;
- 4 P : WELCOME ( -- )
- 5 P   CR ." HELLO, DEAR "
- 6 P   WHO ." !" ;
- 7 P : DEFAULT ; ' DEFAULT 'param !
- 8 P : BARTOSZ  ." BARTOSZ" ;
- 9 P : MATYLDA  ." MATYLDA"  ;
-10 P CR WELCOME
-11 P CR ' BARTOSZ 'param ! WELCOME
-12 P CR ' MATYLDA 'param ! WELCOME
-13 P CR ;S 
+ 4 P : WELCOME CR ." HELLO, DEAR "
+ 5 P   WHO ." !" ;
+ 6 P : DEFAULT ; ' DEFAULT 'param !
+ 7 P : BARTOSZ  ." BARTOSZ" ;
+ 8 P : MATYLDA  ." MATYLDA"  ;
+ 9 P CR WELCOME
+10 P CR ' BARTOSZ 'param ! WELCOME
+11 P CR ' MATYLDA 'param ! WELCOME
+12 P CR ;S ( CON/CUR FD V03NR1/KH )
+13 P       : (.I) @ 4 - NFA ID. ;  
+14 P       : .CON CONTEXT (.I) ;
+15 P       : .CUR CURRENT (.I) ; 
 
 
 84 CLEAR
@@ -1421,3 +1420,7 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 
 FLUSH
 FORTH
+
+
+
+

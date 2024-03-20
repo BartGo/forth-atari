@@ -48,7 +48,7 @@ EDITOR DEFINITIONS
   PAD C/L 1+ CMOVE ; 
 : LINE DUP FFF0 AND 17 ?ERROR
   SCR @ (LINE) DROP ; 
-: WHERE DUP B/SCR / DUP SCR ! ." SCR # " DECIMAL .
+: WHERE DUP B/SCR / DUP SCR ! ." SCR # " .
   SWAP C/L /MOD C/L * ROT BLOCK + CR
   C/L -TRAILING TYPE CR HERE
   C@ - SPACES 1 2FE C! 1C EMIT 0 2FE
@@ -112,7 +112,7 @@ EDITOR
 
 
 PREPARE ( scr 12 )
-Q ( 1/2 FIG-EDITOR, mini subset -- FD III/2 p.40 ) CR CR
+Q ( 1/2 FIG-EDITOR, mini subset -- FD III/2 p.40 ) : TASK ; CR CR
 Q ( First set edit screen: m SCR ! then edit line n: n P ccc  )
 Q SPACE  : HEX DECIMAL 5 712 ! HEX ; :  DECIMAL DECIMAL 0 712 ! ;
 Q HEX VOCABULARY EDITOR               EDITOR DEFINITIONS
@@ -131,7 +131,7 @@ Q   DO DUP FORTH I BLOCK 2 - ! 1+ UPDATE LOOP DROP FLUSH ; -->
 PREPARE
 Q ( 2/2 SEARCH w/ EDITOR wrds -- FD Vol03 Nr1 /WFR )
 Q : CLEAR  SCR ! 10 0 DO FORTH I EDITOR E LOOP ;
-Q : WHERE DUP B/SCR / DUP SCR ! ."    SCR # " . 
+Q : WHERE DUP B/SCR / DUP SCR ! ." SCR # " . 
 Q   SWAP C/L /MOD C/L * ROT BLOCK +   CR C/L -TRAILING
 Q   TYPE CR HERE C@ - SPACES 1 2FE C! 1C EMIT 0 2FE
 Q   C! [COMPILE] EDITOR QUIT ;     0 VARIABLE SRCHCNT      
@@ -141,7 +141,7 @@ Q   > IF 0 SRCHCNT ! CR THEN ; : SEARCH ( FROM TO -- STRING )
 Q   CR 01 TEXT 0 SRCHCNT ! 1+ SWAP DO FORTH I SCR ! EDITOR TOP
 Q   BEGIN 1LINE IF 0 M SCR ? BUMP THEN    1023 R# @ < UNTIL LOOP ; 
 Q  CR ." SEARCH (case-sensitive) loaded." CR 
-Q ." Example: 16 18 SEARCH KOT"     CR CR FORTH 
+Q ." Example: 16 18 SEARCH KOT"     CR CR FORTH FORTH DEFINITIONS
 Q : (LINE/2) >R C/L 2 / B/BUF */MOD R> B/SCR * + BLOCK + C/L
 Q   2 / ; : LI CR ( n -- ) SCR ! 32 0 DO CR I SCR @ (LINE/2)
 Q   -TRAILING TYPE LOOP CR ." === SCR#" SCR ? CR CR ; ;S
@@ -176,7 +176,7 @@ Q #39 ZESPOLONE                       pF              [1]
 Q #40 FUNKCJE                         pF              [2]
 Q #42 LIFE                            pF              [5]
 Q #47 SORTOWANIE                      pF              [7]
-Q #53 PSY                             pF              [4]
+Q #54 PSY                             pF              [4] <<!
 Q #57 GOIN decompiler                 fd vol14/nr2    [2]
 Q #59 EDIT /M.Dougherty  (or: #60)    micro 57/feb/83 [9]
 Q #70 RAGSDALE ASSEMBLER   [asmWR]    fig             [3]
@@ -765,7 +765,7 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 
 
 
-53 DUP CLEAR SCR !
+54 DUP CLEAR SCR !
 0 P ( 1/4 PSY RASOWE ) -->
 1 P bokser 165
 2 P cocker-spaniel 90
@@ -780,7 +780,7 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 11 P chow-chow 172
 12 P pekinczyk 28
 
-54 DUP CLEAR SCR !
+55 DUP CLEAR SCR !
 0 P ( 2/4 CECHY PSOW ) -->
 1 P Czy ma:
 2 P 1 wiecej niz 60 cm wzrostu?
@@ -792,9 +792,9 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 8 P 7 dlugie uszy?
 9 P 8 krepa lub mocna budowe?
 
-55 DUP CLEAR SCR !
+56 DUP CLEAR SCR !
  0 P ( 3/4 PSY ) : HOME 125 EMIT ;
- 1 P : #PSY 53 ; : #CECHY 54 ;         
+ 1 P : #PSY 54 ; : #CECHY 55 ;         
  2 P : CARRAY <BUILDS ALLOT DOES> + ;
  3 P 15 CARRAY CECHY : X CECHY C! ;
  4 P  165 0 X 98  1 X 163  2 X 35  3 X
@@ -810,7 +810,7 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 14 P   REPEAT ; 
 15 P -->
 
-56 DUP CLEAR SCR !
+57 DUP CLEAR SCR !
  0 P ( 4/4 PSY )
  1 P : DAJ BAJT @ 12 0 DO
  2 P     DUP I CECHY C@ OR          ( !! XOR/OR zmienia tryb? )

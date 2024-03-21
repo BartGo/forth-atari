@@ -134,6 +134,7 @@ Q CR ." Fig-Editor subset loaded." CR DECIMAL FORTH DEFINITIONS
 Q DECIMAL LATEST 12 +ORIGIN !  HERE 28 +ORIGIN ! HERE 30 
 Q +ORIGIN ! ' EDITOR 6 + 32 +ORIGIN ! HERE FENCE ! BASE ! 
 Q : (I @ 4 - NFA ID. ; : .CON CONTEXT (I ; : .CUR CURRENT (I ; 
+Q : .CC CR ." Context, Current: " .CON .CUR CR ;
 Q 0 VARIABLE SRCHCNT : BUMP 1 SRCHCNT +! SRCHCNT @ 56
 Q   > IF 0 SRCHCNT ! CR THEN ; : SEARCH ( FROM TO -- STRING )
 Q   CR 01 TEXT 0 SRCHCNT ! 1+ SWAP DO FORTH I SCR ! EDITOR TOP
@@ -160,10 +161,10 @@ Q #23 ERATOS, ..., PIERWSZE           pF 5.8          [2]
 Q #25 NAZWISKO?, ..., DATY            pF 6.2-8.3      [1]
 Q #26 SILNIA, SILNIA2, ...            pF 8.5          [1]
 Q #27 ARRAY, 2DARRAY                  pF 9.1          [1]
-Q #28 MATDEF /valFORTH                pF 9.1          [1]
-Q #29 ARRAY2, ARRAY3 [JB]             pF 9.1          [1]
+Q #28 MATDEF                          pF 9.1          [1]
+Q #29 ARRAY2                          pF 9.1          [1]
 Q #30 SETNE, SEXTAL, XX, SEK          pF 9.2          [1]
-Q #31 DBL - D*, FIX, F., ..., D=      pF 9.2-9.3      [2]
+Q #31 DBL - D*, FIX, F., ..., D=      pF 9.2-9.3 FIXME[2]
 															     
 PREPARE                                                          
 Q ( ** Poznajemy FORTH 2/2 ** )       ;S
@@ -337,7 +338,7 @@ Q   THEN [ SMUDGE ] ;
 Q : FACTORIAL ( JB ) DUP IF DUP
 Q   1 - [ SMUDGE ] FACTORIAL 
 Q   [ SMUDGE ] * ELSE 1+ THEN ;
-Q 8 SILNIA  U.  8 SILNIA2 U. ( NIE 1.4S )
+Q 8 SILNIA  U.  8 SILNIA2 U.
 Q 8 SILNIA3 U.  8 FACTORIAL U. ;S
 
 PREPARE
@@ -345,15 +346,17 @@ Q ( 1/1 ARRAY, 2DARRAY )
 Q : ARRAY <BUILDS 2 * ALLOT DOES>
 Q   SWAP 2 * + ;
 Q : 2DARRAY
-Q   <BUILDS
+Q   <BUILDS 
 Q     DUP , * 2 * ALLOT
 Q   DOES>
 Q     ROT OVER @ + ROT + 2 * + 2+ ;
 V
-Q 10 ARRAY LICZBY
-Q 7 LICZBY 7 LICZBY ! 7 LICZBY @ .
-V
-Q 4 5 2DARRAY PROSTOKAT ;S
+Q 10 ARRAY LICZBY 
+Q      7 3 LICZBY ! 6 4 LICZBY ! 
+Q        3 LICZBY ?   4 LICZBY ?
+Q 4 5 2DARRAY PROSTOKAT
+Q      44 2 1 PROSTOKAT !
+Q         2 1 PROSTOKAT ?     ;S
 
 PREPARE
 Q ( 1/1 MATDEF ) 
@@ -366,26 +369,25 @@ Q 2 3 MATDEF MATRIX2                   CR CR
 Q 11 0 0 MATRIX2 C!                    22 0 1 MATRIX2 C!
 Q 33 1 0 MATRIX2 C!                    44 1 1 MATRIX2 C!
 Q 55 0 2 MATRIX2 C!                    66 1 2 MATRIX2 C!
-Q 77 2 3 MATRIX2 C! ( PRZEKROCZONE )
+Q ( 77 2 3 MATRIX2 C! ) ( !! )
 Q    0 0 MATRIX2 C@                    . CR  0 1 MATRIX2 C@ . CR
 Q    1 0 MATRIX2 C@                    . CR  1 1 MATRIX2 C@ . CR
 Q    0 2 MATRIX2 C@                    . CR  1 2 MATRIX2 C@ . CR
 Q CR ;S
 
 PREPARE
-Q ( 1/1 ARRAY2, ARRAY3 [JB] )
+Q ( 1/1 ARRAY2 )
 Q : ARRAY2 ( n n --- )                 ( n n ARRAY2 matrix )
 Q   <BUILDS OVER , * ALLOT DOES>       DUP @ ROT * + + 2+ ;
-Q : ARRAY3 ( n n --- )     <BUILDS     ( n n ARRAY2 matrix )
-Q   OVER C, DUP C, * ALLOT   DOES>     1+ ROT OVER C@ * + + 1+ ;
-Q 2 3 ARRAY2 MATRIX   2 3 ARRAY3 BUF     
+Q    2 3 ARRAY2 MATRIX 
 Q 11 0 0 MATRIX C!                     22 0 1 MATRIX C!
 Q 33 1 0 MATRIX C!                     44 1 1 MATRIX C!
 Q 55 0 2 MATRIX C!                     66 1 2 MATRIX C!
+Q CR CR 
 Q    0 0 MATRIX C@ . CR                0 1 MATRIX C@ . CR
 Q    1 0 MATRIX C@ . CR                1 1 MATRIX C@ . CR
-Q    0 2 MATRIX C@ . CR                1 2 MATRIX C@ . CR CR
-Q 13 2 1 BUF C!                        2 1 BUF C@ .    CR ;S
+Q    0 2 MATRIX C@ . CR                1 2 MATRIX C@ . CR
+Q CR ;S
 
 PREPARE
 Q ( 1/1 SETNE, SEXTAL, XX, SEK )
@@ -398,15 +400,18 @@ Q : XX # SEXTAL # DECIMAL 58 HOLD ;
 Q : SEK ( n --- ) 
 Q   CR <# XX XX #S #> TYPE CR ;
 V
-Q 15610. SEK
+Q CR 15610. SEK
+Q CR 36000. SEK
 Q CR ;S
 
 PREPARE
 Q ( 1/2 DBL - D*, FIX, F. )  
 Q 0 VARIABLE A_  0 VARIABLE B_       0 VARIABLE C_  0 VARIABLE D_
-Q : D* A_ ! B_ ! C_ ! D_ !           ( "COMPLETE FORTH" )
+Q ( from "COMPLETE FORTH" )
+Q : D* A_ ! B_ ! C_ ! D_ !           
 Q   D_ @ B_ A_ U* D_ @ A_ @ U* DROP + C_ @ B_ @ U* DROP + ; 
-Q   ( ? FD-V03N2.pdf: -- : D* DUP ROT * ROT ROT U* ROT + ;  )
+Q ( from FD-V03N2.pdf )
+Q ( : D* DUP ROT * ROT ROT U* ROT + ; )
 Q : FIX DPL @ 0< IF                   ( jezeli lb byla pojed.   )
 Q     S->D 0 DPL !                    ( przeksztalca ja w podw. )
 Q   THEN
@@ -425,10 +430,12 @@ Q : D0= OR 0= ;                       ( test na liczbe podw. 0   )
 Q : D0< SWAP DROP 0< ;                ( " ujemna liczbe podw.    )
 Q : D= D- D0= ;                       ( " rownosc dwoch lb podw. )
 V
-Q 0.04 FIX        0.3 FIX D+ 
-Q 0.625 FIX D+ 0.0001 FIX D+ 
-Q 10 FIX D+  ( BUG: cos tu sie wywala !! ) 
-Q F. 10.9651 
+Q  0.04   FIX 
+Q  0.3    FIX D+ 
+Q  0.625  FIX D+
+Q  0.0001 FIX D+ 
+Q 10      FIX D+
+Q         F. ( 10.9651 ) ( FIXME )
 Q CR ;S
 
 PREPARE

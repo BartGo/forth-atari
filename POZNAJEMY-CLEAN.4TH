@@ -107,7 +107,7 @@ DECIMAL CR
 EDITOR
 
 PREPARE ( scr 16 )
-Q ( ** Poznajemy FORTH 1/2 ** ) ;S    src            #scr 
+Q ( ** Poznajemy FORTH 1/2 ** ) ;S    From           Scrs 
 Q #14 (standard error messages)       apx             [2]
 Q #16 (this index)                    here            [2]  
 Q #18 KOT, NAPIS, KWADRATY            pF 2.1-3.4.3    [1]
@@ -125,7 +125,7 @@ Q #30 SETNE, SEXTAL, XX, SEK          pF 9.2          [1]
 Q #31 DBL - D*, FIX, F., ..., D=      pF 9.2-9.3 FIXME[2]
 
 PREPARE                                                          
-Q ( ** Poznajemy FORTH 2/2 ** ) ;S    src            #scr 
+Q ( ** Poznajemy FORTH 2/2 ** ) ;S    From           Scrs
 Q #33 3DUP, TAM, ..., HANOI           pF 12.1         [1]
 Q #34 HETMANY                         pF 12.2         [5]
 Q #39 ZESPOLONE                       pF 12.4         [1]

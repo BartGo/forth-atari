@@ -81,7 +81,7 @@ DECIMAL CR
 
 ( ADDITIONAL WORDS TO SIMPLIFY CODE PASTING AND BROWSING)
 
-11 VARIABLE #SC ( starting scr-1 )
+15 VARIABLE #SC ( starting scr-1 )
  0 VARIABLE #LN ( & line )
 : LN? ( -- ) DECIMAL #LN @ 16 = IF 23 ERROR COLD THEN ;
 : PREPARE ( -- ) ( next scr )
@@ -106,52 +106,11 @@ DECIMAL CR
 
 EDITOR
 
-( BUG: CHYBA ZEPSUTY WHERE )
-
-PREPARE 
-Q ( 1/2 FIG-EDITOR, SUBSET... ) : /START ; CR CR SPACE BASE @ 
-Q : HEX DECIMAL 5 712 ! HEX ; :  DECIMAL DECIMAL 0 712 ! ; HEX
-Q : TEXT HERE C/L 1+ BLANKS WORD HERE PAD C/L 1+ CMOVE ;
-Q : LINE DUP FFF0 AND 17 ?ERROR SCR @ (LINE) DROP ; : MARK 10 0 
-Q   DO I LINE UPDATE DROP LOOP ; VOCABULARY EDITOR IMMEDIATE
-Q : WHERE DUP B/SCR / DUP SCR ! ." SCR # " DECIMAL .
-Q   SWAP C/L /MOD C/L * ROT BLOCK +   CR C/L -TRAILING
-Q   TYPE CR HERE C@ - SPACES 1 2FE C! 1C EMIT 0 2FE
-Q   C! [COMPILE] EDITOR QUIT ; EDITOR DEFINITIONS
-Q : #LOCATE R# @ C/L /MOD ; : #LEAD #LOCATE LINE SWAP ;
-Q : #LAG  #LEAD DUP >R + C/L R> - ; : -MOVE LINE C/L CMOVE UPDATE 
-Q ; : P 1 TEXT PAD 1+ SWAP -MOVE ; : E LINE C/L BLANKS UPDATE ;
-Q : TOP 0 R# ! ; : M R# +! CR SPACE #LEAD TYPE 17 EMIT #LAG TYPE
-Q   #LOCATE . DROP ; : 1LINE #LAG PAD COUNT MATCH R# +!  ;
-Q : CLEAR  SCR ! 10 0 DO FORTH I EDITOR E LOOP ; -->
-
-
-PREPARE
-Q ( 2/2 FIG-EDITOR, SEARCH [FD VOL03 NR1 /WFR], .CC FDV03NR1/KH )
-Q : COPY   B/SCR * OFFSET @ + SWAP    B/SCR * B/SCR OVER + SWAP
-Q   DO DUP FORTH I BLOCK 2 - ! 1+ UPDATE LOOP DROP FLUSH ; 
-Q CR ." Fig-Editor subset loaded." CR DECIMAL FORTH DEFINITIONS
-Q DECIMAL LATEST 12 +ORIGIN !  HERE 28 +ORIGIN ! HERE 30 
-Q +ORIGIN ! ' EDITOR 6 + 32 +ORIGIN ! HERE FENCE ! BASE ! 
-Q : (I @ 4 - NFA ID. ; : .CON CONTEXT (I ; : .CUR CURRENT (I ; 
-Q : .CC CR ." Context, Current: " .CON .CUR CR ;
-Q 0 VARIABLE SRCHCNT : BUMP 1 SRCHCNT +! SRCHCNT @ 56
-Q   > IF 0 SRCHCNT ! CR THEN ; : SEARCH ( FROM TO -- STRING )
-Q   CR 01 TEXT 0 SRCHCNT ! 1+ SWAP DO FORTH I SCR ! EDITOR TOP
-Q   BEGIN 1LINE IF 0 M SCR ? BUMP THEN    1023 R# @ < UNTIL 
-Q   LOOP ; : (LINE/2) >R C/L 2 / B/BUF */MOD R> B/SCR * + BLOCK +
-Q   C/L 2 / ; : LI CR ( N -- ) SCR ! 32 0 DO CR I SCR @ (LINE/2)
-Q   -TRAILING TYPE LOOP CR ." === SCR#" SCR ? CR CR ; CR
-Q ." SEARCH loaded, try: 16 18 SEARCH KOT" CR CR : /FIGEDIT ; ;S
-
-   
-( skip error screens 14-15, move to 16  )
-
-15 SCR ! 
-
 PREPARE ( scr 16 )
 Q ( ** Poznajemy FORTH 1/2 ** )       ;S
-Q #12 Fig-EDIT subset, SEARCH, ...    fig/fd III/2/p40[2]
+Q #00 (first screens: no code)        --              ...
+Q #14 (standard error messages)       apx             [2]
+Q #16 (this index)                    here            [2]  
 Q #18 KOT, NAPIS, KWADRATY            pF 2.1-3.4.3    [1]
 Q #19 2DUP, 2DROP, ... DUMP[debug]    pF 3.5-4        [1]
 Q #20 PRZEDZIAL, FIBO, ...            pF 3.5-5.5      [1]
@@ -164,10 +123,10 @@ Q #27 ARRAY, 2DARRAY                  pF 9.1          [1]
 Q #28 MATDEF                          pF 9.1          [1]
 Q #29 ARRAY2                          pF 9.1          [1]
 Q #30 SETNE, SEXTAL, XX, SEK          pF 9.2          [1]
-Q #31 DBL - D*, FIX, F., ..., D=      pF 9.2-9.3 FIXME[2]
 															     
 PREPARE                                                          
 Q ( ** Poznajemy FORTH 2/2 ** )       ;S
+Q #31 DBL - D*, FIX, F., ..., D=      pF 9.2-9.3 FIXME[2]
 Q #33 3DUP, TAM, ..., HANOI           pF 12.1         [1]
 Q #34 HETMANY                         pF 12.2         [5]
 Q #39 ZESPOLONE                       pF 12.4         [1]
@@ -182,7 +141,7 @@ Q #73 EDIT /R.Pantola    re:asmWR     ta              [a]
 Q #83 VECTORED EXEC exmpl             fd v4p17&v3nr1  [1]
 Q #84 BLINKING asm exmpl re:asmPM     compute 12/81   [1]
 Q #85 GOIN decompiler                 fd vol14/nr2    [2]
-Q #87 (empty)                         --              [2]
+Q #87 Fig-EDIT subset, SEARCH, ...    fig/fd III/2/p40[2]
 
 PREPARE ( scr 18 )
 Q ( 1/1 KOT, NAPIS, KWADRATY  )
@@ -1328,8 +1287,41 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 14 E
 15 P ;S 
 
-87 CLEAR
-88 CLEAR
+PREPARE 
+Q ( 1/2 FIG-EDITOR, SUBSET... ) : /START ; CR CR SPACE BASE @ 
+Q : HEX DECIMAL 5 712 ! HEX ; :  DECIMAL DECIMAL 0 712 ! ; HEX
+Q : TEXT HERE C/L 1+ BLANKS WORD HERE PAD C/L 1+ CMOVE ;
+Q : LINE DUP FFF0 AND 17 ?ERROR SCR @ (LINE) DROP ; : MARK 10 0 
+Q   DO I LINE UPDATE DROP LOOP ; VOCABULARY EDITOR IMMEDIATE
+Q : WHERE DUP B/SCR / DUP SCR ! ." SCR # " DECIMAL .
+Q   SWAP C/L /MOD C/L * ROT BLOCK +   CR C/L -TRAILING
+Q   TYPE CR HERE C@ - SPACES 1 2FE C! 1C EMIT 0 2FE
+Q   C! [COMPILE] EDITOR QUIT ; EDITOR DEFINITIONS
+Q : #LOCATE R# @ C/L /MOD ; : #LEAD #LOCATE LINE SWAP ;
+Q : #LAG  #LEAD DUP >R + C/L R> - ; : -MOVE LINE C/L CMOVE UPDATE 
+Q ; : P 1 TEXT PAD 1+ SWAP -MOVE ; : E LINE C/L BLANKS UPDATE ;
+Q : TOP 0 R# ! ; : M R# +! CR SPACE #LEAD TYPE 17 EMIT #LAG TYPE
+Q   #LOCATE . DROP ; : 1LINE #LAG PAD COUNT MATCH R# +!  ;
+Q : CLEAR  SCR ! 10 0 DO FORTH I EDITOR E LOOP ; -->
+
+
+PREPARE
+Q ( 2/2 FIG-EDITOR, SEARCH [FD VOL03 NR1 /WFR], .CC FDV03NR1/KH )
+Q : COPY   B/SCR * OFFSET @ + SWAP    B/SCR * B/SCR OVER + SWAP
+Q   DO DUP FORTH I BLOCK 2 - ! 1+ UPDATE LOOP DROP FLUSH ; 
+Q CR ." Fig-Editor subset loaded." CR DECIMAL FORTH DEFINITIONS
+Q DECIMAL LATEST 12 +ORIGIN !  HERE 28 +ORIGIN ! HERE 30 
+Q +ORIGIN ! ' EDITOR 6 + 32 +ORIGIN ! HERE FENCE ! BASE ! 
+Q : (I @ 4 - NFA ID. ; : .CON CONTEXT (I ; : .CUR CURRENT (I ; 
+Q : .CC CR ." Context, Current: " .CON .CUR CR ;
+Q 0 VARIABLE SRCHCNT : BUMP 1 SRCHCNT +! SRCHCNT @ 56
+Q   > IF 0 SRCHCNT ! CR THEN ; : SEARCH ( FROM TO -- STRING )
+Q   CR 01 TEXT 0 SRCHCNT ! 1+ SWAP DO FORTH I SCR ! EDITOR TOP
+Q   BEGIN 1LINE IF 0 M SCR ? BUMP THEN    1023 R# @ < UNTIL 
+Q   LOOP ; : (LINE/2) >R C/L 2 / B/BUF */MOD R> B/SCR * + BLOCK +
+Q   C/L 2 / ; : LI CR ( N -- ) SCR ! 32 0 DO CR I SCR @ (LINE/2)
+Q   -TRAILING TYPE LOOP CR ." === SCR#" SCR ? CR CR ; CR
+Q ." SEARCH loaded, try: 16 18 SEARCH KOT" CR CR : /FIGEDIT ; ;S
 
 FLUSH
 FORTH

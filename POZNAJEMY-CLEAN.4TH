@@ -107,8 +107,7 @@ DECIMAL CR
 EDITOR
 
 PREPARE ( scr 16 )
-Q ( ** Poznajemy FORTH 1/2 ** )       ;S
-Q #00 (first screens: no code)        --              ...
+Q ( ** Poznajemy FORTH 1/2 ** ) ;S    src            #scr 
 Q #14 (standard error messages)       apx             [2]
 Q #16 (this index)                    here            [2]  
 Q #18 KOT, NAPIS, KWADRATY            pF 2.1-3.4.3    [1]
@@ -123,10 +122,10 @@ Q #27 ARRAY, 2DARRAY                  pF 9.1          [1]
 Q #28 MATDEF                          pF 9.1          [1]
 Q #29 ARRAY2                          pF 9.1          [1]
 Q #30 SETNE, SEXTAL, XX, SEK          pF 9.2          [1]
-															     
-PREPARE                                                          
-Q ( ** Poznajemy FORTH 2/2 ** )       ;S
 Q #31 DBL - D*, FIX, F., ..., D=      pF 9.2-9.3 FIXME[2]
+
+PREPARE                                                          
+Q ( ** Poznajemy FORTH 2/2 ** ) ;S    src            #scr 
 Q #33 3DUP, TAM, ..., HANOI           pF 12.1         [1]
 Q #34 HETMANY                         pF 12.2         [5]
 Q #39 ZESPOLONE                       pF 12.4         [1]
@@ -143,7 +142,7 @@ Q #84 BLINKING asm exmpl re:asmPM     compute 12/81   [1]
 Q #85 GOIN decompiler                 fd vol14/nr2    [2]
 Q #87 Fig-EDIT subset, SEARCH, ...    fig/fd III/2/p40[2]
 
-PREPARE ( scr 18 )
+PREPARE
 Q ( 1/1 KOT, NAPIS, KWADRATY  )
 Q : KOT CR ." Kot pije mleko" ; 
 Q : NAPIS KOT SPACE
@@ -273,7 +272,7 @@ Q   CR QUERY 155 WORD HERE ;
 Q : DRUKUJ NAZWISKO? CR COUNT TYPE ;
 Q : INPUT CR QUERY BL WORD HERE
 Q   NUMBER DROP ; 
-Q : DATY <BUILDS , , , DOES>              ( n n n --- )
+Q : DATY <BUILDS , , , DOES>
 Q   DUP 2+ DUP 2+ ? ? ? CR ;
 Q 12  9 1683 DATY WIEDEN               
 Q  4  4 1794 DATY RACLAWICE
@@ -411,8 +410,9 @@ Q : WIEZE [ SMUDGE ] DUP IF
 Q     TAM WIEZE DRUKUJ
 Q     Z.POWROTEM WIEZE THEN
 Q   DROP DROP DROP [ SMUDGE ] ;
-Q : HANOI 1 3 ROT CR WIEZE ;      ( patrz tez: FD II/2 p. 32 )
+Q : HANOI 1 3 ROT CR WIEZE ;
 Q 5 HANOI ( n -- ) ;S
+Q ( patrz tez: FD II/2 p. 32 )
 
 PREPARE
 Q ( 1/5 HETMANY:WEKTOR,LHET,... )
@@ -424,21 +424,21 @@ Q 1024 WEKTOR WSPOLRZEDNA
 Q : LHET ( --- liczba hetmanow+1 )
 Q   0 WSPOLRZEDNA C@ ;
 Q : POSTAW ( rzad kolumna --- )
-Q   SWAP WSPOLRZEDNA C! ;              ( umieszcza hetmana )
+Q   SWAP WSPOLRZEDNA C! ; ( umieszcza h. )
 Q : USUN ( rzad --- )
-Q   0 POSTAW ;                         ( kasuje hetmana )
+Q   0 POSTAW ;            ( kasuje h. )
 Q -->
 
 PREPARE
 Q ( 2/5 HETMANY:WOLNE,... )
-Q : WOLNE                              ( rzad n --- rzad f )
+Q : WOLNE ( rzad n --- rzad f )
 Q   2DUP = >R
 Q   OVER WSPOLRZEDNA C@
 Q   OVER WSPOLRZEDNA C@ -
 Q   ROT ROT - ABS OVER ABS =
 Q   SWAP 0= OR 0=
 Q   R> OR ;
-Q : WSZYSTKIE-WOLNE                    ( rzad --- rzad f )
+Q : WSZYSTKIE-WOLNE ( rzad --- rzad f )
 Q   1 OVER 1 DO
 Q     OVER I WOLNE AND
 Q   LOOP ;
@@ -523,7 +523,7 @@ Q DOES> SWAP 2 * + @ ;            ( APX/1.4S )
 Q 91 TABLICA SINTABLICA -->
 
 PREPARE
-Q ( 2/2 FN FUNKCJE [FIXED] )
+Q ( 2/2 FN FUNKCJE )
 Q : S180 DUP 90 > IF 180 SWAP -        THEN SINTABLICA ;
 Q : SIN 360 MOD DUP 0< IF 360 +        THEN DUP 180 > IF 
 Q     180 - S180 MINUS ELSE S180       THEN ;
@@ -727,7 +727,6 @@ Q   OVER OVER POCZ ! KON ! QUICK ;
 Q POCZATEK 4 0 QUICKSORT CR
 Q ." QUICKSORT: " CR POKAZ CR ;S
 
-
 54 DUP CLEAR SCR !
 0 P ( 1/4 PSY RASOWE ) -->
 1 P bokser             165
@@ -790,7 +789,7 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 13 P     ( .. 6 0 - ratler 32 )
 14 P ;S  ( .. 2 3 4 6 0 - foks. 46 )
 
-58 CLEAR ( purposefully empty )
+58 CLEAR ( - )
 
 59 CLEAR ( CONST #HLP = 59 )
   0 P ( EDIT - HELP ) -->

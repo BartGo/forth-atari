@@ -1,0 +1,1369 @@
+
+SCR # 12 
+  0 ( 1/2 FIG-EDITOR, SUBSET... )        CR CR SPACE BASE @
+  1 : HEX DECIMAL 5 712 ! HEX ; :  DECIMAL DECIMAL 0 712 ! ; HEX
+  2 : TEXT HERE C/L 1+ BLANKS WORD HERE PAD C/L 1+ CMOVE ;
+  3 : LINE DUP FFF0 AND 17 ?ERROR SCR @ (LINE) DROP ; : MARK 10 0
+  4   DO I LINE UPDATE DROP LOOP ; VOCABULARY EDITOR IMMEDIATE
+  5 : WHERE DUP B/SCR / DUP SCR ! ." SCR # " DECIMAL .
+  6   SWAP C/L /MOD C/L * ROT BLOCK +   CR C/L -TRAILING
+  7   TYPE CR HERE C@ - SPACES 1 2FE C! 1C EMIT 0 2FE
+  8   C! [COMPILE] EDITOR QUIT ; EDITOR DEFINITIONS
+  9 : #LOCATE R# @ C/L /MOD ; : #LEAD #LOCATE LINE SWAP ;
+ 10 : #LAG  #LEAD DUP >R + C/L R> - ; : -MOVE LINE C/L CMOVE UPDATE
+ 11 ; : P 1 TEXT PAD 1+ SWAP -MOVE ; : E LINE C/L BLANKS UPDATE ;
+ 12 : TOP 0 R# ! ; : M R# +! CR SPACE #LEAD TYPE 17 EMIT #LAG TYPE
+ 13   #LOCATE . DROP ; : 1LINE #LAG PAD COUNT MATCH R# +!  ;
+ 14 : CLEAR  SCR ! 10 0 DO FORTH I EDITOR E LOOP ; -->
+ 15 
+
+SCR # 13 
+  0 ( 2/2 FIG-EDITOR, SEARCH [FD VOL03 NR1 /WFR], .CC FDV03NR1/KH )
+  1 : COPY   B/SCR * OFFSET @ + SWAP    B/SCR * B/SCR OVER + SWAP
+  2   DO DUP FORTH I BLOCK 2 - ! 1+ UPDATE LOOP DROP FLUSH ;
+  3 CR ." Fig-Editor subset loaded." CR DECIMAL FORTH DEFINITIONS
+  4 DECIMAL LATEST 12 +ORIGIN !  HERE 28 +ORIGIN ! HERE 30
+  5 +ORIGIN ! ' EDITOR 6 + 32 +ORIGIN ! HERE FENCE ! BASE !
+  6 : (I @ 4 - NFA ID. ; : .CON CONTEXT (I ; : .CUR CURRENT (I ;
+  7 0 VARIABLE SRCHCNT : BUMP 1 SRCHCNT +! SRCHCNT @ 56
+  8   > IF 0 SRCHCNT ! CR THEN ; : SEARCH ( FROM TO -- STRING )
+  9   CR 01 TEXT 0 SRCHCNT ! 1+ SWAP DO FORTH I SCR ! EDITOR TOP
+ 10   BEGIN 1LINE IF 0 M SCR ? BUMP THEN    1023 R# @ < UNTIL
+ 11   LOOP ; : (LINE/2) >R C/L 2 / B/BUF */MOD R> B/SCR * + BLOCK +
+ 12   C/L 2 / ; : LI CR ( N -- ) SCR ! 32 0 DO CR I SCR @ (LINE/2)
+ 13   -TRAILING TYPE LOOP CR ." === SCR#" SCR ? CR CR ; CR
+ 14 ." SEARCH loaded, try: 16 18 SEARCH KOT" CR CR ;S
+ 15 
+
+SCR # 14 
+  0 ( ERROR MESSAGES )
+  1 Stack empty
+  2 Dictionary full
+  3 Wrong address mode
+  4 Isn't unique
+  5 Value error
+  6 Disk address error
+  7 Stack full
+  8 Disk Error!
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
+SCR # 15 
+  0 ( ERROR MESSAGES )
+  1 Use only in Definitions
+  2 Execution only
+  3 Conditionals not paired
+  4 Definition not finished
+  5 In protected dictionary
+  6 Use only when loading
+  7 Off current screen
+  8 Declare VOCABULARY
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
+SCR # 16 
+  0 ( ** Poznajemy FORTH 1/2 ** )       ;S
+  1 #12 Fig-EDIT subset, SEARCH, ...    fig/fd III/2/p40[2]
+  2 #18 KOT, NAPIS, KWADRATY            pF 2.1-3.4.3    [1]
+  3 #19 2DUP, 2DROP, ... DUMP[debug]    pF 3.5-4        [1]
+  4 #20 PRZEDZIAL, FIBO, ...            pF 3.5-5.5      [1]
+  5 #21 TEST1, NWP, TABLICZKA           pF 5.5-5.6      [1]
+  6 #22 TABLICZKA2                      pF              [1]
+  7 #23 ERATOS, ..., PIERWSZE           pF              [2]
+  8 #25 NAZWISKO?, ..., DATY            pF              [1]
+  9 #26 SILNIA, SILNIA2, ...            pF              [1]
+ 10 #27 ARRAY, 2DARRAY                  pF              [1]
+ 11 #28 MATDEF /valFORTH                pF              [1]
+ 12 #29 ARRAY2, ARRAY3 [JB]             pF              [1]
+ 13 #30 SETNE, SEXTAL, XX, SEK          pF              [1]
+ 14 #31 DBL - D*, FIX, F., ..., D=      pF              [2]
+ 15 
+
+SCR # 17 
+  0 ( ** Poznajemy FORTH 2/2 ** )       ;S
+  1 #33 3DUP, TAM, ..., HANOI           pF              [1]
+  2 #34 HETMANY                         pF              [5]
+  3 #39 ZESPOLONE                       pF              [1]
+  4 #40 FUNKCJE                         pF              [2]
+  5 #42 LIFE                            pF              [5]
+  6 #47 SORTOWANIE                      pF              [7]
+  7 #54 PSY                             pF              [4]
+  8 #58 (empty)                         --              [1]
+  9 #59 EDIT /M.Dougherty  (or: #60)    micro 57/feb/83 [b]
+ 10 #70 RAGSDALE ASSEMBLER   [asmWR]    fig             [3]
+ 11 #73 EDIT /R.Pantola    re:asmWR     ta              [a]
+ 12 #83 VECTORED EXEC exmpl             fd v4p17&v3nr1  [1]
+ 13 #84 BLINKING asm exmpl re:asmPM     compute 12/81   [1]
+ 14 #85 GOIN decompiler                 fd vol14/nr2    [2]
+ 15 #87 (empty)                         --              [2]
+
+SCR # 18 
+  0 ( 1/1 KOT, NAPIS, KWADRATY  )
+  1 : KOT CR ." Kot pije mleko" ;
+  2 : NAPIS KOT SPACE
+  3   ." i poluje na myszy" ;
+  4 : S0 18 +ORIGIN @ ; ( APX s#85 )
+  5 : .S ( --- ) 2 SPACES SP@ S0 =
+  6     0= IF SP@ 2 - S0 2 - DO
+  7       I @ . -2 +LOOP THEN ;
+  8 : TEST ( -- ) 1 2 3   DUP  .S         ( 1 2 3 3 )
+  9   DROP .S   ( 1 2 3 ) SWAP .S         ( 1 3 2 )
+ 10   ROT  .S   ( 3 2 1 ) OVER .S         ( 3 2 1 2 )
+ 11  SP! ;  : KWADRAT DUP * . ;
+ 12 : SZESCIAN DUP OVER * * . ;
+ 13 : KWADRATY CR DO I DUP U* 15            D.R CR LOOP ;
+ 14 ( 45001 44980 KWADRATY ) ;S
+ 15 
+
+SCR # 19 
+  0 ( 1/1 2DUP,2DROP,...        )
+  1 : 2DUP OVER OVER ;                  : 2DROP DROP DROP ;
+  2 : 2SWAP ROT >R ROT R> ; : 2OVER     >R >R 2DUP R> R> 2SWAP ;
+  3 : 2ROT ( n1 n2 n3 n4 n5 n6 ... )    ( --- n3 n4 n5 n6 n1 n2 )
+  4    >R ( n1 n2 n3 n4 n5 )            ( - n6 na stos powrotow )
+  5    >R ( n1 n2 n3 n4 )               ( - n5 na stos powrotow )
+  6    2SWAP ( n3 n4 n1 n2 )            ( - zamienia pary liczb )
+  7    R> ( n3 n4 n1 n2 n5 )            ( - przenosi z powrotem n5 )
+  8    R> ( n3 n4 n1 n2 n5 n6 )         ( - przenosi z powrotem n6 )
+  9    2SWAP ; ( n3 n4 n5 n6 n1 n2 )    ( - zamiana wykonana! )
+ 10 ;S
+ 11 ( *** DUMP-INDEX: req. APX DEBUG )
+ 12 : DUMP-INDEX ' INDEX NFA ' TRIAD
+ 13   NFA OVER - DUMP ;
+ 14 ( HEX DUMP-INDEX DECIMAL ) ;S
+ 15 
+
+SCR # 20 
+  0 ( 1/1 PRZEDZIAL, FIBO, ...  )
+  1 : PRZEDZIAL                         ( dolna-gr. n gorna-gran. )
+  2    OVER                             ( dol-gr n gor-gr n )
+  3    > >R                             ( dol-gr n f1 ) ( dol-gr n )
+  4    <  R> ;                          ( f2 ) ( f2 f1 ) ( f )
+  5 ( 20 370 400 PRZEDZIAL . CR )
+  6 : FIBO ( n --- ) ( max n: 23 )
+  7   0 1 ROT 0 CR DO
+  8     DUP 10 .R CR SWAP OVER + LOOP ;
+  9 : DFIBO ( n --- ) ( max n: 46 )
+ 10   0. ROT 1. ROT 0 CR DO
+ 11     2DUP 14 D.R CR
+ 12     2SWAP 2OVER D+ LOOP ;           : KWADRAT2 DUP * ;
+ 13 : KWADRAT3 DO I KWADRAT2 DUP 32760 IF DROP LEAVE THEN . LOOP ;
+ 14 ( -- ) ;S
+ 15 
+
+SCR # 21 
+  0 ( 1/1 TEST1, NWP, TABLICZKA )
+  1 : TEST1 51  1 DO I .  2 +LOOP ;
+  2 : TEST2  0 20 DO I . -1 +LOOP ;
+  3 : IKSY BEGIN ." X" 1 - DUP 0= UNTIL ;
+  4 : NWP BEGIN SWAP OVER MOD -DUP 0= UNTIL ;
+  5 ( 128 1024 NWP . CR 324 556 NWP . CR 1933 821 NWP . CR )
+  6 0 VARIABLE AA : TABLICZKA ( -- )
+  7   125 EMIT CR CR 8 SPACES
+  8   ." TABLICZKA MNOZENIA"
+  9   CR CR 3 SPACES
+ 10   10 1 DO I 3 .R LOOP CR
+ 11   30 0 DO ." _" LOOP CR
+ 12   10 1 DO I DUP AA !
+ 13     . ." |" 10 1 DO
+ 14       I AA @ *     3 .R
+ 15     LOOP CR LOOP ; TABLICZKA ;S
+
+SCR # 22 
+  0 ( 1/1 TABLICZKA2 )
+  1 : J R> R> R> R R# !
+  2     >R >R >R R# @ ;
+  3 : TAB2 ( -- ) 125 EMIT
+  4   CR CR 8 SPACES
+  5   ." TABLICZKA MNOZENIA"
+  6   CR CR 3 SPACES
+  7   10 1 DO I 3 .R LOOP CR
+  8   30 0 DO ." _" LOOP CR
+  9   10 1 DO
+ 10     I . ." |" 10 1 DO
+ 11       I J * 3 .R
+ 12     LOOP CR
+ 13   LOOP ;
+ 14 : TABLICZKA2 TAB2 ;
+ 15 TABLICZKA2 ;S
+
+SCR # 23 
+  0 ( 1/2 ERATOS - WSTAW, USUN )
+  1 0 VARIABLE ERATOS 254 ALLOT
+  2 : WSTAW ( adr --- )
+  3   256 1 DO
+  4     I OVER C! 1+
+  5   LOOP
+  6   DROP ;
+  7 : USUN ( n --- )
+  8   256 OVER DO
+  9     I 1 - ERATOS + 0 SWAP C!
+ 10     DUP
+ 11  +LOOP
+ 12  DROP ;
+ 13 -->
+ 14 
+ 15 
+
+SCR # 24 
+  0 ( 2/2 ERATOS - PIERWSZE )
+  1 : PIERWSZE ( --- )
+  2  ERATOS WSTAW CR ERATOS ( adr )
+  3  256 2     ( adr 256 2 )
+  4  DO        ( adr )
+  5     I 1 -  ( adr I-1 )
+  6     OVER   ( adr I-1 adr )
+  7     +      ( adr adr+I-1 )
+  8     C@     ( adr n )
+  9     -DUP IF DUP .
+ 10       USUN ( adr ) ( gdy n<>0 )
+ 11     THEN
+ 12  LOOP DROP ;
+ 13 
+ 14 PIERWSZE ;S
+ 15 
+
+SCR # 25 
+  0 ( 1/1 NAZWISKO?, DRUKUJ, ...)
+  1 : QUERY TIB @ 80 EXPECT 0 IN ! ;
+  2 : NAZWISKO?
+  3   CR ." PODAJ SWOJE NAZWISKO: "
+  4   CR QUERY 155 WORD HERE ;
+  5 : DRUKUJ NAZWISKO? CR COUNT TYPE ;
+  6 : INPUT CR QUERY BL WORD HERE
+  7   NUMBER DROP ;
+  8 : DATY <BUILDS , , , DOES>              ( n n n --- )
+  9   DUP 2+ DUP 2+ ? ? ? CR ;
+ 10 12  9 1683 DATY WIEDEN
+ 11  4  4 1794 DATY RACLAWICE
+ 12 18  6 1815 DATY WATERLOO
+ 13  1  9 1870 DATY SEDAN
+ 14 12 10 1943 DATY LENINO
+ 15 15 08 1920 DATY WARSZAWA ;S
+
+SCR # 26 
+  0 ( 1/1 SILNIA,SILNIA2,... )
+  1 : TENKOD ( -- n ) CURRENT @ @
+  2   PFA CFA ; IMMEDIATE
+  3 : SILNIA ( n -- )
+  4   1 SWAP 1+ 1 DO I * LOOP ;
+  5 : SILNIA2 ( n -- ) DUP 2 = IF
+  6   ELSE DUP 1 - TENKOD LITERAL
+  7   EXECUTE * THEN ;
+  8 : SILNIA3 ( n -- ) [ SMUDGE ]
+  9   DUP 2 = IF ELSE DUP 1 - SILNIA3 *
+ 10   THEN [ SMUDGE ] ;
+ 11 : FACTORIAL ( JB ) DUP IF DUP
+ 12   1 - [ SMUDGE ] FACTORIAL
+ 13   [ SMUDGE ] * ELSE 1+ THEN ;
+ 14 8 SILNIA  U.  8 SILNIA2 U. ( NIE 1.4S )
+ 15 8 SILNIA3 U.  8 FACTORIAL U. ;S
+
+SCR # 27 
+  0 ( 1/1 ARRAY, 2DARRAY )
+  1 : ARRAY <BUILDS 2 * ALLOT DOES>
+  2   SWAP 2 * + ;
+  3 : 2DARRAY
+  4   <BUILDS
+  5     DUP , * 2 * ALLOT
+  6   DOES>
+  7     ROT OVER @ + ROT + 2 * + 2+ ;
+  8 
+  9 10 ARRAY LICZBY
+ 10 7 LICZBY 7 LICZBY ! 7 LICZBY @ .
+ 11 
+ 12 4 5 2DARRAY PROSTOKAT ;S
+ 13 
+ 14 
+ 15 
+
+SCR # 28 
+  0 ( 1/1 MATDEF /valFORTH  )
+  1 : 0> 0 MAX ;
+  2 : MATDEF <BUILDS OVER OVER           SWAP , , * 2 * ALLOT
+  3    DOES> >R OVER OVER R @ R          2 + @ ROT - 0> ROT
+  4    ROT - 0< * IF R @ * + 2 *         R> 4 + +
+  5    ELSE R> DROP DROP DROP            ." ZLE WSKAZNIKI" THEN ;
+  6 2 3 MATDEF MATRIX2                   CR CR
+  7 11 0 0 MATRIX2 C!                    22 0 1 MATRIX2 C!
+  8 33 1 0 MATRIX2 C!                    44 1 1 MATRIX2 C!
+  9 55 0 2 MATRIX2 C!                    66 1 2 MATRIX2 C!
+ 10 77 2 3 MATRIX2 C! ( PRZEKROCZONE )
+ 11    0 0 MATRIX2 C@                    . CR  0 1 MATRIX2 C@ . CR
+ 12    1 0 MATRIX2 C@                    . CR  1 1 MATRIX2 C@ . CR
+ 13    0 2 MATRIX2 C@                    . CR  1 2 MATRIX2 C@ . CR
+ 14 CR ;S
+ 15 
+
+SCR # 29 
+  0 ( 1/1 ARRAY2, ARRAY3 [JB] )
+  1 : ARRAY2 ( n n --- )                 ( n n ARRAY2 matrix )
+  2   <BUILDS OVER , * ALLOT DOES>       DUP @ ROT * + + 2+ ;
+  3 : ARRAY3 ( n n --- )     <BUILDS     ( n n ARRAY2 matrix )
+  4   OVER C, DUP C, * ALLOT   DOES>     1+ ROT OVER C@ * + + 1+ ;
+  5 2 3 ARRAY2 MATRIX   2 3 ARRAY3 BUF
+  6 11 0 0 MATRIX C!                     22 0 1 MATRIX C!
+  7 33 1 0 MATRIX C!                     44 1 1 MATRIX C!
+  8 55 0 2 MATRIX C!                     66 1 2 MATRIX C!
+  9    0 0 MATRIX C@ . CR                0 1 MATRIX C@ . CR
+ 10    1 0 MATRIX C@ . CR                1 1 MATRIX C@ . CR
+ 11    0 2 MATRIX C@ . CR                1 2 MATRIX C@ . CR CR
+ 12 13 2 1 BUF C!                        2 1 BUF C@ .    CR ;S
+ 13 
+ 14 
+ 15 
+
+SCR # 30 
+  0 ( 1/1 SETNE, SEXTAL, XX, SEK )
+  1 DECIMAL
+  2 : SETNE <# # # 46 HOLD #S #> TYPE ;
+  3 
+  4 123489. SETNE ( 1234.89 )
+  5 : SEXTAL 6 BASE ! ;
+  6 : XX # SEXTAL # DECIMAL 58 HOLD ;
+  7 : SEK ( n --- )
+  8   CR <# XX XX #S #> TYPE CR ;
+  9 
+ 10 15610. SEK
+ 11 CR ;S
+ 12 
+ 13 
+ 14 
+ 15 
+
+SCR # 31 
+  0 ( 1/2 DBL - D*, FIX, F. )
+  1 0 VARIABLE A_  0 VARIABLE B_       0 VARIABLE C_  0 VARIABLE D_
+  2 : D* A_ ! B_ ! C_ ! D_ !           ( "COMPLETE FORTH" )
+  3   D_ @ B_ A_ U* D_ @ A_ @ U* DROP + C_ @ B_ @ U* DROP + ;
+  4   ( ? FD-V03N2.pdf: -- : D* DUP ROT * ROT ROT U* ROT + ;  )
+  5 : FIX DPL @ 0< IF                   ( jezeli lb byla pojed.   )
+  6     S->D 0 DPL !                    ( przeksztalca ja w podw. )
+  7   THEN
+  8   DPL @ DUP 4 < IF 4 SWAP           DO 10. D* LOOP
+  9   ELSE
+ 10     4 > IF ." Poza zakresem" 2DROP  THEN THEN ;
+ 11 : F. SWAP OVER DABS
+ 12  <# # # # # 46 HOLD #S SIGN #> TYPE SPACE ;
+ 13 -->
+ 14 
+ 15 
+
+SCR # 32 
+  0 ( 2/2 DBL - UD.,D-,D0=,D0<,D= )
+  1 : UD. <# #S #> TYPE ;
+  2 : D- DMINUS D+ ;
+  3 : D0= OR 0= ;                       ( test na liczbe podw. 0   )
+  4 : D0< SWAP DROP 0< ;                ( " ujemna liczbe podw.    )
+  5 : D= D- D0= ;                       ( " rownosc dwoch lb podw. )
+  6 
+  7 0.04 FIX        0.3 FIX D+
+  8 0.625 FIX D+ 0.0001 FIX D+
+  9 10 FIX D+  ( BUG: cos tu sie wywala !! )
+ 10 F. 10.9651
+ 11 CR ;S
+ 12 
+ 13 
+ 14 
+ 15 
+
+SCR # 33 
+  0 ( 1/1 WIEZE Z HANOI )
+  1 : 3DUP >R 2DUP R ROT ROT R> ;
+  2 : TAM 3DUP ROT ROT OVER + 6
+  3   SWAP - ROT 1 - ;
+  4 : Z.POWROTEM
+  5   3DUP SWAP ROT OVER + 6 SWAP -
+  6   SWAP ROT 1 - ;
+  7 : DRUKUJ 3DUP DROP SWAP
+  8   . ." NA " . ." ," ;
+  9 : WIEZE [ SMUDGE ] DUP IF
+ 10     TAM WIEZE DRUKUJ
+ 11     Z.POWROTEM WIEZE THEN
+ 12   DROP DROP DROP [ SMUDGE ] ;
+ 13 : HANOI 1 3 ROT CR WIEZE ;      ( patrz tez: FD II/2 p. 32 )
+ 14 5 HANOI ( n -- ) ;S
+ 15 
+
+SCR # 34 
+  0 ( 1/5 HETMANY:WEKTOR,LHET,... )
+  1 0 VARIABLE ROZWIAZANIE
+  2 : WEKTOR
+  3   <BUILDS HERE OVER ERASE ALLOT
+  4   DOES> + ;
+  5 1024 WEKTOR WSPOLRZEDNA
+  6 : LHET ( --- liczba hetmanow+1 )
+  7   0 WSPOLRZEDNA C@ ;
+  8 : POSTAW ( rzad kolumna --- )
+  9   SWAP WSPOLRZEDNA C! ;              ( umieszcza hetmana )
+ 10 : USUN ( rzad --- )
+ 11   0 POSTAW ;                         ( kasuje hetmana )
+ 12 -->
+ 13 
+ 14 
+ 15 
+
+SCR # 35 
+  0 ( 2/5 HETMANY:WOLNE,... )
+  1 : WOLNE                              ( rzad n --- rzad f )
+  2   2DUP = >R
+  3   OVER WSPOLRZEDNA C@
+  4   OVER WSPOLRZEDNA C@ -
+  5   ROT ROT - ABS OVER ABS =
+  6   SWAP 0= OR 0=
+  7   R> OR ;
+  8 : WSZYSTKIE-WOLNE                    ( rzad --- rzad f )
+  9   1 OVER 1 DO
+ 10     OVER I WOLNE AND
+ 11   LOOP ;
+ 12 -->
+ 13 
+ 14 
+ 15 
+
+SCR # 36 
+  0 ( 3/5 HETMANY:BRZEG,DRUK,INIC )
+  1 : BRZEG ( rzad --- rzad f )
+  2  LHET OVER WSPOLRZEDNA C@ > ;
+  3 : DRUK ( --- ) CR LHET 1 DO
+  4     I WSPOLRZEDNA C@ LHET 1
+  5     DO DUP I =
+  6       IF ." X " ELSE ." . " THEN
+  7     LOOP DROP CR LOOP
+  8   1 ROZWIAZANIE +! CR ." Rozwiazanie nr "
+  9   ROZWIAZANIE ?    CR ;
+ 10 : INIC ( --- ) ( inic. sz. z hetm. w rz. 0 )
+ 11   LHET 1 DO I USUN LOOP 0 ROZWIAZANIE ! ; -->
+ 12 
+ 13 
+ 14 
+ 15 
+
+SCR # 37 
+  0 ( 4/5 HETMANY:NAPRZOD,... )
+  1 : NAPRZOD ( rzad --- rzad f )     ( f=1, gdy het. w rz. "rzad" )
+  2                                   ( mozna przes. do nast. kol. )
+  3   DUP DUP WSPOLRZEDNA
+  4   C@ 1+ POSTAW BRZEG
+  5   IF 1 ELSE DUP USUN 0 THEN ;
+  6 : PIERWSZA-WOLNA ( rz --- rz f )  ( f=1,gdy hetman moze ... )
+  7   ( ... przejsc do nast. kol. w rz                          )
+  8  BEGIN
+  9    NAPRZOD
+ 10    IF WSZYSTKIE-WOLNE -DUP
+ 11    ELSE 0 1 THEN
+ 12  UNTIL ;
+ 13 -->
+ 14 
+ 15 
+
+SCR # 38 
+  0 ( 5/5 HETMANY:POZYCJA,HETMANY )
+  1 : POZYCJA ( rzad --- f )
+  2   [ SMUDGE ]
+  3     LHET OVER > IF
+  4       BEGIN
+  5         PIERWSZA-WOLNA IF
+  6              1+ POZYCJA -DUP
+  7            ELSE 1 - 0 1 THEN
+  8       UNTIL
+  9     ELSE DRUK 1 - 0 THEN
+ 10  [ SMUDGE ] ;
+ 11 : HETMANY ( --- )
+ 12   9 0 SWAP POSTAW INIC
+ 13   1 POZYCJA 2 DROP ;        ;S
+ 14 
+ 15 
+
+SCR # 39 
+  0 ( 1/1 LICZBY ZESPOLONE )
+  1 : COMPLEX <BUILDS , ,  DOES> ;
+  2 : X@ DUP @ SWAP 2+ @ SWAP  ;
+  3 : X! SWAP OVER ! 2+ ! ;
+  4 : X+ ROT + >R + R> ;
+  5 : X- ROT SWAP - >R - R> ;
+  6 : X*' SWAP OVER * ROT ROT * SWAP ;
+  7 : X*
+  8   2OVER 2OVER ROT
+  9   * >R * R> - >R ROT ROT
+ 10   * >R * R> + R> SWAP ;
+ 11 : TEST-COMPLEX 3 2 1 7 X* . .  ;
+ 12 
+ 13 CR TEST-COMPLEX CR ( -11 23 ok ) ;S
+ 14 
+ 15 
+
+SCR # 40 
+  0 ( 1/2 FN TRYGONOMETRYCZNE )
+  1 : TABLICA <BUILDS 0 ,
+  2  174 , 348  ,  522 ,  696 ,  870 , 1044 , 1218 , 1390 , 1564 ,
+  3 1736 , 1908 , 2078 , 2248 , 2418 , 2588 , 2756 , 2922 , 3090 ,
+  4 3254 , 3420 , 3582 , 3746 , 3906 , 4066 , 4226 , 4382 , 4538 ,
+  5 4694 , 4848 , 5000 , 5150 , 5298 , 5446 , 5590 , 5734 , 5876 ,
+  6 6018 , 6156 , 6292 , 6426 , 6560 , 6690 , 6818 , 6946 , 7070 ,
+  7 7192 , 7312 , 7430 , 7546 , 7660 , 7770 , 7880 , 7986 , 8090 ,
+  8 8190 , 8290 , 8386 , 8480 , 8570 , 8660 , 8746 , 8828 , 8910 ,
+  9 8986 , 9062 , 9134 , 9204 , 9270 , 9334 , 9396 , 9454 , 9510 ,
+ 10 9562 , 9612 , 9658 , 9702 , 9742 , 9780 , 9816 , 9848 , 9876 ,
+ 11 9902 , 9924 , 9944 , 9960 , 9974 , 9986 , 9992 , 9998 , 10000 ,
+ 12 DOES> SWAP 2 * + @ ;            ( APX/1.4S )
+ 13 91 TABLICA SINTABLICA -->
+ 14 
+ 15 
+
+SCR # 41 
+  0 ( 2/2 FN FUNKCJE [FIXED] )
+  1 : S180 DUP 90 > IF 180 SWAP -        THEN SINTABLICA ;
+  2 : SIN 360 MOD DUP 0< IF 360 +        THEN DUP 180 > IF
+  3     180 - S180 MINUS ELSE S180       THEN ;
+  4 : COS 90 + SIN ;
+  5 : TAN DUP SIN SWAP COS DUP ABS 2920
+  6   > IF 10000 SWAP */  ELSE DROP      DROP ." ZA DUZE! " THEN ;
+  7 CR
+  8  0 SIN . (     0 )                   90 SIN . ( 10000 )
+  9 45 SIN . (  7070 )                   44 SIN . (  6946 )
+ 10 44 TAN . (  9657 )                   46 SIN . (  7192 )
+ 11 45 SIN . (  7070 )                   30 SIN . (  5000 )
+ 12 89 SIN . (  9998 )                   0 TAN .  (     0 )
+ 13 30 TAN . (  5773 )                   45 TAN . ( 10000 )
+ 14 30 COS . (  8660 )                   CR ;S
+ 15 
+
+SCR # 42 
+  0 ( 1/5 LIFE:ARRAY,UNIVERSUM,J )
+  1 10 CONSTANT DIMX
+  2 10 CONSTANT DIMY
+  3 : ARRAY                            ( dimX dimY --- )
+  4   <BUILDS
+  5     OVER ,                         ( dimY pod adresem pfa+2 )
+  6     * ALLOT                        ( dimX*dimY bajtow )
+  7   DOES>
+  8   DUP @                            ( dimX na stosie )
+  9   ROT *                            ( dimY*dimX )
+ 10   + + 2+ ;                         ( bezwzgledny adres komorki )
+ 11 DIMX DIMY ARRAY UNIVERSUM
+ 12 : HOME 125 EMIT ;
+ 13 : J R> R> R> R R# !
+ 14   >R >R >R R# @ ; -->
+ 15 
+
+SCR # 43 
+  0 ( 2/5 LIFE:WSTAW,USUN,ZERUJ  )
+  1 : WSTAW ( indX indY --- )
+  2   UNIVERSUM 1 SWAP C! ;
+  3 : USUN ( indX indY --- )
+  4   UNIVERSUM 0 SWAP C! ;
+  5 : ZERUJ ( --- )
+  6   DIMY 0 DO
+  7     DIMX 0 DO I J USUN LOOP
+  8   LOOP ;
+  9 : WERYFIKACJA                     ( liczba stanu sasiadow --- )
+ 10  DUP 3 =                          ( liczba stanu f )
+ 11  IF DROP 2+ ELSE
+ 12    2 = 0=                         ( stan stan nr2 )
+ 13    IF 4 + THEN
+ 14  THEN ; -->
+ 15 
+
+SCR # 44 
+  0 ( 3/5 LIFE:PRZYGOTOWANIE   )
+  1 : PRZYGOTOWANIE ( --- )
+  2   DIMY 0 DO DIMX 0 DO
+  3     0 J 2+ DIMY MIN        J 1 - 0 MAX    DO
+  4          J 2+ DIMX MIN J 1 - 0 MAX    DO
+  5         I J UNIVERSUM C@ 1 AND +    ( 1+ *** chyba nie )
+  6       LOOP
+  7     LOOP
+  8     I J UNIVERSUM C@ 1 AND
+  9     SWAP OVER - WERYFIKACJA         ( koduje przyszlosc )
+ 10     I J UNIVERSUM C!                ( 1+ ** chyba nie )
+ 11     LOOP LOOP ; -->
+ 12 
+ 13 
+ 14 
+ 15 
+
+SCR # 45 
+  0 ( 4/5 LIFE:DRUK,TWORZENIE   )
+  1 : DRUK ( --- )
+  2   HOME DIMY 0 DO
+  3     DIMX 0 DO
+  4       I J UNIVERSUM C@
+  5       IF ." *" ELSE SPACE THEN
+  6     LOOP CR LOOP ;
+  7 : TWORZENIE
+  8   DIMY 0 DO DIMX 0 DO
+  9     I J UNIVERSUM DUP C@ DUP
+ 10     3 > IF DROP 0 ELSE
+ 11       DUP 1 > IF DROP 1 THEN
+ 12      THEN SWAP C!
+ 13   LOOP LOOP ; -->
+ 14 
+ 15 
+
+SCR # 46 
+  0 ( 5/5 LIFE:GRA,GRA1   )
+  1 : GRA ( n --- )
+  2   0 DO
+  3     DRUK   ( wysw. pokol. N )
+  4     PRZYGOTOWANIE ( gasi pokol. N i zostawia dane dla nast. )
+  5     TWORZENIE  ( tworzy pokol. N+1 )
+  6   LOOP
+  7   DRUK ; ( druk. ostatnie pokol. )
+  8 : GRA1 ( -- )
+  9   BEGIN
+ 10     ?TERMINAL IF ;S THEN
+ 11     DRUK PRZYGOTOWANIE TWORZENIE
+ 12   AGAIN
+ 13   DRUK ; ;S
+ 14 
+ 15 
+
+SCR # 47 
+  0 ( 1/7 SORT:ARRAY,WSTAW,POKAZ - APX/1.4S? )
+  1 : ARRAY <BUILDS 2 * ALLOT
+  2   DOES> SWAP 2 * + ;
+  3 5 ARRAY LICZBY
+  4 0 VARIABLE NAST
+  5 : WSTAW 120 23 157 18 93
+  6   5 0 DO I LICZBY ! LOOP ;
+  7 : POKAZ 5 0 DO I LICZBY ? LOOP ;
+  8 -->
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
+SCR # 48 
+  0 ( 2/7 SORT:POROWNAJ )
+  1 : POROWNAJ ( n1 n2 --- )
+  2   DUP      ( n1 n2 n2 )
+  3   LICZBY @ ( n1 n2 L2 )
+  4   ROT DUP  ( n2 L2 n1 n1 )
+  5   LICZBY @ ( n2 L2 n1 L1 )
+  6   ROT      ( n2 n1 L1 L2 )
+  7   OVER
+  8   OVER ( n2 n1 L1 L2 L1 L2 )
+  9   >    ( n2 n1 L1 L2 f )
+ 10   IF ROT     ( n2 L1 L2 n1 )
+ 11     LICZBY ! ( n2 L1 )
+ 12     SWAP     ( L1 n2 )
+ 13     LICZBY ! ( --- )
+ 14   ELSE 2DROP 2DROP THEN ; -->
+ 15 
+
+SCR # 49 
+  0 ( 3/7 SORT:PRZEJRZYJ,EXSORT )
+  1 : PRZEJRZYJ DUP 1+ NAST !
+  2   BEGIN OVER 1+ NAST @ >
+  3   WHILE DUP NAST @ POROWNAJ
+  4   NAST @ 1+ NAST ! REPEAT
+  5   2DROP ;
+  6 : EXSORT ( n1 n2 -- )
+  7   BEGIN OVER OVER
+  8     PRZEJRZYJ 1+ OVER OVER
+  9   = UNTIL 2DROP ;
+ 10 WSTAW 4 0 EXSORT
+ 11 CR ." EXSORT: " CR POKAZ CR -->
+ 12 
+ 13 
+ 14 
+ 15 
+
+SCR # 50 
+  0 ( 4/7 SORT:PORBUB,..,BUBSORT )
+  1 0 VARIABLE KONIEC?
+  2 : PORBUB ( n1 n2 -- )
+  3   DUP LICZBY @ ROT DUP LICZBY @
+  4   ROT OVER OVER >
+  5   IF ROT LICZBY ! SWAP LICZBY !
+  6    0 KONIEC? ! ELSE 2DROP 2DROP THEN ;
+  7 : PRZESUN BEGIN
+  8     DUP DUP 1+ PORBUB 1+
+  9   OVER OVER = UNTIL DROP DROP ;
+ 10 : BUBSORT BEGIN 1 KONIEC?
+ 11     ! OVER OVER PRZESUN
+ 12   KONIEC? @ UNTIL 2DROP ;
+ 13 WSTAW 4 0 BUBSORT
+ 14 CR ." BUBSORT: " CR POKAZ CR -->
+ 15 
+
+SCR # 51 
+  0 ( 5/7 SORT:WSTAW,LEWY,PRAWY )
+  1 0 VARIABLE POCZ  0 VARIABLE KON
+  2 0 VARIABLE LW    0 VARIABLE PW
+  3 : POCZATEK WSTAW ;
+  4 : LEWY BEGIN
+  5     DUP LW @ LICZBY @
+  6   > WHILE LW @ 1+ LW !
+  7   REPEAT DROP ;
+  8 : PRAWY BEGIN
+  9     DUP PW @ LICZBY @
+ 10   < WHILE PW @
+ 11     1 - PW !
+ 12   REPEAT DROP ;
+ 13 : CZYTAJ @ LICZBY @ ;
+ 14 : WSTAW @ LICZBY ! ; -->
+ 15 
+
+SCR # 52 
+  0 ( 6/7 SORT:ZAM,SORTUJ,KOMPARAND )
+  1 : ZAM
+  2   LW CZYTAJ PW CZYTAJ
+  3   LW WSTAW PW WSTAW
+  4   LW @ 1+ LW ! PW @ 1 - PW ! ;
+  5 : SORTUJ BEGIN
+  6     DUP DUP LEWY PRAWY
+  7    LW @ PW @ > DUP
+  8    IF ELSE ZAM THEN
+  9   UNTIL DROP ;
+ 10 : KOMPARAND
+ 11   OVER OVER LW ! PW ! + 2 /
+ 12   LICZBY @ ;
+ 13 -->
+ 14 
+ 15 
+
+SCR # 53 
+  0 ( 7/7 SORT:QUICK,QUICKSORT )
+  1 : QUICK [ SMUDGE ]
+  2    KOMPARAND SORTUJ
+  3    POCZ @ PW @ <
+  4    IF
+  5      PW @ DUP KON ! POCZ @ QUICK
+  6    THEN
+  7    LW @ KON @ < IF
+  8      KON @ LW @ DUP POCZ ! QUICK
+  9    THEN [ SMUDGE ] ;
+ 10 : QUICKSORT
+ 11   OVER OVER POCZ ! KON ! QUICK ;
+ 12 POCZATEK 4 0 QUICKSORT CR
+ 13 ." QUICKSORT: " CR POKAZ CR ;S
+ 14 
+ 15 
+
+SCR # 54 
+  0 ( 1/4 PSY RASOWE ) -->
+  1 bokser             165
+  2 cocker-spaniel      98
+  3 dog                163
+  4 doberman            35
+  5 bernardyn          221
+  6 owczarek alzacki   171
+  7 foksterier          46
+  8 seter               27
+  9 jamnik             194
+ 10 ratler             32
+ 11 chow-chow         172
+ 12 pekinczyk          28
+ 13 
+ 14 
+ 15 
+
+SCR # 55 
+  0 ( 2/4 CECHY PSOW ) -->
+  1   C z y  m a:
+  2 1 wiecej niz 60 cm wzrostu?
+  3 2 wydluzona glowe?
+  4 3 kwadratowy lub plaski pysk?
+  5 4 obfita siersc?
+  6 5 dlugi wlos?
+  7 6 stojace lub przyciete uszy?
+  8 7 dlugie uszy?
+  9 8 krepa lub mocna budowe?
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
+SCR # 56 
+  0 ( 3/4 PSY ) : HOME 125 EMIT ;
+  1 : #PSY 54 ; : #CECHY 55 ;
+  2 : CARRAY <BUILDS ALLOT DOES> + ;
+  3 15 CARRAY CECHY : X CECHY C! ;
+  4  165 0 X 98  1 X 163  2 X 35  3 X
+  5  221 4 X 171 5 X 46   6 X 27  7 X
+  6  194 8 X 32  9 X 172 10 X 28 11 X
+  7 0 VARIABLE BAJT
+  8 : BITY 1 SWAP 0 DO 2 * LOOP
+  9   2 / BAJT @ OR BAJT ! ;
+ 10 : WLASNOSCI 0 BAJT ! BEGIN
+ 11     QUERY BL WORD HERE NUMBER
+ 12     DROP DUP MINUS 0<
+ 13   WHILE 1 SWAP BITY CR DROP
+ 14   REPEAT ;
+ 15 -->
+
+SCR # 57 
+  0 ( 4/4 PSY )
+  1 : DAJ BAJT @ 12 0 DO
+  2     DUP I CECHY C@ XOR
+  3     0= IF
+  4       I 1+ #PSY .LINE CR
+  5     THEN
+  6   LOOP DROP ;
+  7 : PSY ( -- ) HOME 12 1 DO
+  8     I #CECHY .LINE CR
+  9   LOOP CR ." NAPISZ LICZBY:"
+ 10   CR WLASNOSCI
+ 11   CR CR CR ." TO MOZE BYC:"
+ 12   CR DAJ DROP ;
+ 13     ( .. 6 0 - RATLER 32 )
+ 14 ;S  ( .. 2 3 4 6 0 - FOKS. 46 )
+ 15 
+
+SCR # 58 
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
+SCR # 59 
+  0 ( EDIT - HELP ) -->
+  1 
+  2 Arrows, Insert, BckSpc: standard
+  3 Return: next line, Tab: tab (2)
+  4 Clear: clear screen (Shf> Ctl>)
+  5 Esc-Z: undo scrn chn (empty-buf)
+  6 Shf-Insert: insert whole line*
+  7 Shf-Delete: delete whole line*
+  8 Ctl-Insert: insert space
+  9 Ctl-BckSpc: delete;  Esc-0: cold
+ 10 Esc-R: rotate/sides; Esc-H: help
+ 11 Esc-N: next screen, save (flush)
+ 12 Esc-L: last screen, save (flush)
+ 13 Esc-S: save (flush) ; Esc-B: 4th
+ 14 Esc-Q: quit (empty-buf)
+ 15 Esc-V: put last deleted line
+
+SCR # 60 
+  0 ( EDIT - BY M. DOUGHERTY )       ( APX FORTH ONLY )
+  1 : TASK ; 752 CONSTANT CRSINH     59 CONSTANT #HLP
+  2 0  VARIABLE CLINE                0 VARIABLE CCHAR
+  3 3  VARIABLE LINEOFF              3 VARIABLE CHAROFF
+  4 18 CONSTANT TOP-BOT              2 CONSTANT REDGE
+  5 22 CONSTANT LEDGE                0 VARIABLE SIDE
+  6 17 VARIABLE EXTRAOFF             0 VARIABLE STOP
+  7 0  VARIABLE SAV-BUF  64 ALLOT
+  8 : EREAD 16 0 DO I SCR @ (LINE)   DROP
+  9   UPDATE DROP LOOP 0 CLINE !
+ 10   0 CCHAR ! 0 SIDE ! ;
+ 11 : CLS 125 EMIT ; : ECLEAR CLS 1  CRSINH C! ;
+ 12 : POINT-CURSOR 85 ! 84 C! ;
+ 13 : CURSOR@ CLINE @ LINEOFF @ +
+ 14   CCHAR @ SIDE @ IF 32 - ENDIF   CHAROFF @ + ;
+ 15 : CURSOR CURSOR@ POINT-CURSOR ;  -->
+
+SCR # 61 
+  0 ( EDIT - SCREEN-CURSOR, ..., 2TOP )
+  1 : SCREEN-CURSOR CURSOR@ SWAP 40 * + 106 C@ 256 *
+  2  960 - + DUP C@ 128 XOR SWAP C! ;
+  3 : HLINE 34 0 DO TOP-BOT EMIT LOOP ;
+  4 : LADDR CLINE @ SCR @ (LINE) DROP
+  5  SIDE @ IF 32 + ENDIF ;
+  6 : EADDR CLINE @ SCR @ (LINE) DROP
+  7  SIDE @ 0= IF 32 + ENDIF ;
+  8 : ELINE LEDGE EMIT LADDR 32 TYPE REDGE EMIT ;
+  9 : XLINE LEDGE EMIT EADDR 32 TYPE REDGE EMIT ;
+ 10 : WRITE-LINE CLINE @ LINEOFF @ + CHAROFF @ 1 -
+ 11  POINT-CURSOR ELINE ;
+ 12 : WRITE-EXTRA EXTRAOFF @ LINEOFF @ + CHAROFF @ 1 -
+ 13  POINT-CURSOR XLINE ; : FRE 741 @ HERE - 1024 / ;
+ 14 : 2TOP LINEOFF @ 1 - CHAROFF @ 1 -
+ 15  POINT-CURSOR HLINE ;  -->
+
+SCR # 62 
+  0 ( EDIT - DISPLAY, CASE )
+  1 : BOT LINEOFF @ 16 + CHAROFF @ 1 -
+  2  POINT-CURSOR HLINE ;
+  3 : ETITLE 0 CHAROFF @ POINT-CURSOR
+  4  ." EDIT / Dr" OFFSET @ 0= 0= . ." Scr" SCR ?
+  5  ." Side" SIDE ? ." / Free " FRE U. ; ( BUG? )
+  6 : DISPLAY ECLEAR ETITLE 2TOP CLINE @ 16 0 DO
+  7  I CLINE ! WRITE-LINE LOOP CLINE !
+  8  SIDE @ IF 32 ELSE 0 ENDIF CCHAR ! BOT
+  9  WRITE-EXTRA CURSOR SCREEN-CURSOR ;
+ 10 : CASES ?COMP CSP @ !CSP 4 ; IMMEDIATE
+ 11 : CASE 4 ?PAIRS COMPILE OVER COMPILE =
+ 12  COMPILE 0BRANCH HERE 0 , COMPILE DROP 5 ; IMMEDIATE
+ 13 : IS 5 ?PAIRS COMPILE BRANCH HERE 0 ,
+ 14  SWAP 2 [COMPILE] ENDIF 4 ; IMMEDIATE
+ 15 : ANYK CR ." (Return)" KEY DROP ; -->
+
+SCR # 63 
+  0 ( EDIT - CASE, MOVEMENT )
+  1 : CEND 4 ?PAIRS COMPILE DROP
+  2   BEGIN SP@ CSP @ = 0= WHILE
+  3   2 [COMPILE] ENDIF REPEAT
+  4   CSP ! ; IMMEDIATE
+  5 : MOVE-RIGHT CCHAR @ 1 + SIDE @ IF
+  6   DUP 64 = IF DROP 32 ENDIF ELSE
+  7   DUP 32 = IF DROP 0  ENDIF ENDIF
+  8   CCHAR ! ;
+  9 : RIGHT MOVE-RIGHT SCREEN-CURSOR ;
+ 10 : RIGHT-CURSOR SCREEN-CURSOR RIGHT ;
+ 11 : MOVE-LEFT CCHAR @ 1 - SIDE @ IF
+ 12  DUP 31 = IF DROP 63 ENDIF ELSE
+ 13  DUP -1 = IF DROP 31 ENDIF ENDIF
+ 14  CCHAR ! ;
+ 15 : LEFT MOVE-LEFT SCREEN-CURSOR ; -->
+
+SCR # 64 
+  0 ( EDIT - MOVEMENT, KEYJOY )
+  1 : LEFT-CURSOR SCREEN-CURSOR LEFT ;
+  2 : MOVE-UP CLINE @ 1 - 15 AND
+  3   CLINE ! WRITE-EXTRA ;
+  4 : EUP MOVE-UP SCREEN-CURSOR ;
+  5 : UP-CURSOR SCREEN-CURSOR EUP ;
+  6 : MOVE-DOWN CLINE @ 1 + 15 AND
+  7   CLINE ! WRITE-EXTRA ;
+  8 : DOWN MOVE-DOWN SCREEN-CURSOR ;
+  9 : DOWN-CURSOR SCREEN-CURSOR DOWN ;
+ 10 : RETURN SCREEN-CURSOR SIDE @ IF
+ 11   32 ELSE 0 ENDIF CCHAR ! DOWN ;
+ 12 : EABORT EMPTY-BUFFERS 1 STOP ! ;
+ 13 : KEYJOY 632 C@ CASES 15 CASE KEY IS
+ 14   11 CASE 30 IS 7 CASE 31 IS 14 CASE 28 IS
+ 15   13 CASE 29 IS CEND ; -->
+
+SCR # 65 
+  0 ( EDIT - REFORTH, SCREEN NAVG, HELP )
+  1 : SH CLS 0 CRSINH C! IN @ >R BLK @ >R 0 IN !
+  2   0 BLK ! CR QUERY INTERPRET R> BLK ! R> IN ! ANYK ;
+  3 : ENEXT FLUSH SCR @ 1 + SCR ! EREAD DISPLAY ;
+  4 : ELAST FLUSH SCR @ 1 - SCR ! EREAD DISPLAY ;
+  5 : ADDR CLINE @ SCR @ (LINE) DROP
+  6   CCHAR @ + ; #HLP VARIABLE HLPM ( BEFORE HLP )
+  7 : ADDKEY DUP ADDR C! CURSOR EMIT RIGHT ;
+  8 : CHANGE-SIDE SIDE @ 1 XOR SIDE ! DISPLAY ;
+  9 : INSERT-CHAR ADDR SWAP CCHAR @ -
+ 10   SWAP OVER + SWAP -DUP IF 0 DO
+ 11   DUP 1 - C@ OVER C! 1 - LOOP
+ 12   ENDIF BL SWAP C! ; : INSERT SIDE @ IF
+ 13   63 ELSE 31 ENDIF INSERT-CHAR WRITE-LINE
+ 14   CURSOR SCREEN-CURSOR ; : HLP SCR @ 70 = IF
+ 15   HLPM @ SCR ! ELSE SCR @ HLPM ! #HLP SCR ! ENDIF ; -->
+
+SCR # 66 
+  0 ( EDIT - DELETE, INSERT )
+  1 : DELETE-CHAR ADDR SWAP CCHAR @ -
+  2   -DUP IF 0 DO DUP 1 + C@ OVER C!
+  3   1 + LOOP ENDIF BL SWAP C! ;
+  4 : DELETE SIDE @ IF 63 ELSE 31 ENDIF
+  5   DELETE-CHAR WRITE-LINE CURSOR SCREEN-CURSOR ;
+  6 : L-A SCR @ (LINE) DROP ;
+  7 : DELETE-L CLINE @ L-A SAV-BUF 64 CMOVE
+  8   15 CLINE @ - IF 15 CLINE @ DO
+  9   I 1+ L-A I L-A 64 CMOVE LOOP ENDIF
+ 10   15 L-A 64 BLANKS ;
+ 11 : INSERT-L 15 CLINE @ - IF
+ 12   CLINE @ 15 DO I 1 - L-A I L-A 64 CMOVE
+ 13   -1 +LOOP ENDIF CLINE @ L-A 64 BLANKS ;
+ 14 : INSERT-LINE INSERT-L DISPLAY ;
+ 15 : DELETE-LINE DELETE-L DISPLAY ; -->
+
+SCR # 67 
+  0 ( EDIT - PUTLINE, TAB )
+  1 : PUT-LINE INSERT-L SAV-BUF CLINE @
+  2   L-A 64 CMOVE DISPLAY ;
+  3 : TAB 2 0 DO RIGHT-CURSOR LOOP ;
+  4 : DEL LEFT-CURSOR BL DUP ADDR C!
+  5   CURSOR EMIT SCREEN-CURSOR ;
+  6 : CLEAR-SCR 16 0 DO I L-A 64 BLANKS
+  7   LOOP DISPLAY ;
+  8 ( empty )
+  9 ( empty )
+ 10 ( empty )
+ 11 ( empty )
+ 12 ( empty )
+ 13 ( empty )
+ 14 ( empty )
+ 15 -->
+
+SCR # 68 
+  0 ( EDIT - COMMANDS )
+  1 : REVB 712 @ 128 XOR 712 ! ; ( CLR4 )
+  2 : ESC REVB KEY CASES
+  3   82 CASE CHANGE-SIDE IS ( R )   47 CASE CHANGE-SIDE IS ( / )
+  4   78 CASE ENEXT       IS ( N )   62 CASE ENEXT IS ( > )
+  5   76 CASE ELAST       IS ( L )   60 CASE ENEXT IS ( < )
+  6   83 CASE FLUSH       IS ( S )
+  7   81 CASE EABORT      IS ( Q )
+  8   86 CASE PUT-LINE    IS ( V )
+  9   90 CASE EMPTY-BUFFERS DISPLAY IS ( Z )
+ 10   66 CASE SH DISPLAY  IS ( B )
+ 11   48 CASE BOOT        IS ( 0 )   66 CASE SH DISPLAY  IS ( B )
+ 12   72 CASE HLP DISPLAY IS ( H )
+ 13   BEEP CEND REVB ;
+ 14 : DEPTH SP@ 12 +ORIGIN @ SWAP - 2 / ;
+ 15 : SETSCR DEPTH 0= IF #HLP ENDIF SCR ! ;  -->
+
+SCR # 69 
+  0 ( EDIT - MAIN, END. ) : EDIT ( n -- )
+  1 SETSCR EREAD DISPLAY 0 STOP ! BEGIN
+  2   KEYJOY CASES 27 CASE ESC IS
+  3   28  CASE UP-CURSOR    IS
+  4   29  CASE DOWN-CURSOR  IS
+  5   31  CASE RIGHT-CURSOR IS
+  6   30  CASE LEFT-CURSOR  IS
+  7   155 CASE RETURN       IS
+  8   255 CASE INSERT       IS
+  9   254 CASE DELETE       IS
+ 10   157 CASE INSERT-LINE  IS
+ 11   156 CASE DELETE-LINE  IS
+ 12   126 CASE DEL IS 127 CASE TAB IS
+ 13   125 CASE CLEAR-SCR IS
+ 14 DUP ADDKEY CEND STOP @ UNTIL
+ 15 125 EMIT 0 CRSINH ! ; : /EDIT ; ;S
+
+SCR # 70 
+  0 ( RAGSDALE ASSEMBLER )
+  1 VOCABULARY ASSEMBLER IMMEDIATE ASSEMBLER DEFINITIONS BASE @ HEX
+  2 
+  3 0 VARIABLE INDEX -2 ALLOT 0909 , 1505 , 0115 , 8011 , 8009 ,
+  4 1D0D , 8019 , 8080 , 0080 , 1404 , 8014 , 8080 , 8080 ,
+  5 1C0C , 801C , 2C80 ,
+  6 2 VARIABLE MODE : .A 0 MODE ! ; : # 1 MODE ! ; : MEM 2 MODE ! ;
+  7 : ,X 3 MODE ! ; : ,Y 4 MODE ! ; : X) 5 MODE ! ; : )Y 6 MODE ! ;
+  8 : ) F MODE ! ; : BOT ,X 0 ; : SEC ,X 2 ; : RP) ,X 101 ;
+  9 : UPMODE IF MODE @ 8 AND 0= IF 8 MODE +! THEN THEN
+ 10 1 MODE @ F AND -DUP IF 0 DO DUP + LOOP THEN OVER 1+ @ AND 0= ;
+ 11 : CPU <BUILDS C, DOES> C@ C, MEM ;
+ 12 00 CPU BRK, 18 CPU CLC, D8 CPU CLD, 58 CPU CLI, B8 CPU CLV,
+ 13 CA CPU DEX, 88 CPU DEY, E8 CPU INX, C8 CPU INY, EA CPU NOP,
+ 14 48 CPU PHA, 08 CPU PHP, 68 CPU PLA, 28 CPU PLP, 40 CPU RTI,
+ 15 60 CPU RTS, 38 CPU SEC, F8 CPU SED, 78 CPU SEI, AA CPU TAX, -->
+
+SCR # 71 
+  0 ( RAGSDALE ASSEMBLER )
+  1 A8 CPU TAY, BA CPU TSX, 8A CPU TXA, 9A CPU TXS, 98 CPU TYA,
+  2 : MCP <BUILDS C, , DOES> DUP 1+ @ 80 AND IF 10 MODE +! THEN
+  3 OVER FF00 AND UPMODE UPMODE IF MEM CR LATEST ID. 3 ERROR THEN
+  4 C@ MODE C@ INDEX + C@ + C, MODE C@ 7 AND IF MODE C@ F AND 7 <
+  5 IF C, ELSE , THEN THEN MEM ;
+  6 1C6E 60 MCP ADC, 1C6E 20 MCP AND, 1C6E C0 MCP CMP,
+  7 1C6E 40 MCP EOR, 1C6E A0 MCP LDA, 1C6E 00 MCP ORA,
+  8 1C6E E0 MCP SBC, 1C6C 80 MCP STA, 0D0D 01 MCP ASL,
+  9 0C0C C1 MCP DEC, 0C0C E1 MCP INC, 0D0D 41 MCP LSR,
+ 10 0D0D 21 MCP ROL, 0D0D 61 MCP ROR, 0414 81 MCP STX,
+ 11 0486 E0 MCP CPX, 0486 C0 MCP CPY, 1496 A2 MCP LDX,
+ 12 0C8E A0 MCP LDY, 048C 80 MCP STY, 0480 14 MCP JSR,
+ 13 8480 40 MCP JMP, 0484 20 MCP BIT,
+ 14 : BEGIN, HERE 1 ; IMMEDIATE
+ 15 : UNTIL, ?EXEC >R 1 ?PAIRS R> C, HERE 1+ - C, ; IMMEDIATE -->
+
+SCR # 72 
+  0 ( RAGSDALE ASSEMBLER )
+  1 : IF, C, HERE 0 C, 2 ; IMMEDIATE
+  2 : THEN, ?EXEC 2 ?PAIRS HERE OVER C@ IF SWAP ! ELSE OVER 1+
+  3 - SWAP C! THEN ;  IMMEDIATE
+  4 : ELSE, 2 ?PAIRS HERE 1+ 1 JMP, SWAP HERE OVER 1+ - SWAP C!
+  5 2 ;  IMMEDIATE
+  6 : NOT 20 + ;
+  7 90 CONSTANT CS D0 CONSTANT 0= 10 CONSTANT 0< 90 CONSTANT >=
+  8 : END-CODE CURRENT @ CONTEXT ! ?EXEC ?CSP SMUDGE ;  IMMEDIATE
+  9 ( NOTE: alternative to END-CODE could be C; or ;C )
+ 10 FORTH DEFINITIONS DECIMAL
+ 11 : CODE ?EXEC CREATE [COMPILE] ASSEMBLER ASSEMBLER MEM !CSP ;
+ 12 IMMEDIATE
+ 13 ' ASSEMBLER CFA ' ;CODE 8 + ! LATEST 12 +ORIGIN !
+ 14 HERE 28 +ORIGIN ! HERE 30 +ORIGIN ! HERE FENCE !
+ 15 ' ASSEMBLER 6 + 32 +ORIGIN !     BASE ! FORTH ;S
+
+SCR # 73 
+  0 ( EDYTOR-FORTH /Roland Pantola ) ( [c] 1992 Tajemnice Atari )
+  1 : TASK ; : MAC  -FIND 0= 0 ?ERROR DROP 32 C, , ; IMMEDIATE
+  2 : <=< OVER > >R < R> * ; ASSEMBLER DEFINITIONS : C; CURRENT
+  3 @ CONTEXT ! ?EXEC ?CSP SMUDGE ;  IMMEDIATE  FORTH DEFINITIONS
+  4 0 VARIABLE #GGE : GGE #GGE @ ;  129 #GGE !    CODE INSTR
+  5 3 ,X LDA, XSAVE 3 + STA,        2 ,X LDY,
+  6 0= IF, XSAVE 3 + DEC,           THEN, DEY, XSAVE 2+ STY,
+  7 0 ,X LDY, 4 ,X LDA,             BEGIN, XSAVE 2+ )Y CMP,
+  8 0= NOT IF, DEY, THEN,           0= UNTIL, 4 ,X STY,
+  9 POPTWO JMP, C;                  ( A ADR DLU --- NR )
+ 10 : SELECT <BUILDS SMUDGE ] DOES> SWAP 2 * + @ EXECUTE ;
+ 11 : % COMPILE CLIT BL WORD HERE   NUMBER DROP -1 OVER 256 <=< 0=
+ 12 IF CR ." Error: % " DUP .       ENDIF C, ;
+ 13 IMMEDIATE                       0 VARIABLE #C 2 ALLOT
+ 14 64 #C C!                        0 #C 1+ C!
+ 15 32 #C 2+ C!                     96 #C 3 + C! -->
+
+SCR # 74 
+  0 ( EDYTOR-FORTH c.d. )
+  1 CODE CMOVE> 2 ,X LDA, XSAVE 2+  STA, 4 ,X LDA, XSAVE 4 + STA,
+  2 1 ,X LDA, CLC, 5 ,X ADC,        XSAVE 5 + STA, 1 ,X LDA,
+  3 CLC, 3 ,X ADC, XSAVE 3 + STA,   BEGIN, 0 ,X LDY,
+  4 BEGIN, DEY, XSAVE 4 + )Y LDA,   XSAVE 2+ )Y STA, 0 # CPY, 0=
+  5 UNTIL, XSAVE 5 + DEC, XSAVE     3 + DEC, 0 ,X LDA, 0= IF,
+  6 1 ,X LDA, 0= NOT                IF, 1 ,X DEC, THEN, THEN,
+  7 0 # LDA, 0 ,X STA,              1 ,X LDA, 0= UNTIL,
+  8 INX, INX, XSAVE STX, POPTWO     JMP, C;
+  9                                 CODE ASC-PEEK XSAVE STX,
+ 10 2 ,X LDA, XSAVE 2+ STA,         3 ,X LDA, XSAVE 3 + STA,
+ 11 0 ,X LDY,                       BEGIN, DEY, XSAVE 2+ )Y LDA,
+ 12 96 # AND, .A LSR, .A LSR,       .A LSR, .A LSR, .A LSR, TAX,
+ 13 XSAVE 2+ )Y LDA,                255 96 - # AND, #C ,X ORA,
+ 14 XSAVE 2+ )Y STA, 0 # CPY,       0= UNTIL, XSAVE LDX,
+ 15 POPTWO JMP, C;  -->
+
+SCR # 75 
+  0 ( EDYTOR-FORTH c.d. )
+  1 : PEEK-ASC OVER OVER 2 0        DO ASC-PEEK LOOP ;
+  2 ( ADDR DLU --- )                4 VARIABLE XPOS 4 VARIABLE YPOS
+  3 : XPOS@ XPOS @ ;                : YPOS@ YPOS @ ;
+  4 : POSE YPOS ! XPOS ! ;          48 CONSTANT ZERO
+  5 : X! % 85 ! ; : Y! % 84 C! ;    : X@ % 85 @ ; : Y@ % 84 C@ ;
+  6 : POS Y! X! ;                   : 0.R ' ZERO CFA ' SPACE ! .R
+  7 ' BL CFA ' SPACE ! ;            : BEEP 253 EMIT ;
+  8                                 VOCABULARY EDITOR IMMEDIATE
+  9 EDITOR DEFINITIONS              : #DLE [ 112 C, 66 C, 48032 ,
+ 10 2 C, 2 C, 2 C, 2 C, 2 C, 2 C,   2 C, 2 C, 2 C, 2 C, 2 C, 2 C, 2
+ 11 C, 2 C, 2 C, 2 C, 2 C, 2 C, 2   C, 2 C, 2 C, 2 C, 2 C, 2 C, 2
+ 12 C, 2 C, 2 C, 65 C, 47998 , ] ;  : #SCR? 0 % 10 POS ." SCR"
+ 13   0 % 12 POS SCR @ 3 0.R ;      : ADBUFF HERE 260 + ;
+ 14 : LBUFF ADBUFF 2 - ;            : CZYBUFF ADBUFF % 4 -
+ 15 @ 31886 = ;                     -->
+
+SCR # 76 
+  0 ( EDYTOR-FORTH c.d. )
+  1 : #BUFF? CZYBUFF IF LBUFF       @ ELSE 0 ADBUFF 2 - ! 31886
+  2 ADBUFF 4 - ! 0 ENDIF 0 % 16 POS ." BUF" 0 % 18 POS % 3 0.R ;
+  3 : #DISPE ' #DLE 47998 % 34      CMOVE 47998 560 ! 48032 % 88 !
+  4 ; : #RAMKA % 125 EMIT % 88 @    % 28 0 DO DUP I % 40 * + % 3 +
+  5 % 124 SWAP OVER OVER % 33 + ! ! LOOP DROP #SCR? #BUFF? ;
+  6 0 VARIABLE #LINIA0              : #W# SCR @ B/SCR * DUP B/SCR +
+  7 SWAP ; : #WEJ #W# DO I          BLOCK % 128 ASC-PEEK LOOP ;
+  8 : #WYJ #W# DO I BLOCK % 128     PEEK-ASC LOOP ;
+  9 48036 CONSTANT ADE: : ADLINE    % 40 * ADE: + ;
+ 10 : #KP SWAP OVER OVER 1 - C!     OVER OVER 32 + C! DROP DROP ;
+ 11 : KK? ADLINE % 84 #KP ;         : PP? ADLINE % 124 #KP ;
+ 12 : #LIN# DUP % 4 /MOD SCR @      B/SCR * + BLOCK SWAP % 32 * +
+ 13 SWAP ADLINE #LINIA0 @ % 40 * -  ; : LIN-E: #LIN# % 32 CMOVE ;
+ 14 : EK-E: #LINIA0 @ DUP % 28 +    SWAP DO I LIN-E: LOOP ;
+ 15 : LIN-BUF #LIN#  SWAP % 32      CMOVE ; -->
+
+SCR # 77 
+  0 ( EDYTOR-FORTH c.d. )
+  1 : EK-BUF #LINIA0 @ DUP % 28 +   SWAP DO I LIN-BUF LOOP ;
+  2 : E:V ADLINE DUP % 40 - % 26    ADLINE DO I DUP % 40 + % 32
+  3 CMOVE -40 +LOOP % 32 ERASE ;
+  4 : E:^ ADLINE % 40 +             % 28 ADLINE
+  5 SWAP DO I DUP % 40 - % 32       CMOVE % 40 +LOOP % 27 ADLINE
+  6 % 32 ERASE ;
+  7 : LINB #LINIA0 @ + ;            : E: ADE: % 4 -
+  8 XPOS@ + YPOS@                   % 40 * + ; : E:@ E: C@ ;
+  9 : E:! E: C! ;
+ 10 : #KUR E:@ DUP % 127 >          IF % 128
+ 11 - ELSE % 128 +                  ENDIF E:! ;
+ 12                                 : &PP
+ 13 POSE #LINIA0 @ DUP 0=           IF 0 KK? ELSE 0 PP? ENDIF
+ 14 % 4 = IF % 27 KK? ELSE % 27     PP? ENDIF ;
+ 15                                 -->
+
+SCR # 78 
+  0 ( EDYTOR-FORTH c.d. )
+  1 : #POS SWAP DUP % 4 < IF DROP   % 35 SWAP % 1 - SWAP ENDIF
+  2 DUP % 35 > IF DROP % 4 SWAP     1+ SWAP ENDIF SWAP
+  3 DUP 0 < IF #LINIA0 @ IF % 27    LINB LIN-BUF
+  4 -1 #LINIA0 +! 0 E:V 0 LINB      LIN-E: DROP 0
+  5 ELSE DROP % 27 ENDIF ENDIF      DUP % 27 > IF #LINIA0 @ 4 =
+  6 IF DROP 0 ELSE                  0 LINB LIN-BUF 1 #LINIA0 +! 0
+  7 E:^ % 27 LINB LIN-E:            DROP % 27 ENDIF ENDIF &PP ;
+  8 : #PISZ DUP SP@ 1 ASC-PEEK #KUR E:! XPOS@ 1+ YPOS@ #POS #KUR ;
+  9 : #KXY@ #KUR XPOS@ YPOS@ ;      : #PK #POS #KUR ;
+ 10 : ?< #KXY@ SWAP 1 - SWAP #PK ;  : ?> #KXY@ SWAP 1+ SWAP #PK ;
+ 11 : ?^ #KXY@ 1 - #PK ;            : ?V #KXY@ 1+ #PK ;
+ 12 : #RET #KXY@ 1+ SWAP DROP % 4     SWAP #PK 0 LBUFF ! #BUFF? ;
+ 13 : #COF #KXY@ SWAP 1 - SWAP #POS 0 E:! #KUR ; : BFREE 430 LBUFF
+ 14 @ % 32 * + 471 @ HERE - U< ;    : >BUFF YPOS@ ADLINE ADBUFF
+ 15 LBUFF @ % 32 * + % 32 CMOVE     1 LBUFF +! #BUFF? ; -->
+
+SCR # 79 
+  0 ( EDYTOR-FORTH c.d. )
+  1 0 VARIABLE #CM 67 ALLOT         : #BU# % 28 #LIN# DROP DUP
+  2 % 32 + % 96 ;                   : #EB# % 27 ADLINE % 28 LINB
+  3 #LIN# DROP ;                    : BUFV #BU#  CMOVE> ;
+  4                                 : BUF^ #BU# OVER >R >R SWAP R>
+  5 CMOVE R> % 64 + % 32 ERASE ;    : XSP DO I C@ 0= 0= IF DROP I
+  6 LEAVE ENDIF LOOP ;
+  7 : OSTLIN #LINIA0 @ % 4 = IF 0   % 27 ADLINE DUP % 32 +
+  8 SWAP XSP ELSE 0 % 31 #LIN#      DROP DUP % 32 + SWAP XSP
+  9 ENDIF 0= ;
+ 10 : #^^ BFREE IF #KUR >BUFF       YPOS@ E:^ #LINIA0 @
+ 11 % 4 < IF #EB# SWAP % 32         CMOVE ENDIF BUF^ #KUR
+ 12 ELSE BEEP BEEP ENDIF ;
+ 13 : #VV OSTLIN IF                 #KUR BUFV #LINIA0 @ % 4 <
+ 14 IF #EB# % 32 CMOVE ENDIF        YPOS@ E:V #KUR ELSE BEEP
+ 15 ENDIF ;                         -->
+
+SCR # 80 
+  0 ( EDYTOR-FORTH c.d. )
+  1 : #<BF OSTLIN IF LBUFF @ IF #VV -1 LBUFF +! ADBUFF LBUFF @
+  2 32 * + YPOS@ ADLINE % 32        CMOVE #BUFF? #KUR ENDIF ELSE
+  3 BEEP ENDIF ;                    : X#CM #CM XPOS@ + % 4 - ;
+  4 : XSPAC #CM % 63 + DUP X#CM     XSP #CM % 64 + DUP ROT
+  5 DO I C@ 0= I 1+ C@              0= * IF DROP I LEAVE
+  6 ENDIF LOOP X#CM - ;             : <#CM> YPOS@ #LINIA0 @ XPOS@
+  7 YPOS@ 1+ #POS #LINIA0 @ = 0=    - YPOS !
+  8 YPOS@ ADLINE #CM OVER OVER      YPOS@ % 27 < IF SWAP % 40
+  9 + SWAP % 32 + ENDIF ;           : 32CM % 32 CMOVE ;
+ 10 : >#CM  #KUR <#CM> #CM 66       ERASE 32CM 32CM ;
+ 11 : <#CM <#CM> SWAP 32CM SWAP     32CM #KUR ;
+ 12 : #>> >#CM XSPAC #CM % 63 +     C@ 0= OVER X#CM + #CM - % 63
+ 13 < + IF X#CM DUP 1+ ROT          CMOVE> 0 X#CM C! ELSE BEEP
+ 14 DROP ENDIF <#CM ;               : #<< >#CM X#CM 1+ DUP 1 -
+ 15 XSPAC CMOVE <#CM ;              -->
+
+SCR # 81 
+  0 ( EDYTOR-FORTH -- )
+  1 : #DUP DUP DUP % 127 >          IF % 128 - ENDIF ;
+  2 : ESC DROP KEY #DUP BL = IF     DROP 300 ELSE #PISZ ENDIF ;
+  3 : #KLA0 [ 27 C, 28 C, 29 C, 30  C, 31 C, 155 C, 126 C, 254 C,
+  4 255 C, 156 C, 157 C, 127 C,     ] ;
+  5 : #NR-KLAW ' #KLA0 % 12 INSTR ;
+  6 SELECT #WYB0 #PISZ ESC ?^ ?V ?< ?> #RET #COF #<< #>> #^^ #VV
+  7 #<BF ;                          FORTH DEFINITIONS
+  8 : (E) EDITOR  #WEJ              1 752 C! #DISPE #RAMKA
+  9 XPOS@ YPOS@ #POS                EK-E: #KUR
+ 10 BEGIN                           KEY DUP #NR-KLAW #WYB0
+ 11 300 = UNTIL                     #KUR EK-BUF #WYJ FORTH ;
+ 12                                 : EXFO % 125 EMIT % 80 % 88 +!
+ 13 ." FORTH" CR 0 752 C! ;         : CLEAR % 16 0 DO I SCR @
+ 14 (LINE) DROP C/L BLANKS UPDATE   LOOP ;
+ 15 ( END ) -->
+
+SCR # 82 
+  0 ( ED-DYSK )
+  1 : MARK SCR @ % 8 * % 8 0 DO I   OVER + BLOCK DROP UPDATE
+  2 LOOP DROP ;                     : E. (E) EXFO ;
+  3 : L. SCR ! E. ;                 : F. MARK FLUSH ;
+  4 : INDE EMPTY-BUFFERS            GGE SWAP GGE 1 - MIN
+  5 DO I 8 * BLOCK 32 -TRAILING     OVER @ DUP 8224 = 0= * IF CR
+  6 I . SPACE TYPE ELSE 2DROP ENDIF ?TERMINAL IF LEAVE ENDIF
+  7 LOOP EMPTY-BUFFERS ;            : IND 1 INDE ;
+  8 CR ." EDYTOR-FORTH: screen L." CR
+  9 ( END ) ;S
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
+SCR # 83 
+  0 ( 1/1 VECTORED EX )
+  1 ( adapted from: FD V/4/P17 )
+  2 : TASK ; 0 VARIABLE 'param
+  3 : WHO 'param @ CFA EXECUTE ;
+  4 : WELCOME CR ." HELLO, DEAR "
+  5   WHO ." !" ;
+  6 : DEFAULT ; ' DEFAULT 'param !
+  7 : BARTOSZ  ." BARTOSZ" ;
+  8 : MATYLDA  ." MATYLDA"  ;
+  9 CR WELCOME
+ 10 CR ' BARTOSZ 'param ! WELCOME
+ 11 CR ' MATYLDA 'param ! WELCOME
+ 12 CR ;S
+ 13 
+ 14 
+ 15 
+
+SCR # 84 
+  0 ( "Blinking Characters" RM COMPUTE 12/81 )
+  1 ( "39 LOAD" from APX floppy to load Mullarky's ASM )
+  2 HEX : TASK ; CODE Blink ( -- )
+  3   02F3 LDA,  2 # AND, 2 #  EOR,
+  4   02F3 STA, 15 # LDA, 021A STA,
+  5 RTS,
+  6 CODE BlinkStart ( -- )
+  7   15 # LDA, 021A STA,
+  8 NEXT JMP,
+  9 : BlinkInit ( -- ) ' Blink 228 ! ;
+ 10 : BlinkCursor ( -- ) BlinkInit BlinkStart ; DECIMAL ;S
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+
+SCR # 85 
+  0 ( 1/2 GoesInto - Decomp by RDA - APX only? )
+  1 ( -- Forth Dimension Vol14 Nr2 )
+  2 : TASK ; 0 VARIABLE GIN
+  3 : MYSELF LATEST PFA CFA , ; IMMEDIATE
+  4 : GIN+ CR GIN @ 2+ DUP GIN ! SPACES ;
+  5 : GCHK DUP @ 2+ ' COMPILE =
+  6   IF  2+ DUP @ 2+ NFA ID. 2+
+  7   ELSE DUP @ 2+ DUP ' LIT =
+  8   OVER ' BRANCH  = OR OVER ' 0BRANCH = OR
+  9   OVER ' (LOOP)  = OR SWAP ' (+LOOP) = OR
+ 10   IF 2+ DUP @ SPACE . 2+ ELSE DUP @ 2+ ' CLIT =
+ 11   IF 2+ DUP C@ SPACE . 1+ ELSE DUP @ 2+
+ 12   ' (.") = IF 2+ DUP COUNT TYPE
+ 13   DUP C@ 1+ + ELSE 2+ THEN THEN THEN THEN
+ 14   -2 GIN +! ;
+ 15 : DIN CR GIN @ SPACES ; -->
+
+SCR # 86 
+  0 ( 2/2 Use: "GOIN x" RET/SPC/Q )
+  1 : (GOESINTO) DUP CFA @ ' : CFA
+  2   @ = OVER ' ERROR = 0= AND
+  3   IF BEGIN DUP @ DUP ' ;S CFA =
+  4     OVER ' (;CODE) CFA = OR 0=
+  5   WHILE 2+ DUP GIN+ NFA ID. KEY
+  6     DUP 81 = IF SP! QUIT ELSE 155 =
+  7     IF MYSELF ELSE DROP THEN THEN
+  8     GCHK REPEAT 2+ DIN NFA ID.
+  9   THEN DROP ; ( 81=Q, 155=RETURN )
+ 10 : GOESINTO -FIND IF DROP 0 GIN !
+ 11   (GOESINTO) ELSE ." NOT FOUND" CR THEN ;
+ 12 
+ 13 : GOIN GOESINTO ;
+ 14 
+ 15 ;S
+
+SCR # 87 
+  0 
+  1 
+  2 
+  3 
+  4 
+  5 
+  6 
+  7 
+  8 
+  9 
+ 10 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+

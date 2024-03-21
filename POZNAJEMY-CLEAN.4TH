@@ -107,9 +107,9 @@ DECIMAL CR
 EDITOR
 
 PREPARE 
-Q ( 1/2 FIG-EDITOR, SUBSET -- FD III/2 P.40 ) CR CR SPACE BASE @ 
-Q SPACE : HEX DECIMAL 5 712 ! HEX ; :  DECIMAL DECIMAL 0 712 ! ; 
-Q HEX : TEXT HERE C/L 1+ BLANKS WORD HERE PAD C/L 1+ CMOVE ;
+Q ( 1/2 FIG-EDITOR, SUBSET... )        CR CR SPACE BASE @ 
+Q : HEX DECIMAL 5 712 ! HEX ; :  DECIMAL DECIMAL 0 712 ! ; HEX
+Q : TEXT HERE C/L 1+ BLANKS WORD HERE PAD C/L 1+ CMOVE ;
 Q : LINE DUP FFF0 AND 17 ?ERROR SCR @ (LINE) DROP ; : MARK 10 0 
 Q   DO I LINE UPDATE DROP LOOP ; VOCABULARY EDITOR IMMEDIATE
 Q : WHERE DUP B/SCR / DUP SCR ! ." SCR # " DECIMAL .
@@ -125,21 +125,22 @@ Q : CLEAR  SCR ! 10 0 DO FORTH I EDITOR E LOOP ; -->
 
 
 PREPARE
-Q ( 2/2 FIG-EDITOR, SEARCH [FD VOL03 NR1 /WFR] )
+Q ( 2/2 FIG-EDITOR, SEARCH [FD VOL03 NR1 /WFR], .CC FDV03NR1/KH )
 Q : COPY   B/SCR * OFFSET @ + SWAP    B/SCR * B/SCR OVER + SWAP
 Q   DO DUP FORTH I BLOCK 2 - ! 1+ UPDATE LOOP DROP FLUSH ; 
 Q CR ." Fig-Editor subset loaded." CR DECIMAL FORTH DEFINITIONS
 Q DECIMAL LATEST 12 +ORIGIN !  HERE 28 +ORIGIN ! HERE 30 
 Q +ORIGIN ! ' EDITOR 6 + 32 +ORIGIN ! HERE FENCE ! BASE ! 
+Q : (I @ 4 - NFA ID. ; : .CON CONTEXT (I ; : .CUR CURRENT (I ; 
 Q 0 VARIABLE SRCHCNT : BUMP 1 SRCHCNT +! SRCHCNT @ 56
 Q   > IF 0 SRCHCNT ! CR THEN ; : SEARCH ( FROM TO -- STRING )
 Q   CR 01 TEXT 0 SRCHCNT ! 1+ SWAP DO FORTH I SCR ! EDITOR TOP
 Q   BEGIN 1LINE IF 0 M SCR ? BUMP THEN    1023 R# @ < UNTIL 
-Q   LOOP ;
-Q : (LINE/2) >R C/L 2 / B/BUF */MOD R> B/SCR * + BLOCK + C/L
-Q    2 / ; : LI CR ( N -- ) SCR ! 32 0 DO CR I SCR @ (LINE/2)
-Q    -TRAILING TYPE LOOP CR ." === SCR#" SCR ? CR CR ;
-Q CR ." SEARCH loaded, try: 16 18 SEARCH KOT" CR CR ;S
+Q   LOOP ; : (LINE/2) >R C/L 2 / B/BUF */MOD R> B/SCR * + BLOCK +
+Q   C/L 2 / ; : LI CR ( N -- ) SCR ! 32 0 DO CR I SCR @ (LINE/2)
+Q   -TRAILING TYPE LOOP CR ." === SCR#" SCR ? CR CR ; CR
+Q ." SEARCH loaded, try: 16 18 SEARCH KOT" CR CR ; ;S
+
    
 ( skip error screens 14-15, move to 16  )
 
@@ -147,7 +148,7 @@ Q CR ." SEARCH loaded, try: 16 18 SEARCH KOT" CR CR ;S
 
 PREPARE ( scr 16 )
 Q ( ** Poznajemy FORTH 1/2 ** )       ;S
-Q #12 Fig-EDIT/MINI, SEARCH           fig/fd III/2/p40[2]
+Q #12 Fig-EDIT subset, SEARCH, ...    fig/fd III/2/p40[2]
 Q #18 KOT, NAPIS, KWADRATY            pF 2.1-3.4.3    [1]
 Q #19 2DUP, 2DROP, ... DUMP[debug]    pF 3.5-4        [1]
 Q #20 PRZEDZIAL, FIBO, ...            pF 3.5-5.5      [1]
@@ -159,8 +160,8 @@ Q #26 SILNIA, SILNIA2, ...            pF              [1]
 Q #27 ARRAY, 2DARRAY                  pF              [1]
 Q #28 MATDEF /valFORTH                pF              [1]
 Q #29 ARRAY2, ARRAY3 [JB]             pF              [1]
-Q #30 SETNE, SEXTAL, X, ...           pF              [1]
-Q #31 DBL - D*, FIX, F., ...          pF              [2]
+Q #30 SETNE, SEXTAL, XX, SEK          pF              [1]
+Q #31 DBL - D*, FIX, F., ..., D=      pF              [2]
 															     
 PREPARE                                                          
 Q ( ** Poznajemy FORTH 2/2 ** )       ;S
@@ -170,14 +171,15 @@ Q #39 ZESPOLONE                       pF              [1]
 Q #40 FUNKCJE                         pF              [2]
 Q #42 LIFE                            pF              [5]
 Q #47 SORTOWANIE                      pF              [7]
-Q #54 PSY                             pF              [4] <<!
-Q #57 GOIN decompiler                 fd vol14/nr2    [2]
-Q #59 EDIT /M.Dougherty  (or: #60)    micro 57/feb/83 [9]
+Q #54 PSY                             pF              [4]
+Q #58 (empty)                         --              [1]
+Q #59 EDIT /M.Dougherty  (or: #60)    micro 57/feb/83 [b]
 Q #70 RAGSDALE ASSEMBLER   [asmWR]    fig             [3]
-Q #73 EDIT /R.Pantola    re:asmWR     ta              [9]
+Q #73 EDIT /R.Pantola    re:asmWR     ta              [a]
 Q #83 VECTORED EXEC exmpl             fd v4p17&v3nr1  [1]
-Q #84 DIS disassembler                antic 3/84      [5]
-Q #89 BLINKING asm exmpl re:asmPM     compute 12/81   [1]
+Q #84 BLINKING asm exmpl re:asmPM     compute 12/81   [1]
+Q #85 GOIN decompiler                 fd vol14/nr2    [2]
+Q #87 (empty)                         --              [2]
 
 PREPARE ( scr 18 )
 Q ( 1/1 KOT, NAPIS, KWADRATY  )
@@ -208,7 +210,7 @@ Q    R> ( n3 n4 n1 n2 n5 )            ( – przenosi z powrotem n5 )
 Q    R> ( n3 n4 n1 n2 n5 n6 )         ( – przenosi z powrotem n6 )
 Q    2SWAP ; ( n3 n4 n5 n6 n1 n2 )    ( – zamiana wykonana! )
 Q ;S
-Q ( *** DUMP-INDEX: req. DEBUG )
+Q ( *** DUMP-INDEX: req. APX DEBUG )
 Q : DUMP-INDEX ' INDEX NFA ' TRIAD    
 Q   NFA OVER - DUMP ;         
 Q ( HEX DUMP-INDEX DECIMAL ) ;S
@@ -758,7 +760,6 @@ Q POCZATEK 4 0 QUICKSORT CR
 Q ." QUICKSORT: " CR POKAZ CR ;S
 
 
-
 54 DUP CLEAR SCR !
 0 P ( 1/4 PSY RASOWE ) -->
 1 P bokser 165
@@ -823,42 +824,7 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 
 ( TODO: nie znajduje foksa! )
 
-57 CLEAR
- 0 P ( 1/2 GoesInto - Decomp by RDA - APX only? )
- 1 P ( -- Forth Dimension Vol14 Nr2 )
- 2 P : TASK ; 0 VARIABLE GIN 
- 3 P : MYSELF LATEST PFA CFA , ; IMMEDIATE
- 4 P : GIN+ CR GIN @ 2+ DUP GIN ! SPACES ;
- 5 P : GCHK DUP @ 2+ ' COMPILE =
- 6 P   IF  2+ DUP @ 2+ NFA ID. 2+
- 7 P   ELSE DUP @ 2+ DUP ' LIT =
- 8 P   OVER ' BRANCH  = OR OVER ' 0BRANCH = OR
- 9 P   OVER ' (LOOP)  = OR SWAP ' (+LOOP) = OR
-10 P   IF 2+ DUP @ SPACE . 2+ ELSE DUP @ 2+ ' CLIT =
-11 P   IF 2+ DUP C@ SPACE . 1+ ELSE DUP @ 2+ 
-12 P   ' (.") = IF 2+ DUP COUNT TYPE 
-13 P   DUP C@ 1+ + ELSE 2+ THEN THEN THEN THEN 
-14 P   -2 GIN +! ; 
-15 P : DIN CR GIN @ SPACES ; -->
-
-58 CLEAR
- 0 P ( 2/2 Use: "GOIN x" RET/SPC/Q ) 
- 1 P : (GOESINTO) DUP CFA @ ' : CFA 
- 2 P   @ = OVER ' ERROR = 0= AND
- 3 P   IF BEGIN DUP @ DUP ' ;S CFA =
- 4 P     OVER ' (;CODE) CFA = OR 0=
- 5 P   WHILE 2+ DUP GIN+ NFA ID. KEY 
- 6 P     DUP 81 = IF SP! QUIT ELSE 155 =
- 7 P     IF MYSELF ELSE DROP THEN THEN
- 8 P     GCHK REPEAT 2+ DIN NFA ID.
- 9 P   THEN DROP ; ( 81=Q, 155=RETURN )
-10 P : GOESINTO -FIND IF DROP 0 GIN !
-11 P   (GOESINTO) ELSE ." NOT FOUND" CR THEN ;
-12 E
-13 P : GOIN GOESINTO ; 
-14 E
-15 P ;S 
-
+58 CLEAR ( purposefully empty )
 
 59 CLEAR ( CONST #HLP = 59 )
   0 P ( EDIT - HELP ) -->
@@ -1290,7 +1256,7 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
   
  
 83 CLEAR
- 0 P ( 1/1 VECTORED EX, .CON/.CUR )
+ 0 P ( 1/1 VECTORED EX )
  1 P ( adapted from: FD V/4/P17 )
  2 P : TASK ; 0 VARIABLE 'param
  3 P : WHO 'param @ CFA EXECUTE ;
@@ -1302,104 +1268,10 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
  9 P CR WELCOME
 10 P CR ' BARTOSZ 'param ! WELCOME
 11 P CR ' MATYLDA 'param ! WELCOME
-12 P CR ;S ( CON/CUR FD V03NR1/KH )
-13 P       : (.I) @ 4 - NFA ID. ;  
-14 P       : .CON CONTEXT (.I) ;
-15 P       : .CUR CURRENT (.I) ; 
+12 P CR ;S
 
 
 84 CLEAR
-   0 P ( 1/5 FORTH DISASSEMBLER ) HEX : TASK ;
-   1 P   0 VARIABLE POINTER 0 VARIABLE MULTIMODE 
-   2 P   -2 ALLOT 1D , 1E , 3C , 3D , 3E , 5C , 
-   3 P   5D , 5E , 7D , 7E , 9C , 9D ,
-   4 P   9E , BC , BD , BE , DC , DD ,
-   5 P   DE , FC , FD , FE ,
-   6 P : SEEKD 1 + 0 DO OVER OVER I 2
-   7 P   * + C@ - DUP 0= IF DROP
-   8 P   DROP DROP I 1 LEAVE ELSE  
-   9 P   0 < IF DROP DROP I 0 LEAVE   
-  10 P   ENDIF ENDIF LOOP ;   
-  11 P : STRING ( COMPILE TEXT )    
-  12 P   BL BLK @ IF BLK @ BLOCK ELSE
-  13 P   TIB @ ENDIF IN @ + SWAP
-  14 P   ENCLOSE IN +! OVER - >R +
-  15 P   HERE R CMOVE R> ALLOT ; -->
-
-85 CLEAR
-   0 P ( 2/5 FORTH DISASSEMBLER )
-   1 P   0 VARIABLE MULTINAME -2 ALLOT
-   2 P   STRING ORAASLBITANDROLJMPEORLSR    
-   3 P   STRING ADCRORSTYSTASTXLDYLDALDX    
-   4 P   STRING CPYCMPDECCPXSBCINC    
-   5 P : CHKMODE DROP DUP 2 * '
-   6 P   MULTIMODE + @ POINTER @ C@ -
-   7 P   4 /MOD SWAP IF SWAP 1+ SWAP ENDIF ; 
-   8 P 0 VARIABLE ONENAME -2 ALLOT
-   9 P   STRING BRKPHPASLBPLCLCJSRPLPROL
-  10 P   STRING BMISECRTIPHALSRBVCCLIRTS
-  11 P   STRING PLARORJMPBVSSEIDEYTXABCC
-  12 P   STRING STXTYATXSLDYLDXTAYTAXBCS
-  13 P   STRING LDXCLVTSXLDXINYDEXBNECLD
-  14 P   STRING INXNOPBEQSED???
-  15 P -->
-
-86 CLEAR
-   0 P ( 3/5 FORTH DISASSEMBLER )
-   1 P   0 VARIABLE ONEMODE -2 ALLOT
-   2 P     2C00 , 2C08 , 280A , 3010 ,
-   3 P     2C18 , 1020 , 2C28 , 282A ,
-   4 P     3030 , 2C38 , 2C40 , 2C48 ,
-   5 P     284A , 3050 , 2C58 , 2C60 ,
-   6 P     2C68 , 286A , 246C , 3070 ,
-   7 P     2C78 , 2C88 , 2C8A , 3090 ,
-   8 P     2096 , 2C98 , 2C9A , 14A0 ,
-   9 P     14A2 , 2CA8 , 2CAA , 30B0 ,
-  10 P     20B6 , 2CB8 , 2CBA , 04BE ,
-  11 P     2CC8 , 2CCA , 30D0 , 2CD8 ,
-  12 P     2CE8 , 2CEA , 30F0 , 2CF8 , 00FF , 
-  13 P   0 VARIABLE MODE -2 ALLOT
-  14 P     STRING ,X,Y,X)Y..##0PX).Y().AIMRE
-  15 P -->
-
-87 CLEAR
-   0 P ( 4/5 FORTH DISASSEMBLER )
-   1 P   0 VARIABLE LENGTH -2 ALLOT
-   2 P     2 C, 2 C, 1 C, 1 C, 2 C, 1 C,
-   3 P     1 C, 1 C, 1 C, 2 C, 0 C, 0 C,
-   4 P     1 C, 0 C,
-   5 P : .NAME SPACE SWAP 3 * + 3 TYPE 2 SPACES ;
-   6 P : .MODE 2 * ' MODE + 2 TYPE 2 SPACES ;           
-   7 P : .ADD POINTER @ C@ DUP 20
-   8 P     = OVER 40 = OR OVER 4C = OR
-   9 P     OVER 60 = OR SWAP 6C = OR
-  10 P     SWAP ' LENGTH + C@ 1 POINTER
-  11 P     +! POINTER @ OVER POINTER +!
-  12 P     OVER 0= IF DROP DROP ELSE
-  13 P     OVER 1 = IF C@ . DROP ELSE
-  14 P     @ 0 D. DROP ENDIF ENDIF ; 
-  15 P --> (  TEST: ' ASMWORD DIS )
-
-88 CLEAR
-   0 P ( 5/5 FORTH DISASSEMBLER )
-   1 P : DIS POINTER ! CR BEGIN CR
-   2 P     POINTER @ DUP 0 D. 2 SPACES
-   3 P     C@ ' ONEMODE 2D SEEKD
-   4 P       IF ( FOUND ) DUP ' ONENAME
-   5 P          .NAME 2 * 1+ '
-   6 P          ONEMODE + C@ 4 /
-   7 P       ELSE ( NOT ) DROP POINTER @
-   8 P          C@ ' MULTIMODE 16 SEEKD
-   9 P          CHKMODE CHKMODE CHKMODE
-  10 P          SWAP ' MULTINAME
-  11 P          .NAME ENDIF
-  12 P     DUP .MODE .ADD
-  13 P     ?TERMINAL OR ( ANTIC 3/84 )
-  14 P   UNTIL ; : DISASSEMBLE DIS ;
-  15 P DECIMAL ( ' SOMEWORD DIS ) ;S
-
-89 SCR !
-( last screen, do not overflow! )
  0 P ( "Blinking Characters" RM COMPUTE 12/81 )
  1 P ( "39 LOAD" from APX floppy to load Mullarky's ASM )
  2 P HEX : TASK ; CODE Blink ( -- )
@@ -1411,6 +1283,46 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
  8 P NEXT JMP,
  9 P : BlinkInit ( -- ) ' Blink 228 ! ;
 10 P : BlinkCursor ( -- ) BlinkInit BlinkStart ; DECIMAL ;S
+
+
+85 CLEAR
+ 0 P ( 1/2 GoesInto - Decomp by RDA - APX only? )
+ 1 P ( -- Forth Dimension Vol14 Nr2 )
+ 2 P : TASK ; 0 VARIABLE GIN 
+ 3 P : MYSELF LATEST PFA CFA , ; IMMEDIATE
+ 4 P : GIN+ CR GIN @ 2+ DUP GIN ! SPACES ;
+ 5 P : GCHK DUP @ 2+ ' COMPILE =
+ 6 P   IF  2+ DUP @ 2+ NFA ID. 2+
+ 7 P   ELSE DUP @ 2+ DUP ' LIT =
+ 8 P   OVER ' BRANCH  = OR OVER ' 0BRANCH = OR
+ 9 P   OVER ' (LOOP)  = OR SWAP ' (+LOOP) = OR
+10 P   IF 2+ DUP @ SPACE . 2+ ELSE DUP @ 2+ ' CLIT =
+11 P   IF 2+ DUP C@ SPACE . 1+ ELSE DUP @ 2+ 
+12 P   ' (.") = IF 2+ DUP COUNT TYPE 
+13 P   DUP C@ 1+ + ELSE 2+ THEN THEN THEN THEN 
+14 P   -2 GIN +! ; 
+15 P : DIN CR GIN @ SPACES ; -->
+
+86 CLEAR
+ 0 P ( 2/2 Use: "GOIN x" RET/SPC/Q ) 
+ 1 P : (GOESINTO) DUP CFA @ ' : CFA 
+ 2 P   @ = OVER ' ERROR = 0= AND
+ 3 P   IF BEGIN DUP @ DUP ' ;S CFA =
+ 4 P     OVER ' (;CODE) CFA = OR 0=
+ 5 P   WHILE 2+ DUP GIN+ NFA ID. KEY 
+ 6 P     DUP 81 = IF SP! QUIT ELSE 155 =
+ 7 P     IF MYSELF ELSE DROP THEN THEN
+ 8 P     GCHK REPEAT 2+ DIN NFA ID.
+ 9 P   THEN DROP ; ( 81=Q, 155=RETURN )
+10 P : GOESINTO -FIND IF DROP 0 GIN !
+11 P   (GOESINTO) ELSE ." NOT FOUND" CR THEN ;
+12 E
+13 P : GOIN GOESINTO ; 
+14 E
+15 P ;S 
+
+87 CLEAR
+88 CLEAR
 
 FLUSH
 FORTH

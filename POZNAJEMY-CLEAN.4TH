@@ -106,6 +106,8 @@ DECIMAL CR
 
 EDITOR
 
+( BUG: CHYBA ZEPSUTY WHERE )
+
 PREPARE 
 Q ( 1/2 FIG-EDITOR, SUBSET... )        CR CR SPACE BASE @ 
 Q : HEX DECIMAL 5 712 ! HEX ; :  DECIMAL DECIMAL 0 712 ! ; HEX
@@ -139,7 +141,7 @@ Q   BEGIN 1LINE IF 0 M SCR ? BUMP THEN    1023 R# @ < UNTIL
 Q   LOOP ; : (LINE/2) >R C/L 2 / B/BUF */MOD R> B/SCR * + BLOCK +
 Q   C/L 2 / ; : LI CR ( N -- ) SCR ! 32 0 DO CR I SCR @ (LINE/2)
 Q   -TRAILING TYPE LOOP CR ." === SCR#" SCR ? CR CR ; CR
-Q ." SEARCH loaded, try: 16 18 SEARCH KOT" CR CR ;S
+Q ." SEARCH loaded, try: 16 18 SEARCH KOT" CR CR : /FIGEDIT ; ;S
 
    
 ( skip error screens 14-15, move to 16  )
@@ -152,26 +154,26 @@ Q #12 Fig-EDIT subset, SEARCH, ...    fig/fd III/2/p40[2]
 Q #18 KOT, NAPIS, KWADRATY            pF 2.1-3.4.3    [1]
 Q #19 2DUP, 2DROP, ... DUMP[debug]    pF 3.5-4        [1]
 Q #20 PRZEDZIAL, FIBO, ...            pF 3.5-5.5      [1]
-Q #21 TEST1, NWP, TABLICZKA           pF 5.5-5.6      [1]
-Q #22 TABLICZKA2                      pF              [1]
-Q #23 ERATOS, ..., PIERWSZE           pF              [2]
-Q #25 NAZWISKO?, ..., DATY            pF              [1]
-Q #26 SILNIA, SILNIA2, ...            pF              [1]
-Q #27 ARRAY, 2DARRAY                  pF              [1]
-Q #28 MATDEF /valFORTH                pF              [1]
-Q #29 ARRAY2, ARRAY3 [JB]             pF              [1]
-Q #30 SETNE, SEXTAL, XX, SEK          pF              [1]
-Q #31 DBL - D*, FIX, F., ..., D=      pF              [2]
+Q #21 TEST1, NWP, TABLICZKA           pF 5.5-5.7      [1]
+Q #22 TABLICZKA2                      pF 5.6          [1]
+Q #23 ERATOS, ..., PIERWSZE           pF 5.8          [2]
+Q #25 NAZWISKO?, ..., DATY            pF 6.2-8.3      [1]
+Q #26 SILNIA, SILNIA2, ...            pF 8.5          [1]
+Q #27 ARRAY, 2DARRAY                  pF 9.1          [1]
+Q #28 MATDEF /valFORTH                pF 9.1          [1]
+Q #29 ARRAY2, ARRAY3 [JB]             pF 9.1          [1]
+Q #30 SETNE, SEXTAL, XX, SEK          pF 9.2          [1]
+Q #31 DBL - D*, FIX, F., ..., D=      pF 9.2-9.3      [2]
 															     
 PREPARE                                                          
 Q ( ** Poznajemy FORTH 2/2 ** )       ;S
-Q #33 3DUP, TAM, ..., HANOI           pF              [1]
-Q #34 HETMANY                         pF              [5]
-Q #39 ZESPOLONE                       pF              [1]
-Q #40 FUNKCJE                         pF              [2]
-Q #42 LIFE                            pF              [5]
-Q #47 SORTOWANIE                      pF              [7]
-Q #54 PSY                             pF              [4]
+Q #33 3DUP, TAM, ..., HANOI           pF 12.1         [1]
+Q #34 HETMANY                         pF 12.2         [5]
+Q #39 ZESPOLONE                       pF 12.4         [1]
+Q #40 FUNKCJE                         pF 12.5         [2]
+Q #42 LIFE                            pF 12.3         [5]
+Q #47 SORTOWANIE                      pF 12.6         [7]
+Q #54 PSY                             pF 10.4         [4]
 Q #58 (empty)                         --              [1]
 Q #59 EDIT /M.Dougherty  (or: #60)    micro 57/feb/83 [b]
 Q #70 RAGSDALE ASSEMBLER   [asmWR]    fig             [3]
@@ -354,7 +356,7 @@ V
 Q 4 5 2DARRAY PROSTOKAT ;S
 
 PREPARE
-Q ( 1/1 MATDEF /valFORTH  ) 
+Q ( 1/1 MATDEF ) 
 Q : 0> 0 MAX ; 
 Q : MATDEF <BUILDS OVER OVER           SWAP , , * 2 * ALLOT
 Q    DOES> >R OVER OVER R @ R          2 + @ ROT - 0> ROT
@@ -762,22 +764,22 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 
 54 DUP CLEAR SCR !
 0 P ( 1/4 PSY RASOWE ) -->
-1 P bokser 165
-2 P cocker-spaniel 90
-3 P dog 163
-4 P doberman 35
-5 P bernardyn 221
-6 P owczarek alzacki 171
-7 P foksterier 46
-8 P seter 27
-9 P jamnik 194
-10 P ratler 32
-11 P chow-chow 172
-12 P pekinczyk 28
+1 P bokser             165
+2 P cocker-spaniel      98
+3 P dog                163
+4 P doberman            35
+5 P bernardyn          221
+6 P owczarek alzacki   171
+7 P foksterier          46
+8 P seter               27
+9 P jamnik             194
+10 P ratler             32
+11 P chow-chow         172
+12 P pekinczyk          28
 
 55 DUP CLEAR SCR !
 0 P ( 2/4 CECHY PSOW ) -->
-1 P Czy ma:
+1 P   C z y  m a:
 2 P 1 wiecej niz 60 cm wzrostu?
 3 P 2 wydluzona glowe?
 4 P 3 kwadratowy lub plaski pysk?
@@ -808,7 +810,7 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 57 DUP CLEAR SCR !
  0 P ( 4/4 PSY )
  1 P : DAJ BAJT @ 12 0 DO
- 2 P     DUP I CECHY C@ OR          ( !! XOR/OR zmienia tryb? )
+ 2 P     DUP I CECHY C@ XOR
  3 P     0= IF
  4 P       I 1+ #PSY .LINE CR
  5 P     THEN
@@ -816,13 +818,11 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
  7 P : PSY ( -- ) HOME 12 1 DO
  8 P     I #CECHY .LINE CR
  9 P   LOOP CR ." Napisz liczby:"
-10 P   CR WLASNOSCI CR CR
-11 P   CR ." To moze byc:"
+10 P   CR WLASNOSCI
+11 P   CR CR CR ." To moze byc:"
 12 P   CR DAJ DROP ;
-13 P PSY ( .. 6 0 - ratler 32 )
+13 P     ( .. 6 0 - ratler 32 )
 14 P ;S  ( .. 2 3 4 6 0 - foks. 46 )
-
-( TODO: nie znajduje foksa! )
 
 58 CLEAR ( purposefully empty )
 

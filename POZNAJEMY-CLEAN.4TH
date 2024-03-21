@@ -139,7 +139,7 @@ Q   BEGIN 1LINE IF 0 M SCR ? BUMP THEN    1023 R# @ < UNTIL
 Q   LOOP ; : (LINE/2) >R C/L 2 / B/BUF */MOD R> B/SCR * + BLOCK +
 Q   C/L 2 / ; : LI CR ( N -- ) SCR ! 32 0 DO CR I SCR @ (LINE/2)
 Q   -TRAILING TYPE LOOP CR ." === SCR#" SCR ? CR CR ; CR
-Q ." SEARCH loaded, try: 16 18 SEARCH KOT" CR CR ; ;S
+Q ." SEARCH loaded, try: 16 18 SEARCH KOT" CR CR ;S
 
    
 ( skip error screens 14-15, move to 16  )

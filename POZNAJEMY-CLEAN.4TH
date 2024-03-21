@@ -143,7 +143,7 @@ Q #85 GOIN decompiler                 fd vol14/nr2    [2]
 Q #87 Fig-EDIT subset, SEARCH, ...    fig/fd III/2/p40[2]
 
 PREPARE
-Q ( 1/1 KOT, NAPIS, KWADRATY  )
+Q ( KOT, NAPIS, KWADRATY  )
 Q : KOT CR ." Kot pije mleko" ; 
 Q : NAPIS KOT SPACE
 Q   ." i poluje na myszy" ;
@@ -160,7 +160,7 @@ Q : KWADRATY CR DO I DUP U* 15            D.R CR LOOP ;
 Q ( 45001 44980 KWADRATY ) ;S
 
 PREPARE
-Q ( 1/1 2DUP,2DROP,...        )   
+Q ( 2DUP,2DROP,...        )   
 Q : 2DUP OVER OVER ;                  : 2DROP DROP DROP ;
 Q : 2SWAP ROT >R ROT R> ; : 2OVER     >R >R 2DUP R> R> 2SWAP ;
 Q : 2ROT ( n1 n2 n3 n4 n5 n6 ... )    ( --- n3 n4 n5 n6 n1 n2 )
@@ -178,7 +178,7 @@ Q ( HEX DUMP-INDEX DECIMAL ) ;S
 
 
 PREPARE
-Q ( 1/1 PRZEDZIAL, FIBO, ...  )        
+Q ( PRZEDZIAL, FIBO, ...  )        
 Q : PRZEDZIAL                         ( dolna-gr. n gorna-gran. )
 Q    OVER                             ( dol-gr n gor-gr n )
 Q    > >R                             ( dol-gr n f1 ) ( dol-gr n )
@@ -195,7 +195,7 @@ Q : KWADRAT3 DO I KWADRAT2 DUP 32760 IF DROP LEAVE THEN . LOOP ;
 Q ( -- ) ;S
 
 PREPARE
-Q ( 1/1 TEST1, NWP, TABLICZKA )
+Q ( TEST1, NWP, TABLICZKA )
 Q : TEST1 51  1 DO I .  2 +LOOP ; 
 Q : TEST2  0 20 DO I . -1 +LOOP ; 
 Q : IKSY BEGIN ." X" 1 - DUP 0= UNTIL ; 
@@ -213,7 +213,7 @@ Q       I AA @ *	3 .R
 Q     LOOP CR LOOP ; TABLICZKA ;S
 
 PREPARE
-Q ( 1/1 TABLICZKA2 ) 
+Q ( TABLICZKA2 ) 
 Q : J R> R> R> R R# !
 Q     >R >R >R R# @ ; 
 Q : TAB2 ( -- ) 125 EMIT
@@ -264,7 +264,7 @@ V
 Q PIERWSZE ;S
 
 PREPARE
-Q ( 1/1 NAZWISKO?, DRUKUJ, ...)
+Q ( NAZWISKO?, DRUKUJ, ...)
 Q : QUERY TIB @ 80 EXPECT 0 IN ! ; 
 Q : NAZWISKO?
 Q   CR ." PODAJ SWOJE NAZWISKO: "
@@ -282,7 +282,7 @@ Q 12 10 1943 DATY LENINO
 Q 15 08 1920 DATY WARSZAWA ;S 
 
 PREPARE
-Q ( 1/1 SILNIA,SILNIA2,... )
+Q ( SILNIA, SILNIA2, ... )
 Q : TENKOD ( -- n ) CURRENT @ @
 Q   PFA CFA ; IMMEDIATE
 Q : SILNIA ( n -- )
@@ -300,7 +300,7 @@ Q 8 SILNIA  U.  8 SILNIA2 U.
 Q 8 SILNIA3 U.  8 FACTORIAL U. ;S
 
 PREPARE
-Q ( 1/1 ARRAY, 2DARRAY )
+Q ( ARRAY, 2DARRAY )
 Q : ARRAY <BUILDS 2 * ALLOT DOES>
 Q   SWAP 2 * + ;
 Q : 2DARRAY
@@ -317,7 +317,7 @@ Q      44 2 1 PROSTOKAT !
 Q         2 1 PROSTOKAT ?     ;S
 
 PREPARE
-Q ( 1/1 MATDEF ) 
+Q ( MATDEF ) 
 Q : 0> 0 MAX ; 
 Q : MATDEF <BUILDS OVER OVER           SWAP , , * 2 * ALLOT
 Q    DOES> >R OVER OVER R @ R          2 + @ ROT - 0> ROT
@@ -334,7 +334,7 @@ Q    0 2 MATRIX2 C@                    . CR  1 2 MATRIX2 C@ . CR
 Q CR ;S
 
 PREPARE
-Q ( 1/1 ARRAY2 )
+Q ( ARRAY2 )
 Q : ARRAY2 ( n n --- )                 ( n n ARRAY2 matrix )
 Q   <BUILDS OVER , * ALLOT DOES>       DUP @ ROT * + + 2+ ;
 Q    2 3 ARRAY2 MATRIX 
@@ -348,7 +348,7 @@ Q    0 2 MATRIX C@ . CR                1 2 MATRIX C@ . CR
 Q CR ;S
 
 PREPARE
-Q ( 1/1 SETNE, SEXTAL, XX, SEK )
+Q ( SETNE, SEXTAL, XX, SEK )
 Q DECIMAL
 Q : SETNE <# # # 46 HOLD #S #> TYPE ;
 V
@@ -397,7 +397,7 @@ Q         F. ( 10.9651 ) ( FIXME )
 Q CR ;S
 
 PREPARE
-Q ( 1/1 WIEZE Z HANOI )
+Q ( WIEZE Z HANOI )
 Q : 3DUP >R 2DUP R ROT ROT R> ;
 Q : TAM 3DUP ROT ROT OVER + 6
 Q   SWAP - ROT 1 - ;
@@ -491,7 +491,7 @@ Q   9 0 SWAP POSTAW INIC
 Q   1 POZYCJA 2 DROP ;        ;S
 
 PREPARE
-Q ( 1/1 LICZBY ZESPOLONE )
+Q ( LICZBY ZESPOLONE )
 Q : COMPLEX <BUILDS , ,  DOES> ; 
 Q : X@ DUP @ SWAP 2+ @ SWAP  ;
 Q : X! SWAP OVER ! 2+ ! ;
@@ -523,7 +523,7 @@ Q DOES> SWAP 2 * + @ ;            ( APX/1.4S )
 Q 91 TABLICA SINTABLICA -->
 
 PREPARE
-Q ( 2/2 FN FUNKCJE )
+Q ( 2/2 FN TRYGONOMETRYCZNE )
 Q : S180 DUP 90 > IF 180 SWAP -        THEN SINTABLICA ;
 Q : SIN 360 MOD DUP 0< IF 360 +        THEN DUP 180 > IF 
 Q     180 - S180 MINUS ELSE S180       THEN ;
@@ -990,7 +990,7 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
  
 
 70 CLEAR
- 0 P ( RAGSDALE ASSEMBLER )
+ 0 P ( 1/3 RAGSDALE ASSEMBLER )
  1 P VOCABULARY ASSEMBLER IMMEDIATE ASSEMBLER DEFINITIONS BASE @ HEX
  2 E 
  3 P 0 VARIABLE INDEX -2 ALLOT 0909 , 1505 , 0115 , 8011 , 8009 ,
@@ -1009,7 +1009,7 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 
 
 71 CLEAR
- 0 P ( RAGSDALE ASSEMBLER )
+ 0 P ( 2/3 RAGSDALE ASSEMBLER )
  1 P A8 CPU TAY, BA CPU TSX, 8A CPU TXA, 9A CPU TXS, 98 CPU TYA,
  2 P : MCP <BUILDS C, , DOES> DUP 1+ @ 80 AND IF 10 MODE +! THEN
  3 P OVER FF00 AND UPMODE UPMODE IF MEM CR LATEST ID. 3 ERROR THEN
@@ -1028,7 +1028,7 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 
 
 72 CLEAR
- 0 P ( RAGSDALE ASSEMBLER )
+ 0 P ( 3/3 RAGSDALE ASSEMBLER )
  1 P : IF, C, HERE 0 C, 2 ; IMMEDIATE
  2 P : THEN, ?EXEC 2 ?PAIRS HERE OVER C@ IF SWAP ! ELSE OVER 1+
  3 P - SWAP C! THEN ;  IMMEDIATE
@@ -1190,7 +1190,7 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 15 P XSPAC CMOVE <#CM ;              -->
 
 81 CLEAR
- 0 P ( EDYTOR-FORTH -- )
+ 0 P ( EDYTOR-FORTH ends )
  1 P : #DUP DUP DUP % 127 >          IF % 128 - ENDIF ;
  2 P : ESC DROP KEY #DUP BL = IF     DROP 300 ELSE #PISZ ENDIF ;
  3 P : #KLA0 [ 27 C, 28 C, 29 C, 30  C, 31 C, 155 C, 126 C, 254 C,
@@ -1208,7 +1208,7 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 15 P ( END ) -->
 
 82 CLEAR
- 0 P ( ED-DYSK )
+ 0 P ( EDYTOR-FORTH / ED-DYSK )
  1 P : MARK SCR @ % 8 * % 8 0 DO I   OVER + BLOCK DROP UPDATE
  2 P LOOP DROP ;                     : E. (E) EXFO ;
  3 P : L. SCR ! E. ;                 : F. MARK FLUSH ;
@@ -1221,7 +1221,7 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
   
  
 83 CLEAR
- 0 P ( 1/1 VECTORED EX )
+ 0 P ( VECTORED EXECUTION )
  1 P ( adapted from: FD V/4/P17 )
  2 P : TASK ; 0 VARIABLE 'param
  3 P : WHO 'param @ CFA EXECUTE ;
@@ -1251,7 +1251,7 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 
 
 85 CLEAR
- 0 P ( 1/2 GoesInto - Decomp by RDA - APX only? )
+ 0 P ( 1/2 GoesInto - Decomp by RDA )
  1 P ( -- Forth Dimension Vol14 Nr2 )
  2 P : TASK ; 0 VARIABLE GIN 
  3 P : MYSELF LATEST PFA CFA , ; IMMEDIATE
@@ -1269,7 +1269,7 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 15 P : DIN CR GIN @ SPACES ; -->
 
 86 CLEAR
- 0 P ( 2/2 Use: "GOIN x" RET/SPC/Q ) 
+ 0 P ( 2/2 GoesInto: "GOIN x" RET/SPC/Q ) 
  1 P : (GOESINTO) DUP CFA @ ' : CFA 
  2 P   @ = OVER ' ERROR = 0= AND
  3 P   IF BEGIN DUP @ DUP ' ;S CFA =

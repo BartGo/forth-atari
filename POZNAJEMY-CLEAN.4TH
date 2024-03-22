@@ -12,7 +12,8 @@
 ( - boot Altirra with it, depress CAPS, paste LOADING HELPER )
 ( - to ensure a clean "install", do then: 88 16 CLEARS       )
 ( - paste the code below /LOADING HELPER                     )
-( - reboot, enjoy new screens 16-88                          )
+( - screens 16-88 contain code now                           )
+( - Forth is REMOVED from screens 0-14                       )
 ( - screens 16-17 are an index with source and # of screens  )
 ( - pF is "Poznajemy FORTH"                                  )
 ( - FD is "Forth Dimensions": https://www.forth.org/fd/      )
@@ -1331,4 +1332,8 @@ Q   -TRAILING TYPE LOOP CR ." === SCR#" SCR ? CR CR ; CR
 Q ." SEARCH loaded, try: 16 18 SEARCH KOT" CR CR : /FIGEDIT ; ;S
 
 FLUSH
-FORTH
+
+EDITOR
+DECIMAL 13 0 CLEARS 0 CLEAR
+FORTH 
+CR CR ." Q.E.D." CR CR

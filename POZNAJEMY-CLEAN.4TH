@@ -1,5 +1,4 @@
 ( ********************************************************** )
-( ********************************************************** )
 ( This is a batch for Atari 800XL's APX Extended Fig-Forth.  )
 ( It prepares SD floppy with listings from "Poznajemy Forth" )
 ( Polish book, published by SOETO in '87 and RETRONICS in '24)
@@ -9,29 +8,28 @@
 (                                                            )
 ( To install:                                                )
 ( - use a clean copy of APX Forth, CRC F64B50DA or E6B43BB4  )
-( - make sure you have another copy as this ATR    )
+( - make sure you have a copy, the script overwrites the ATR )
 ( - boot Altirra with it, depress CAPS, paste LOADING HELPER )
-( - to ensure a clean "install", do then: 89 16 CLEARS       )
+( - to ensure a clean "install", do then: 88 16 CLEARS       )
 ( - paste the code below /LOADING HELPER                     )
-( - reboot, enjoy new screens 16-89                          )
+( - reboot, enjoy new screens 16-88                          )
+( - screens 16-17 are an index with source and # of screens  )
+( - pF is "Poznajemy FORTH"                                  )
+( - FD is "Forth Dimensions": https://www.forth.org/fd/      )
+( - apx is from the APX Forth floppy itself /FIG sources/    )
+( - micro is: https://archive.org/details/6502-micro-journal )
+( - ta is "Tajemnice Atari": https://tajemnice.atari8.info/  )
+( - comp! is: https://archive.org/details/compute-magazine   )
 ( ********************************************************** )
-( ********************************************************** )
-
-
-( NICE TO ADD / TODO: -------------------------------------- )
+( NICE TO ADD FOR FUTURE VERSIONS:                           )
 ( TRACE: https://www.forth.org/fd/FD-V03N2.pdf p. 58         )
 ( RP@/UNRAVEL/?ENOUGH: https://www.forth.org/fd/FD-V06N2.pdf )
-( DEFER/IS                                                   )
-
-( DEPENDING ON OTHER CODE: --------------------------------- )
-( >> https://github.com/BartGo/forth-atari/blob/main/DBGTOOLS.4TH )
-( >> https://github.com/BartGo/forth-atari/blob/main/EDIT.4TH )
+( DEFER/IS: ?                                                )
+( ********************************************************** )
 
 
-( ********************** )
 ( ********************** )
 ( *** LOADING HELPER *** ) 
-( ********************** )
 ( ********************** )
 
 : TASK ;
@@ -100,9 +98,7 @@ DECIMAL CR
 #SC @ SCR !
 
 ( ********************** )
-( ********************** )
 ( *** /LOADING HELPER ** ) 
-( ********************** )
 ( ********************** )
 
 EDITOR
@@ -136,12 +132,12 @@ Q #47 SORTOWANIE                      pF 12.6         [7]
 Q #54 PSY                             pF 10.4         [4]
 Q #58 (empty)                         --              [1]
 Q #59 EDIT /M.Dougherty  (or: #60)    micro 57/feb/83 [b]
-Q #70 RAGSDALE ASSEMBLER   [asmWR]    fig             [3]
+Q #70 RAGSDALE ASSEMBLER   [asmWR]    apx             [3]
 Q #73 EDIT /R.Pantola    re:asmWR     ta              [a]
 Q #83 VECTORED EXEC, USING FENCE      fd v4nr4p17, pF [1]
-Q #84 BLINKING asm exmpl re:asmPM     compute 12/81   [1]
+Q #84 BLINKING asm exmpl re:asmPM     comp! 12/81     [1]
 Q #85 GOIN decompiler                 fd v4nr2p28     [2]
-Q #87 Fig-EDIT subset, SEARCH, ...    fig/fd v3nr1p10 [2]
+Q #87 Fig-EDIT subset, SEARCH, ...    apx/fd v3nr1p10 [2]
 
 PREPARE
 Q ( KOT, NAPIS, KWADRATY  )
@@ -727,6 +723,11 @@ Q : QUICKSORT
 Q   OVER OVER POCZ ! KON ! QUICK ;
 Q POCZATEK 4 0 QUICKSORT CR
 Q ." QUICKSORT: " CR POKAZ CR ;S
+
+( Be careful - below we stop using PREPARE   )
+( and start using explicit screen selection! )
+( Everything can use PREPARE if we remove    )
+( from PSY hard-coded references to screen #!)
 
 54 DUP CLEAR SCR !
 0 P ( 1/4 PSY RASOWE ) -->

@@ -107,7 +107,7 @@ DECIMAL CR
 EDITOR
 
 PREPARE ( scr 16 )
-Q ( ** Poznajemy FORTH 1/2 ** ) ;S    From           Scrs 
+Q ( ** Poznajemy FORTH 1/2 ** ) ;S
 Q #14 (standard error messages)       apx             [2]
 Q #16 (this index)                    here            [2]  
 Q #18 KOT, NAPIS, KWADRATY            pF 2.1-3.4.3    [1]
@@ -125,7 +125,7 @@ Q #30 SETNE, SEXTAL, XX, SEK          pF 9.2          [1]
 Q #31 DBL - D*, FIX, F., ..., D=      pF 9.2-9.3 FIXME[2]
 
 PREPARE                                                          
-Q ( ** Poznajemy FORTH 2/2 ** ) ;S    From           Scrs
+Q ( ** Poznajemy FORTH 2/2 ** ) ;S
 Q #33 3DUP, TAM, ..., HANOI           pF 12.1         [1]
 Q #34 HETMANY                         pF 12.2         [5]
 Q #39 ZESPOLONE                       pF 12.4         [1]
@@ -137,7 +137,7 @@ Q #58 (empty)                         --              [1]
 Q #59 EDIT /M.Dougherty  (or: #60)    micro 57/feb/83 [b]
 Q #70 RAGSDALE ASSEMBLER   [asmWR]    fig             [3]
 Q #73 EDIT /R.Pantola    re:asmWR     ta              [a]
-Q #83 VECTORED EXEC exmpl             fd v4p17&v3nr1  [1]
+Q #83 VECTORED EXEC, USING FENCE      fd v4p17&v3/1,pF[1]
 Q #84 BLINKING asm exmpl re:asmPM     compute 12/81   [1]
 Q #85 GOIN decompiler                 fd vol14/nr2    [2]
 Q #87 Fig-EDIT subset, SEARCH, ...    fig/fd III/2/p40[2]
@@ -620,7 +620,7 @@ Q   AGAIN
 Q   DRUK ; ;S
 
 PREPARE
-Q ( 1/7 SORT:ARRAY,WSTAW,POKAZ - APX/1.4S? )
+Q ( 1/7 SORT:ARRAY,WSTAW,POKAZ )
 Q : ARRAY <BUILDS 2 * ALLOT
 Q   DOES> SWAP 2 * + ;
 Q 5 ARRAY LICZBY
@@ -794,22 +794,22 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 59 CLEAR ( CONST #HLP = 59 )
   0 P ( EDIT - HELP ) -->
   2 P Arrows, Insert, BckSpc: standard
-  3 P Return: next line, Tab: tab (2)
-  4 P Clear: clear screen (Shf> Ctl>)
-  5 P Esc-Z: undo scrn chn (empty-buf)
-  6 P Shf-Insert: insert whole line*
-  7 P Shf-Delete: delete whole line*
-  8 P Ctl-Insert: insert space
-  9 P Ctl-BckSpc: delete;  Esc-0: cold
- 10 P Esc-R: rotate/sides; Esc-H: help
- 11 P Esc-N: next screen, save (flush)
- 12 P Esc-L: last screen, save (flush)
+  3 P Return: next line;  Tab: tab (2)
+  4 P Clear: clear screen  (Shf> Ctl>)
+  5 P Esc-Z: undo scr chng (empty-buf)
+  6 P Shf-Ins: insert whole line*
+  7 P Shf-Del: delete whole line*
+  8 P Ctl-Ins: ins space;  Esc-H: help
+  9 P Ctl-BckSpc: del;  Esc-0: cold
+ 10 P Esc-R: rotate/sides;       ( / )
+ 11 P Esc-N: screen +1, no flush ( > )
+ 12 P Esc-L: screen -1, no flush ( < )
  13 P Esc-S: save (flush) ; Esc-B: 4th
  14 P Esc-Q: quit (empty-buf)
- 15 P Esc-V: put last deleted line
+ 15 P Esc-V: put last deleted line*
 
 60 CLEAR
-  0 P ( EDIT - BY M. DOUGHERTY )       ( APX FORTH ONLY )
+  0 P ( EDIT - BY M. DOUGHERTY )
   1 P : TASK ; 752 CONSTANT CRSINH     59 CONSTANT #HLP 
   2 P 0  VARIABLE CLINE                0 VARIABLE CCHAR
   3 P 3  VARIABLE LINEOFF              3 VARIABLE CHAROFF
@@ -896,14 +896,14 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 12 P : EABORT EMPTY-BUFFERS 1 STOP ! ;
 13 P : KEYJOY 632 C@ CASES 15 CASE KEY IS
 14 P   11 CASE 30 IS 7 CASE 31 IS 14 CASE 28 IS 
-15 P   13 CASE 29 IS CEND ; -->
+15 P   13 CASE 29 IS CEND ( FIXME ) ; -->
 
 65 CLEAR
- 0 P ( EDIT - REFORTH, SCREEN NAVG, HELP )
+ 0 P ( EDIT - REFORTH, SCREEN<>, HELP )
  1 P : SH CLS 0 CRSINH C! IN @ >R BLK @ >R 0 IN ! 
  2 P   0 BLK ! CR QUERY INTERPRET R> BLK ! R> IN ! ANYK ; 
- 3 P : ENEXT FLUSH SCR @ 1 + SCR ! EREAD DISPLAY ;
- 4 P : ELAST FLUSH SCR @ 1 - SCR ! EREAD DISPLAY ;  
+ 3 P : ENEXT ( FLUSH ) SCR @ 1 + SCR ! EREAD DISPLAY ;
+ 4 P : ELAST ( FLUSH ) SCR @ 1 - SCR ! EREAD DISPLAY ;  
  5 P : ADDR CLINE @ SCR @ (LINE) DROP
  6 P   CCHAR @ + ; #HLP VARIABLE HLPM ( BEFORE HLP )
  7 P : ADDKEY DUP ADDR C! CURSOR EMIT RIGHT ;
@@ -971,20 +971,20 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 15 P : SETSCR DEPTH 0= IF #HLP ENDIF SCR ! ;  -->
  
 69 CLEAR
- 0 P ( EDIT - MAIN, END. ) : EDIT ( n -- ) 
- 1 P SETSCR EREAD DISPLAY 0 STOP ! BEGIN 
- 2 P   KEYJOY CASES 27 CASE ESC IS 
- 3 P   28  CASE UP-CURSOR    IS
- 4 P   29  CASE DOWN-CURSOR  IS
- 5 P   31  CASE RIGHT-CURSOR IS
- 6 P   30  CASE LEFT-CURSOR  IS
- 7 P   155 CASE RETURN       IS
- 8 P   255 CASE INSERT       IS
- 9 P   254 CASE DELETE       IS
-10 P   157 CASE INSERT-LINE  IS
-11 P   156 CASE DELETE-LINE  IS
-12 P   126 CASE DEL IS 127 CASE TAB IS
-13 P   125 CASE CLEAR-SCR IS 
+ 0 P ( EDIT - ends ) ( n -- ) : EDIT 
+ 1 P   SETSCR EREAD DISPLAY 0 STOP ! BEGIN ( KEYJOY )
+ 2 P   CASES 27 CASE ESC IS 
+ 3 P     28  CASE UP-CURSOR    IS
+ 4 P     29  CASE DOWN-CURSOR  IS
+ 5 P     31  CASE RIGHT-CURSOR IS
+ 6 P     30  CASE LEFT-CURSOR  IS
+ 7 P     155 CASE RETURN       IS
+ 8 P     255 CASE INSERT       IS
+ 9 P     254 CASE DELETE       IS
+10 P     157 CASE INSERT-LINE  IS
+11 P     156 CASE DELETE-LINE  IS
+12 P     126 CASE DEL IS 127 CASE TAB IS
+13 P     125 CASE CLEAR-SCR IS 
 14 P DUP ADDKEY CEND STOP @ UNTIL 
 15 P 125 EMIT 0 CRSINH ! ; : /EDIT ; ;S
  
@@ -1234,10 +1234,13 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 10 P CR ' BARTOSZ 'param ! WELCOME
 11 P CR ' MATYLDA 'param ! WELCOME
 12 P CR ;S
+13 P ( ** Hint of the day ************** )
+14 P ( Example usage of FENCE and FORGET )
+15 P (  ' X FENCE !     Y FORGET    SAVE )
 
 
 84 CLEAR
- 0 P ( "Blinking Characters" RM COMPUTE 12/81 )
+ 0 P ( "Blinking Characters" )
  1 P ( "39 LOAD" from APX floppy to load Mullarky's ASM )
  2 P HEX : TASK ; CODE Blink ( -- )
  3 P   02F3 LDA,  2 # AND, 2 #  EOR,
@@ -1248,6 +1251,7 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
  8 P NEXT JMP,
  9 P : BlinkInit ( -- ) ' Blink 228 ! ;
 10 P : BlinkCursor ( -- ) BlinkInit BlinkStart ; DECIMAL ;S
+11 P ( *** RM COMPUTE 12/81 )
 
 
 85 CLEAR

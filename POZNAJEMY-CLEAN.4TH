@@ -2,13 +2,14 @@
 ( ********************************************************** )
 ( This is a batch for Atari 800XL's APX Extended Fig-Forth.  )
 ( It prepares SD floppy with listings from "Poznajemy Forth" )
-( and adds some public domain tools, published in the 1980s. )
+( Polish book, published by SOETO in '87 and RETRONICS in '24)
+( - adds some public domain tools, published in the 80s/90s. )
 (                                                            )
 ( Collected, formatted and tuned by BartGo.                  )
 (                                                            )
 ( To install:                                                )
 ( - use a clean copy of APX Forth, CRC F64B50DA or E6B43BB4  )
-( - make sure you have another copy as this ATR be purged!   )
+( - make sure you have another copy as this ATR    )
 ( - boot Altirra with it, depress CAPS, paste LOADING HELPER )
 ( - to ensure a clean "install", do then: 89 16 CLEARS       )
 ( - paste the code below /LOADING HELPER                     )
@@ -137,10 +138,10 @@ Q #58 (empty)                         --              [1]
 Q #59 EDIT /M.Dougherty  (or: #60)    micro 57/feb/83 [b]
 Q #70 RAGSDALE ASSEMBLER   [asmWR]    fig             [3]
 Q #73 EDIT /R.Pantola    re:asmWR     ta              [a]
-Q #83 VECTORED EXEC, USING FENCE      fd v4p17&v3/1,pF[1]
+Q #83 VECTORED EXEC, USING FENCE      fd v4nr4p17, pF [1]
 Q #84 BLINKING asm exmpl re:asmPM     compute 12/81   [1]
-Q #85 GOIN decompiler                 fd vol14/nr2    [2]
-Q #87 Fig-EDIT subset, SEARCH, ...    fig/fd III/2/p40[2]
+Q #85 GOIN decompiler                 fd v4nr2p28     [2]
+Q #87 Fig-EDIT subset, SEARCH, ...    fig/fd v3nr1p10 [2]
 
 PREPARE
 Q ( KOT, NAPIS, KWADRATY  )
@@ -827,7 +828,7 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
  15 P : CURSOR CURSOR@ POINT-CURSOR ;  -->
 
 61 CLEAR
-  0 P ( EDIT - SCREEN-CURSOR, ..., 2TOP ) 
+  0 P ( EDIT - SCREEN-CURSOR, ... ) 
   1 P : SCREEN-CURSOR CURSOR@ SWAP 40 * + 106 C@ 256 *
   2 P  960 - + DUP C@ 128 XOR SWAP C! ;
   3 P : HLINE 34 0 DO TOP-BOT EMIT LOOP ;
@@ -899,7 +900,7 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 15 P   13 CASE 29 IS CEND ( FIXME ) ; -->
 
 65 CLEAR
- 0 P ( EDIT - REFORTH, SCREEN<>, HELP )
+ 0 P ( EDIT - REFORTH, SCREEN<>, HLP )
  1 P : SH CLS 0 CRSINH C! IN @ >R BLK @ >R 0 IN ! 
  2 P   0 BLK ! CR QUERY INTERPRET R> BLK ! R> IN ! ANYK ; 
  3 P : ENEXT ( FLUSH ) SCR @ 1 + SCR ! EREAD DISPLAY ;
@@ -1046,7 +1047,7 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 15 P ' ASSEMBLER 6 + 32 +ORIGIN !     BASE ! FORTH ;S
 
 73 CLEAR
- 0 P ( EDYTOR-FORTH /Roland Pantola ) ( [c] 1992 Tajemnice Atari )
+ 0 P ( EDYTOR-FORTH /Roland Pantola       [c] '92 Tajemnice Atari )
  1 P : TASK ; : MAC  -FIND 0= 0 ?ERROR DROP 32 C, , ; IMMEDIATE
  2 P : <=< OVER > >R < R> * ; ASSEMBLER DEFINITIONS : C; CURRENT
  3 P @ CONTEXT ! ?EXEC ?CSP SMUDGE ;  IMMEDIATE  FORTH DEFINITIONS
@@ -1222,7 +1223,7 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
  
 83 CLEAR
  0 P ( VECTORED EXECUTION )
- 1 P ( adapted from: FD V/4/P17 )
+ 1 P ( adapted from R. W. Sommers - FD V/4/P17 )
  2 P : TASK ; 0 VARIABLE 'param
  3 P : WHO 'param @ CFA EXECUTE ;
  4 P : WELCOME CR ." HELLO, DEAR "
@@ -1255,8 +1256,8 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 
 
 85 CLEAR
- 0 P ( 1/2 GoesInto - Decomp by RDA )
- 1 P ( -- Forth Dimension Vol14 Nr2 )
+ 0 P ( 1/2 GoesInto Decompiler )
+ 1 P ( FD Vol4 Nr2 p28, R. D. Ackermann )
  2 P : TASK ; 0 VARIABLE GIN 
  3 P : MYSELF LATEST PFA CFA , ; IMMEDIATE
  4 P : GIN+ CR GIN @ 2+ DUP GIN ! SPACES ;
@@ -1273,7 +1274,7 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 15 P : DIN CR GIN @ SPACES ; -->
 
 86 CLEAR
- 0 P ( 2/2 GoesInto: "GOIN x" RET/SPC/Q ) 
+ 0 P ( 2/2 "GOIN x" RET/SPC/Q ) 
  1 P : (GOESINTO) DUP CFA @ ' : CFA 
  2 P   @ = OVER ' ERROR = 0= AND
  3 P   IF BEGIN DUP @ DUP ' ;S CFA =
@@ -1293,7 +1294,7 @@ Q ." QUICKSORT: " CR POKAZ CR ;S
 86 DUP #SC ! SCR !
 
 PREPARE 
-Q ( 1/2 FIG-EDITOR, SUBSET... ) : /START ; CR CR SPACE BASE @ 
+Q ( 1/2 FIG-EDITOR SUBSET ) : /START ; CR CR SPACE BASE @ 
 Q : HEX DECIMAL 5 712 ! HEX ; :  DECIMAL DECIMAL 0 712 ! ; HEX
 Q : TEXT HERE C/L 1+ BLANKS WORD HERE PAD C/L 1+ CMOVE ;
 Q : LINE DUP FFF0 AND 17 ?ERROR SCR @ (LINE) DROP ; : MARK 10 0 
@@ -1308,18 +1309,18 @@ Q : E LINE C/L BLANKS UPDATE ; : TOP 0 R# ! ;
 Q : M R# +! CR SPACE #LEAD TYPE 17 EMIT #LAG TYPE
 Q   #LOCATE . DROP ; : 1LINE #LAG PAD COUNT MATCH R# +!  ;
 Q : CLEAR  SCR ! 10 0 DO FORTH I EDITOR E LOOP ;
-Q : L SCR @ LIST 0 M ; -->
+Q : L SCR @ LIST 0 M ; --> ( idea of subset: FD III/2/p40 & pF )
 
 PREPARE
-Q ( 2/2 FIG-EDITOR, SEARCH [FD VOL03 NR1 /WFR], .CC FDV03NR1/KH )
+Q ( 2/2 FIG-EDITOR & SEARCH & .CC ) 
 Q : COPY   B/SCR * OFFSET @ + SWAP    B/SCR * B/SCR OVER + SWAP
 Q   DO DUP FORTH I BLOCK 2 - ! 1+ UPDATE LOOP DROP FLUSH ; 
 Q CR ." Fig-Editor subset loaded." CR DECIMAL FORTH DEFINITIONS
 Q DECIMAL LATEST 12 +ORIGIN !  HERE 28 +ORIGIN ! HERE 30 
 Q +ORIGIN ! ' EDITOR 6 + 32 +ORIGIN ! HERE FENCE ! BASE ! 
 Q : (I @ 4 - NFA ID. ; : .CON CONTEXT (I ; : .CUR CURRENT (I ; 
-Q : .CC CR ." Context, Current: " .CON .CUR CR ;
-Q 0 VARIABLE SRCHCNT : BUMP 1 SRCHCNT +! SRCHCNT @ 56
+Q : .CC CR ." Context, Current: " .CON .CUR CR ; ( FDIII1p10/KH )
+Q 0 VARIABLE SRCHCNT : BUMP 1 SRCHCNT +! SRCHCNT @ 56    ( "/JJ )
 Q   > IF 0 SRCHCNT ! CR THEN ; : SEARCH ( FROM TO -- STRING )
 Q   CR 01 TEXT 0 SRCHCNT ! 1+ SWAP DO FORTH I SCR ! EDITOR TOP
 Q   BEGIN 1LINE IF 0 M SCR ? BUMP THEN    1023 R# @ < UNTIL 

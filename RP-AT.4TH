@@ -23,6 +23,23 @@ FORTH DEFINITIONS
 	: R0 TIB 2 - @ ; 
 )SEGMENT
 
+( **** BREAK&GO **** )
+( by Leo Brodie, FD )
+( REQUIRES: RP@: S., S.: S0 ) ( TBD: R.N )
+
+(SEGMENT
+  0 VARIABLE RP*
+  : S. SP@ S0 = 0= IF
+    SP@ 2 - S0 2 - DO I @ . -2 +LOOP
+  THEN ;
+  : BREAK 
+    CR ." BREAK S= " S. CR ( ." R= " R.N )
+    RP@ 4 - RP* ! 0 BLK ! BEGIN
+      QUERY INTERPRET ." aok" CR
+    AGAIN ; : () BREAK ;
+  : GO RP@ RP* @ = IF R> DROP R> DROP
+    ELSE ." can't resume " QUIT THEN ;
+)SEGMENT
 
 ( ***** AUGMENTED TRACE ***** )
 ( https://www.forth.org/fd/FD-V06N5.pdf )

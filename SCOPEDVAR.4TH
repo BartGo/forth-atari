@@ -1,10 +1,10 @@
 
 : GLOBAL VARIABLE ; IMMEDIATE
 0 GLOBAL *RP ( return stack memory )
-\ scopes can't be nested, only seq.
-: LOCAL <BUILDS , DOES> @ ; / mk snglt
+( scopes can't be nested, only seq. )
+: LOCAL <BUILDS , DOES> @ ; ( mk snglt )
 
-(( \ RP stored in *RP
+(( ( RP stored in *RP )
 
 : LOCALPROC
   0 LOCAL &test
@@ -15,10 +15,10 @@
   AGAIN
 ;
 
-)) \ locals released: drop till *RP
+)) ( locals released: drop till *RP )
 
 &test ? ( ERROR )
 
 
-: (( RP@ 2- *RP ! ; \ why not
-: )) *RP RP@ ! ; \ why not
+: (( RP@ 2- *RP ! ; ( why not )
+: )) *RP RP@ ! ; ( why not )

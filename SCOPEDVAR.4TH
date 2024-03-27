@@ -5,13 +5,18 @@
 : LOCAL <BUILDS , DOES> @ ; / mk snglt
 
 (( \ RP stored in *RP
+
+: LOCALPROC
   0 LOCAL &test
   6 LOCAL &foo
   BEGIN
     200 &test !
     LEAVE
   AGAIN
+;
+
 )) \ locals released: drop till *RP
+
 &test ? ( ERROR )
 
 

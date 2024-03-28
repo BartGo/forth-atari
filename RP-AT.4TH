@@ -8,6 +8,10 @@ FORTH DEFINITIONS DECIMAL
 : S0 TIB 4 - @ ; 
 : R0 TIB 2 - @ ; 
 
+( ***** ?EXEC ***** )
+( REQUIRES: NOTHING )
+: ?EXEC -FIND IF DROP CFA EXECUTE THEN ;
+
 ( ******* RP@ ****** )
 ( from Blazin' Forth )
 ( REQUIRES: assembler [39 LOAD] )

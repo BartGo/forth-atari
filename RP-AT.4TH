@@ -10,7 +10,7 @@ FORTH DEFINITIONS DECIMAL
 
 ( ***** ?EXEC ***** )
 ( REQUIRES: NOTHING )
-: ?EXEC -FIND IF DROP CFA EXECUTE THEN ;
+: ?EXEC -FIND IF DROP CFA EXECUTE THEN ; IMMEDIATE
 
 ( ******* RP@ ****** )
 ( from Blazin' Forth )

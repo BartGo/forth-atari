@@ -52,8 +52,16 @@ THEN ;
   WHILE
     R CR . R> 2 - @ NFA ID. ( FIX ME )
   REPEAT QUIT ; : (U) UNRAVEL ; 
-
 ;S
+
+DEBUGGING TECHNIQUES: pt 1 / UNRAVEL
+https://archive.org/details/Forth_Dimension_Volume_06_Number_2/page/n37/mode/2up?q=unravel
+DEBUGGING TECHNIQUES: pt 2 / TRACE
+https://archive.org/details/Forth_Dimension_Volume_06_Number_3/page/n31/mode/2up?q=unravel
+HIGH-LEVEL SINGLE STEPPER
+https://archive.org/details/Forth_Dimension_Volume_10_Number_6/page/n14/mode/1up?q=unravel
+
+
 
 ( TEST UNRAVEL ) ( FIXME: SHORT WORDS )
   : (TEST-UNRAVEL3) (U) ;

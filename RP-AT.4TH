@@ -47,11 +47,19 @@ THEN ;
 ( ***** AUGMENTED TRACE ***** )
 ( https://www.forth.org/fd/FD-V06N5.pdf )
 ( REQUIRES: RP@, R0 ) 
+
+: (HIGH?) 
+  DUP  @    [ ' : @ ] LITERAL =
+  SWAP @ C@ [ ' FORTH @ C@ ] LITERAL = OR ;
 : UNRAVEL ( -- ) 
   BEGIN RP@ R0 = 0=
   WHILE
-    R CR . R> 2 - @ NFA ID. ( FIX ME )
+    ( R> 2 - @ NFA ID. ) ( OLD )
+    R> DUP 2 - @ DUP (HIGH?) IF
+      NFA ID. DROP
+    ELSE DROP U. THEN
   REPEAT QUIT ; : (U) UNRAVEL ; 
+
 ;S
 
 DEBUGGING TECHNIQUES: pt 1 / UNRAVEL
@@ -61,12 +69,10 @@ https://archive.org/details/Forth_Dimension_Volume_06_Number_3/page/n31/mode/2up
 HIGH-LEVEL SINGLE STEPPER
 https://archive.org/details/Forth_Dimension_Volume_10_Number_6/page/n14/mode/1up?q=unravel
 
-
-
 ( TEST UNRAVEL ) ( FIXME: SHORT WORDS )
-  : (TEST-UNRAVEL3) (U) ;
-  : (TEST-UNRAVEL2) (TEST-UNRAVEL3) ;
-  : (TEST-UNRAVEL1) (TEST-UNRAVEL2) ;
-: TEST-UNRAVEL (TEST-UNRAVEL1) ;
+  : T3 (U) ;
+  : T2 T3 ;
+  : T1 T2 ;
+: TEST-UNRAVEL T1 ;
 
 

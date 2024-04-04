@@ -1,9 +1,7 @@
-( Debugging words for Atari APX Extended Fig-Forth )
-( Using return stack pointer RP@                   )
+(   Debugging words for Atari's  )
+(     APX Extended Fig-Forth     )
 
 FORTH DEFINITIONS DECIMAL
-
-: WITH ;
 
 ( ***** S0, R0 ***** )
 ( fig-FORTH_Installation_Manual_May79%20good.pdf )
@@ -42,46 +40,39 @@ THEN ;
   CR ." R= " R.N CR 
   RP@ 4 - RP* ! 0 BLK ! BEGIN
     QUERY INTERPRET ." aok" CR
-  AGAIN ; : () BREAK ;
+  AGAIN ; : || BREAK ;
 : GO RP@ RP* @ = IF R> DROP R> DROP
   ELSE ." can't resume " QUIT THEN ;
 
 ( ***** AUGMENTED TRACE ***** )
 ( https://www.forth.org/fd/FD-V06N5.pdf )
 ( REQUIRES: RP@, R0 ) 
-
-: (HIGH?) 
-  DUP  @    [ ' : @ ] LITERAL =
-  SWAP @ C@ [ ' FORTH @ C@ ] LITERAL = OR ;
 : UNRAVEL2 ( -- ) 
   BEGIN
     RP@ R0 = 0=
   WHILE
     CR R> CFA @ NFA ID.
   REPEAT QUIT ;
-: UNRAVEL ( -- ) ( TEST ME )
+: HIGH? ( n -- f )
+  DUP  @    [ ' : @ ] LITERAL =
+  SWAP @ C@ [ ' FORTH @ C@ ] LITERAL = OR ;
+: UNRAVEL ( -- ) ( FIX ME )
   BEGIN RP@ R0 = 0=
   WHILE
-    WITH
-      R> DUP CFA @ DUP 
-      DUP @ [ ' : CFA @ ] LITERAL =
-    IF
-      CR ." U:" NFA ID. DROP ()
-    ELSE
-      CR ." U:" DROP U.      ()
+      R> DUP CFA @ DUP ( n2 n n ) 
+	  HIGH?                ( n2 n f  )
+    IF   CR ." UN: " NFA ID. DROP
+    ELSE CR ." UN: " DROP U.
     THEN
   REPEAT QUIT ;
 
-: (U) UNRAVEL ; 
-: R3 (U) ;
+( R CFA @ NFA ID. => INTERPRET )
+
+: UN UNRAVEL ; 
+: R3 UN ;
 : R2 R3 ;
 : R1 R2 ;
 : TEST-UNRAVEL R1 ;
-
-: T3 UNRAVEL2 ;
-: T2 T3 ;
-: T1 T2 ;
-: TEST-UNRAVEL2 T1 ;
 
 ;S
 
@@ -91,5 +82,3 @@ DEBUGGING TECHNIQUES: pt 2 / TRACE
 https://archive.org/details/Forth_Dimension_Volume_06_Number_3/page/n31/mode/2up?q=unravel
 HIGH-LEVEL SINGLE STEPPER
 https://archive.org/details/Forth_Dimension_Volume_10_Number_6/page/n14/mode/1up?q=unravel
-
-

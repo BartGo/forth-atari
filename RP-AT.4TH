@@ -54,27 +54,28 @@ THEN ;
   DUP  @    [ ' : @ ] LITERAL =
   SWAP @ C@ [ ' FORTH @ C@ ] LITERAL = OR ;
 : UNRAVEL2 ( -- ) 
-  BEGIN RP@ R0 = 0=
+  BEGIN
+    RP@ R0 = 0=
   WHILE
-    R> 2 - @ NFA ID.
+    CR R> CFA @ NFA ID.
   REPEAT QUIT ;
 : UNRAVEL ( -- ) ( TEST ME )
   BEGIN RP@ R0 = 0=
   WHILE
     WITH
       R> DUP CFA @ DUP 
-      [ ' : CFA @ ] LITERAL =
+      DUP @ [ ' : CFA @ ] LITERAL =
     IF
-      NFA ID. DROP
+      CR ." U:" NFA ID. DROP ()
     ELSE
-      DROP U.
+      CR ." U:" DROP U.      ()
     THEN
   REPEAT QUIT ;
 
 : (U) UNRAVEL ; 
 : R3 (U) ;
-: R2 T3 ;
-: R1 T2 ;
+: R2 R3 ;
+: R1 R2 ;
 : TEST-UNRAVEL R1 ;
 
 : T3 UNRAVEL2 ;

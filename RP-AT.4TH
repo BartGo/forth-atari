@@ -3,6 +3,8 @@
 
 FORTH DEFINITIONS DECIMAL
 
+: WITH ;
+
 ( ***** S0, R0 ***** )
 ( fig-FORTH_Installation_Manual_May79%20good.pdf )
 ( REQUIRES: NOTHING )
@@ -56,23 +58,28 @@ THEN ;
   WHILE
     R> 2 - @ NFA ID.
   REPEAT QUIT ;
-: UNRAVEL ( -- ) 
+: UNRAVEL ( -- ) ( TEST ME )
   BEGIN RP@ R0 = 0=
   WHILE
-    ( R> 2 - @ NFA ID. ) ( OLD )
-    R> DUP 2 - @ DUP (HIGH?) IF
+    WITH
+      R> DUP CFA @ DUP 
+      [ ' : CFA @ ] LITERAL =
+    IF
       NFA ID. DROP
-    ELSE DROP U. THEN
-  REPEAT QUIT ; : (U) UNRAVEL ; 
+    ELSE
+      DROP U.
+    THEN
+  REPEAT QUIT ;
 
-  : R3 UNRAVEL ;
-  : R2 T3 ;
-  : R1 T2 ;
+: (U) UNRAVEL ; 
+: R3 (U) ;
+: R2 T3 ;
+: R1 T2 ;
 : TEST-UNRAVEL R1 ;
 
-  : T3 UNRAVEL2 ;
-  : T2 T3 ;
-  : T1 T2 ;
+: T3 UNRAVEL2 ;
+: T2 T3 ;
+: T1 T2 ;
 : TEST-UNRAVEL2 T1 ;
 
 ;S

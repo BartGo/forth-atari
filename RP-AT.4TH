@@ -72,6 +72,38 @@ THEN ;
 
 ( R CFA @ NFA ID. => INTERPRET )
 
+: ZAP ( oldpfa newpfa -- ) ( replace word in nucleus )
+  CFA OVER !                          ( new pfa into old )
+  [ ' ;S CFA ]   LITERAL OVER 2+ !    ( force ;S )
+  [ ' ;  CFA @ ] LITERAL SWAP CFA ! ; ( force DOCOL)
+  ( ' OLD ' NEW ZAP )
+
+
+( ' ASCII FENCE ! FORGET PAPER ) 
+
+: PAPER
+  125 EMIT 148 712 C! 0 81 ! CR ;
+: PROMP"
+  PFLAG @ 0 PFLAG ! 
+  ." ready" PFLAG ! ;
+
+( SAVE )
+
+( new prompt )
+' PROMPT ' PROMP" ZAP
+
+( rewrite CR from ABORT to point to PAPER )
+( idea: fetch timestamp from FN and punch )
+(       into prompt in hex as unique ID   )
+' PAPER CFA 7884 !
+48 7894 C!
+( SAVE )
+
+( 240506160. HEX D. E55D530 w negatyw)
+( "fig-FORTH  1.1      " )
+( "fig-FORTH  1.E55D530" )
+
+
 : UN UNRAVEL ; 
 : R3 UN ;
 : R2 R3 ;

@@ -53,16 +53,20 @@ THEN ;
   WHILE
     CR R> CFA @ NFA ID.
   REPEAT QUIT ;
-: HIGH? ( n -- f )
-  DUP  @    [ ' : @ ] LITERAL =
+: HIGH? ( cfa -- f )
+  DUP  @    [ ' : @ @ ] LITERAL =
   SWAP @ C@ [ ' FORTH @ C@ ] LITERAL = OR ;
-: UNRAVEL ( -- ) ( FIX ME )
+: UNRAVEL ( -- )
   BEGIN RP@ R0 = 0=
   WHILE
       R> DUP CFA @ DUP ( n2 n n ) 
-	  HIGH?                ( n2 n f  )
-    IF   CR ." UN: " NFA ID. DROP
-    ELSE CR ." UN: " DROP U.
+	  HIGH?            ( n2 n f  )
+    IF
+      CR ." UN:" DUP 4 .R SPACE
+	  NFA ID. DROP
+    ELSE
+	  CR ." UN:" DUP 4 .R SPACE
+	  DROP U.
     THEN
   REPEAT QUIT ;
 

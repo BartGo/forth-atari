@@ -20,6 +20,13 @@ FORTH DEFINITIONS DECIMAL
 10  CONSTANT ARM
 3   CONSTANT MSL  ( missiles: class and # on bits )
 
+( calc ship class ~ 1-12 )
+fuel	range	capac	laser	armor	missile-slots
+10	10	10	1	 0	0	
+250	100	200	5	10	3
+=ROUND((C3/10+D3/10+E3/10+F3*10+G3*10+H3*10)/20,0)
+)
+
 ( ### variables ### )
 
 GRID GRID

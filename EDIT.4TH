@@ -1,3 +1,5 @@
+( to do:" define if exists" to override only if not defined by a "better" module )
+
 59 CLEAR ( CONST #HLP = 59 )
   0 P ( EDIT - HELP ) -->
   2 P Arrows, Insert, BckSpc: standard
@@ -27,7 +29,7 @@
   8 P : EREAD 16 0 DO I SCR @ (LINE)   DROP
   9 P   UPDATE DROP LOOP 0 CLINE ! 0 CCHAR ! 0 SIDE ! ;
  10 P : CLS 125 EMIT ; : ECLEAR CLS 1  CRSINH C! ; 
- 11 P : -EXECUTE -FIND IF DROP CFA EXECUTE THEN ; ( IMMEDIATE )
+ 11 P : -EXECUTE -FIND IF DROP CFA EXECUTE THEN ; ( removed IMMEDIATE )
  12 P : POINT-CURSOR 85 ! 84 C! ;
  13 P : CURSOR@ CLINE @ LINEOFF @ +
  14 P   CCHAR @ SIDE @ IF 32 - ENDIF   CHAROFF @ + ;

@@ -3,6 +3,8 @@
 
 FORTH DEFINITIONS DECIMAL
 
+: DEVLIB( ;
+
 ( ***** S0, R0 ***** )
 ( fig-FORTH_Installation_Manual_May79%20good.pdf )
 ( REQUIRES: NOTHING )
@@ -72,43 +74,35 @@ THEN ;
 
 ( R CFA @ NFA ID. => INTERPRET )
 
+
+( *** stack trace *** )
+: TRACE-ON  ' UNRAVEL CFA 7290 ! ; ( replace 'QUIT' IN 'ERROR' with UNRAVEL + QUIT )
+: TRACE-OFF ' QUIT    CFA 7290 ! ; ( restore default )
 : ZAP ( oldpfa newpfa -- ) ( replace word in nucleus )
   CFA OVER !                          ( new pfa into old )
   [ ' ;S CFA ]   LITERAL OVER 2+ !    ( force ;S )
   [ ' ;  CFA @ ] LITERAL SWAP CFA ! ; ( force DOCOL)
   ( ' OLD ' NEW ZAP )
-
-
-( ' ASCII FENCE ! FORGET PAPER ) 
-
-: PAPER
-  125 EMIT 148 712 C! 0 81 ! CR ;
-: PROMP"
+: PROMPTX
   PFLAG @ 0 PFLAG ! 
-  ." ready" PFLAG ! ;
+  ." ok" PFLAG !
+  BASE @ DUP 10 = IF DROP 0 THEN
+  712 C! ;
 
-( SAVE )
+' PROMPT ' PROMPTX ZAP
+TRACE-ON
 
-( new prompt )
-' PROMPT ' PROMP" ZAP
+SAVE
 
-( rewrite CR from ABORT to point to PAPER )
-( idea: fetch timestamp from FN and punch )
-(       into prompt in hex as unique ID   )
-' PAPER CFA 7884 !
-48 7894 C!
-( SAVE )
+(
+ : UN UNRAVEL ; 
+ : R3 UN ;
+ : R2 R3 ;
+ : R1 R2 ;
+ : TEST-UNRAVEL R1 ;
+)
 
-( 240506160. HEX D. E55D530 w negatyw)
-( "fig-FORTH  1.1      " )
-( "fig-FORTH  1.E55D530" )
-
-
-: UN UNRAVEL ; 
-: R3 UN ;
-: R2 R3 ;
-: R1 R2 ;
-: TEST-UNRAVEL R1 ;
+: )DEVLIB ;
 
 ;S
 

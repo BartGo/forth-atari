@@ -1,10 +1,10 @@
-(              DEBLIB            )
+(              UNBUG             )
 (   Debugging words for Atari's  )
 (     APX Extended Fig-Forth     )
 
 FORTH DEFINITIONS DECIMAL
 
-: DEBLIB( ;
+: UNBUG( ;
 
 ( ***** S0, R0 ***** )
 ( fig-FORTH_Installation_Manual_May79%20good.pdf )
@@ -50,12 +50,6 @@ THEN ;
 ( ***** AUGMENTED TRACE ***** )
 ( https://www.forth.org/fd/FD-V06N5.pdf )
 ( REQUIRES: RP@, R0 ) 
-: UNRAVEL2 ( -- ) 
-  BEGIN
-    RP@ R0 = 0=
-  WHILE
-    CR R> CFA @ NFA ID.
-  REPEAT QUIT ;
 : HIGH? ( cfa -- f )
   DUP  @    [ ' : @ @ ] LITERAL =
   SWAP @ C@ [ ' FORTH @ C@ ] LITERAL = OR ;
@@ -71,14 +65,18 @@ THEN ;
 	  CR ." UN:" DUP 4 .R SPACE
 	  DROP U.
     THEN
-  REPEAT QUIT ;
+  REPEAT BREAK ; ( original QUIT replaced with BREAK )
 
 ( R CFA @ NFA ID. => INTERPRET )
 
-
 ( *** stack trace *** )
+
 : TRACE-ON  ' UNRAVEL CFA 7290 ! ; ( replace 'QUIT' IN 'ERROR' with UNRAVEL + QUIT )
 : TRACE-OFF ' QUIT    CFA 7290 ! ; ( restore default )
+
+TRACE-ON
+
+( *** zap word *** )
 : ZAP ( oldpfa newpfa -- ) ( replace word in nucleus )
   CFA OVER !                          ( new pfa into old )
   [ ' ;S CFA ]   LITERAL OVER 2+ !    ( force ;S )
@@ -91,8 +89,6 @@ THEN ;
   712 C! ;
 
 ' PROMPT ' PROMPTX ZAP
-TRACE-ON
-
 SAVE
 
 (
@@ -103,9 +99,9 @@ SAVE
  : TEST-UNRAVEL R1 ;
 )
 
-( : DEFER CREATE ['] ABORT , DOES> @ EXECUTE ; ) ( [;] = compile ' ? )
+( : DEFER CREATE ['] ABORT , DOES> @ EXECUTE ; ) ( ??  ['] = [compile] ' ??  )
 
-: )DEBLIB ;
+: )UNBUG ;
 
 ;S
 

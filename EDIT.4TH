@@ -3,31 +3,31 @@
   2 P Arrows, Insert, BckSpc: standard
   3 P Return: next line;  Tab: tab (2)
   4 P Clear: clear screen (Shf> Ctl>)
-  5 P Esc-Z: undo scr chng (empty-buf)
-  6 P Shf-Ins: insert whole line*
-  7 P Shf-Del: delete whole line*
+  5 P Esc-Z: undo scr chng (empt-buf)
+  6 P Shf-Ins: ins ln*; Esc-1:5: plgns
+  7 P Shf-Del: del ln*;    Esc-W: crc
   8 P Ctl-Ins: ins space;  Esc-H: help
-  9 P Ctl-BckSpc: del;  Esc-0: cold
- 10 P Esc-R: rotate/sides;       ( / )
- 11 P Esc-N: screen +1, no flush ( > )
- 12 P Esc-L: screen -1, no flush ( < )
- 13 P Esc-S: save (flush) ; Esc-B: 4th
- 14 P Esc-Q: quit (empty-buf)
+  9 P Ctl-BckSpc: del;     Esc-0: cold
+ 10 P Esc-R: rotate/sides;    ( / )
+ 11 P Esc-N: screen+1/empt-bf ( > )
+ 12 P Esc-L: screen-1/empt-bf ( < )
+ 13 P Esc-S: save (flush); Esc-B: frth
+ 14 P Esc-Q: quit/empt-bf; Esc-T: thme
  15 P Esc-V: put last deleted line*
 
 60 CLEAR
   0 P ( EDIT - BY M. DOUGHERTY )
-  1 P : TASK ; DECIMAL 0 VARIABLE CLINE 0 VARIABLE CCHAR
+  1 P : EDIT( ; DECIMAL 0 VARIABLE CLINE 0 VARIABLE CCHAR
   2 P 752 CONSTANT CRSINH             59 CONSTANT #HLP 
   3 P 3  VARIABLE LINEOFF              3 VARIABLE CHAROFF
   4 P 18 CONSTANT TOP-BOT              2 CONSTANT REDGE
   5 P 22 CONSTANT LEDGE                0 VARIABLE SIDE 
   6 P 17 VARIABLE EXTRAOFF             0 VARIABLE STOP
-  7 P 0  VARIABLE SAV-BUF  64 ALLOT 
+  7 P 0  VARIABLE SAV-BUF 64 ALLOT  
   8 P : EREAD 16 0 DO I SCR @ (LINE)   DROP
-  9 P   UPDATE DROP LOOP 0 CLINE !
- 10 P   0 CCHAR ! 0 SIDE ! ; 
- 11 P : CLS 125 EMIT ; : ECLEAR CLS 1  CRSINH C! ; 
+  9 P   UPDATE DROP LOOP 0 CLINE ! 0 CCHAR ! 0 SIDE ! ;
+ 10 P : CLS 125 EMIT ; : ECLEAR CLS 1  CRSINH C! ; 
+ 11 P : -EXECUTE -FIND IF DROP CFA EXECUTE THEN ; IMMEDIATE
  12 P : POINT-CURSOR 85 ! 84 C! ;
  13 P : CURSOR@ CLINE @ LINEOFF @ +
  14 P   CCHAR @ SIDE @ IF 32 - ENDIF   CHAROFF @ + ;
@@ -36,25 +36,25 @@
 61 CLEAR
   0 P ( EDIT - SCREEN-CURSOR, ... ) 
   1 P : SCREEN-CURSOR CURSOR@ SWAP 40 * + 106 C@ 256 *
-  2 P  960 - + DUP C@ 128 XOR SWAP C! ;
+  2 P   960 - + DUP C@ 128 XOR SWAP C! ;
   3 P : HLINE 34 0 DO TOP-BOT EMIT LOOP ;
   4 P : LADDR CLINE @ SCR @ (LINE) DROP
-  5 P  SIDE @ IF 32 + ENDIF ;
+  5 P   SIDE @ IF 32 + ENDIF ;
   6 P : EADDR CLINE @ SCR @ (LINE) DROP
-  7 P  SIDE @ 0= IF 32 + ENDIF ;
+  7 P   SIDE @ 0= IF 32 + ENDIF ;
   8 P : ELINE LEDGE EMIT LADDR 32 TYPE REDGE EMIT ;
   9 P : XLINE LEDGE EMIT EADDR 32 TYPE REDGE EMIT ;
  10 P : WRITE-LINE CLINE @ LINEOFF @ + CHAROFF @ 1 -
- 11 P  POINT-CURSOR ELINE ;
+ 11 P   POINT-CURSOR ELINE ;
  12 P : WRITE-EXTRA EXTRAOFF @ LINEOFF @ + CHAROFF @ 1 -
- 13 P  POINT-CURSOR XLINE ; : FRE 741 @ HERE - ;
+ 13 P   POINT-CURSOR XLINE ; : FRE 741 @ HERE - ;
  14 P : 2TOP LINEOFF @ 1 - CHAROFF @ 1 -
- 15 P  POINT-CURSOR HLINE ;  -->
+ 15 P   POINT-CURSOR HLINE ;  -->
 
 62 CLEAR 
-  0 P ( EDIT - DISPLAY, CASE )
-  1 P : BOT LINEOFF @ 16 + CHAROFF @ 1 -
-  2 P  POINT-CURSOR HLINE ; 
+  0 P ( EDIT - CO, DISPLAY, CASE )
+  1 P : CO R> R> SWAP >R >R ;
+  2 P : BOT LINEOFF @ 16 + CHAROFF @ 1 - POINT-CURSOR HLINE ; 
   3 P : ETITLE 0 CHAROFF @ POINT-CURSOR
   4 P  ." EDIT / Dr" OFFSET @ 0= 0= . ." Scr" SCR ?
   5 P  ." Side" SIDE ? ." Free" FRE U. ; 
@@ -109,8 +109,8 @@
  0 P ( EDIT - REFORTH, SCREEN<>, HLP )
  1 P : SH CLS 0 CRSINH C! IN @ >R BLK @ >R 0 IN ! 
  2 P   0 BLK ! CR QUERY INTERPRET R> BLK ! R> IN ! ANYK ; 
- 3 P : ENEXT ( FLUSH ) SCR @ 1 + SCR ! EREAD DISPLAY ;
- 4 P : ELAST ( FLUSH ) SCR @ 1 - SCR ! EREAD DISPLAY ;  
+ 3 P : ENEXT  1 SCR +! UNDOSCR ;
+ 4 P : ELAST -1 SCR +! UNDOSCR ;  
  5 P : ADDR CLINE @ SCR @ (LINE) DROP
  6 P   CCHAR @ + ; #HLP VARIABLE HLPM ( BEFORE HLP )
  7 P : ADDKEY DUP ADDR C! CURSOR EMIT RIGHT ;
@@ -153,27 +153,27 @@
  8 P : UNDOSCR EMPTY-BUFFERS EREAD DISPLAY ;
  9 P : SAVESCR FLUSH EREAD DISPLAY ;
 10 P : THEME 710 C@ 148 XOR 710 C! ; 
-11 P ( TODO: Plugin mechanism / ?EXEC )
-12 P   : PIN1 CLS       VLIST ANYK DISPLAY ; 
-13 P   : PIN2 CLS SCR @ LIST  ANYK DISPLAY ; 
-14 P   : PIN3 CLS SCR @ TRIAD ANYK DISPLAY ; 
-15 P -->
+11 P : CRC  CLS -EXECUTE VER   ANYK DISPLAY ;
+12 P : PIN1 CLS          VLIST ANYK DISPLAY ; 
+13 P : PIN2 CLS SCR @    LIST  ANYK DISPLAY ; 
+14 P : PIN3 CLS SCR @    TRIAD ANYK DISPLAY ; 
+15 P : PIN4 CLS -EXECUTE .SCUV ANYK DISPLAY ;  -->
  
 68 CLEAR
  0 P ( EDIT - COMMANDS )
- 1 P : REVB 712 @ 128 XOR 712 ! ; ( CLR4 )
- 2 P : ESC REVB KEY CASES        
- 3 P   82 CASE CHANGE-SIDE IS ( R )   47 CASE CHANGE-SIDE IS ( / )
- 4 P   78 CASE ENEXT       IS ( N )   62 CASE ENEXT IS ( > )
- 5 P   76 CASE ELAST       IS ( L )   60 CASE ENEXT IS ( < )
- 6 P   83 CASE SAVESCR     IS ( S )   49 CASE PIN1 IS ( 1 )           
- 7 P   81 CASE EABORT      IS ( Q )   50 CASE PIN2 IS ( 2 )           
- 8 P   86 CASE PUT-LINE    IS ( V )   51 CASE PIN3 IS ( 3 )           
- 9 P   90 CASE UNDOSCR     IS ( Z )
-10 P   66 CASE SH DISPLAY  IS ( B )   84 CASE THEME       IS ( T )   
-11 P   48 CASE BOOT        IS ( 0 )   66 CASE SH DISPLAY  IS ( B )
-12 P   72 CASE HLP DISPLAY IS ( H )          
-13 P   BEEP CEND REVB ;
+ 1 P : PIN5 CLS SCR @ LOAD ANYK DISPLAY ;
+ 2 P : REVB 712 @ 128 XOR 712 ! ; : ESC REVB KEY CASES
+ 3 P   82 CASE CHANGE-SIDE IS ( R ) 47 CASE CHANGE-SIDE IS ( / )
+ 4 P   78 CASE ENEXT       IS ( N ) 62 CASE ENEXT IS       ( > )
+ 5 P   76 CASE ELAST       IS ( L ) 60 CASE ENEXT IS       ( < )
+ 6 P   83 CASE SAVESCR     IS ( S ) 49 CASE PIN1 IS        ( 1 )           
+ 7 P   81 CASE EABORT      IS ( Q ) 50 CASE PIN2 IS        ( 2 )           
+ 8 P   86 CASE PUT-LINE    IS ( V ) 51 CASE PIN3 IS        ( 3 )           
+ 9 P   90 CASE UNDOSCR     IS ( Z ) 52 CASE PIN4 IS        ( 4 ) 
+10 P   66 CASE SH DISPLAY  IS ( B ) 53 CASE PIN5 IS        ( 5 ) 
+11 P   48 CASE BOOT        IS ( 0 ) 66 CASE SH DISPLAY IS  ( B )
+12 P   72 CASE HLP DISPLAY IS ( H ) 84 CASE THEME      IS  ( T )       
+13 P   87 CASE CRC         IS ( W ) BEEP CEND REVB ;
 14 P : DEPTH SP@ 12 +ORIGIN @ SWAP - 2 / ;
 15 P : SETSCR DEPTH 0= IF #HLP ENDIF SCR ! ;  -->
  
@@ -193,5 +193,5 @@
 12 P   126 CASE DEL IS 127 CASE TAB IS
 13 P   125 CASE CLEAR-SCR IS 
 14 P DUP ADDKEY CEND STOP @ UNTIL 
-15 P 125 EMIT 0 CRSINH ! ; : /EDIT ; ;S
+15 P CLS 0 CRSINH ! ; : )EDIT ; ;S
  

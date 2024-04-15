@@ -3,10 +3,11 @@
 
 59 CLEAR ( CONST HLP# = 59 )
   0 P ( EDIT - HELP ) -->
-  2 P Arrows, Insert, BckSpc: standard
-  3 P Return: next line;  Tab: tab (2)
-  4 P Clear: clear screen (Shf> Ctl>)
-  5 P Esc-Z: undo scr chng (empt-buf)
+  1 P Esc-S: save (flush)
+  2 P Esc-Z: undo (empty-buffers)
+  3 P Arrows, Insert, BckSpc: standard 
+  4 P Return: next line;  Tab: tab (2)
+  5 P Clear: clear screen (Shf> Ctl>)
   6 P Shf-Ins: ins ln*; Esc-1:5: plgns
   7 P Shf-Del: del ln*;    Esc-W: crc
   8 P Ctl-Ins: ins space;  Esc-H: help
@@ -14,7 +15,7 @@
  10 P Esc-R: rotate/sides;    ( / )
  11 P Esc-N: screen+1/empt-bf ( > )
  12 P Esc-L: screen-1/empt-bf ( < )
- 13 P Esc-S: save (flush); Esc-B: frth
+ 13 P Esc-B: forth command line
  14 P Esc-Q: quit/empt-bf; Esc-D: dark
  15 P Esc-V: put last deleted line*
 
@@ -60,7 +61,7 @@
   2 P : ETITLE 0 CHAROFF @ POINT-CURSOR ." EDIT / Dr" 
   3 P   OFFSET @ 0= 0= . ( ?FLUSHED 30 + EMIT ) ( FIXME )
   4 P   ." Scr" SCR ? 
-  5 P   ." Side" SIDE ? ." Fre" FRE U. ; 
+  5 P   ." Side" SIDE ? ." Free" FRE U. ; 
   6 P : DISPLAY CLS 1 CRSINH C! ETITLE 2TOP CLINE @ 
   7 P   16 0 DO I CLINE ! WRITE-LINE LOOP CLINE !
   8 P   SIDE @ IF 32 ELSE 0 ENDIF CCHAR ! BOT

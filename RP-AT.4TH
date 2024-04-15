@@ -53,17 +53,16 @@ THEN ;
 : HIGH? ( cfa -- f )
   DUP  @    [ ' : @ @ ] LITERAL =
   SWAP @ C@ [ ' FORTH @ C@ ] LITERAL = OR ;
+: (UNLINE) CR SPACE DUP 4 .R SPACE ;
 : UNRAVEL ( -- )
   BEGIN RP@ R0 = 0=
   WHILE
       R> DUP CFA @ DUP ( n2 n n ) 
-	  HIGH?            ( n2 n f  )
+      HIGH?            ( n2 n f  )
     IF
-      CR ." UN:" DUP 4 .R SPACE
-	  NFA ID. DROP
+      (UNLINE) NFA ID. DROP
     ELSE
-	  CR ." UN:" DUP 4 .R SPACE
-	  DROP U.
+      (UNLINE) DROP U.
     THEN
   REPEAT BREAK ; ( original QUIT replaced with BREAK )
 

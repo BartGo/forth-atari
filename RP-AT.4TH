@@ -88,8 +88,12 @@ TRACE-ON
   BASE @ DUP 10 = IF DROP 0 THEN
   712 C! ;
 
+: )UNBUG ;
+
 ' PROMPT ' PROMPTX ZAP
 SAVE
+
+;S
 
 (
  : UN UNRAVEL ; 
@@ -99,11 +103,10 @@ SAVE
  : TEST-UNRAVEL R1 ;
 )
 
-( : DEFER CREATE ['] ABORT , DOES> @ EXECUTE ; ) ( ??  ['] = [compile] ' ??  )
 
-: )UNBUG ;
-
-;S
+( crash )
+( : ['] [COMPILE] ' ; )
+( : DEFER CREATE ['] ABORT , DOES> @ EXECUTE ; )
 
 DEBUGGING TECHNIQUES: pt 1 / UNRAVEL
 https://archive.org/details/Forth_Dimension_Volume_06_Number_2/page/n37/mode/2up?q=unravel

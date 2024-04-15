@@ -5,13 +5,13 @@ BASE @
  DUP HEX 6 .R DUP @ 6 .R
  DUP DECIMAL 6 .R @ 6 .R CR ;
 
-: .SC ( System Constants )
+: (SC) ( System Constants )
   CR CR
   ' FIRST .V ' LIMIT .V
   ' B/SCR .V ' B/BUF .V
   '   C/L .V ;
 
-: .UV ( User Variables )
+: (UV) ( User Variables )
   CR CR ( S0, R0 hidden ) 
   ' TIB      .V ' WARNING .V
   ' FENCE    .V ' DP      .V
@@ -23,5 +23,7 @@ BASE @
   ' DPL      .V	' FLD     .V
   ' CSP      .V	' R#      .V
   ' HLD      .V ;
+
+: .SCUV (SC) (UV) ;
 
 BASE !

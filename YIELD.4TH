@@ -24,3 +24,15 @@
   R> DROP ;  
 
 : RUN CONSUMER ; ( -- )
+
+;S
+
+: CO ( -- )
+  R> R> SWAP >R >R ;
+: X1 ( -- )
+  BEGIN ." 1" CO AGAIN ;
+: X2 ( -- )
+  X1
+  BEGIN ." 2" CO ?TERMINAL IF QUIT THEN AGAIN ;
+: XRUN ( -- )
+  X2 ;

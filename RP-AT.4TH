@@ -1,9 +1,10 @@
+(              DEBLIB            )
 (   Debugging words for Atari's  )
 (     APX Extended Fig-Forth     )
 
 FORTH DEFINITIONS DECIMAL
 
-: DEVLIB( ;
+: DEBLIB( ;
 
 ( ***** S0, R0 ***** )
 ( fig-FORTH_Installation_Manual_May79%20good.pdf )
@@ -102,7 +103,9 @@ SAVE
  : TEST-UNRAVEL R1 ;
 )
 
-: )DEVLIB ;
+( : DEFER CREATE ['] ABORT , DOES> @ EXECUTE ; ) ( [;] = compile ' ? )
+
+: )DEBLIB ;
 
 ;S
 
@@ -112,3 +115,14 @@ DEBUGGING TECHNIQUES: pt 2 / TRACE
 https://archive.org/details/Forth_Dimension_Volume_06_Number_3/page/n31/mode/2up?q=unravel
 HIGH-LEVEL SINGLE STEPPER
 https://archive.org/details/Forth_Dimension_Volume_10_Number_6/page/n14/mode/1up?q=unravel
+RDCP
+https://archive.org/details/Forth_Dimension_Volume_05_Number_6/page/n14/mode/1up
+DEFER
+https://archive.org/details/Forth_Dimension_Volume_05_Number_6/page/n34/mode/1up
+TASKER
+https://archive.org/details/Forth_Dimension_Volume_05_Number_2/page/n19/mode/1up
+FORMATTER
+- tbc -
+DOC TOOL
+https://archive.org/details/Forth_Dimension_Volume_04_Number_2/page/n22/mode/1up
+

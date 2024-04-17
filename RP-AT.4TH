@@ -111,22 +111,22 @@ SAVE
 ( : ['] [COMPILE] ' ; )
 ( : DEFER CREATE ['] ABORT , DOES> @ EXECUTE ; )
 
-DEBUGGING TECHNIQUES: pt 1 / UNRAVEL
-https://archive.org/details/Forth_Dimension_Volume_06_Number_2/page/n37/mode/2up?q=unravel
-DEBUGGING TECHNIQUES: pt 2 / TRACE
-https://archive.org/details/Forth_Dimension_Volume_06_Number_3/page/n31/mode/2up?q=unravel
-HIGH-LEVEL SINGLE STEPPER
-https://archive.org/details/Forth_Dimension_Volume_10_Number_6/page/n14/mode/1up?q=unravel
+DOC TOOL
+https://archive.org/details/Forth_Dimension_Volume_04_Number_2/page/n22/mode/1up
+TASKER
+https://archive.org/details/Forth_Dimension_Volume_05_Number_2/page/n19/mode/1up
 RDCP
 https://archive.org/details/Forth_Dimension_Volume_05_Number_6/page/n14/mode/1up
 DEFER
 https://archive.org/details/Forth_Dimension_Volume_05_Number_6/page/n34/mode/1up
-TASKER
-https://archive.org/details/Forth_Dimension_Volume_05_Number_2/page/n19/mode/1up
+DEBUGGING TECHNIQUES: pt 1 / UNRAVEL
+https://archive.org/details/Forth_Dimension_Volume_06_Number_2/page/n37/mode/2up?q=unravel
+DEBUGGING TECHNIQUES: pt 2 / TRACE
+https://archive.org/details/Forth_Dimension_Volume_06_Number_3/page/n31/mode/2up?q=unravel
 FORMATTER
-- tbc -
-DOC TOOL
-https://archive.org/details/Forth_Dimension_Volume_04_Number_2/page/n22/mode/1up
+https://archive.org/details/Forth_Dimension_Volume_08_Number_2/page/n25/mode/2up?q=FORMATTER
+HIGH-LEVEL SINGLE STEPPER
+https://archive.org/details/Forth_Dimension_Volume_10_Number_6/page/n14/mode/1up?q=unravel
 STEP TRACKING
 https://archive.org/details/Forth_Dimension_Volume_10_Number_2/page/n20/mode/1up
 

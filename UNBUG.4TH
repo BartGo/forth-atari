@@ -1,4 +1,4 @@
-(           ### SPOT ###          )
+(          ### UNBUG ###          )
 (     A library of debug words.   )
 ( Collected from Forth Dimensions ) 
 ( Atari800XL / APX Ext. Fig-Forth )
@@ -6,7 +6,7 @@
 
 FORTH DEFINITIONS DECIMAL
 
-: SPOT( ;
+: UNBUG( ;
 
 ( ******* BUFS ******* )
 ( REQUIRES: NOTHING )
@@ -149,9 +149,7 @@ PUSH JMP,
 : TRACE-ON  ' UNRAVEL CFA 7290 ! ; ( replace 'QUIT' IN 'ERROR' with UNRAVEL + QUIT )
 : TRACE-OFF ' QUIT    CFA 7290 ! ; ( restore default )
 
-TRACE-ON
-
-: )SPOT ;
+: )UNBUG ;
 
 ( fig-F*RTH hacked with a heart )
 ( 0 7894 C!  SAVE ) 

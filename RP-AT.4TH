@@ -1,55 +1,133 @@
-(              UNBUG             )
-(   Debugging words for Atari's  )
-(     APX Extended Fig-Forth     )
+(           ### SPOT ###          )
+(     A library of debug words.   )
+( Collected from Forth Dimensions ) 
+( Atari800XL / APX Ext. Fig-Forth )
+(  REQUIRES: assembler [39 LOAD]  )
 
 FORTH DEFINITIONS DECIMAL
 
-: UNBUG( ;
+: SPOT( ;
 
-( ***** S0, R0 ***** )
-( fig-FORTH_Installation_Manual_May79%20good.pdf )
+( ******* BUFS ******* )
 ( REQUIRES: NOTHING )
-: S0 TIB 4 - @ ; 
-: R0 TIB 2 - @ ; 
+( TDH 7/11/81 FD-V03N6 )
+: .BUFS ( display addresses of all the buffers )
+  CR ." #  Addr(hex) Upd Block#  Screen  -sub"
+  FIRST
+  LIMIT FIRST - B/BUF / ( #BUFF )
+  1+ 1 DO
+    CR I 2 .R 2 SPACES
+    DUP 2+ HEX 6 0 SWAP D.R DECIMAL 3 SPACES
+    DUP @ 32768 AND
+    0= 0= 32 + EMIT 2 SPACES
+    DUP @ 32767 AND
+	DUP 6 .R 4 SPACES
+    B/SCR /MOD 5 .R 4 SPACES 2 .R
+    132 + ?TERMINAL IF LEAVE THEN
+  LOOP DROP CR ; 
 
-( ***** -EXECUTE ***** )
-( REQUIRES: NOTHING )
-( : -EXECUTE -FIND IF DROP CFA EXECUTE THEN ; IMMEDIATE )
+( ******* .CC ****** )
+( Vw current/context )
+( FD III/1 p10 / KH  )  
+( REQUIRES: NOTHING  )
+: .CC CR ." Context Current: "
+  CONTEXT @ 4 - NFA ID.
+  CURRENT @ 4 - NFA ID. CR ; 
+
+( *** zap word - IRREVERSIBLY *** )
+( *** replace word in nucleus *** )
+( *** usage:  ' OLD ' NEW ZAP *** )
+( REQUIRES: NOTHING               )
+: ZAP ( oldpfa newpfa -- ) 
+  CFA OVER ! ( new pfa into old )
+  [ ' ;S CFA ]   LITERAL OVER 2+ !
+  [ ' ;  CFA @ ] LITERAL SWAP CFA ! ;
+
+( ***** S0, R0, S. ***** )
+( REQUIRES: NOTHING      )
+: S0 TIB 4 - @ ; ( -- n )
+: R0 TIB 2 - @ ; ( -- n )
+: S. SP@ S0 = 0= IF
+    SP@ 2 - S0 2 - DO I @ . -2 +LOOP
+  ELSE ." Stack empty " THEN ;
 
 ( ******* RP@ ****** )
 ( from Blazin' Forth )
 ( REQUIRES: assembler [39 LOAD] )
-( TO DO: machine code version )
-CODE RP@ ( -- ADDR RETURN STACK 1- )
+CODE RP@ 
   XSAVE STX,
   TSX, TXA, PHA,
   1 # LDA,
   XSAVE LDX,
 PUSH JMP,
 
+( ***** .EVAR **** )
+( REQUIRES: S0, R0, RP@, asm [39] )
+: (VC) ( pfa -- )
+    DUP CFA EXECUTE
+	4 4 + .R 
+    NFA SPACE ID. CR ;
+: (VV) ( pfa -- )
+    DUP CFA EXECUTE   DUP
+	4 .R              C@ 4 .R 
+    NFA SPACE ID. CR ;
+: .SYS ( -- )
+  CR 5 SPACES
+  ." Val System-Constant" CR
+  ' S0    (VC)  ' R0    (VC)
+  ' FIRST (VC)  ' LIMIT (VC)
+  ' B/SCR (VC)  ' B/BUF (VC)
+  '   C/L (VC)  ' RP@   (VC) 
+  '   SP@ (VC) ;
+: .USR ( -- )
+  CR ." Addr Val User-Variable" CR
+  ' TIB      (VV)  ' WARNING (VV)
+  ' FENCE    (VV)  ' DP      (VV)
+  ' VOC-LINK (VV)  ' BLK     (VV)
+  ' IN       (VV)  ' OUT     (VV)
+  ' SCR      (VV)  ' OFFSET  (VV)
+  ' CONTEXT  (VV)  ' CURRENT (VV)
+  ' STATE    (VV)  ' BASE    (VV)
+  ' DPL      (VV)  ' FLD     (VV)
+  ' CSP      (VV)  ' R#      (VV)
+  ' HLD      (VV)  ( and ... )
+  ' USE      (VV)
+  ' PREV     (VV)
+  ' UP       (VV) 
+  ' PAD      (VV) ;
+: .EVAR ( -- )
+  .SYS .USR ;
+
+( *********** R.N ************* )
+( Shows the return stack        )
+( REQUIRES: assembler [39], RP@ )
+: R.N RP@ R0 = 0= IF ( TODO: TEST )
+    RP@ 2 - R0 2 - DO I @ U. -2 +LOOP
+  THEN ;
+
 ( **** BREAK&GO **** )
 ( https://www.forth.org/fd/FD-V05N1.pdf )
-( REQUIRES: RP@: S., S.: S0 ) ( TBD: R.N )
+( REQUIRES: assembler [39], RP@, R0, S0, S., R.N )
 0 VARIABLE RP*
-: S. SP@ S0 = 0= IF
-  SP@ 2 - S0 2 - DO I @ . -2 +LOOP
-THEN ;
-: R.N RP@ R0 = 0= IF ( TEST ME )
-  RP@ 2 - R0 2 - DO I @ U. -2 +LOOP
-THEN ;
 : BREAK 
-  CR ." (BREAK hit, GO to proceed)"
+  CR ." (BREAK reached, type GO to proceed)"
   CR ." S= " S.
   CR ." R= " R.N CR 
   RP@ 4 - RP* ! 0 BLK ! BEGIN
     QUERY INTERPRET ." aok" CR
-  AGAIN ; : || BREAK ;
-: GO RP@ RP* @ = IF R> DROP R> DROP
-  ELSE ." can't resume " QUIT THEN ;
+  AGAIN ;
+: || BREAK ;
+: GO RP@ RP* @ = IF
+    R> DROP R> DROP
+  ELSE
+    ." can't resume " QUIT
+  THEN ;
 
 ( ***** AUGMENTED TRACE ***** )
 ( https://www.forth.org/fd/FD-V06N5.pdf )
-( REQUIRES: RP@, R0 ) 
+( REQUIRES: assembler [39], RP@, R0     )
+( FIXME: UNRAVEL sometimes fails, with  )
+(        short words and other cases    )
 : HIGH? ( cfa -- f )
   DUP  @    [ ' : @ @ ] LITERAL =
   SWAP @ C@ [ ' FORTH @ C@ ] LITERAL = OR ;
@@ -64,37 +142,21 @@ THEN ;
     ELSE
       (UNLINE) DROP U.
     THEN
-  REPEAT BREAK ; ( original QUIT replaced with BREAK )
+  REPEAT QUIT ; ( original QUIT replaced with BREAK )
 
-( R CFA @ NFA ID. => INTERPRET )
-
-( *** stack trace *** )
-
+( *** stack trace ON / OFF *** )
+( REQUIRES: assembler [39], RP@, R0, UNRAVEL )
 : TRACE-ON  ' UNRAVEL CFA 7290 ! ; ( replace 'QUIT' IN 'ERROR' with UNRAVEL + QUIT )
 : TRACE-OFF ' QUIT    CFA 7290 ! ; ( restore default )
 
 TRACE-ON
 
-( *** zap word *** )
-: ZAP ( oldpfa newpfa -- ) ( replace word in nucleus )
-  CFA OVER !                          ( new pfa into old )
-  [ ' ;S CFA ]   LITERAL OVER 2+ !    ( force ;S )
-  [ ' ;  CFA @ ] LITERAL SWAP CFA ! ; ( force DOCOL)
-  ( ' OLD ' NEW ZAP )
-: PROMPTX
-  PFLAG @ 0 PFLAG ! 
-  ." ok" PFLAG !
-  BASE @ DUP 10 = IF DROP 0 THEN
-  712 C! ;
+: )SPOT ;
 
-: )UNBUG ;
+( fig-F*RTH hacked with a heart )
+( 0 7894 C!  SAVE ) 
 
-' PROMPT ' PROMPTX ZAP
-SAVE
-
-( *** step tracing *** )
-
-
+( *** step tracing TBD *** )
 
 ;S
 
@@ -129,4 +191,3 @@ HIGH-LEVEL SINGLE STEPPER
 https://archive.org/details/Forth_Dimension_Volume_10_Number_6/page/n14/mode/1up?q=unravel
 STEP TRACKING
 https://archive.org/details/Forth_Dimension_Volume_10_Number_2/page/n20/mode/1up
-

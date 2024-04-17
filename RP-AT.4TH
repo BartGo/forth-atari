@@ -92,6 +92,10 @@ TRACE-ON
 ' PROMPT ' PROMPTX ZAP
 SAVE
 
+( *** step tracing *** )
+
+
+
 ;S
 
 (
@@ -123,4 +127,6 @@ FORMATTER
 - tbc -
 DOC TOOL
 https://archive.org/details/Forth_Dimension_Volume_04_Number_2/page/n22/mode/1up
+STEP TRACKING
+https://archive.org/details/Forth_Dimension_Volume_10_Number_2/page/n20/mode/1up
 

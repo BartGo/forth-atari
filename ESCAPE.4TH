@@ -1,5 +1,5 @@
 ( ESCAPE DEMO by John Mattes )
-( JEM-10DEC82 )
+( original author unknown   )
 
 ( tested on Atari 800XL, APX Extended fig-Forth )
 ( https://archive.org/details/atari_computer_enthusiasts_nsw_06/page/n15/mode/2up?q=escape )
@@ -10,6 +10,8 @@ DECIMAL
 
 ( requires: 39 LOAD ) ( ASSEMBLER )
 ( requires: 50 LOAD ) ( GRAPHICS  )
+
+( JEM-10DEC82 )
 
 0 VARIABLE X1  0 VARIABLE Y1
 0 VARIABLE X2  0 VARIABLE Y2

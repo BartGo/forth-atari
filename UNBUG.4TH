@@ -74,14 +74,17 @@ PUSH JMP,
 : .SYS ( -- )
   CR 5 SPACES
   ." Val System-Constant" CR
-  ' S0    (VC)  ' R0    (VC)
+  ' BL    (VC)  '   C/L (VC) 
   ' FIRST (VC)  ' LIMIT (VC)
-  ' B/SCR (VC)  ' B/BUF (VC)
-  '   C/L (VC)  ' RP@   (VC) 
-  '   SP@ (VC) ;
+  ' B/BUF (VC)  ' B/SCR (VC) 
+  ( ' RP@ (VC)
+  ( ' SP@ (VC)
+  ;
 : .USR ( -- )
   CR ." Addr Val User-Variable" CR
-  ' TIB      (VV)  ' WARNING (VV)
+  ' S0       (VV)  ' R0      (VV)
+  ' TIB      (VV)  ' WIDTH   (VV)
+  ' WARNING  (VV)
   ' FENCE    (VV)  ' DP      (VV)
   ' VOC-LINK (VV)  ' BLK     (VV)
   ' IN       (VV)  ' OUT     (VV)
@@ -90,7 +93,8 @@ PUSH JMP,
   ' STATE    (VV)  ' BASE    (VV)
   ' DPL      (VV)  ' FLD     (VV)
   ' CSP      (VV)  ' R#      (VV)
-  ' HLD      (VV)  ( and ... )
+  ' HLD      (VV)
+  ( and? ... )
   ' USE      (VV)
   ' PREV     (VV)
   ' UP       (VV) 

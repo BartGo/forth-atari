@@ -1,141 +1,54 @@
-( DZIAŁA DZIWNIE )
+( ESCAPE DEMO by John Mattes )
+( JEM-10DEC82 )
+
+( tested on Atari 800XL, APX Extended fig-Forth )
 ( https://archive.org/details/atari_computer_enthusiasts_nsw_06/page/n15/mode/2up?q=escape )
+( errata and Team Forth / 1.4S adaptation hints in https://archive.org/details/atari_computer_enthusiasts_nsw_08/page/n10/mode/1up?q=forth )
+( see also BASIC version: https://archive.org/details/atari_computer_enthusiasts_nsw_03/page/n15/mode/1up?q=ESCAPE )
 
-39 LOAD ( ASSEMBLER )
-50 LOAD ( GRAPHICS  )
+DECIMAL
 
-( 37 SCR ! )
+( requires: 39 LOAD ) ( ASSEMBLER )
+( requires: 50 LOAD ) ( GRAPHICS  )
 
-(     DEMO PROGRAM JEM-10DEC82 )
-     0 VARIABLE X1  0 VARIABLE Y1
-     0 VARIABLE X2  0 VARIABLE Y2
-     1 VARIABLE C
+0 VARIABLE X1  0 VARIABLE Y1
+0 VARIABLE X2  0 VARIABLE Y2
+1 VARIABLE C
 : BOX C @ X1 @ Y1 @ PLOT
       C @ X2 @ Y1 @ DRAW
 	  C @ X2 @ Y2 @ DRAW
 	  C @ X1 @ Y2 @ DRAW
 	  C @ X1 @ Y1 @ DRAW ;
-: SETCR 0 2 4 6 8 6 4 2  9 1 DO
-  224 + 704 I + C! LOOP         ;
-: ROTATE DUP @ ROT ROT OVER
-    SWAP DO I 1+ @ I C! LOOP C! ;
-		  
-( 38 SCR ! )  
-
-: RUN BEGIN 712 705 ROTATE
-    600 1 DO LOOP 2 0= UNTIL ;
-
-: ESCAPE 10 GR. SETCR
+: SETCR
+  0 2 4 6 8 6 4 2
+  9 1 DO
+    224 + 704 I + C!
+  LOOP ;
+: ROTATE
+  DUP @ ROT ROT OVER SWAP DO
+    I 1+ @ I C!
+  LOOP C! ;
+: RUN
+  BEGIN
+    712 705 ROTATE
+	600 1 DO LOOP
+  2 0= UNTIL ;
+: ESCAPE
+  10 GR. SETCR
   39 0 DO 
-           I X1 !      I I + Y1 !
-   79 X1 @ - X2 ! 190 Y1 @ - Y2 !
-   BOX
-   1 Y1 +!   1 MINUS Y2 +!   BOX
-   1 C +! C @ 8   IF 1 C ! ENDIF
- LOOP RUN  ;
+    I X1 !
+	I I + Y1 !
+    79 X1 @ - X2 !
+	190 Y1 @ - Y2 !
+    BOX
+    1 Y1 +!
+	1 MINUS Y2 +!
+	BOX
+    1 C +! C @ 8
+	> IF
+	  1 C !
+	ENDIF
+  LOOP
+  RUN ;
  
-ESCAPE
-
-
-( VS https://archive.org/details/atari_computer_enthusiasts_nsw_03/page/n15/mode/1up?q=ESCAPE )
-
-
-B 158
-
-110 XORG=19YORG=79 {BS="ENTHISIASTS' iG
-
-QSUB 150
-
-120 XORG=28s YORG=112SBS="(NS.H. GOS
-
-UB 150
-
-130 GOSUB 1000
-
-140 X=USRCAOR(A$) SFOR I=1 TO S;NEXT I
-
-iGOTO 140
-
-156 FOR I=i TO LEN(R$)$RESTORE 200+ASC
-
-(8$(1))
-
-140 READ C$,X,Y3IF C$="P" THEN PLOT XO
-
-RG+X, YORG+Y3GOTO 160
-
-170 IF C$="D" THEN DRAWTO XORG+X, YORG+
-
-YiGOTd 140
-
-180 IF C$="E" THEN XORG=XORG+XNEXT I}
-
-RETURN
-
-240 DATA P41,-3,D)0,-3,D.0,9,D,1,9,E 92
-
-0
-
-241 DATA P,-1,-35D,0,-3,0,0,9,D,-1,9,E
-
-12,0
-
-246 DATA P,0,5)P)6,6,E,2)0
-
-265 DATA P,0;6,D,0,0,D,2,0,0,2,4,P,1,3 Ey 4,0 267 DATA Py210,D,6,0,D,0,6,0,2,6,E 5440 249 DATA Po2+04D)0504D,0,6,D,2,6yP 4143 1£,4,0
-
-272 DATA Py0,0,D40,6,Py2y0,D,2,6,Py143 1E,4,0
-
-273 DATA P,0,0,0,0,6,E,2,0
-
-277 DATA Py0,6,D,0,0,D,4,0,0,4,6,P 52,0 1D,246,E 96,0
-
-278 DATA P,0,6,0,0,0,; 279 DATA Py0,0,D,0,4, 1E 54,0
-
-oo ~
-
-mM ~~
-
--16-
-
-280 DATA P,0,6,D,0,0,D,2,0,D,2,3,0,0,3 E440
-
-9D,2,0,E,650
-
-1000 DIM AS(Z1) RESTORE 1020
-
-1010 FOR I=1 TG 21;READ ASAS(I)=CHRS(A YINEXT TSRETURN
-
-1020 DATA 104,162,0,172,193,2, 189,194, 2,157 193,25 232,224 8,144,245, 140,200, 2,96
-
-1 REM $492449494444544434343244345444 2 REK # ESCAPE $ 3 REM # Original author uranown # 4 REM # Modified by Garry Francis 4
-
-5 REM # Published by Atari Computer # 6 REN # = Enthusiasts (N.S.W.) + 7 REM # October 1982 $
-
-8 REN HHH AHHRARAH 10 GRAPHICS 10
-
-20 FOR I=705 TO 7123READ ASPOKE I,224 ASNEXT I
-
-30 DATA 254,6,856,452,0
-
-40 C=1:FOR I=0 TO 38:COLOR Cix=1iY=Ix2 PLOT X,Y:DRAWTO 79-X,Y
-
-58 PLOT X,Y+1:DRAWTO 79-X,Y+1 :DRAHTO 7 9-X,190-YSDRAWTO X,190-Y
-
-60 PLOT 79-X,191-Y3DRANTO X,191-Y SDRAW TO X,Y
-
-70 C=C+HitIF C>8 THEN C=1
-
-80 NEXT TiGOSUB 1000
-
-90 X=USR(ADR(AS) {FOR T=1 TO 24:NEXT I GOTO 90
-
-1000 DIM A$(21)$RESTORE 1020
-
-1010 FOR I=1 10 213READ AtA$(T)=CHRS(A YINEXT ISRETURN
-
-1020 DATA 104,162,0,172,193,2,189,194,
-
-241575193, 2,232,224 8,144,245, 140,200, 2,96
-
-
+( ESCAPE )

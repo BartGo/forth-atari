@@ -7,6 +7,10 @@
 (  https://www.atarimagazines.com )
 (  /software/83-09/FORTHASM.4TH   )
 ( https://archive.org/details/1983-09-anticmagazine/page/79/mode/1up?q=forth )
+( https://archive.org/details/1986-02-anticmagazine/page/98/mode/2up?q=forth )
+( https://archive.org/details/1982-06-anticmagazine/page/45/mode/1up?q=forth )
+( https://archive.org/details/1983-04-anticmagazine/page/94/mode/1up?q=forth )
+( https://archive.org/details/1982-12-anticmagazine/page/49/mode/2up?q=definers )
 
 FORTH DEFINITIONS DECIMAL
 

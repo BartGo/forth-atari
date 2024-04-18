@@ -135,11 +135,11 @@ DECIMAL
   [ ' ;S CFA ]   LITERAL OVER 2+ !
   [ ' ;  CFA @ ] LITERAL SWAP CFA ! ;
 
-( ***** S0, R0, S. ***** )
+( ***** S0, R0, .S ***** )
 ( REQUIRES: NOTHING      )
 : S0 TIB 4 - @ ; ( -- n )
 : R0 TIB 2 - @ ; ( -- n )
-: S. SP@ S0 = 0= IF
+: .S SP@ S0 = 0= IF
     SP@ 2 - S0 2 - DO I @ . -2 +LOOP
   ELSE ." Stack empty " THEN ;
 
@@ -203,11 +203,11 @@ PUSH JMP,
 
 ( **** BREAK&GO **** )
 ( https://www.forth.org/fd/FD-V05N1.pdf )
-( REQUIRES: assembler [39], RP@, R0, S0, S., R.N )
+( REQUIRES: assembler [39], RP@, R0, S0, .S, R.N )
 0 VARIABLE RP*
 : BREAK 
   CR ." (BREAK reached, type GO to proceed)"
-  CR ." S= " S.
+  CR ." S= " .S
   CR ." R= " R.N CR 
   RP@ 4 - RP* ! 0 BLK ! BEGIN
     QUERY INTERPRET ." aok" CR

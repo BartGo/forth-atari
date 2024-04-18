@@ -11,6 +11,7 @@
 ( https://archive.org/details/1982-06-anticmagazine/page/45/mode/1up?q=forth )
 ( https://archive.org/details/1983-04-anticmagazine/page/94/mode/1up?q=forth )
 ( https://archive.org/details/1982-12-anticmagazine/page/49/mode/2up?q=definers )
+( needed: CALL or PROC /?/ to directly execute machine code procedure )
 
 FORTH DEFINITIONS DECIMAL
 

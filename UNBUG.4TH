@@ -17,6 +17,20 @@ FORTH DEFINITIONS DECIMAL
 
 : UNBUG( ;
 
+( *** EDITOR'S "PUT" *** )
+BASE @ HEX 
+: P ( n -- ) ( edit one line )
+  1 HERE C/L 1+ BLANKS WORD
+  HERE PAD C/L 1+ CMOVE PAD 1+
+  SWAP DUP FFF0 AND 17 ?ERROR
+  SCR @ (LINE) DROP C/L CMOVE
+  UPDATE ;
+: L. SCR @ LIST ;
+: T. SCR @ TRIAD ; 
+: N.  1 SCR +! L. ;
+: B. -1 SCR +! L. ;
+BASE !
+
 ( ******* BUFS ******* )
 ( REQUIRES: NOTHING )
 ( TDH 7/11/81 FD-V03N6 )

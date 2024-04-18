@@ -3,6 +3,9 @@
 ( Collected from Forth Dimensions ) 
 ( Atari800XL / APX Ext. Fig-Forth )
 (  REQUIRES: assembler [39 LOAD]  )
+( see also:                       )
+(  https://www.atarimagazines.com )
+(  /software/83-09/FORTHASM.4TH   )
 
 FORTH DEFINITIONS DECIMAL
 

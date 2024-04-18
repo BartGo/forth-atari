@@ -3,6 +3,7 @@ BYE
 ( ANTIC 3/84 W/ ERRATA FROM 4/84          )
 ( https://archive.org/details/1984-03-anticmagazine/page/74/mode/2up )
 ( https://archive.org/details/1984-08-anticmagazine/page/n5/mode/2up )
+( https://archive.org/details/1984-11-anticmagazine/page/52/mode/1up )
 ( WORKS W/ ATARI APX FIG-FORTH REV. 2     )
 ( MAY WORK W/ TEAM ATARI FIG-FORTH 1.4S?  )
 ( DOES NOT WORK W/ VALFORTH?              )

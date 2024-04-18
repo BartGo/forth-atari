@@ -1,10 +1,8 @@
-// INCORRECT, DO  WE MOVE RETURN STACK OR DICTIONARY POINTER OR BOTH?
+( FIXME )
 
-0 VARIABLE *RP ( return stack memory )
-0 VARIABLE *DP ( dict memory )
-: (( RP@ 2 - *RP ! ; ( why not )
-: )) *RP RP@ ! ; ( why not )
-( scopes can't be nested )
+0 VARIABLE *DP
+: ((  HERE *DP ! ; 
+: )) *DP @  DP @ ! ; 
 
 ((
   0 VARIABLE &test

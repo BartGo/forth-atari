@@ -43,6 +43,37 @@ FORTH DEFINITIONS DECIMAL
   CONTEXT @ 4 - NFA ID.
   CURRENT @ 4 - NFA ID. CR ; 
 
+( *******   GOESINTO    ****** )
+( Decompiler by R. D. Ackerman )
+( -- Forth Dimension Vol14 Nr2 )
+( "GOIN word", RET/SPC/Q ) 
+: :GOIN ; 0 VARIABLE GIN 
+: GIN+ CR GIN @ 2+ DUP GIN ! SPACES ;
+: GCHK DUP @ 2+ ' COMPILE =
+  IF  2+ DUP @ 2+ NFA ID. 2+
+  ELSE DUP @ 2+ DUP ' LIT =
+  OVER ' BRANCH  = OR OVER ' 0BRANCH = OR
+  OVER ' (LOOP)  = OR SWAP ' (+LOOP) = OR
+  IF 2+ DUP @ SPACE . 2+ ELSE DUP @ 2+ ' CLIT =
+  IF 2+ DUP C@ SPACE . 1+ ELSE DUP @ 2+ 
+  ' (.") = IF 2+ DUP COUNT TYPE 
+  DUP C@ 1+ + ELSE 2+ THEN THEN THEN THEN 
+  -2 GIN +! ; 
+: MYSELF LATEST PFA CFA , ; IMMEDIATE
+: DIN CR GIN @ SPACES ;
+: (GOESINTO) DUP CFA @ ' : CFA 
+  @ = OVER ' ERROR = 0= AND
+  IF BEGIN DUP @ DUP ' ;S CFA =
+    OVER ' (;CODE) CFA = OR 0=
+  WHILE 2+ DUP GIN+ NFA ID. KEY 
+    DUP 81 = IF SP! QUIT ELSE 155 =
+    IF MYSELF ELSE DROP THEN THEN
+    GCHK REPEAT 2+ DIN NFA ID.
+  THEN DROP ; ( 81=Q, 155=RETURN )
+: GOESINTO -FIND IF DROP 0 GIN !
+  (GOESINTO) ELSE ." NOT FOUND" CR THEN ;
+: GOIN GOESINTO ; : ;GOIN ; ( END )
+
 ( *** zap word - IRREVERSIBLY *** )
 ( *** replace word in nucleus *** )
 ( *** usage:  ' OLD ' NEW ZAP *** )

@@ -154,8 +154,8 @@
  5 P   CURSOR EMIT SCREEN-CURSOR ;
  6 P : CLEAR-SCR 
  7 P   16 0 DO I L-A 64 BLANKS LOOP DISPLAY ; 
- 8 P : THEME DUP C@ 148 XOR SWAP C! ; ( 709/710 -- )
- 9 P : SAVESCR FLUSH EREAD DISPLAY  ;  
+ 8 P : THEME DUP C@ 148 XOR SWAP C! ; : BGRC 710 THEME ;
+ 9 P : SAVESCR FLUSH EREAD DISPLAY  ; : FNTC 709 THEME ;
 10 P : CRC  CLS ( VER )     ANYKD   ; ( ext: crc calc )
 11 P : PIN1 CLS VLIST       ANYKD   ; ( plugins 1..5 )
 12 P : PIN2 CLS SCR @ LIST  ANYKD   ;
@@ -165,18 +165,18 @@
  
 68 CLEAR
  0 P ( EDIT - COMMANDS ) 
- 1 P : REVB FRM# @ 128 XOR FRM# ! ; ( reverse frame when Esc )
+ 1 P : REVB FRM# @ 128 XOR FRM# ! ;  ( reverse frame when Esc )
  2 P : ESC REVB KEY CASES
- 3 P     82 CASE CHSIDE    IS ( R )  47 CASE CHSIDE     IS  ( / )
- 4 P     78 CASE ENEXT     IS ( N )  62 CASE ENEXT      IS  ( > )
- 5 P     76 CASE ELAST     IS ( L )  60 CASE ENEXT      IS  ( < )
- 6 P     83 CASE SAVESCR   IS ( S )  49 CASE PIN1       IS  ( 1 )           
- 7 P     81 CASE EABORT    IS ( Q )  50 CASE PIN2       IS  ( 2 )           
- 8 P     86 CASE PUT-LINE  IS ( V )  51 CASE PIN3       IS  ( 3 )           
- 9 P     90 CASE 0 UNDOSCR IS ( Z )  52 CASE PIN4       IS  ( 4 ) 
-10 P     66 CASE SH        IS ( B )  53 CASE PIN5       IS  ( 5 ) 
-11 P     48 CASE BOOT      IS ( 0 )  84 CASE BGR# THEME IS  ( T )
-12 P     72 CASE HLP       IS ( H )  70 CASE FNT# THEME IS  ( F )
+ 3 P     82 CASE CHSIDE    IS ( R )  47 CASE CHSIDE IS  ( / )
+ 4 P     78 CASE ENEXT     IS ( N )  62 CASE ENEXT  IS  ( > )
+ 5 P     76 CASE ELAST     IS ( L )  60 CASE ENEXT  IS  ( < )
+ 6 P     83 CASE SAVESCR   IS ( S )  49 CASE PIN1   IS  ( 1 )           
+ 7 P     81 CASE EABORT    IS ( Q )  50 CASE PIN2   IS  ( 2 )           
+ 8 P     86 CASE PUT-LINE  IS ( V )  51 CASE PIN3   IS  ( 3 )           
+ 9 P     90 CASE 0 UNDOSCR IS ( Z )  52 CASE PIN4   IS  ( 4 ) 
+10 P     66 CASE SH        IS ( B )  53 CASE PIN5   IS  ( 5 ) 
+11 P     48 CASE BOOT      IS ( 0 )  84 CASE BGRC   IS  ( T )
+12 P     72 CASE HLP       IS ( H )  70 CASE FNTC   IS  ( F )
 13 P     87 CASE CRC       IS ( W )  BEEP END-CASES REVB ;
 14 P : DEPTH SP@ 12 +ORIGIN @ SWAP - 2 / ; ( if no DEBUG words )
 15 P : SETSCR DEPTH 0= IF HLP# ENDIF SCR ! ;  -->

@@ -1,23 +1,21 @@
-( to do:" define if exists" to override only if not defined )
-( by a "better" module )
 
 59 CLEAR ( CONST HLP# = 59 )
-  0 P ( EDIT - HELP ) -->
-  1 P Esc-S: save (flush)
-  2 P Esc-Z: undo (empty-buffers)
-  3 P Arrows,Ins,BckSp,Tab: standard 
-  4 P Return: next line; Esc-T/F: colr
-  5 P Clear: clear screen (Shf> Ctl>)   
-  6 P Shf-Ins: ins ln*; Esc-1:5: plgns VLIST LIST TRIAD EVARS LOAD
-  7 P Shf-Del: del ln*;    Esc-W: crc
-  8 P Ctl-Ins: ins space;  Esc-H: help
-  9 P Ctl-BckSpc: del;     Esc-0: cold
- 10 P Esc-R: rotate/sides;    ( / )
+  0 P ( EDIT - HELP ) --> Esc-H: help
+  1 P Arrows, Ins, BckSp, Tab: normal
+  2 P Esc-Q:  quit (empty-buffers)
+  3 P Esc-S:  save (flush)
+  4 P Esc-Z:  undo (empty-buffers) 
+  5 P Return: next line
+  6 P Shf-Ins: ins ln*; Esc-1:5: plgns 
+  7 P Shf-Del: del ln*; Esc-T/F: color
+  8 P Esc-V: ins last del ln*
+  9 P Esc-B: forth command line
+ 10 P Esc-R: rotate/sides     ( / )
  11 P Esc-N: screen+1/empt-bf ( > )
  12 P Esc-L: screen-1/empt-bf ( < )
- 13 P Esc-B: forth command line
- 14 P Esc-Q: quit/empt-bf; 
- 15 P Esc-V: ins last del ln*
+ 13 P Ctl-Ins: ins space; 
+ 14 P Ctl-BckSpc: del;  Esc-0: cold
+ 15 P Clear: clear screen (Shf> Ctl>)   
 
 60 CLEAR
   0 P ( EDIT - BY M. DOUGHERTY )
@@ -53,15 +51,15 @@
  12 P : WRITE-EXTRA EXTRAOFF @ LINEOFF @ + CHAROFF @ 1 -
  13 P   POINT-CURSOR XLINE ; : FRE 741 @ HERE - ;
  14 P : 2TOP LINEOFF @ 1 - CHAROFF @ 1 - POINT-CURSOR HLINE ; 
- 15 P : ?FLUSHED PREV @ @ -32768 AND IF 1 ELSE 0 THEN ; -->
+ 15 P -->
 
 62 CLEAR 
   0 P ( EDIT - DISPLAY, CASE )
   1 P : BOT LINEOFF @ 16 + CHAROFF @ 1 - POINT-CURSOR HLINE ; 
   2 P : ETITLE 0 CHAROFF @ POINT-CURSOR ." EDIT / Dr" 
-  3 P   OFFSET @ 0= 0= . ( ?FLUSHED 32 + EMIT ) ( FIXME )
-  4 P   ."  Scr" SCR ? 
-  5 P   ." Side" SIDE ? ." Free" FRE U. ; 
+  3 P   OFFSET @ 0= 0= . ." Scr" 
+  4 P   SCR ? ." Side" SIDE
+  5 P   ? ." Free" FRE U. ; 
   6 P : DISPLAY CLS 1 CRSINH C! ETITLE 2TOP CLINE @ 
   7 P   16 0 DO I CLINE ! WRITE-LINE LOOP CLINE !
   8 P   SIDE @ IF 32 ELSE 0 ENDIF CCHAR ! BOT
@@ -105,8 +103,8 @@
 10 P : RETURN SCREEN-CURSOR SIDE @ IF
 11 P   32 ELSE 0 ENDIF CCHAR ! DOWN ;
 12 P : EABORT EMPTY-BUFFERS 1 STOP ! ;
-13 P : FLASH 712 C@ 255 XOR 712 C! ;
-14 P : BEEPF BEEP FLASH ; ( FIXME )
+13 P : FLASH FRM# @ 255 XOR FRM# ! ;
+14 P : BEEPF BEEP FLASH ; 
 15 P   -->
 
 65 CLEAR
@@ -124,7 +122,7 @@
 11 P   DUP 1 - C@ OVER C! 1 - LOOP ENDIF BL SWAP C! ;
 12 P : INSERT SIDE @ IF 63 ELSE 31 ENDIF 
 13 P   INSERT-CHAR WRITE-LINE CURSOR SCREEN-CURSOR ;
-14 P : HLP SCR @ 70 = IF HLPM @ SCR ! ELSE
+14 P : HLP SCR @ HLP# = IF HLPM @ SCR ! ELSE
 15 P     SCR @ HLPM ! HLP# SCR ! ENDIF DISPLAY ; -->
 
 66 CLEAR
@@ -154,14 +152,14 @@
  5 P   CURSOR EMIT SCREEN-CURSOR ;
  6 P : CLEAR-SCR 
  7 P   16 0 DO I L-A 64 BLANKS LOOP DISPLAY ; 
- 8 P : THEME DUP C@ 148 XOR SWAP C! ; : BGRC 710 THEME ;
- 9 P : SAVESCR FLUSH EREAD DISPLAY  ; : FNTC 709 THEME ;
-10 P : CRC  CLS ( VER )     ANYKD   ; ( ext: crc calc )
-11 P : PIN1 CLS VLIST       ANYKD   ; ( plugins 1..5 )
-12 P : PIN2 CLS SCR @ LIST  ANYKD   ;
-13 P : PIN3 CLS SCR @ TRIAD ANYKD   ;
-14 P : PIN4 CLS ( EVARS )   ANYKD   ; ( ext: env/sysvars )
-15 P : PIN5 CLS SCR @ LOAD  ANYKD   ; -->
+ 8 P : THEME DUP C@ 148 XOR SWAP C! ; 
+ 9 P : SAVESCR FLUSH EREAD DISPLAY  ; 
+10 P : BGRC 710 THEME ;    : FNTC 709 THEME ;
+11 P : PIN1 CLS VLIST        ANYKD ; ( vlist )
+12 P : PIN2 CLS SCR @ LIST   ANYKD ; ( list  )
+13 P : PIN3 CLS SCR @ TRIAD  ANYKD ; ( triad )
+14 P : PIN4 CLS DR0 18 SCR ! ANYKD ; ( set DR0, 18th screen )
+15 P : PIN5 CLS SCR @ LOAD   ANYKD ; ( load  ) -->
  
 68 CLEAR
  0 P ( EDIT - COMMANDS ) 
@@ -177,9 +175,9 @@
 10 P     66 CASE SH        IS ( B )  53 CASE PIN5   IS  ( 5 ) 
 11 P     48 CASE BOOT      IS ( 0 )  84 CASE BGRC   IS  ( T )
 12 P     72 CASE HLP       IS ( H )  70 CASE FNTC   IS  ( F )
-13 P     87 CASE CRC       IS ( W )  BEEP END-CASES REVB ;
-14 P : DEPTH SP@ 12 +ORIGIN @ SWAP - 2 / ; ( if no DEBUG words )
-15 P : SETSCR DEPTH 0= IF HLP# ENDIF SCR ! ;  -->
+13 P   BEEPF END-CASES REVB ;
+14 P : DEEP SP@ 12 +ORIGIN @ SWAP - 2 / ; ( if no DEPTH dfnd )
+15 P : SETSCR DEEP 0= IF HLP# ENDIF SCR ! ;  -->
  
 69 CLEAR
  0 P ( EDIT - ends ) ( n EDIT ) 
@@ -195,7 +193,7 @@
 10 P       DUP ADDKEY 
 11 P     END-CASES
 12 P   STOP @ UNTIL   
-13 P   CLS  
-14 P   0 CRSINH ! ; 
-15 P : )EDIT ; ;S
+13 P   CLS 0 CRSINH ! ;   
+14 P : )EDIT ; 
+15 P ;S
  

@@ -5,10 +5,10 @@
   0 P ( EDIT - HELP ) -->
   1 P Esc-S: save (flush)
   2 P Esc-Z: undo (empty-buffers)
-  3 P Arrows, Insert, BckSpc: standard 
-  4 P Return: next line;  Tab: tab (2)
-  5 P Clear: clear screen (Shf> Ctl>)
-  6 P Shf-Ins: ins ln*; Esc-1:5: plgns
+  3 P Arrows,Ins,BckSp,Tab: standard 
+  4 P Return: next line; Esc-T/F: colr
+  5 P Clear: clear screen (Shf> Ctl>)   
+  6 P Shf-Ins: ins ln*; Esc-1:5: plgns VLIST LIST TRIAD EVARS LOAD
   7 P Shf-Del: del ln*;    Esc-W: crc
   8 P Ctl-Ins: ins space;  Esc-H: help
   9 P Ctl-BckSpc: del;     Esc-0: cold
@@ -16,23 +16,23 @@
  11 P Esc-N: screen+1/empt-bf ( > )
  12 P Esc-L: screen-1/empt-bf ( < )
  13 P Esc-B: forth command line
- 14 P Esc-Q: quit/empt-bf; Esc-D: dark
- 15 P Esc-V: put last deleted line*
+ 14 P Esc-Q: quit/empt-bf; 
+ 15 P Esc-V: ins last del ln*
 
 60 CLEAR
   0 P ( EDIT - BY M. DOUGHERTY )
-  1 P : EDIT( ; DECIMAL 0 VARIABLE CLINE 0 VARIABLE CCHAR
-  2 P 752 CONSTANT CRSINH                59 CONSTANT HLP#               
-  3 P   3 VARIABLE LINEOFF                3 VARIABLE CHAROFF
-  4 P  18 CONSTANT TOP-BOT                2 CONSTANT REDGE
-  5 P  22 CONSTANT LEDGE                  0 VARIABLE SIDE 
-  6 P  17 VARIABLE EXTRAOFF               0 VARIABLE STOP
-  7 P  0  VARIABLE SAV-BUF 64 ALLOT    HLP# VARIABLE HLPM
-  8 P : EREAD 16 0 DO I SCR @ (LINE) ( FIXME - UPDATE TOO EARLY! )
-  9 P   DROP UPDATE DROP LOOP 0 CLINE ! 0 CCHAR ! 0 SIDE ! ;
- 10 P : CLS 125 EMIT ; 
- 11 P ( : -X -FIND IF DROP CFA EXECUTE THEN ; ) ( FIXME )
- 12 P : POINT-CURSOR 85 ! 84 C! ;
+  1 P : EDIT( ; DECIMAL : CLS 125 EMIT ;
+  2 P 752 CONSTANT CRSINH              59 CONSTANT HLP#               
+  3 P 709 CONSTANT FNT#               710 CONSTANT BGR#
+  4 P  18 CONSTANT TOP-BOT              2 CONSTANT REDGE
+  5 P  22 CONSTANT LEDGE                0 VARIABLE SIDE 
+  6 P  17 VARIABLE EXTRAOFF             0 VARIABLE STOP
+  7 P   0 VARIABLE SAV-BUF 64 ALLOT  HLP# VARIABLE HLPM
+  8 P   3 VARIABLE LINEOFF              3 VARIABLE CHAROFF 
+  9 P   0 VARIABLE CLINE                0 VARIABLE CCHAR
+ 10 P : EREAD 16 0 DO I SCR @ (LINE) 
+ 11 P   DROP UPDATE DROP LOOP 0 CLINE ! 0 CCHAR ! 0 SIDE ! ;  
+ 12 P : POINT-CURSOR 85 ! 84 C! ;     712 CONSTANT FRM#
  13 P : CURSOR@ CLINE @ LINEOFF @ +
  14 P   CCHAR @ SIDE @ IF 32 - ENDIF   CHAROFF @ + ;
  15 P : CURSOR CURSOR@ POINT-CURSOR ;  -->
@@ -66,16 +66,16 @@
   7 P   16 0 DO I CLINE ! WRITE-LINE LOOP CLINE !
   8 P   SIDE @ IF 32 ELSE 0 ENDIF CCHAR ! BOT
   9 P   WRITE-EXTRA CURSOR SCREEN-CURSOR ;
- 10 P : CASES ?COMP CSP @ !CSP 4 ; IMMEDIATE
- 11 P : CASE 4 ?PAIRS COMPILE OVER COMPILE =
- 12 P   COMPILE 0BRANCH HERE 0 , COMPILE DROP 5 ; IMMEDIATE
- 13 P : IS 5 ?PAIRS COMPILE BRANCH HERE 0 ,
- 14 P   SWAP 2 [COMPILE] ENDIF 4 ; IMMEDIATE
- 15 P : ANYK CR ." (Return)" KEY DROP ; : ANYKD ANYK DISPLAY ; -->
+ 10 P : ANYK CR ." (Return)" KEY DROP ; : ANYKD ANYK DISPLAY ;
+ 11 P : CASES ?COMP CSP @ !CSP 4 ; IMMEDIATE
+ 12 P : CASE 4 ?PAIRS COMPILE OVER COMPILE =
+ 13 P   COMPILE 0BRANCH HERE 0 , COMPILE DROP 5 ; IMMEDIATE
+ 14 P : IS 5 ?PAIRS COMPILE BRANCH HERE 0 ,
+ 15 P   SWAP 2 [COMPILE] ENDIF 4 ; IMMEDIATE -->
 
 63 CLEAR
   0 P ( EDIT - CASE, MOVEMENT )
-  1 P : CEND 4 ?PAIRS COMPILE DROP
+  1 P : END-CASES 4 ?PAIRS COMPILE DROP
   2 P   BEGIN SP@ CSP @ = 0= WHILE
   3 P   2 [COMPILE] ENDIF REPEAT
   4 P   CSP ! ; IMMEDIATE
@@ -118,7 +118,7 @@
  5 P : ELAST -1 UNDOSCR ; 
  6 P : ADDR CLINE @ SCR @ (LINE) DROP CCHAR @ + ; ( UPDATE HERE? )
  7 P : ADDKEY DUP ADDR C! CURSOR EMIT RIGHT ;
- 8 P : CHANGE-SIDE SIDE @ 1 XOR SIDE ! DISPLAY ;
+ 8 P : CHSIDE SIDE @ 1 XOR SIDE ! DISPLAY ;
  9 P : INSERT-CHAR ADDR SWAP CCHAR @ -
 10 P   SWAP OVER + SWAP -DUP IF 0 DO
 11 P   DUP 1 - C@ OVER C! 1 - LOOP ENDIF BL SWAP C! ;
@@ -154,30 +154,30 @@
  5 P   CURSOR EMIT SCREEN-CURSOR ;
  6 P : CLEAR-SCR 
  7 P   16 0 DO I L-A 64 BLANKS LOOP DISPLAY ; 
- 8 P : THEME 710 C@ 148 XOR 710 C! ; ( dark mode )
- 9 P : SAVESCR FLUSH EREAD DISPLAY ;  
-10 P : CRC  CLS ( VER )     ANYKD  ; ( ext: crc calc )
-11 P : PIN1 CLS VLIST       ANYKD  ; ( plugins 1..5 )
-12 P : PIN2 CLS SCR @ LIST  ANYKD  ;
-13 P : PIN3 CLS SCR @ TRIAD ANYKD  ;
-14 P : PIN4 CLS ( EVARS )   ANYKD  ; ( ext: env/sysvars )
-15 P : PIN5 CLS SCR @ LOAD  ANYKD  ; -->
+ 8 P : THEME DUP C@ 148 XOR SWAP C! ; ( 709/710 -- )
+ 9 P : SAVESCR FLUSH EREAD DISPLAY  ;  
+10 P : CRC  CLS ( VER )     ANYKD   ; ( ext: crc calc )
+11 P : PIN1 CLS VLIST       ANYKD   ; ( plugins 1..5 )
+12 P : PIN2 CLS SCR @ LIST  ANYKD   ;
+13 P : PIN3 CLS SCR @ TRIAD ANYKD   ;
+14 P : PIN4 CLS ( EVARS )   ANYKD   ; ( ext: env/sysvars )
+15 P : PIN5 CLS SCR @ LOAD  ANYKD   ; -->
  
 68 CLEAR
  0 P ( EDIT - COMMANDS ) 
- 1 P : REVB 712 @ 128 XOR 712 ! ; ( reverse border for Escape )
+ 1 P : REVB FRM# @ 128 XOR FRM# ! ; ( reverse frame when Esc )
  2 P : ESC REVB KEY CASES
- 3 P   82 CASE CHANGE-SIDE IS ( R ) 47 CASE CHANGE-SIDE IS ( / )
- 4 P   78 CASE ENEXT       IS ( N ) 62 CASE ENEXT IS       ( > )
- 5 P   76 CASE ELAST       IS ( L ) 60 CASE ENEXT IS       ( < )
- 6 P   83 CASE SAVESCR     IS ( S ) 49 CASE PIN1 IS        ( 1 )           
- 7 P   81 CASE EABORT      IS ( Q ) 50 CASE PIN2 IS        ( 2 )           
- 8 P   86 CASE PUT-LINE    IS ( V ) 51 CASE PIN3 IS        ( 3 )           
- 9 P   90 CASE 0 UNDOSCR   IS ( Z ) 52 CASE PIN4 IS        ( 4 ) 
-10 P   66 CASE SH          IS ( B ) 53 CASE PIN5 IS        ( 5 ) 
-11 P   48 CASE BOOT        IS ( 0 ) 
-12 P   72 CASE HLP         IS ( H ) 84 CASE THEME      IS  ( T )       
-13 P   87 CASE CRC         IS ( W ) BEEP CEND REVB ;
+ 3 P     82 CASE CHSIDE    IS ( R )  47 CASE CHSIDE     IS  ( / )
+ 4 P     78 CASE ENEXT     IS ( N )  62 CASE ENEXT      IS  ( > )
+ 5 P     76 CASE ELAST     IS ( L )  60 CASE ENEXT      IS  ( < )
+ 6 P     83 CASE SAVESCR   IS ( S )  49 CASE PIN1       IS  ( 1 )           
+ 7 P     81 CASE EABORT    IS ( Q )  50 CASE PIN2       IS  ( 2 )           
+ 8 P     86 CASE PUT-LINE  IS ( V )  51 CASE PIN3       IS  ( 3 )           
+ 9 P     90 CASE 0 UNDOSCR IS ( Z )  52 CASE PIN4       IS  ( 4 ) 
+10 P     66 CASE SH        IS ( B )  53 CASE PIN5       IS  ( 5 ) 
+11 P     48 CASE BOOT      IS ( 0 )  84 CASE BGR# THEME IS  ( T )
+12 P     72 CASE HLP       IS ( H )  70 CASE FNT# THEME IS  ( F )
+13 P     87 CASE CRC       IS ( W )  BEEP END-CASES REVB ;
 14 P : DEPTH SP@ 12 +ORIGIN @ SWAP - 2 / ; ( if no DEBUG words )
 15 P : SETSCR DEPTH 0= IF HLP# ENDIF SCR ! ;  -->
  
@@ -193,7 +193,7 @@
  8 P       126 CASE DEL          IS  127 CASE TAB         IS
  9 P       125 CASE CLEAR-SCR IS 
 10 P       DUP ADDKEY 
-11 P     CEND
+11 P     END-CASES
 12 P   STOP @ UNTIL   
 13 P   CLS  
 14 P   0 CRSINH ! ; 

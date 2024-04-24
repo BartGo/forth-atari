@@ -1,20 +1,18 @@
 ( BUG: LEAVES AFTER 1ST LINE )
 
-: TASK ;
+: VER( ;
 ( 0 VARIABLE CNT )
 
 ( Checksum for hand-entered source screens)
 ( FD IV No3 Klaxon Suralis and Leo Brodie )
 : ACCUMULATE ( oldcrc\char -- newcrc )
-  DUP EMIT
-  256 * XOR 8 0 DO DUP 0< IF 16386 XOR DUP + 1+
-  ELSE DUP + THEN LOOP ;
+  DUP EMIT 256 * XOR 8 0 DO DUP 0< IF
+      16386 XOR DUP + 1+
+    ELSE DUP + THEN LOOP ;
 : DISPOSE ( crcvalue\adr\len --- newcrcvalue )
   OVER DUP C@ 40 = SWAP 1+ C@ BL = AND OVER 1 = AND 
-  IF ( comment; skip it )
-  2DROP 41 WORD HERE DROP
-  ELSE 1+ OVER + SWAP DO I C@
-  ACCUMULATE LOOP
+  IF ( comment; skip it ) 2DROP 41 WORD HERE DROP
+  ELSE 1+ OVER + SWAP DO I C@ ACCUMULATE LOOP
   THEN ; ( careful: LOOPs on addresses )
 : MORE ( -- adr f )
   BL WORD HERE DUP C@ 2 < OVER 1+ C@
@@ -28,13 +26,16 @@
     BEGIN
       MORE
     WHILE
-       ( 1 CNT +! )
-	   BL OVER
+       ( 1 CNT +! ) BL OVER
       COUNT + C! COUNT DISPOSE
     REPEAT
   DROP
-  R> IN !  R> BLK ! ; : VE VERIFY ;
+  R> IN !  R> BLK ! ;
+: VE VERIFY ;
 : VER SCR @ VERIFY U. ; 
+: )VER ;
+
+;S
 
 0 P ( Test screen)
 1 P      For program exchange, the medium of hard copy is cheap,

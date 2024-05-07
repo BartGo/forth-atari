@@ -9,14 +9,14 @@ https://archive.org/details/Forth_Dimension_Volume_04_Number_2/page/n22/mode/1up
 
 ( Source screen documentation tool WF25 2Apr82 KRH )
 
-: 1OUTLINE ( #screen -- ) ( print line 0 & )
-( lines with non-blank in column 1         )
+( FIXME )
+: 1OUTLINE ( #screen -- ) 
   CR CR ." Screen # " DUP . 1024 0 DO
-    DUP BLOCK I + DUP C@ BL = INVERT I 0= OR IF
-	  3 SPACES 64 -TRAILING TYPE CR
-	ELSE DROP THEN
-  64 +LOOP
-  DROP ;
+    DUP B/SCR * BLOCK ( scr->block# )
+    I + DUP C@ BL = 0= I 0= OR IF
+      64 -TRAILING TYPE
+    ELSE DROP THEN
+  64 +LOOP DROP ;
 
 : OUTLINE ( #1st-screen #last-screen -- ) ( print line 0 & )
 ( lines with non-blank in column 1 for range of screens    )

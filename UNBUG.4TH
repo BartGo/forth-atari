@@ -3,15 +3,19 @@
 ( Collected from Forth Dimensions ) 
 ( Atari800XL / APX Ext. Fig-Forth )
 (  REQUIRES: assembler [39 LOAD]  )
+(    optionally: debug [21 LOAD]  )
 ( see also:                       )
 (  https://www.atarimagazines.com )
 (  /software/83-09/FORTHASM.4TH   )
-( https://archive.org/details/1983-09-anticmagazine/page/79/mode/1up?q=forth )
-( https://archive.org/details/1986-02-anticmagazine/page/98/mode/2up?q=forth )
-( https://archive.org/details/1982-06-anticmagazine/page/45/mode/1up?q=forth )
-( https://archive.org/details/1983-04-anticmagazine/page/94/mode/1up?q=forth )
-( https://archive.org/details/1982-12-anticmagazine/page/49/mode/2up?q=definers )
+( https://archive.org/details/    )
+( 1983-09-anticmagazine/page/79/mode/1up?q=forth )
+( 1986-02-anticmagazine/page/98/mode/2up?q=forth )
+( 1982-06-anticmagazine/page/45/mode/1up?q=forth )
+( 1983-04-anticmagazine/page/94/mode/1up?q=forth )
+( 1982-12-anticmagazine/page/49/mode/2up?q=definers )
 ( needed: CALL or PROC /?/ to directly execute machine code procedure )
+( consider for this MAC from RP's words )
+( load asm[39] and optionally debug - useful DUMP, DECOMP )
 
 FORTH DEFINITIONS DECIMAL
 
@@ -34,16 +38,10 @@ HEX
   17 EMIT #LAG TYPE #LOCATE . DROP ;
 : TOP 0 R# ! ; 
 : E. LINE C/L BLANKS UPDATE ;
-: L. SCR @ LIST ;
-( : LI. BASE @ DECIMAL 82 C@ 0 82 C!   )
-(  CR 16 0 DO CR I SCR @ .LINE LOOP CR )
-(  82 C! BASE ! ;                      )
-: T. SCR @ TRIAD ; 
-: N.  1 SCR +! L. ;
-: B. -1 SCR +! L. ;
-: MARK 10 0 DO
-    I LINE UPDATE DROP LOOP ;
-: FL. MARK FLUSH ; 
+: L. SCR @ LIST ;   : T. SCR @ TRIAD ; 
+: N.  1 SCR +! L. ; : B. -1 SCR +! L. ;
+: MARK 10 0 DO I LINE UPDATE DROP LOOP ;
+: FL. MARK FLUSH ;
 : EB. EMPTY-BUFFERS ;
 : WHERE DUP B/SCR / DUP SCR
   ! ." SCR # " DECIMAL .
@@ -69,9 +67,9 @@ DECIMAL
   CR 01 TEXT 0 SRCHCNT ! 1+ SWAP
   DO
     FORTH I SCR ! TOP
-    BEGIN 1LINE
-	  IF 0 M SCR ? BUMP THEN
-	1023 R# @ < UNTIL 
+    BEGIN
+      1LINE IF 0 M SCR ? BUMP THEN
+    1023 R# @ < UNTIL 
   LOOP ; 
 
 ( ******* BUFS ******* )
@@ -104,6 +102,7 @@ DECIMAL
 ( Decompiler by R. D. Ackerman )
 ( -- Forth Dimension Vol14 Nr2 )
 ( "GOIN word", RET/SPC/Q ) 
+( TODO: enhance, add addresses )
 0 VARIABLE GIN 
 : GIN+ CR GIN @ 2+ DUP GIN ! SPACES ;
 : GCHK DUP @ 2+ ' COMPILE =
@@ -142,7 +141,7 @@ DECIMAL
 
 ( ***** S0, R0, .S ***** )
 ( REQUIRES: NOTHING      )
-: S0 TIB 4 - @ ; ( -- n )
+: S0 TIB 4 - @ ; ( -- n ) ( better: 18 +ORIGIN @ )
 : R0 TIB 2 - @ ; ( -- n )
 : .S SP@ S0 = 0= IF
     SP@ 2 - S0 2 - DO I @ . -2 +LOOP
@@ -163,49 +162,42 @@ FORTH
 
 ( ***** .EVAR **** )
 ( REQUIRES: S0, R0, RP@, asm [39] )
-: (VC) ( pfa -- )
-    DUP CFA EXECUTE
-	4 4 + .R 
+: (VC ( pfa -- )
+    DUP CFA EXECUTE 4 4 + .R 
     NFA SPACE ID. CR ;
-: (VV) ( pfa -- )
-    DUP CFA EXECUTE   DUP
-	4 .R              C@ 4 .R 
-    NFA SPACE ID. CR ;
+: (VV ( pfa -- )
+    DUP CFA EXECUTE DUP 4 .R C@
+    4 .R NFA SPACE ID. CR ;
 : .SYS ( -- )
   CR 5 SPACES
   ." Val System-Constant" CR
-  ' BL    (VC)  '   C/L (VC) 
-  ' FIRST (VC)  ' LIMIT (VC)
-  ' B/BUF (VC)  ' B/SCR (VC) 
-  ( ' RP@ (VC)
-  ( ' SP@ (VC)
+  ' BL    (VC  '   C/L (VC 
+  ' FIRST (VC  ' LIMIT (VC
+  ' B/BUF (VC  ' B/SCR (VC 
+  ( ' RP@ (VC  ' SP@ (VC      )
   ;
 : .USR ( -- )
   CR ." Addr Val User-Variable" CR
-  ' S0       (VV)  ' R0      (VV)
-  ' TIB      (VV)  ' WIDTH   (VV)
-  ' WARNING  (VV)
-  ' FENCE    (VV)  ' DP      (VV)
-  ' VOC-LINK (VV)  ' BLK     (VV)
-  ' IN       (VV)  ' OUT     (VV)
-  ' SCR      (VV)  ' OFFSET  (VV)
-  ' CONTEXT  (VV)  ' CURRENT (VV)
-  ' STATE    (VV)  ' BASE    (VV)
-  ' DPL      (VV)  ' FLD     (VV)
-  ' CSP      (VV)  ' R#      (VV)
-  ' HLD      (VV)
-  ( and? ... )
-  ' USE      (VV)
-  ' PREV     (VV)
-  ' UP       (VV) 
-  ' PAD      (VV) ;
-: .EVAR ( -- )
-  .SYS .USR ;
+  ' S0       (VV  ' R0      (VV
+  ' TIB      (VV  ' WIDTH   (VV
+  ' WARNING  (VV
+  ' FENCE    (VV  ' DP      (VV
+  ' VOC-LINK (VV  ' BLK     (VV
+  ' IN       (VV  ' OUT     (VV
+  ' SCR      (VV  ' OFFSET  (VV
+  ' CONTEXT  (VV  ' CURRENT (VV
+  ' STATE    (VV  ' BASE    (VV
+  ' DPL      (VV  ' FLD     (VV
+  ' CSP      (VV  ' R#      (VV
+  ' HLD      (VV  ( and? ... )
+  ' USE      (VV  ' PREV    (VV
+  ' UP       (VV  ' PAD     (VV ;
+: .EVAR ( -- ) .SYS .USR ;
 
 ( *********** R.N ************* )
 ( Shows the return stack        )
 ( REQUIRES: assembler [39], RP@ )
-: R.N RP@ R0 = 0= IF
+: R.N ( -- ) RP@ R0 = 0= IF
     RP@ 2 - R0 2 - DO I @ U. -2 +LOOP
   THEN ; ( FIXME )
 
@@ -213,19 +205,13 @@ FORTH
 ( https://www.forth.org/fd/FD-V05N1.pdf )
 ( REQUIRES: assembler [39], RP@, R0, S0, .S, R.N )
 0 VARIABLE RP*
-: BREAK 
+: BREAK ( -- )
   CR ." (BREAK reached, type GO to proceed)"
-  CR ." S= " .S
-  CR ." R= " R.N CR 
-  RP@ 4 - RP* ! 0 BLK ! BEGIN
-    QUERY INTERPRET ." aok" CR
-  AGAIN ;
-: || BREAK ;
-: GO RP@ RP* @ = IF
-    R> DROP R> DROP
-  ELSE
-    ." can't resume " QUIT
-  THEN ;
+  CR ." S= " .S CR ." R= " R.N CR 
+  RP@ 4 - RP* ! 0 BLK ! BEGIN QUERY
+  INTERPRET ." aok" CR AGAIN ; : || BREAK ;
+: GO ( -- ) RP@ RP* @ = IF R> DROP R> DROP
+  ELSE ." can't resume " QUIT THEN ;
 
 ( ***** AUGMENTED TRACE ***** )
 ( https://www.forth.org/fd/FD-V06N5.pdf )
@@ -235,35 +221,30 @@ FORTH
 : HIGH? ( cfa -- f )
   DUP  @    [ ' : @ @ ] LITERAL =
   SWAP @ C@ [ ' FORTH @ C@ ] LITERAL = OR ;
-: (UNLINE) CR SPACE DUP 4 .R SPACE ;
+: (UNLINE CR SPACE DUP 4 .R SPACE ;
 : UNRAVEL ( -- )
-  BEGIN RP@ R0 = 0=
-  WHILE
-      R> DUP CFA @ DUP ( n2 n n ) 
-      HIGH?            ( n2 n f  )
-    IF
-      (UNLINE) NFA ID. DROP
-    ELSE
-      (UNLINE) DROP U.
-    THEN
+  BEGIN RP@ R0 = 0= WHILE
+    R> DUP CFA @ DUP ( n2 n n ) 
+    HIGH?            ( n2 n f  )
+    IF   (UNLINE NFA ID. DROP
+    ELSE (UNLINE DROP U. THEN
   REPEAT QUIT ; ( original QUIT replaced with BREAK )
 
 ( *** stack trace ON / OFF *** )
 ( REQUIRES: assembler [39], RP@, R0, UNRAVEL )
-: TRACE-ON  ' UNRAVEL CFA 7290 ! ;
-( replace 'QUIT' IN 'ERROR' with UNRAVEL + QUIT )
-: TRACE-OFF ' QUIT    CFA 7290 ! ; ( restore default )
+: TRACE-ON ( -- ) ' UNRAVEL CFA 7290 ! ;
+( ^ replace 'QUIT' IN 'ERROR' with UNRAVEL + QUIT )
+: TRACE-OFF ( -- ) ' QUIT    CFA 7290 ! ; ( default )
 
 ( ** BASE COLOR FRAME THROUGH PROMPT ** )
 ( BG 2024; REQUIRES: ZAP )
 1 VARIABLE BASECOL
-: BASECOL-ON  1 BASECOL ! ;
-: BASECOL-OFF 0 BASECOL ! ;
-: PROMPTX
+: BASECOL-ON  1 BASECOL ! ; ( -- )
+: BASECOL-OFF 0 BASECOL ! ; ( -- )
+: PROMPTX ( -- )
   PFLAG @ 0 PFLAG ! ." ok" PFLAG !
   BASECOL @ 1 = IF 
-    BASE @
-    DUP 10 = IF DROP 0 THEN
+    BASE @ DUP 10 = IF DROP 0 THEN
     712 C!
   ELSE 0 712 ! THEN ;
 ' PROMPT ' PROMPTX ZAP 
@@ -280,14 +261,19 @@ HEX DECIMAL ( BLINK TO TEST )
 
 ;S
 
-(
- : UN UNRAVEL ; 
- : R3 UN ;
- : R2 R3 ;
- : R1 R2 ;
- : TEST-UNRAVEL R1 ;
-)
+( DECOMP MESSAGE DONE )
+( MESSAGE SCREEN IS 14 AT 8777 DEC )
+DECIMAL 14 8777 C! ( 14+ as default message screens   )
+        87 8777 C! ( 87+ as new message screens       )
+( - better solution: replace 8775 to 8789 with static )
+(   messages and no drive access                      )
+( - make warning remembered after boot                )
 
+( : UN UNRAVEL ; 
+  : R3 UN ;
+  : R2 R3 ;
+  : R1 R2 ;
+  : TEST-UNRAVEL R1 ; )
 
 ( crash )
 ( : ['] [COMPILE] ' ; )

@@ -205,9 +205,9 @@ FORTH
 ( *********** R.N ************* )
 ( Shows the return stack        )
 ( REQUIRES: assembler [39], RP@ )
-: R.N RP@ R0 = 0= IF ( TODO: TEST )
+: R.N RP@ R0 = 0= IF
     RP@ 2 - R0 2 - DO I @ U. -2 +LOOP
-  THEN ;
+  THEN ; ( FIXME )
 
 ( **** BREAK&GO **** )
 ( https://www.forth.org/fd/FD-V05N1.pdf )

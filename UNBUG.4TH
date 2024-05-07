@@ -35,9 +35,9 @@ HEX
 : TOP 0 R# ! ; 
 : E. LINE C/L BLANKS UPDATE ;
 : L. SCR @ LIST ;
-: LI. BASE @ DECIMAL 82 C@ 0 82 C!
-  CR 16 0 DO CR I SCR @ .LINE LOOP CR
-  82 C! BASE ! ;
+( : LI. BASE @ DECIMAL 82 C@ 0 82 C!   )
+(  CR 16 0 DO CR I SCR @ .LINE LOOP CR )
+(  82 C! BASE ! ;                      )
 : T. SCR @ TRIAD ; 
 : N.  1 SCR +! L. ;
 : B. -1 SCR +! L. ;
@@ -268,7 +268,9 @@ HEX DECIMAL ( BLINK TO TEST )
 : )UNBUG ;
 
 ( fig-F*RTH hacked with a heart )
-( 0 7894 C!  SAVE ) 
+0 7894 C!
+
+( SAVE ) 
 
 ( *** step tracing TBD *** )
 

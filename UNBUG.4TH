@@ -37,7 +37,7 @@ HEX
 : L. SCR @ LIST ;
 : LI. BASE @ DECIMAL 82 C@ 0 82 C!
   CR 16 0 DO CR I SCR @ .LINE LOOP CR
-  82 C! BASE !;
+  82 C! BASE ! ;
 : T. SCR @ TRIAD ; 
 : N.  1 SCR +! L. ;
 : B. -1 SCR +! L. ;
@@ -137,7 +137,7 @@ DECIMAL
 ( REQUIRES: NOTHING               )
 : ZAP ( oldpfa newpfa -- ) 
   CFA OVER ! ( new pfa into old )
-  [ ' ;S CFA ]   LITERAL OVER 2+ !
+  [ ' ;S CFA   ] LITERAL OVER  2+ !
   [ ' ;  CFA @ ] LITERAL SWAP CFA ! ;
 
 ( ***** S0, R0, .S ***** )

@@ -247,7 +247,8 @@ PUSH JMP,
 
 ( *** stack trace ON / OFF *** )
 ( REQUIRES: assembler [39], RP@, R0, UNRAVEL )
-: TRACE-ON  ' UNRAVEL CFA 7290 ! ; ( replace 'QUIT' IN 'ERROR' with UNRAVEL + QUIT )
+: TRACE-ON  ' UNRAVEL CFA 7290 ! ;
+( replace 'QUIT' IN 'ERROR' with UNRAVEL + QUIT )
 : TRACE-OFF ' QUIT    CFA 7290 ! ; ( restore default )
 
 ( ** BASE COLOR FRAME THROUGH PROMPT ** )

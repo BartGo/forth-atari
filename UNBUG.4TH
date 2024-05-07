@@ -151,12 +151,15 @@ DECIMAL
 ( ******* RP@ ****** )
 ( from Blazin' Forth )
 ( REQUIRES: assembler [39 LOAD] )
-CODE RP@ 
-  XSAVE STX,
-  TSX, TXA, PHA,
-  1 # LDA,
-  XSAVE LDX,
-PUSH JMP,
+ASSEMBLER
+  CODE RP@ 
+    XSAVE STX,
+    TSX, TXA, PHA,
+    1 # LDA,
+    XSAVE LDX,
+    PUSH JMP,
+  END-CODE
+FORTH
 
 ( ***** .EVAR **** )
 ( REQUIRES: S0, R0, RP@, asm [39] )

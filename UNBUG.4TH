@@ -59,6 +59,11 @@ HEX
   LOOP DROP FLUSH ;
 DECIMAL
 
+( ** LINE EDITOR HISTORY ** )
+( FD V15N6 p. 13 )
+( https://archive.org/details/ ) 
+( Forth_Dimension_Volume_15_Number_6/page/n9/mode/1up?q=editor )
+
 ( ***      SEARCH     *** ) 
 ( REQUIRES: editor subset )
 ( SEARCH to: "n p SEARCH word ")

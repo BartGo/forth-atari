@@ -26,32 +26,33 @@ FORTH DEFINITIONS DECIMAL
 ( PUT to edit: "n P xxx "      ) 
 HEX
 0 VARIABLE SRCHCNT
-: TEXT HERE C/L 1+ BLANKS WORD HERE PAD C/L 1+ CMOVE ;
-: LINE DUP FFF0 AND 17 ?ERROR SCR @ (LINE) DROP ;
+: TEXT HERE C/L 1+ BL FILL WORD HERE PAD C/L 1+ CMOVE ;
+: LINE DUP FFF0 AND 17 ?ERROR SCR @ (LINE) DROP ; 
 : -MOVE LINE C/L CMOVE UPDATE ;
-: P 1 TEXT PAD 1+ SWAP -MOVE ; : P. P ;
+: P ( n -- ccc ) 1 TEXT PAD 1+ SWAP -MOVE ; : P. P ;
 : #LOCATE R# @ C/L /MOD ;
 : #LEAD #LOCATE LINE SWAP ;
 : #LAG  #LEAD DUP >R + C/L R> - ;
 : 1LINE #LAG PAD COUNT MATCH R# +! ; 
 : M R# +! CR SPACE #LEAD TYPE
   17 EMIT #LAG TYPE #LOCATE . DROP ;
-: TOP 0 R# ! ; 
-: E. LINE C/L BLANKS UPDATE ;
-: L. SCR @ LIST ;   : T. SCR @ TRIAD ; 
-: N.  1 SCR +! L. ; : B. -1 SCR +! L. ;
-: MARK 10 0 DO I LINE UPDATE DROP LOOP ;
-: FL. MARK FLUSH ;
-: EB. EMPTY-BUFFERS ;
-: WHERE DUP B/SCR / DUP SCR
+: TOP ( -- ) 0 R# ! ; 
+: E. ( n -- ) LINE C/L BL FILL UPDATE ;
+( TODO: add? -> H S D R I )
+: L.   ( -- ) SCR @ LIST  ; : T. ( -- ) SCR @ TRIAD ; 
+: N.   ( -- ) 1 SCR +! L. ; : B. ( -- ) -1 SCR +! L. ;
+: MARK ( -- ) 10 0 DO I LINE UPDATE DROP LOOP ;
+: FL.  ( -- ) MARK FLUSH ;
+: EB.  ( -- ) EMPTY-BUFFERS ;
+: WHERE ( -- ) DUP B/SCR / DUP SCR
   ! ." SCR # " DECIMAL .
   SWAP C/L /MOD C/L * ROT BLOCK +
   CR C/L -TRAILING TYPE CR
   HERE C@ - SPACES 1 2FE C!
   1C EMIT 0 2FE C! SP! QUIT ; 
-: CLEAR  SCR ! 10 0 DO I E. LOOP ;
-: CLEARS DO I CLEAR FLUSH LOOP ; 
-: COPY
+: CLEAR ( n -- ) SCR ! 10 0 DO I E. LOOP ;
+: CLEARS ( n m -- ) DO I CLEAR FLUSH LOOP ; 
+: COPY ( n n -- )
   B/SCR * OFFSET @ + SWAP
   B/SCR * B/SCR OVER + SWAP DO
     DUP I BLOCK 2 - ! 1+ UPDATE
@@ -75,7 +76,9 @@ DECIMAL
 ( ******* BUFS ******* )
 ( REQUIRES: NOTHING )
 ( TDH 7/11/81 FD-V03N6 )
-: .BUFS ( display addresses of all the buffers )
+
+: .BUFS ( -- )
+( display addresses of all the buffers )
   CR ." #  Addr(hex) Upd Block#  Screen  -sub"
   FIRST
   LIMIT FIRST - B/BUF / ( #BUFF )
@@ -94,7 +97,8 @@ DECIMAL
 ( Vw current/context )
 ( FD III/1 p10 / KH  )  
 ( REQUIRES: NOTHING  )
-: .CC CR ." Context Current: "
+: .CC ( -- )
+  CR ." Context Current: "
   CONTEXT @ 4 - NFA ID.
   CURRENT @ 4 - NFA ID. CR ; 
 
@@ -128,7 +132,7 @@ DECIMAL
   THEN DROP ; ( 81=Q, 155=RETURN )
 : GOESINTO -FIND IF DROP 0 GIN !
   (GOESINTO) ELSE ." NOT FOUND" CR THEN ;
-: GOIN GOESINTO ; 
+: GOIN ( -- ) GOESINTO ; 
 
 ( *** zap word - IRREVERSIBLY *** )
 ( *** replace word in nucleus *** )

@@ -1,10 +1,8 @@
 FORTH DEFINITIONS
 
-: CALL ( ?? = JSR? ) ;
-
 ( CALL )
-( David Held, FD V/5 p. 22 )
-(    see also FD V/3 p. 23 )
+( David Held? FD V/5 p. 22 ) ( check )
+( David Held  FD V/3 p. 23 )
 
 FORTH DEFINITIONS
 
@@ -24,10 +22,13 @@ FORTH
 ( ** TEST: SELF TEST ** )
 ( HEX         E471 CALL )
 
-: SUBROUTINE 
+: SUB ( SUBROUTINE )
   ( optional? ) [COMPILE] ASSEMBLER
   <BUILDS DOES> CALL ;
-  
+( The ASSEMBLER vocabulary must be
+( invoked before using SUBROUTINE to
+( define words. 
+
 : ASM(
 ; IMMEDIATE
 

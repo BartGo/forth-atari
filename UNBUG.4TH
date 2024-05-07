@@ -104,7 +104,7 @@ DECIMAL
 ( Decompiler by R. D. Ackerman )
 ( -- Forth Dimension Vol14 Nr2 )
 ( "GOIN word", RET/SPC/Q ) 
-: :GOIN ; 0 VARIABLE GIN 
+0 VARIABLE GIN 
 : GIN+ CR GIN @ 2+ DUP GIN ! SPACES ;
 : GCHK DUP @ 2+ ' COMPILE =
   IF  2+ DUP @ 2+ NFA ID. 2+
@@ -129,7 +129,7 @@ DECIMAL
   THEN DROP ; ( 81=Q, 155=RETURN )
 : GOESINTO -FIND IF DROP 0 GIN !
   (GOESINTO) ELSE ." NOT FOUND" CR THEN ;
-: GOIN GOESINTO ; : ;GOIN ; ( END )
+: GOIN GOESINTO ; 
 
 ( *** zap word - IRREVERSIBLY *** )
 ( *** replace word in nucleus *** )

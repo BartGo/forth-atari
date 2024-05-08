@@ -18,10 +18,12 @@
 ( load asm[39] and optionally debug - useful DUMP, DECOMP )
 
 ( fig-FORTH  1.1/dae )
-ASCII / 7903 C!
-ASCII d 7904 C! ( "debug" ) ( load before! )
-ASCII a 7905 C! ( asm wfr ) ( load before! )
-ASCII e 7906 C! ( fig edt ) ( included     )
+
+ASCII d 128 + 7904 C! ( "debug" ) ( load before! )
+ASCII a 128 + 7905 C! ( asm wfr ) ( load before! )
+ASCII e 128 + 7906 C! ( fig edt ) ( included     )
+ASCII u 128 + 7907 C! ( !unbug! ) ( included     )
+ASCII E 128 + 7908 C! ( editors ) ( external     )
 
 FORTH DEFINITIONS
 

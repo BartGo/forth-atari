@@ -44,7 +44,7 @@ HEX
 : M. R# +! CR SPACE #LEAD TYPE
   17 EMIT #LAG TYPE #LOCATE . DROP ;
 : TOP ( -- ) 0 R# ! ; 
-: L. ( -- ) SCR @ LIST 0 M ; : LI. L. ;
+: L. ( -- ) SCR @ LIST 0 M. ; : LI. L. ;
 : TR. ( -- ) SCR @ TRIAD ; 
 : N.   ( -- ) 1 SCR +! L. ; : B. ( -- ) -1 SCR +! L. ;
 : MARK ( -- ) 10 0 DO I LINE UPDATE DROP LOOP ;
@@ -285,6 +285,8 @@ FORTH
     712 C!
   ELSE 0 712 ! THEN ;
 ' PROMPT ' PROMPTX ZAP 
+  ( fix: NEED TO ROLL BACK? )
+  ( fixme: ' PROMPT ' SPACE ZAP )
 HEX DECIMAL ( BLINK TO TEST )
 
 : )UNBUG ;

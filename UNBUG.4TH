@@ -29,17 +29,23 @@ HEX
 : TEXT HERE C/L 1+ BL FILL WORD HERE PAD C/L 1+ CMOVE ;
 : LINE DUP FFF0 AND 17 ?ERROR SCR @ (LINE) DROP ; 
 : -MOVE LINE C/L CMOVE UPDATE ;
-: P ( n -- ccc ) 1 TEXT PAD 1+ SWAP -MOVE ; : P. P ;
+: H. LINE PAD 1+ C/L DUP PAD C! CMOVE ;
+: E. ( n -- ) LINE C/L BL FILL UPDATE ; 
+: S. DUP 1 - 0E DO I LINE I 1+ -MOVE -1 +LOOP E. ;
+: D. DUP H. 0F DUP ROT DO I 1+ LINE I -MOVE LOOP E. ;
+: T. DUP C/L * R# ! DUP H. 0 M. ;
+: R. PAD 1+ SWAP -MOVE ;
+: I. DUP S. R. ;
+: P ( n -- ccc ) 1 TEXT R ; : P. P ;
 : #LOCATE R# @ C/L /MOD ;
 : #LEAD #LOCATE LINE SWAP ;
 : #LAG  #LEAD DUP >R + C/L R> - ;
 : 1LINE #LAG PAD COUNT MATCH R# +! ; 
-: M R# +! CR SPACE #LEAD TYPE
+: M. R# +! CR SPACE #LEAD TYPE
   17 EMIT #LAG TYPE #LOCATE . DROP ;
 : TOP ( -- ) 0 R# ! ; 
-: E. ( n -- ) LINE C/L BL FILL UPDATE ;
-( TODO: add? -> H S D R I )
-: L.   ( -- ) SCR @ LIST  ; : T. ( -- ) SCR @ TRIAD ; 
+: L. ( -- ) SCR @ LIST 0 M ; : LI. L. ;
+: TR. ( -- ) SCR @ TRIAD ; 
 : N.   ( -- ) 1 SCR +! L. ; : B. ( -- ) -1 SCR +! L. ;
 : MARK ( -- ) 10 0 DO I LINE UPDATE DROP LOOP ;
 : FL.  ( -- ) MARK FLUSH ;
@@ -57,7 +63,29 @@ HEX
   B/SCR * B/SCR OVER + SWAP DO
     DUP I BLOCK 2 - ! 1+ UPDATE
   LOOP DROP FLUSH ;
+
 DECIMAL
+
+
+( *** Some New Editor Extensions *** ) 
+( * by Kim Harris - FD II/6 p. 156 * )
+( usage example:  )
+( 100 LIST EDITOR )
+( 2 NEW           )
+( 2 UNDER         )
+: ENTER? ( start-line# current-line# -- f ) OVER = ;
+: ENTER ( -- ) QUERY 1 TEXT ;
+: NULL? ( -- f ) TIB @ C@ 0= ;
+: NEW ( start-line# -- )
+  16 0 DO
+    CR I 3 .R SPACE I ENTER?
+	IF
+	  ENTER NULL? IF
+            I SCR @ .LINE
+	  ELSE I. ( EDITOR'S ) R. 1+ THEN
+	ELSE I SCR @ .LINE
+	THEN
+  LOOP DROP ;
 
 ( ** LINE EDITOR HISTORY ** )
 ( FD V15N6 p. 13 )

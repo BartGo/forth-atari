@@ -17,6 +17,12 @@
 ( consider for this MAC from RP's words )
 ( load asm[39] and optionally debug - useful DUMP, DECOMP )
 
+( fig-FORTH  1.1/dae )
+ASCII / 7903 C!
+ASCII d 7904 C! ( "debug" ) ( load before! )
+ASCII a 7905 C! ( asm wfr ) ( load before! )
+ASCII e 7906 C! ( fig edt ) ( included     )
+
 FORTH DEFINITIONS
 
 : FIGED( ; HEX
@@ -121,12 +127,6 @@ DECIMAL
       1LINE IF 0 M. SCR ? BUMP THEN
     1023 R# @ < UNTIL 
   LOOP ; 
-
-( fig-FORTH  1.1/ae )
-ASCII / 7903 C!
-ASCII d DROP    ( "debug" )
-ASCII a 7904 C! ( asm wfr )
-ASCII e 7905 C! ( fig edt )
 
 : )FIGED ;
 

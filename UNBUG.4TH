@@ -21,6 +21,8 @@ FORTH DEFINITIONS
 
 : FIGED( ; HEX
 
+( TODO: put into editor definitions? )
+
 ( ***   EDITOR'S SUBSET    *** )
 ( REQUIRES: NOTHING            )
 ( PUT to edit: "n P xxx "      ) 
@@ -29,12 +31,12 @@ FORTH DEFINITIONS
 : TEXT HERE C/L 1+ BL FILL WORD HERE PAD C/L 1+ CMOVE ;
 : LINE DUP FFF0 AND 17 ?ERROR SCR @ (LINE) DROP ; 
 : -MOVE LINE C/L CMOVE UPDATE ;
-: H. LINE PAD 1+ C/L DUP PAD C! CMOVE ;
+: H.E LINE PAD 1+ C/L DUP PAD C! CMOVE ;
 : E. ( n -- ) LINE C/L BL FILL UPDATE ; 
-: S. DUP 1 - 0E DO I LINE I 1+ -MOVE -1 +LOOP E. ;
-: D.E DUP H. 0F DUP ROT DO I 1+ LINE I -MOVE LOOP E. ; 
+: S.E DUP 1 - 0E DO I LINE I 1+ -MOVE -1 +LOOP E. ;
+: D.E DUP H.E 0F DUP ROT DO I 1+ LINE I -MOVE LOOP E. ; 
 : R. PAD 1+ SWAP -MOVE ;
-: I. DUP S. R. ;
+: I. DUP S.E R. ;
 : P ( n -- ccc ) 1 TEXT R ; : P. P ;
 : #LOCATE R# @ C/L /MOD ;
 : #LEAD #LOCATE LINE SWAP ;
@@ -42,7 +44,7 @@ FORTH DEFINITIONS
 : 1LINE #LAG PAD COUNT MATCH R# +! ; 
 : M. R# +! CR SPACE #LEAD TYPE
   17 EMIT #LAG TYPE #LOCATE . DROP ;
-: T. DUP C/L * R# ! DUP H. 0 M. ;
+: T. DUP C/L * R# ! DUP H.E 0 M. ;
 : TOP ( -- ) 0 R# ! ; 
 : L. ( -- ) SCR @ LIST 0 M. ; : LI. L. ;
 : TR. ( -- ) SCR @ TRIAD ; 

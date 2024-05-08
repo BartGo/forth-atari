@@ -17,14 +17,14 @@
 ( consider for this MAC from RP's words )
 ( load asm[39] and optionally debug - useful DUMP, DECOMP )
 
-FORTH DEFINITIONS DECIMAL
+FORTH DEFINITIONS
 
-: FIGED+(
+: FIGED+( ; HEX
 
 ( ***   EDITOR'S SUBSET    *** )
 ( REQUIRES: NOTHING            )
 ( PUT to edit: "n P xxx "      ) 
-HEX
+
 0 VARIABLE SRCHCNT
 : TEXT HERE C/L 1+ BL FILL WORD HERE PAD C/L 1+ CMOVE ;
 : LINE DUP FFF0 AND 17 ?ERROR SCR @ (LINE) DROP ; 
@@ -107,7 +107,7 @@ DECIMAL
 
 : )FIGED+ ;
 
-: UNBUG( ;
+: UNBUG( ; DECIMAL
 
 ( ******* BUFS ******* )
 ( REQUIRES: NOTHING )

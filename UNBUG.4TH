@@ -119,6 +119,12 @@ DECIMAL
     1023 R# @ < UNTIL 
   LOOP ; 
 
+( fig-FORTH  1.1/ae )
+ASCII / 7903 C!
+ASCII d DROP    ( "debug" )
+ASCII a 7904 C! ( asm wfr )
+ASCII e 7905 C! ( fig edt )
+
 : )FIGED+ ;
 
 : UNBUG( ; DECIMAL

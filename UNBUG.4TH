@@ -318,6 +318,27 @@ FORTH
   ( fixme: ' PROMPT ' SPACE ZAP )
 HEX DECIMAL ( BLINK TO TEST )
 
+( INTERPRET COMPILE-ONLY WORDS )
+( REQUIRES: NOTHING            )
+( FD II/6 p. 168 / Henry Laxen )
+( example: in the command line:)
+( :: 0 IF 1 ELSE 2 THEN ;      )
+( S. => SHOWS 2 BUT NO NEW WORD)
+(       IS DEFINED, ONLY TEMP. )
+(       / DISCARDED DEFINITION )
+: :: ( -- ) 
+  HERE >R
+  [ ' QUIT CFA @ ] LITERAL ,
+  !CSP ]
+  BEGIN
+    INTERPRET
+  STATE @ WHILE
+    CR QUERY
+  REPEAT
+  SMUDGE
+  R EXECUTE
+  R> DP ! ;
+
 : )UNBUG ;
 
 ( fig-F*RTH hacked with a heart )

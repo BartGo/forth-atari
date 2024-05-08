@@ -32,7 +32,7 @@ FORTH DEFINITIONS
 : H. LINE PAD 1+ C/L DUP PAD C! CMOVE ;
 : E. ( n -- ) LINE C/L BL FILL UPDATE ; 
 : S. DUP 1 - 0E DO I LINE I 1+ -MOVE -1 +LOOP E. ;
-: D. DUP H. 0F DUP ROT DO I 1+ LINE I -MOVE LOOP E. ;
+: D.E DUP H. 0F DUP ROT DO I 1+ LINE I -MOVE LOOP E. ; 
 : R. PAD 1+ SWAP -MOVE ;
 : I. DUP S. R. ;
 : P ( n -- ccc ) 1 TEXT R ; : P. P ;
@@ -75,16 +75,30 @@ DECIMAL
 : ENTER? ( start-line# current-line# -- f ) OVER = ;
 : ENTER ( -- ) QUERY 1 TEXT ;
 : NULL? ( -- f ) TIB @ C@ 0= ;
+: .BS ( -- ) 254 EMIT ;
+: S@L SCR @ .LINE ;
 : NEW ( start-line# -- )
   16 0 DO
     CR I 3 .R SPACE I ENTER?
 	IF
 	  ENTER NULL? IF
-            I SCR @ .LINE
-	  ELSE I. ( EDITOR'S ) R. 1+ THEN
-	ELSE I SCR @ .LINE
+        .BS I S@L
+	  ELSE I R. 1+ THEN
+	ELSE I S@L
 	THEN
   LOOP DROP ;
+: UNDER ( start-line# -- )
+  1+ 16 0 DO
+    CR I 3 .R SPACE I ENTER?
+	IF
+	  ENTER NULL? IF
+	    .BS I S@L
+	  ELSE I I. 1+ THEN
+	ELSE
+      I S@L
+    THEN
+  LOOP DROP ;	
+	
 
 ( ** LINE EDITOR HISTORY ** )
 ( FD V15N6 p. 13 )
@@ -101,7 +115,7 @@ DECIMAL
   DO
     FORTH I SCR ! TOP
     BEGIN
-      1LINE IF 0 M SCR ? BUMP THEN
+      1LINE IF 0 M. SCR ? BUMP THEN
     1023 R# @ < UNTIL 
   LOOP ; 
 

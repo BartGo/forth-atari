@@ -19,7 +19,7 @@
 
 FORTH DEFINITIONS
 
-: FIGED+( ; HEX
+: FIGED( ; HEX
 
 ( ***   EDITOR'S SUBSET    *** )
 ( REQUIRES: NOTHING            )
@@ -66,6 +66,7 @@ FORTH DEFINITIONS
 
 DECIMAL
 
+( FIXME )
 ( *** Some New Editor Extensions *** ) 
 ( * by Kim Harris - FD II/6 p. 156 * )
 ( usage example:  )
@@ -125,7 +126,7 @@ ASCII d DROP    ( "debug" )
 ASCII a 7904 C! ( asm wfr )
 ASCII e 7905 C! ( fig edt )
 
-: )FIGED+ ;
+: )FIGED ;
 
 : UNBUG( ; DECIMAL
 

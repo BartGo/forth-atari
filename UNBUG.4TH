@@ -19,7 +19,7 @@
 
 FORTH DEFINITIONS DECIMAL
 
-: UNBUG( ;
+: FIGED+(
 
 ( ***   EDITOR'S SUBSET    *** )
 ( REQUIRES: NOTHING            )
@@ -33,7 +33,6 @@ HEX
 : E. ( n -- ) LINE C/L BL FILL UPDATE ; 
 : S. DUP 1 - 0E DO I LINE I 1+ -MOVE -1 +LOOP E. ;
 : D. DUP H. 0F DUP ROT DO I 1+ LINE I -MOVE LOOP E. ;
-: T. DUP C/L * R# ! DUP H. 0 M. ;
 : R. PAD 1+ SWAP -MOVE ;
 : I. DUP S. R. ;
 : P ( n -- ccc ) 1 TEXT R ; : P. P ;
@@ -43,6 +42,7 @@ HEX
 : 1LINE #LAG PAD COUNT MATCH R# +! ; 
 : M. R# +! CR SPACE #LEAD TYPE
   17 EMIT #LAG TYPE #LOCATE . DROP ;
+: T. DUP C/L * R# ! DUP H. 0 M. ;
 : TOP ( -- ) 0 R# ! ; 
 : L. ( -- ) SCR @ LIST 0 M. ; : LI. L. ;
 : TR. ( -- ) SCR @ TRIAD ; 
@@ -65,7 +65,6 @@ HEX
   LOOP DROP FLUSH ;
 
 DECIMAL
-
 
 ( *** Some New Editor Extensions *** ) 
 ( * by Kim Harris - FD II/6 p. 156 * )
@@ -105,6 +104,10 @@ DECIMAL
       1LINE IF 0 M SCR ? BUMP THEN
     1023 R# @ < UNTIL 
   LOOP ; 
+
+: )FIGED+ ;
+
+: UNBUG( ;
 
 ( ******* BUFS ******* )
 ( REQUIRES: NOTHING )

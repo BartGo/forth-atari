@@ -1,19 +1,14 @@
-FORTH DEFINITIONS
+( * Forth Asm Extensions - Atari 800 XL * )
+( - CALL for Atari 8-bit's APX Forth      )
+(   David Held, Forth Dimension V/5 p. 22 )
+(   David Held, Forth Dimension V/3 p. 23 )
+( - HYBRID ASM-FORTH words by J. Bielecki )
+(   Jan Bielecki, "Jezyk Forth" WNT 1988  )
 
-( CALL )
-( David Held? FD V/5 p. 22 ) ( check )
-( David Held  FD V/3 p. 23 )
-
-FORTH DEFINITIONS
-
-ASSEMBLER
-  CODE (CALL)
-    XSAVE STX,
-    0 JSR,
-    XSAVE LDX,
-    NEXT JMP,
-  C;
-FORTH
+FORTH DEFINITIONS ASSEMBLER CODE (CALL)
+    XSAVE STX,    0 JSR,
+    XSAVE LDX, NEXT JMP,
+C; FORTH
   
 ' (CALL) 3 + CONSTANT CALL-ADDR
 
@@ -22,27 +17,35 @@ FORTH
 ( ** TEST: SELF TEST ** )
 ( HEX         E471 CALL )
 
+
+
 : SUB ( SUBROUTINE )
   ( optional? ) [COMPILE] ASSEMBLER
   <BUILDS DOES> CALL ;
+
 ( The ASSEMBLER vocabulary must be
 ( invoked before using SUBROUTINE to
-( define words. 
+( define words. )
 
 : ASM(
+  ( ... )
 ; IMMEDIATE
 
 ASSEMBLER DEFINITIONS
 : )FORTH 
+  ( ... )
 ; 
 
-ASSEMBLER DEFINITIONS
-CODE (POP) NOP C;
-: FORTH(
+ASSEMBLER DEFINITIONS CODE (NOP)
+  NOP, NEXT JMP,
+C;
+
+ASSEMBLER DEFINITIONS : FORTH(
+  ( ... )
 ;
 
-FORTH DEFINITIONS
-: )ASM 
+FORTH DEFINITIONS : )ASM 
+  ( ... )
 ; IMMEDIATE
 
 ;S

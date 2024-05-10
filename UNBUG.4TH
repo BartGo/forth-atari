@@ -1,4 +1,4 @@
-(          ### UNBUG ###          )
+(    ### UNBUG / DEV UTILS ###    )
 (     A library of debug words.   )
 ( Collected from Forth Dimensions ) 
 ( Atari800XL / APX Ext. Fig-Forth )
@@ -19,12 +19,12 @@
 
 ( fig-FORTH  1.1/dae )
 
-ASCII : 7903 C! ( "debug" ) ( load before! )
+ASCII / 7903 C! 
 ASCII d 7904 C! ( "debug" ) ( load before! )
 ASCII a 7905 C! ( asm wfr ) ( load before! )
 ASCII e 7906 C! ( fig edt ) ( included     )
-ASCII u 7907 C! ( !unbug! ) ( included     )
-ASCII E 7908 C! ( editors ) ( external     )
+ASCII u 7907 C! ( utils )   ( included     )
+( ASCII E 7908 C! ) ( big edits / external )
 
 FORTH DEFINITIONS
 
@@ -133,7 +133,7 @@ DECIMAL
 
 : )FIGED ;
 
-: UNBUG( ; DECIMAL
+: UTILS( ; DECIMAL
 
 ( ******* BUFS ******* )
 ( REQUIRES: NOTHING )
@@ -339,10 +339,10 @@ HEX DECIMAL ( BLINK TO TEST )
   R EXECUTE
   R> DP ! ;
 
-: )UNBUG ;
+: )UTILS ;
 
-( fig-F*RTH hacked with a heart )
-0 7894 C!
+( fig-F0RTH )
+48 7894 C!
 
 ( SAVE ) 
 

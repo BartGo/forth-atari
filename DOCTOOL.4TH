@@ -1,33 +1,31 @@
-( FIXME )
-
 (
-Source Screen Documentation Tool
-Kim Harris
-Laxen & Harris, Inc. 
-https://archive.org/details/Forth_Dimension_Volume_04_Number_2/page/n22/mode/1up
+---
+( Source Screen Documentation Tool WF25 2Apr82 KRH
+( Kim Harris / Laxen & Harris, Inc. 
+( https://archive.org/details/Forth_Dimension_Volume_04_Number_2/page/n22/mode/1up
+( Modified by BartGo to use (LINE)
+( instead of BLOCK 
+---
 )
 
-( Source screen documentation tool WF25 2Apr82 KRH )
 
-
-( FIXME )
-: 1OUTLINE              ( #scr -- ) 
-  DUP SCR ! CR CR ." Screen # "
-  DUP . 1024 0          ( scr#, 1024, 0 )
-  DO
-    DUP BLOCK           ( scr#, blockaddr )
-    I +                 ( scr#, blockaddr+I )
-    DUP C@ BL = 0=      ( scr#, blockaddr+I, if blockaddr+I]@!=BL )
-    I 0= OR IF          (   or I=0 \ 1st line or starts with non-space  )
-      64 -TRAILING TYPE ( scr#, TYPE-TRAILING at blockaddr+I \ print line ) 
-    ELSE DROP THEN      ( scr#, DROP blockaddr+I \ do nothing with the block )
-  64 +LOOP              ( keep scr# on stack, take next line [64 bytes] )
-  DROP ;                ( finally - drop the scr# )
-
-: OUTLINE ( #1st-screen #last-screen -- ) ( print line 0 & )
-( lines with non-blank in column 1 for range of screens    )
-  1+ SWAP
-  DO I 1OUTLINE
+: 1OUTLINE ( #scr -- ) 
+  DUP CR CR ." Screen # " .
+  DUP SCR !
+  15 0 DO
+    DUP I SWAP  ( scr#, ln#, scr# )
+	(LINE) SWAP ( scr#, 64, lineaddr )
+    DUP C@ BL = 0=      
+    I 0= OR IF  ( 1st line or non-space? )         
+      SWAP -TRAILING CR TYPE ( print line )
+    ELSE
+	  DROP DROP ( skip line )
+	THEN      
+  LOOP DROP CR ;                
+  
+: OUTLINE ( #1st-screen #last-screen -- )
+  1+ SWAP DO
+    I 1OUTLINE
   LOOP ;
 
 ;S

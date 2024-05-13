@@ -154,6 +154,8 @@ DECIMAL
   LOOP DROP CR ;                
 : OUTLINES ( #1st-screen #last-screen -- )
   1+ SWAP DO I 1OUTLINE LOOP ;
+: .DOC  OUTLINE  ;
+: .DOCS OUTLINES ;
 
 ( ******* BUFS ******* )
 ( REQUIRES: NOTHING )
@@ -244,6 +246,23 @@ ASSEMBLER
     PUSH JMP,
   END-CODE
 FORTH
+
+
+( TESTME )
+( ** CALL ** )
+( David Held, Forth Dimension V/5 p. 22 )
+( David Held, Forth Dimension V/3 p. 23 )
+( REQUIRES: assembler [39 LOAD] )
+( Test: call selftest ->  HEX E471 CALL )
+FORTH DEFINITIONS ASSEMBLER
+CODE (CALL)
+    XSAVE STX,    0 JSR,
+    XSAVE LDX, NEXT JMP,
+END-CODE
+FORTH
+' (CALL) 3 + CONSTANT CALL-ADDR
+: CALL CALL-ADDR ! (CALL) ;
+
 
 ( ***** .EVAR **** )
 ( REQUIRES: S0, R0, RP@, asm [39] )

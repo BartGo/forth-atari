@@ -340,6 +340,7 @@ FORTH
 ( ^ replace 'QUIT' IN 'ERROR' with UNRAVEL + QUIT )
 : TRACE-OFF ( -- ) ' QUIT    CFA 7290 ! ; ( default )
 
+( FIXME: don't use ZAP! prevents FORGET to baseline!) 
 ( ** BASE COLOR FRAME THROUGH PROMPT ** )
 ( BG 2024; REQUIRES: ZAP )
 1 VARIABLE BASECOL
@@ -353,7 +354,7 @@ FORTH
   ELSE 0 712 ! THEN ;
 ' PROMPT ' PROMPTX ZAP 
   ( fix: NEED TO ROLL BACK? )
-  ( fixme: ' PROMPT ' SPACE ZAP )
+  ( fixme: ' PROMPTX ' SPACE ZAP )
 HEX DECIMAL ( BLINK TO TEST )
 
 ( INTERPRET COMPILE-ONLY WORDS )

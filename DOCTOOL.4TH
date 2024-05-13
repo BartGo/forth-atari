@@ -10,13 +10,18 @@ https://archive.org/details/Forth_Dimension_Volume_04_Number_2/page/n22/mode/1up
 ( Source screen documentation tool WF25 2Apr82 KRH )
 
 ( FIXME )
-: 1OUTLINE ( #screen -- ) 
-  CR CR ." Screen # " DUP . 1024 0 DO
-    DUP B/SCR * BLOCK ( scr->block# )
-    I + DUP C@ BL = 0= I 0= OR IF
-      64 -TRAILING TYPE
-    ELSE DROP THEN
-  64 +LOOP DROP ;
+: 1OUTLINE              ( #scr -- ) 
+  CR CR ." Screen # "
+  DUP . 1024 0          ( scr#, 1024, 0 )
+  DO
+    DUP B/SCR * BLOCK   ( scr#, blockaddr )
+    I +                 ( scr#, blockaddr+I )
+    DUP C@ BL = 0=      ( scr#, blockaddr+I, if [blockaddr+I]@!=BL] ... )
+    I 0= OR IF          (   or I=0 [done with the screen] ... )
+      64 -TRAILING TYPE ( scr#, TYPE-TRAILING at blockaddr+I ) 
+    ELSE DROP THEN      ( scr#, DROP blockaddr+I )
+  64 +LOOP              ( keep scr# on stack, take next 64 bytes )
+  DROP ;                ( finally - drop the scr# )
 
 : OUTLINE ( #1st-screen #last-screen -- ) ( print line 0 & )
 ( lines with non-blank in column 1 for range of screens    )

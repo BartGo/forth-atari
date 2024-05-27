@@ -1,6 +1,7 @@
 ( FujiNet host list in APX 4th )
 ( - by Thom )
 ( http://www.atari.org.pl/forum/viewtopic.php?id=17467 ) 
+( https://github.com/FujiNetWIFI/fujinet-firmware/wiki/Using-FujiNet-from-fig-FORTH )
 
 HEX VOCABULARY FUJINET
 FUJINET DEFINITIONS
@@ -19,6 +20,17 @@ FUJINET DEFINITIONS
 CODE (DO-SIOV)
   XSAVE STX, SIOV JSR,
   XSAVE LDX, NEXT JMP,
+
+: FRESET            ( -- )
+      70 DDEVIC C!
+      01 DUNIT  C!
+      FF DCOMND C!
+      00 DSTATS C!
+    0000 DBUF   !
+      0F DTIMLO C!
+    0000 DBYT   !
+    0000 DAUX   !
+      (DO-SIOV) ;
 
 ( FLH - Data Structures )
 : HOST-ARRAY
@@ -58,8 +70,65 @@ HOST-ARRAY FLHBUF
   CR FLH ;
   
 MYHOSTLIST
-  
+
+
+
+
+
+( ["] is the compiler word that skips over words inside the " )
+( while maintaining a length count for the ->STRING command.  )
+: ["]
+  R COUNT DUP 1+ R> + >R ;
+
+( " provides the in-line string word, that works for both )
+( interpreting and compiling.                             )
+: "  ( start embedded string )
+  22 STATE @ IF
+    COMPILE ["] WORD HERE C@ 1+ ALLOT
+  ELSE
+    WORD HERE DUP C@ 1+ PAD SWAP CMOVE PAD COUNT
+  THEN ; IMMEDIATE
+
+( <-STRING allows you to take an in-line string    )
+( made with " and copy it to a destination buffer. )
+
+: <-STRING ( src len dest -- )
+  2DUP + >R
+  SWAP CMOVE R> 0 SWAP C! ;
+
+
+( 128 character buffer for devicespec )
+0 VARIABLE DSPEC 254 ALLOT
+" N:TNFS://RASPBERRYPI/FOO.TXT " DSPEC <-STRING
+DSPEC  DBUF !
+
+
+
+02EA CONSTANT DVSTAT
+
+: NSTATUS            ( n -- )
+      70 DDEVIC C!
+   ( n ) DUNIT  C!
+      53 DCOMND C!
+      40 DSTATS C!
+  DVSTAT DBUF   !
+      0F DTIMLO C!
+    0004 DBYT   !
+    0000 DAUX   !
+      (DO-SIOV) ;
+
+: NERR            ( -- n )
+  DVSTAT 3 + C@ ;
+
+
+
+
+( https://github.com/FujiNetWIFI/fujinet-firmware/wiki/SIO-Command-$FE-Get-SSID )
+
+
+
 DECIMAL
+
 
 
 ;S

@@ -5,7 +5,9 @@
 
 : UPPER ( pns 1.4 )
   OVER + SWAP DO
-    I C@ 95 > IF I 32 TOGGLE THEN
+      I C@ 96  > ( between a )
+	  I C@ 123 < ( ... and z )
+	AND	IF I 32 TOGGLE THEN
   LOOP  ;
 : -FINDX
   BL WORD HERE

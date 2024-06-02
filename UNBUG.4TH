@@ -30,10 +30,12 @@ ASCII u 7907 C! ( utils )   ( included     )
 ( Tested on Atari 800XL emul.)
 ( and APX Extended fig-Forth )
 
-: UPPER ( from pns 1.4 )
+: UPPER ( pns 1.4 )
   OVER + SWAP DO
-    I C@ 95 > IF I 32 TOGGLE THEN
-  LOOP  ;
+      I C@ 96  > ( between a )
+      I C@ 123 < ( ... and z )
+    AND	IF I 32 TOGGLE THEN
+  LOOP ;
 : -FINDX
   BL WORD HERE
   COUNT UPPER HERE ( from pns 1.4 )

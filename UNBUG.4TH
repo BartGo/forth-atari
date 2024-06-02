@@ -17,13 +17,40 @@
 ( consider for this MAC from RP's words )
 ( load asm[39] and optionally debug - useful DUMP, DECOMP )
 
-( fig-FORTH  1.1/dae )
-
 ASCII / 7903 C! 
 ASCII d 7904 C! ( "debug" ) ( load before! )
 ASCII a 7905 C! ( asm wfr ) ( load before! )
 ASCII e 7906 C! ( fig edt ) ( included     )
 ASCII u 7907 C! ( utils )   ( included     )
+
+( ************************** )
+( Case-insensitive fig-Forth )
+( ************************** )
+( Ported from: pns-FORTH 1.4 )
+( Tested on Atari 800XL emul.)
+( and APX Extended fig-Forth )
+
+: UPPER ( from pns 1.4 )
+  OVER + SWAP DO
+    I C@ 95 > IF I 32 TOGGLE THEN
+  LOOP  ;
+: -FINDX
+  BL WORD HERE
+  COUNT UPPER HERE ( from pns 1.4 )
+  CONTEXT @ @ (FIND) DUP 0= IF
+    DROP HERE LATEST (FIND)
+  THEN ;  
+: ZAP ( oldpfa newpfa -- ) 
+  CFA OVER ! ( new pfa into old )
+  [ ' ;S CFA   ] LITERAL OVER  2+ !
+  [ ' ;  CFA @ ] LITERAL SWAP CFA ! ;
+' -FIND ' -FINDX ZAP
+FORGET ZAP
+
+ASCII o 7894 C! ( insnstv ) ( included     )
+
+( fig-FoRTH  1.1/dae )
+
 ( ASCII E 7908 C! ) ( big edits / external )
 
 FORTH DEFINITIONS
@@ -379,9 +406,6 @@ HEX DECIMAL ( BLINK TO TEST )
   R> DP ! ;
 
 : )UTILS ;
-
-( fig-F0RTH )
-48 7894 C!
 
 ( SAVE ) 
 

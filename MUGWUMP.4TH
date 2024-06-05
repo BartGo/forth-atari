@@ -2,8 +2,14 @@
 ( *********************************** )
 (   M    U    G    W    U    M    P   )
 ( *********************************** )
+(         A HIDE AND SEEK GAME        )
+(      PEOPLE'S COMPUTER COMPANY      )
+(            MENLO PARK CA            )
+( *********************************** )
 ( Ported from Basic game published in )
 ( 1973-04 / People's Computer Company )
+(  https://archive.org/details/       )
+(    1973-04-peoples-computer-company )
 ( *********************************** )
 (     Adaptation: BartGo, 2024-06     )
 (  Written in APX Extended Fig-Forth  )
@@ -47,10 +53,12 @@ FORTH DEFINITIONS DECIMAL
   ." TO THE RIGHT OF HOMEBASE AND THE SECOND"    CR
   ." NUMBER IS THE DISTANCE ABOVE THE "          CR
   ." HOMEBASE. FOR EXAMPLE, IF YOU THINK THE"    CR
-  ." MUGWUMP IS HIDING XX UNITS TO THE RIGHT"    CR
-  ." OF HOMEBASE AND [...]"                      CR
+  ." MUGWUMP IS HIDING 8 UNITS TO THE RIGHT"     CR
+  ." OF HOMEBASE AND 3 UNITS ABOVE HOMEBASE,"    CR
+  ." THEN ENTER 8 3 AS YOUR GUESS."              CR
+  ( TO DO: LIMIT )
   ." AFTER EACH GUESS, I WILL TELL YOU"          CR
-  ." HOW FAR (IN DIRECT LINE) YOU ARE FROM"      CR
+  ." HOW FAR (IN A DIRECT LINE) YOU ARE FROM"    CR
   ." THE MUGWUMP."                               CR ;
   
 ( Random number using POKEY )

@@ -18,37 +18,32 @@ FORTH DEFINITIONS DECIMAL
 0 VARIABLE hideY
 0 VARIABLE time
 
-( Random number, using POKEY )
-: Rnd ( rng -- rnd )
-  -11766 C@
-  -11766 C@ 256 * +
+( Random number using POKEY )
+: GetRnd ( rng -- rnd )
+  -11766 C@ -11766 C@ 256 * +
   SWAP MOD ABS ; 
   
-( Square )
-: ** DUP * ;
-
 ( Square root, Newton Method    )
 ( https://sametwice.com/sqrt.fs ) 
-: Sqrt ( n -- n )
+: GetSqrt ( n -- n )
   1 BEGIN
     OVER OVER / OVER - 2 / DUP
-  WHILE + REPEAT
-  DROP SWAP DROP ;
+  WHILE + REPEAT DROP SWAP DROP ;
+
+( Square )
+: ** DUP * ;
 
 ( Clear screen )
 : Home ( -- )
   0 82 C! 125 EMIT ;
   
-: Return ( -- )
-  2 82 C! CR CR ; 
-
 ( Enter a number )
-: Number ( -- n )
+: GetNumber ( -- n )
   KEY DUP EMIT 48 - CR ;
 
 ( Print the rules )
 : Rules ( -- )
-  CR CR ." Do you want the rules?" 
+  Home CR CR ." Do you want the rules?" 
   CR CR KEY ASCII Y = 0= IF ;S ENDIF
   ." A MUGWUMP IS HIDING IN A " gridSize .
   ." BY " gridSize . ." GRID." CR
@@ -65,46 +60,41 @@ FORTH DEFINITIONS DECIMAL
   
 ( Init variables )  
 : Init ( -- )
-  gridSize Rnd hideX !
-  gridSize Rnd hideY !
+  gridSize GetRnd hideX !
+  gridSize GetRnd hideY !
   1 time ! ;
 
 ( Guess coordinates ) 
 : Guess ( -- )
   ." Hiding. Guess. " CR
-  Number guessX !
-  Number guessY ! ;
+  GetNumber guessX !
+  GetNumber guessY ! ;
 
 ( Winning screen )
-: Won ( -- )
-  ." FOUND IN" time ? ;
+: HighScore ( -- )
+  ." FOUND IN" time ? 2 82 C! CR CR ;
 
 ( Main loop )
-: Game ( -- )
-  Home
-  Rules
-  Init ( sentinel: ) 0
+: MainLoop ( -- )
   BEGIN
-    ( sentinel: ) DROP
     Guess
     guessX @ hideX @ =
-      guessY @ hideY @ = AND
-    IF
-      ( sentinel: ) 0
-    ELSE
+    guessY @ hideY @ = AND
+    IF ;S ELSE
       guessX @ hideX @ - ** 
-        guessY @ hideY @ - ** +
-      Sqrt
+      guessY @ hideY @ - ** +
+      GetSqrt
       ." You are " ? 
       ." units from... " CR
-	  ." DEBUG: " hideX ? hideY ?
-	  ." //" CR
-      1 time +! ( sentinel: ) 1
+      1 time +! 
     ENDIF
-    DUP
-  WHILE REPEAT
-  ( sentinel: ) DROP
-  Won
-  Return ;
-    
+  AGAIN ;
+
+( Game )
+: RUN ( -- )
+  Rules
+  Init
+  MainLoop
+  HighScore ;
+	
 : APP/ ;

@@ -18,33 +18,17 @@ FORTH DEFINITIONS DECIMAL
 0 VARIABLE hideY
 0 VARIABLE time
 
-( Random number using POKEY )
-: GetRnd ( rng -- rnd )
-  -11766 C@ -11766 C@ 256 * +
-  SWAP MOD ABS ; 
-  
-( Square root, Newton Method    )
-( https://sametwice.com/sqrt.fs ) 
-: GetSqrt ( n -- n )
-  1 BEGIN
-    OVER OVER / OVER - 2 / DUP
-  WHILE + REPEAT DROP SWAP DROP ;
-
-( Square )
-: ** DUP * ;
-
 ( Clear screen )
 : Home ( -- )
-  0 82 C! 125 EMIT ;
+  0 82 C!
+  125 EMIT ;
   
-( Enter a number )
-: GetNumber ( -- n )
-  KEY DUP EMIT 48 - CR ;
-
+: != = 0= ;
+  
 ( Print the rules )
 : Rules ( -- )
-  Home CR CR ." Do you want the rules?" 
-  CR CR KEY ASCII Y = 0= IF ;S ENDIF
+  Home CR CR ." Do you want the rules? " 
+  KEY DUP EMIT CR CR ASCII Y != IF ;S ENDIF
   ." A MUGWUMP IS HIDING IN A " gridSize .
   ." BY " gridSize . ." GRID." CR
   ." TRY TO FIND HIM BY GUESSING HIS GRIDPOINT." CR
@@ -58,37 +42,53 @@ FORTH DEFINITIONS DECIMAL
   ." AFTER EACH GUESS, I WILL TELL YOU HOW FAR (IN DIRECT" CR
   ." LINE) YOU ARE FROM THE MUGWUMP." ;
   
+( Random number using POKEY )
+: Rnd ( rng -- rnd )
+  -11766 C@ -11766 C@ 256 * +
+  SWAP MOD ABS ; 
+  
 ( Init variables )  
 : Init ( -- )
-  gridSize GetRnd hideX !
-  gridSize GetRnd hideY !
+  gridSize Rnd hideX !
+  gridSize Rnd hideY !
   1 time ! ;
 
-( Guess coordinates ) 
-: Guess ( -- )
-  ." Hiding. Guess. " CR
-  GetNumber guessX !
-  GetNumber guessY ! ;
+( Enter a number )
+: GetNumber ( -- n )
+  KEY DUP EMIT 48 - CR ;
 
-( Winning screen )
-: HighScore ( -- )
-  ." FOUND IN" time ? 2 82 C! CR CR ;
+( Square )
+: ^2 DUP * ;
+
+( Square root, Newton Method    )
+( https://sametwice.com/sqrt.fs ) 
+: Sqrt ( n -- n )
+  1 BEGIN
+    OVER OVER / OVER - 2 / DUP
+  WHILE + REPEAT DROP SWAP DROP ;
 
 ( Main loop )
 : MainLoop ( -- )
   BEGIN
-    Guess
+    ." Hiding. Guess. " CR
+    GetNumber guessX !
+    GetNumber guessY ! 
     guessX @ hideX @ =
     guessY @ hideY @ = AND
     IF ;S ELSE
-      guessX @ hideX @ - ** 
-      guessY @ hideY @ - ** +
-      GetSqrt
+      guessX @ hideX @ - ^2
+      guessY @ hideY @ - ^2 +
+      Sqrt
       ." You are " ? 
       ." units from... " CR
       1 time +! 
     ENDIF
   AGAIN ;
+
+( Winning screen )
+: HighScore ( -- )
+  ." FOUND IN" time ?
+  2 82 C! CR CR ;
 
 ( Game )
 : RUN ( -- )

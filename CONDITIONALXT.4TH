@@ -7,12 +7,15 @@ FORTH DEFINITIONS HEX
 : -EXECUTE ( xt -- ) DUP 0< IF DROP ;S THEN EXECUTE ;
 : TEST CR ." Hello!" CR ;
 ( -' TEST CFA -EXECUTE )  ( -' FAIL CFA -EXECUTE )
-: ["] R COUNT DUP 1+ R> + >R ;
-: $"  ( start embedded string )
+: ["] R COUNT DUP 1+ R> + >R ;  ( [."] without TYPE )
+: $"  ( start embedded string ) (  ."  without TYPE )
   22 STATE @ IF COMPILE ["] WORD HERE C@ 1+ ALLOT
   ELSE WORD HERE DUP C@ 1+ PAD SWAP CMOVE PAD COUNT
   THEN ; IMMEDIATE
-: $= ( src len dest -- ) 2DUP + >R SWAP CMOVE R> 0 SWAP C! ;
+: $= ( src len dest -- )
+  2DUP + >R
+  SWAP CMOVE
+  R> 0 SWAP C! ;
 : "$ DUP len ! ;
 
 $" $LOL" "$ buf $= ( set string )

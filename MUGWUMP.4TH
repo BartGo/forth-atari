@@ -20,7 +20,7 @@ FORTH DEFINITIONS DECIMAL
 
 : /APP ;
 
-9 CONSTANT gridSize
+9 CONSTANT gridSize ( TODO: make sure it's 10x10 )
 0 VARIABLE guessX
 0 VARIABLE guessY
 0 VARIABLE hideX

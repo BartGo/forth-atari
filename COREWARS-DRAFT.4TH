@@ -1,7 +1,37 @@
+( WORK IN PROGRESS )
+( ATARI 800XL, APX EXTENDED FIG FORTH )
+
 ( *  Micro Core Wars  * )
-( WIP )
 
 FORTH DEFINITIONS DECIMAL
+
+39 LOAD ( assembler ) CR
+50 LOAD ( graphics )  CR
+
+( "coroutine" ) 
+: <CO> ( -- )
+  R> R> SWAP >R >R ;
+
+: ColCycle ( -- ) 
+  BEGIN
+    712 @ 255 = IF 0 712 ! THEN 
+    712 @ 1+ 712 !
+    1000 0 DO LOOP <CO>
+  AGAIN ;
+
+: TEST.COLCYCLE ( -- )
+  ColCycle
+  BEGIN ." Y" <CO> AGAIN ;
+
+2 CONSTANT #A
+: TEST.GrArena ( -- )
+  5 GR. ( 80 x 40 x 4, text window )
+  ColCycle
+  #A  0  0 PLOT
+  #A  0 39 DRAW <CO>
+  #A 79 39 DRAW <CO>
+  #A 79  0 DRAW <CO>
+  #A  0  0 DRAW ;
           
 40 20 * CONSTANT #SIZE
      46 CONSTANT #_

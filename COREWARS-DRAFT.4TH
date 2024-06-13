@@ -1,6 +1,6 @@
 ( WORK IN PROGRESS )
 ( ATARI 800XL, APX EXTENDED FIG FORTH )
-( Day 1: ~5h )
+( Day 1: ca. 5h )
 
 ( *  Micro Core Wars  * )
 
@@ -107,11 +107,11 @@ FORTH DEFINITIONS DECIMAL
   
 : Run ( -- )
   9 GR.
+  1 1 1 SETCOLOR ( FIXME )
   (Run)
   XGR ;  
   
-Init
-
+( Init
 ( Worm PL1-WORM1
 ( Worm PL1-WORM2
 ( Dwrf PL2-DWRF

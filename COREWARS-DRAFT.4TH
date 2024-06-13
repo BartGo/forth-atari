@@ -16,8 +16,7 @@ FORTH DEFINITIONS DECIMAL
 
 ( ** CONSTANTS ** )
 
-192 80 * 2 /
-         CONSTANT #SIZE
+192 80 * CONSTANT #SIZE
        2 CONSTANT #_
 	   3 CONSTANT #COLORS ( BUG? )
       24 CONSTANT #MAXPROG
@@ -61,8 +60,8 @@ FORTH DEFINITIONS DECIMAL
 : SetCell ( c -- ) 
   BEGIN
     #COLORS Rnd arena + ( c n )
-    DUP C@ #_ = IF      ( c n )
-      C! ;S ELSE DROP DROP
+    DUP @ #_ = IF      ( c n )
+      ! ;S ELSE DROP DROP
     THEN 
   AGAIN ;  
 
@@ -94,31 +93,25 @@ FORTH DEFINITIONS DECIMAL
 : TEST.Show ( -- )
   CR
   #SIZE 0 DO
-    ARENA I + C@ EMIT
+    ARENA I + @ .
   LOOP
   CR ;
   
-: Run
-  arena #SAVMSC @ #SIZE CMOVE
+: (Run)
+  arena #SAVMSC @ #SIZE 2 / CMOVE
   BEGIN
     KEY 27 = IF ;S THEN
   AGAIN
   ;
   
-: GR.Run ( -- )
+: Run ( -- )
   9 GR.
-  RUN
+  (Run)
   XGR ;  
   
-: TXT.Run ( -- )
-  0 82 C! 125 EMIT
-  RUN ;
+Init
 
-
-( Init
 ( Worm PL1-WORM1
 ( Worm PL1-WORM2
-( Worm PL1-WORM3
 ( Dwrf PL2-DWRF
-( GR.Run
-( ;S
+( Run

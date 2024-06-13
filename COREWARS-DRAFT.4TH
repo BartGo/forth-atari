@@ -50,12 +50,17 @@ FORTH DEFINITIONS DECIMAL
   0 -2 MOV
   2    JMP ;
   
-: Register
-  Worm worm1Player1
-  Worm worm2Player1
-  Worm worm1Player2 ;
-
-: SetArena
+  
+: RUN
   125 EMIT
-  Register ;
+  #ArenaSize 0 DO
+    I Arena + @ EMIT
+  LOOP ;
+  
+
+Worm PL1-WORM1
+Worm PL1-WORM2
+Worm PL2-WORM1
+Worm PL2-WORM2
+RUN
 

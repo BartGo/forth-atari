@@ -5,9 +5,9 @@ FORTH DEFINITIONS DECIMAL
 ( redcode examples from "Moje Atari 6": )
 ( https://archive.org/details/moje-atari-6/page/n3/mode/2up )
           
-40 25 * CONSTANT #ArenaSize
+40 20 * CONSTANT #ArenaSize
       8 CONSTANT #PlayNameLen
-     32 CONSTANT #EmptyChar
+     32 CONSTANT #Empty
 
 0 VARIABLE arena #ArenaSize 2 - ALLOT 
 
@@ -30,14 +30,21 @@ FORTH DEFINITIONS DECIMAL
   AGAIN ;  
 
 ( Reserve empty characters for the name )
-: EmptyChar DO #EmptyChar C, LOOP ; ( n n -- )
+: EmptyChar DO #Empty C, LOOP ; ( n n -- )
   
-: Worm ( -- name )
+: 1Worm ( -- name )
   <BUILDS
     #PlayNameLen 0 EmptyChar ( name )
     SetCell ,                ( rnd loc )
   DOES>
   0 1 MOV ;
+  
+: 2Worm ( -- name )
+  <BUILDS
+    #PlayNameLen 0 EmptyChar ( name )
+    SetCell ,                ( rnd loc )
+  DOES>
+  0 2 MOV ;
 
 : Dwrf ( -- name )
   <BUILDS
@@ -49,18 +56,21 @@ FORTH DEFINITIONS DECIMAL
   5 -1 ADD 
   0 -2 MOV
   2    JMP ;
-  
-  
-: RUN
-  125 EMIT
-  #ArenaSize 0 DO
-    I Arena + @ EMIT
-  LOOP ;
-  
+    
+: INIT
+  arena #ArenaSize #Empty FILL ;
 
-Worm PL1-WORM1
-Worm PL1-WORM2
-Worm PL2-WORM1
-Worm PL2-WORM2
+: RUN
+  125 EMIT CR
+  #ArenaSize 0 DO
+    I arena + @ EMIT
+  LOOP
+  CR ;
+
+INIT
+1Worm PL1-WORM1
+2Worm PL1-WORM2
+1Worm PL2-WORM1
+2Worm PL2-WORM2
 RUN
 

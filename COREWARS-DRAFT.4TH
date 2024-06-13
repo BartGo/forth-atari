@@ -6,6 +6,7 @@ FORTH DEFINITIONS DECIMAL
 40 20 * CONSTANT #SIZE
      46 CONSTANT #_
      24 CONSTANT #MAXPROG
+   88 @ CONSTANT #SAVMSC@
 
  0 VARIABLE arena #SIZE 2 - ALLOT 
 64 VARIABLE progCnt
@@ -52,14 +53,21 @@ FORTH DEFINITIONS DECIMAL
   0 -2 MOV
   2    JMP ;
   
-: INIT
+: INIT ( -- )
   arena #SIZE #_ FILL ;
 
-: RUN
-  0 82 C! 125 EMIT
-  #SIZE 0 DO ( todo: emit>cmove )
+: HOME ( -- )
+  0 82 C! 125 EMIT ;
+
+: RUN ( -- )
+  HOME #SIZE 0 DO
     I arena + @ EMIT
   LOOP CR ;
+
+: FASTRUN ( -- ) 
+  ;S ( FIXME )
+  HOME arena #SAVMSC@ #SIZE CMOVE
+  CR ;
 
 INIT
 Worm PL1-WORM1

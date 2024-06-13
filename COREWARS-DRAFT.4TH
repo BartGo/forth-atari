@@ -1,17 +1,18 @@
-( DRAFT / NOT WORKING )
+( *  Micro Core Wars  * )
+( WIP )
 
 FORTH DEFINITIONS DECIMAL
-
-( redcode examples from "Moje Atari 6": )
-( https://archive.org/details/moje-atari-6/page/n3/mode/2up )
           
-40 20 * CONSTANT #ArenaSize
-      8 CONSTANT #PlayNameLen
-     32 CONSTANT #Empty
+40 20 * CONSTANT #SIZE
+     46 CONSTANT #_
+     24 CONSTANT #MAXPROG
 
-0 VARIABLE arena #ArenaSize 2 - ALLOT 
+ 0 VARIABLE arena #SIZE 2 - ALLOT 
+64 VARIABLE progCnt
 
 ( dummy commands )
+( redcode examples from "Moje Atari 6": )
+( https://archive.org/details/moje-atari-6/page/n3/mode/2up )
 : JMP DROP ; : MOV DROP DROP ;
 : DAT DROP ; : ADD DROP DROP ; 
 
@@ -21,56 +22,49 @@ FORTH DEFINITIONS DECIMAL
   SWAP MOD ABS ; 
 
 ( Start a program in an empty arena cell )
-: SetCell ( -- n )
+: SetCell ( c -- ) 
   BEGIN
-    #ArenaSize Rnd DUP ( rnd rnd )
-    arena + @ 0= IF
-      DUP arena ! ;S   ( n )
-    ELSE DROP DROP THEN
+    #SIZE Rnd arena + ( c n )
+    DUP C@ #_ = IF    ( c n )
+      C! ;S ELSE DROP DROP
+    THEN 
   AGAIN ;  
 
-( Reserve empty characters for the name )
-: EmptyChar DO #Empty C, LOOP ; ( n n -- )
-  
-: 1Worm ( -- name )
+: Worm ( -- name )
   <BUILDS
-    #PlayNameLen 0 EmptyChar ( name )
-    SetCell ,                ( rnd loc )
+    8 0 DO #_ C, LOOP ( name )
+    1 progCnt +!      ( nxt code )
+    progCnt @
+    DUP , SetCell     ( rnd loc )
   DOES>
   0 1 MOV ;
   
-: 2Worm ( -- name )
-  <BUILDS
-    #PlayNameLen 0 EmptyChar ( name )
-    SetCell ,                ( rnd loc )
-  DOES>
-  0 2 MOV ;
-
 : Dwrf ( -- name )
   <BUILDS
-    #PlayNameLen 0 EmptyChar ( name )
-    SetCell ,                ( rnd loc )
+    8 0 DO #_ C, LOOP ( name )
+    1 progCnt +!      ( nxt code )
+    progCnt @
+    DUP , SetCell     ( rnd loc )
   DOES>
   2    JMP
   0    DAT
   5 -1 ADD 
   0 -2 MOV
   2    JMP ;
-    
+  
 : INIT
-  arena #ArenaSize #Empty FILL ;
+  arena #SIZE #_ FILL ;
 
 : RUN
-  125 EMIT CR
-  #ArenaSize 0 DO
+  0 82 C! 125 EMIT
+  #SIZE 0 DO ( todo: emit>cmove )
     I arena + @ EMIT
-  LOOP
-  CR ;
+  LOOP CR ;
 
 INIT
-1Worm PL1-WORM1
-2Worm PL1-WORM2
-1Worm PL2-WORM1
-2Worm PL2-WORM2
+Worm PL1-WORM1
+Worm PL1-WORM2
+Worm PL1-WORM3
+Dwrf PL2-DWRF
 RUN
-
+;S

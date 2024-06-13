@@ -1,5 +1,6 @@
 ( WORK IN PROGRESS )
 ( ATARI 800XL, APX EXTENDED FIG FORTH )
+( Day 1: ~5h )
 
 ( *  Micro Core Wars  * )
 

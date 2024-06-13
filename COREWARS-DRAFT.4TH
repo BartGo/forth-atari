@@ -5,12 +5,34 @@
 
 FORTH DEFINITIONS DECIMAL
 
-39 LOAD ( assembler ) CR
-50 LOAD ( graphics )  CR
+( ** INCLUDES ** )
+
+( 39 LOAD ( assembler ) CR
+( 50 LOAD ( graphics  ) CR
+
+( ** TYPES ** )
+
+: BYTE[] <BUILDS C, DOES> C@ ;
+
+( ** CONSTANTS ** )
+
+192 80 * 2 /
+         CONSTANT #SIZE
+       2 CONSTANT #_
+	   3 CONSTANT #COLORS ( BUG? )
+      24 CONSTANT #MAXPROG
+      88 CONSTANT #SAVMSC
+
+( ** VARIABLES ** )
+
+#SIZE BYTE[]   arenaTEST
+    0 VARIABLE arena #SIZE 2 - ALLOT 
+   64 VARIABLE progCnt
+
+( ** WORDS ** )
 
 ( "coroutine" ) 
-: <CO> ( -- )
-  R> R> SWAP >R >R ;
+: <CO> R> R> SWAP >R >R ; ( -- )
 
 : ColCycle ( -- ) 
   BEGIN
@@ -19,31 +41,14 @@ FORTH DEFINITIONS DECIMAL
     1000 0 DO LOOP <CO>
   AGAIN ;
 
-: TEST.COLCYCLE ( -- )
+: TEST.ColCycle ( -- )
   ColCycle
   BEGIN ." Y" <CO> AGAIN ;
 
-2 CONSTANT #A
-: TEST.GrArena ( -- )
-  5 GR. ( 80 x 40 x 4, text window )
-  ColCycle
-  #A  0  0 PLOT
-  #A  0 39 DRAW <CO>
-  #A 79 39 DRAW <CO>
-  #A 79  0 DRAW <CO>
-  #A  0  0 DRAW ;
-          
-40 20 * CONSTANT #SIZE
-     46 CONSTANT #_
-     24 CONSTANT #MAXPROG
-   88 @ CONSTANT #SAVMSC@
+( dummy commands, see "Moje Atari 6": )
+( https://archive.org/details/moje-atari-6/ )
+(   page/n3/mode/2up )
 
- 0 VARIABLE arena #SIZE 2 - ALLOT 
-64 VARIABLE progCnt
-
-( dummy commands )
-( redcode examples from "Moje Atari 6": )
-( https://archive.org/details/moje-atari-6/page/n3/mode/2up )
 : JMP DROP ; : MOV DROP DROP ;
 : DAT DROP ; : ADD DROP DROP ; 
 
@@ -52,11 +57,11 @@ FORTH DEFINITIONS DECIMAL
   -11766 C@ -11766 C@ 256 * +
   SWAP MOD ABS ; 
 
-( Start a program in an empty arena cell )
+( Start in an empty cell )
 : SetCell ( c -- ) 
   BEGIN
-    #SIZE Rnd arena + ( c n )
-    DUP C@ #_ = IF    ( c n )
+    #COLORS Rnd arena + ( c n )
+    DUP C@ #_ = IF      ( c n )
       C! ;S ELSE DROP DROP
     THEN 
   AGAIN ;  
@@ -83,26 +88,37 @@ FORTH DEFINITIONS DECIMAL
   0 -2 MOV
   2    JMP ;
   
-: INIT ( -- )
+: Init ( -- )
   arena #SIZE #_ FILL ;
-
-: HOME ( -- )
-  0 82 C! 125 EMIT ;
-
-: RUN ( -- )
-  HOME #SIZE 0 DO
-    I arena + @ EMIT
-  LOOP CR ;
-
-: FASTRUN ( -- ) 
-  ;S ( FIXME )
-  HOME arena #SAVMSC@ #SIZE CMOVE
+  
+: TEST.Show ( -- )
+  CR
+  #SIZE 0 DO
+    ARENA I + C@ EMIT
+  LOOP
   CR ;
+  
+: Run
+  arena #SAVMSC @ #SIZE CMOVE
+  BEGIN
+    KEY 27 = IF ;S THEN
+  AGAIN
+  ;
+  
+: GR.Run ( -- )
+  9 GR.
+  RUN
+  XGR ;  
+  
+: TXT.Run ( -- )
+  0 82 C! 125 EMIT
+  RUN ;
 
-INIT
-Worm PL1-WORM1
-Worm PL1-WORM2
-Worm PL1-WORM3
-Dwrf PL2-DWRF
-RUN
-;S
+
+( Init
+( Worm PL1-WORM1
+( Worm PL1-WORM2
+( Worm PL1-WORM3
+( Dwrf PL2-DWRF
+( GR.Run
+( ;S

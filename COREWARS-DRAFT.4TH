@@ -17,7 +17,7 @@ FORTH DEFINITIONS DECIMAL
 ( ** CONSTANTS ** )
 
 192 80 * CONSTANT #SIZE
-       2 CONSTANT #_
+       1 CONSTANT #_
 	   3 CONSTANT #COLORS ( BUG? )
       24 CONSTANT #MAXPROG
       88 CONSTANT #SAVMSC
@@ -25,7 +25,7 @@ FORTH DEFINITIONS DECIMAL
 ( ** VARIABLES ** )
 
 #SIZE BYTE[]   arenaTEST
-    0 VARIABLE arena #SIZE 2 - ALLOT 
+    0 VARIABLE arena #SIZE ALLOT 
    64 VARIABLE progCnt
 
 ( ** WORDS ** )
@@ -59,7 +59,7 @@ FORTH DEFINITIONS DECIMAL
 ( Start in an empty cell )
 : SetCell ( c -- ) 
   BEGIN
-    #COLORS Rnd arena + ( c n )
+    #SIZE Rnd arena + ( c n )
     DUP @ #_ = IF      ( c n )
       ! ;S ELSE DROP DROP
     THEN 
@@ -90,10 +90,10 @@ FORTH DEFINITIONS DECIMAL
 : Init ( -- )
   arena #SIZE #_ FILL ;
   
-: TEST.Show ( -- )
+: Show ( -- )
   CR
   #SIZE 0 DO
-    ARENA I + @ .
+    arena I + @ .
   LOOP
   CR ;
   

@@ -1,6 +1,8 @@
 ( WORK IN PROGRESS )
 ( ATARI 800XL, APX EXTENDED FIG FORTH )
+( TODO: change arena to a char array? )
 ( Day 1: ca. 5h )
+( Day 2: ca. 1h )
 
 ( *  Micro Core Wars  * )
 
@@ -11,23 +13,18 @@ FORTH DEFINITIONS DECIMAL
 ( 39 LOAD ( assembler ) CR
 ( 50 LOAD ( graphics  ) CR
 
-( ** TYPES ** )
-
-: BYTE[] <BUILDS C, DOES> C@ ;
-
 ( ** CONSTANTS ** )
 
-192 80 * CONSTANT #SIZE
-       1 CONSTANT #_
-	   3 CONSTANT #COLORS ( BUG? )
+       1 CONSTANT #DEBUG
+160 80 * CONSTANT #SIZE
+       0 CONSTANT #_
       24 CONSTANT #MAXPROG
       88 CONSTANT #SAVMSC
 
 ( ** VARIABLES ** )
 
-#SIZE BYTE[]   arenaTEST
-    0 VARIABLE arena #SIZE ALLOT 
-   64 VARIABLE progCnt
+0 VARIABLE arena #SIZE 2 - ALLOT 
+1 VARIABLE progCnt
 
 ( ** WORDS ** )
 
@@ -61,26 +58,28 @@ FORTH DEFINITIONS DECIMAL
 : SetCell ( c -- ) 
   BEGIN
     #SIZE Rnd arena + ( c n )
-    DUP @ #_ = IF      ( c n )
-      ! ;S ELSE DROP DROP
+    DUP C@ #_ = IF      ( c n )
+      #DEBUG IF
+	    CR ." setcell: " 2DUP . .
+		CR 
+	  THEN
+      C! ;S ELSE DROP DROP
     THEN 
   AGAIN ;  
 
-: Worm ( -- name )
+: Worm ( pl -- )
   <BUILDS
-    8 0 DO #_ C, LOOP ( name )
-    1 progCnt +!      ( nxt code )
-    progCnt @
-    DUP , SetCell     ( rnd loc )
+    8 0 DO #_ C, LOOP 
+    1 progCnt +! progCnt C@ ,
+    SetCell ( -- )    
   DOES>
   0 1 MOV ;
   
-: Dwrf ( -- name )
+: Dwrf ( pl -- name )
   <BUILDS
-    8 0 DO #_ C, LOOP ( name )
-    1 progCnt +!      ( nxt code )
-    progCnt @
-    DUP , SetCell     ( rnd loc )
+    8 0 DO #_ C, LOOP 
+    1 progCnt +! progCnt C@ ,
+    SetCell ( -- )    
   DOES>
   2    JMP
   0    DAT
@@ -92,27 +91,26 @@ FORTH DEFINITIONS DECIMAL
   arena #SIZE #_ FILL ;
   
 : Show ( -- )
-  CR
-  #SIZE 0 DO
-    arena I + @ .
-  LOOP
-  CR ;
+  CR #SIZE 0 DO
+    arena I + C@ .
+  LOOP CR ;
   
 : (Run)
-  arena #SAVMSC @ #SIZE 2 / CMOVE
+  arena #SAVMSC @ #SIZE CMOVE
   BEGIN
     KEY 27 = IF ;S THEN
   AGAIN
   ;
   
 : Run ( -- )
-  9 GR.
-  1 1 1 SETCOLOR ( FIXME )
+  5 GR.
   (Run)
   XGR ;  
   
 ( Init
-( Worm PL1-WORM1
-( Worm PL1-WORM2
-( Dwrf PL2-DWRF
+( 1 Worm WORM1
+( 1 Worm WORM2
+( 2 Worm WORM3
+( 2 Dwrf DWRF1
+( 3 Worm WORM4
 ( Run

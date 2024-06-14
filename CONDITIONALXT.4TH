@@ -1,35 +1,24 @@
-( NOT WORKING YET )
+( * conditional execution * )
+(  atari 8-bit / apx forth  )
 
-( detecting whether a word exists, probably will require modification of WORD )
-( uses adepted string routines from tchak's fujinet words )
-( written for atari 8-bit apx extended fig-forth )
+0 VARIABLE 'GO
+: INCLUDE$ ." CR" ; ( default )
+' INCLUDE$ 'GO !
+: GO ( -- )
+  'GO @ 2+ CONTEXT @ @ (FIND)
+  IF DROP CFA EXECUTE
+  ELSE
+    CR 'GO @ CFA
+	EXECUTE ." : not found!" CR
+  THEN ; 
 
+GO ( CR found and executed )
 
-FORTH DEFINITIONS HEX
+: A$ ." ASSEMBLER" ;
+' A$ 'GO ! GO ( switched to assembler )
 
-0 VARIABLE len 
-0 VARIABLE buf WIDTH ALLOT
+: E$ ." EDITOR" ;
+' E$ 'GO ! GO ( editor not found )
 
-: -' ( -- xt|0 ) -FIND 0= IF 0 ;S THEN DROP ;
-: -EXECUTE ( xt -- ) DUP 0< IF DROP ;S THEN EXECUTE ;
-: TEST CR ." Hello!" CR ;
-( -' TEST CFA -EXECUTE )  ( -' FAIL CFA -EXECUTE )
-: ["] R COUNT DUP 1+ R> + >R ;  ( [."] without TYPE )
-( start embedded string ) 
-: $" (  same as ."  without TYPE )
-  22 STATE @ IF COMPILE ["] WORD HERE C@ 1+ ALLOT
-  ELSE WORD HERE DUP C@ 1+ PAD SWAP CMOVE PAD COUNT
-  THEN ; IMMEDIATE
-: $= ( src len dest -- )
-  2DUP + >R SWAP CMOVE R> 0 SWAP C! ;
-: "$ ( n -- )
-  DUP len ! ;
-
-( FIXME )
-$" $LOL" "$ buf $= ( set string )
-len @ buf C! ( set len )
-buf 1 + len C@ 1 - TYPE ( print string )
-buf COUNT TYPE
-
-( buf ' LIT NFA (FIND) )
-
+: Z$ ." BOOT" ;
+' Z$ 'GO ! GO ( reboot found... oops )

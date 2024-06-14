@@ -1,24 +1,22 @@
-( * conditional execution * )
-(  atari 8-bit / apx forth  )
+0 VARIABLE 'XW
 
-0 VARIABLE 'GO
 : INCLUDE$ ." CR" ; ( default )
-' INCLUDE$ 'GO !
-: GO ( -- )
-  'GO @ 2+ CONTEXT @ @ (FIND)
-  IF DROP CFA EXECUTE
-  ELSE
-    CR 'GO @ CFA
-	EXECUTE ." : not found!" CR
-  THEN ; 
+' INCLUDE$ 'XW !
 
-GO ( CR found and executed )
+: ?W ( -- pfa | 0 )
+  'XW @ 2+ CONTEXT @ @ (FIND)
+  IF DROP ELSE 0 THEN ; 
+  
+: XW ( -- ) ( exec a vectored word )
+  ?W DUP
+  IF CFA EXECUTE ELSE DROP THEN ;
+
+XW ( default CR found and executed )
 
 : A$ ." ASSEMBLER" ;
-' A$ 'GO ! GO ( switched to assembler )
+' A$ 'XW !
+XW ( switch to assembler )
 
 : E$ ." EDITOR" ;
-' E$ 'GO ! GO ( editor not found )
-
-: Z$ ." BOOT" ;
-' Z$ 'GO ! GO ( reboot found... oops )
+' E$ 'XW !
+XW ( quiet - word not found )

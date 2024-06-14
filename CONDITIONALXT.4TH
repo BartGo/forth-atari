@@ -13,15 +13,9 @@
   ?W DUP
   IF CFA EXECUTE ELSE DROP THEN ;
 
-XW ( default CR found and executed )
-
 : A$ ." ASSEMBLER" ;
-' A$ 'XW !
-XW ( switch to assembler )
-
 : E$ ." EDITOR" ;
-' E$ 'XW !
-XW ( quiet - word not found )
+: M$ ." )EDIT" ;
 
 : LOAD-ED ( -- )
   ' E$ 'XW ! ?W 0= IF 27 LOAD THEN ;
@@ -29,8 +23,8 @@ XW ( quiet - word not found )
   ' A$ 'XW ! ?W 0= IF 39 LOAD THEN ;
 : LOAD-ASM-WR ( -- )
   ' A$ 'XW ! ?W 0= IF 75 LOAD THEN ;
-
-
+: LOAD-ED-MD ( -- )
+  ' M$ 'XW ! ?W 0= IF 60 LOAD THEN ;
 
 
 ( scanlon_leo_j_forth_programming )

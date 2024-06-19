@@ -9,7 +9,7 @@ FORTH DEFINITIONS DECIMAL
 
 : APP( ;
 
-9  CONSTANT GRIDSIZE ( TODO: make sure it's 10x10 )
+9  CONSTANT GRIDSIZE
 10 CONSTANT GUESSMAX
 0  VARIABLE guessX
 0  VARIABLE guessY
@@ -17,15 +17,15 @@ FORTH DEFINITIONS DECIMAL
 0  VARIABLE hideY
 0  VARIABLE graph
 
-( Clear screen )
-: Home ( -- )
-  0 710 C! 0  82 C! 125 EMIT ;
+( Clear screen, set color and margin )
+: Home ( b b -- )
+  710 C! 82 C! 125 EMIT ;
   
 : WaitEsc ( -- )
   BEGIN KEY 27 = UNTIL ;
   
 : Title
-  3 82 C! 0 710 C! 125 EMIT CR CR
+  3 0 Home CR CR
   ." ***********************************" CR
   ."   M    U    G    W    U    M    P  " CR
   ." ***********************************" CR CR
@@ -45,7 +45,8 @@ FORTH DEFINITIONS DECIMAL
 
 ( Print the rules )
 : Rules ( -- )
-  Home 0 graph !
+  0 0 Home
+  0 graph !
   ." Do you want graphics  (Y=YES)? "  
   KEY DUP EMIT CR ASCII Y = IF
     0 graph !
@@ -107,7 +108,9 @@ FORTH DEFINITIONS DECIMAL
   GRIDSIZE Rnd hideX !
   GRIDSIZE Rnd hideY ! 
   CR ." Press ESC."
-  WaitEsc Home GraphInit
+  WaitEsc
+  0 0 Home
+  GraphInit
   GUESSMAX 0 DO
     GraphUpdate
 	CR ." Mugwump is hiding. You get "
@@ -133,6 +136,7 @@ FORTH DEFINITIONS DECIMAL
 
 ( Ending screen )
 : HighScore ( n -- )
+  ( FIXME : win coord detection )
   -DUP IF 
     CR ." You found him in " 
 	GUESSMAX SWAP - ." guesses!!!" 

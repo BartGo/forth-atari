@@ -33,10 +33,8 @@ FORTH DEFINITIONS DECIMAL
 : WaitYN? ( -- n )
   BEGIN
     KEY DUP
-    ASCII Y = ASCII y = OR IF
-      ASCII Y EMIT DROP 1 ;S THEN
-    ASCII N = ASCII n = OR IF
-      ASCII N EMIT      0 ;S THEN
+    DUP ASCII Y = SWAP ASCII y = OR IF EMIT 1 ;S THEN
+    DUP ASCII N = SWAP ASCII n = OR IF EMIT 0 ;S THEN
   AGAIN ;
 
 ( Clear screen, set color and margin )

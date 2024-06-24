@@ -1,9 +1,11 @@
 ( MUGWUMP in APX Forth, Atari 8-bit )
 ( see "Title" section for program info )
 ( FIXME ) 
+( TODO: winning crashes; add ":" debugging and detect place of the crash )
 ( TODO: use a gr. mode of 8 colors + txt [?] to make a heatmap! )
 ( TODO: show the last entered coordinates )
 ( TODO: P/M graphics; laser + mugwump )
+( TODO: without FP we get very little info! )
 ( TODO: DLI )
 
 FORTH DEFINITIONS DECIMAL
@@ -62,6 +64,7 @@ FORTH DEFINITIONS DECIMAL
   WaitYN? IF 1 graph? ! ENDIF
   CR ." Do you want the rules (Y=YES)? "  
   WaitYN? 0= IF ;S ENDIF
+  CR CR
   ." A MUGWUMP IS HIDING IN A " GRIDSIZE .
   ." BY " GRIDSIZE . ." GRID."                   CR
   ." TRY TO FIND HIM BY GUESSING HIS"            CR
@@ -87,6 +90,7 @@ FORTH DEFINITIONS DECIMAL
   -11766 C@ -11766 C@ 256 * +
   SWAP MOD ABS ; 
 
+( FIXME: should not leave non-# on stack! )
 ( Enter a number )
 : Get# ( -- n )
   BEGIN                   (   )

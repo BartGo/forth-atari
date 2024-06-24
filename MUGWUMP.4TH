@@ -1,21 +1,28 @@
 
 ( !! see "Title" below for program info !! )
 
-( FIXME )
+( FIXME ) 
+
+( TODO: use a gr. mode of 8 colors + txt [?] to make a heatmap! )
+( TODO: show the last entered coordinates )
+( TODO: P/M graphics; laser + mugwump )
+( TODO: DLI )
 
 FORTH DEFINITIONS DECIMAL
 
 ( 39 LOAD 50 LOAD ) ( ASM & GRAPH )
 
-: APP( ;
+: GAME ;
 
 9  CONSTANT GRIDSIZE
 10 CONSTANT GUESSMAX
+2  CONSTANT BCOL ( board color )
+1  CONSTANT GCOL ( guess color )
 0  VARIABLE guessX
 0  VARIABLE guessY
 0  VARIABLE hideX
 0  VARIABLE hideY
-0  VARIABLE graph
+0  VARIABLE graph?
 
 ( Clear screen, set color and margin )
 : Home ( b b -- )
@@ -45,13 +52,10 @@ FORTH DEFINITIONS DECIMAL
 
 ( Print the rules )
 : Rules ( -- )
-  0 0 Home
-  0 graph !
+  0 0 Home 0 graph? !
   ." Do you want graphics  (Y=YES)? "  
-  KEY DUP EMIT CR ASCII Y = IF
-    0 graph !
-  ENDIF CR
-  ." Do you want the rules (Y=YES)? "  
+  KEY DUP EMIT CR ASCII Y = IF 1 graph? ! ENDIF
+  CR ." Do you want the rules (Y=YES)? "  
   KEY DUP EMIT CR CR ASCII Y = 0= IF ;S ENDIF
   ." A MUGWUMP IS HIDING IN A " GRIDSIZE .
   ." BY " GRIDSIZE . ." GRID."                   CR
@@ -70,7 +74,8 @@ FORTH DEFINITIONS DECIMAL
   ." YOU GET " GUESSMAX . ."  GUESSES."          CR 
   ." AFTER EACH GUESS, I WILL TELL YOU"          CR
   ." HOW FAR (IN A DIRECT LINE) YOU ARE FROM"    CR
-  ." THE MUGWUMP."                               CR ;
+  ." THE MUGWUMP."                               CR
+  CR ." Press ESC." WaitEsc  ;
   
 ( Random number using POKEY )
 : Rnd ( rng -- rnd )
@@ -95,28 +100,33 @@ FORTH DEFINITIONS DECIMAL
     OVER OVER / OVER - 2 / DUP
   WHILE + REPEAT DROP SWAP DROP ;
 
-: GraphInit
-  graph @ 0= IF ;S THEN
-  ( init here ) ;
+: GrInit
+  graph? @ 0= IF ;S THEN
+  7 GR. 80 712 ! 80 710 !
+  559 @ 0 559 !
+  8 1 DO 
+    BCOL  I 10 * 1 - 40 +  0 PLOT 
+	BCOL  I 10 * 1 - 40 + 79 DRAW
+	BCOL  0 40 + I 10 * 1 - PLOT 
+	BCOL 79 40 + I 10 * 1 - DRAW
+  LOOP 559 ! ;
 
-: GraphUpdate
-  graph @ 0= IF ;S THEN
+: GrUpdate ( n n -- )
+  graph? @ 0= IF DROP DROP ;S THEN
+  GCOL ROT ROT PLOT 
   ( update here ) ;
 
 ( Main loop )
 : MainLoop ( -- n )
   GRIDSIZE Rnd hideX !
   GRIDSIZE Rnd hideY ! 
-  CR ." Press ESC."
-  WaitEsc
   0 0 Home
-  GraphInit
+  GrInit
   GUESSMAX 0 DO
-    GraphUpdate
 	CR ." Mugwump is hiding. You get "
     GUESSMAX I - . ." guesses. " CR
 	Get# guessX !  ASCII , EMIT
-    Get# guessY !  CR
+    Get# guessY !  CR CR
     guessX @ hideX @ =
       guessY @ hideY @ = AND
     IF
@@ -125,14 +135,13 @@ FORTH DEFINITIONS DECIMAL
 	  guessX @ hideX @ - ^2
         guessY @ hideY @ - ^2 +
       ." You are " Sqrt .
-	  ." unit(s) from the Mugwump. " CR
-	
-		CR      ." Shh... Check gridpoint "
-		hideX @ .; ASCII , EMIT
-		hideY @ .; CR CR
-	
+	  ." unit(s) from the Mugwump. " ( CR )
+	  ( CR ." Shh... Check gridpoint "
+	  ( hideX @ .; ASCII , EMIT
+	  ( hideY @ .; CR CR 
     ENDIF
-   LOOP 0 ( return 0 /lost ) ;
+  guessX @ guessY @ GrUpdate
+  LOOP 0 ( return 0 /lost ) ;
 
 ( Ending screen )
 : HighScore ( n -- )
@@ -147,17 +156,12 @@ FORTH DEFINITIONS DECIMAL
     hideX @ .; ASCII , EMIT
     hideY @ .; 
   THEN
-  CR CR ." Press ESC. " 
-  ." Then, type RUN to play again." 
-  CR WaitEsc
-  148 710 C! 2 82 C! 125 EMIT
-  CR CR ;
+  CR ." Press ESC, type RUN to play again." 
+  WaitEsc
+  graph? @ IF XGR THEN
+  148 710 C! 2 82 C! 125 EMIT ;
 
 ( Game )
 : RUN ( -- )
-  Title
-  Rules
-  MainLoop ( n )
+  Title Rules MainLoop ( n )
   HighScore ;
-	
-: )APP ;

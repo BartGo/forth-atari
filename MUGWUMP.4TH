@@ -1,8 +1,6 @@
-
-( !! see "Title" below for program info !! )
-
+( MUGWUMP in APX Forth, Atari 8-bit )
+( see "Title" section for program info )
 ( FIXME ) 
-
 ( TODO: use a gr. mode of 8 colors + txt [?] to make a heatmap! )
 ( TODO: show the last entered coordinates )
 ( TODO: P/M graphics; laser + mugwump )
@@ -14,22 +12,35 @@ FORTH DEFINITIONS DECIMAL
 
 : GAME ;
 
-9  CONSTANT GRIDSIZE
-10 CONSTANT GUESSMAX
-2  CONSTANT BCOL ( board color )
-1  CONSTANT GCOL ( guess color )
-0  VARIABLE guessX
-0  VARIABLE guessY
-0  VARIABLE hideX
-0  VARIABLE hideY
-0  VARIABLE graph?
+9   CONSTANT GRIDSIZE
+10  CONSTANT GUESSMAX
+2   CONSTANT BCOL ( board color )
+1   CONSTANT GCOL ( guess color )
+559 CONSTANT SDMCTL
+710 CONSTANT COLOR2
+82  CONSTANT LMARGN
+0   VARIABLE guessX
+0   VARIABLE guessY
+0   VARIABLE hideX
+0   VARIABLE hideY
+0   VARIABLE graph?
+
+( Dot word with no trailing space )
+: .; ( n -- ) S->D 0 D.R ;
+
+: WaitEsc ( -- ) BEGIN KEY 27 = UNTIL ;
+
+: WaitYN? ( -- n )
+  BEGIN
+    KEY DUP
+    ASCII Y = ASCII y = OR IF
+      ASCII Y EMIT DROP 1 ;S THEN
+    ASCII N = ASCII n = OR IF
+      ASCII N EMIT      0 ;S THEN
+  AGAIN ;
 
 ( Clear screen, set color and margin )
-: Home ( b b -- )
-  710 C! 82 C! 125 EMIT ;
-  
-: WaitEsc ( -- )
-  BEGIN KEY 27 = UNTIL ;
+: Home ( b b -- ) COLOR2 C! LMARGN C! 125 EMIT ;
   
 : Title
   3 0 Home CR CR
@@ -46,17 +57,13 @@ FORTH DEFINITIONS DECIMAL
   ."           for Atari 8-bit          " CR CR
   ."             (Press ESC)" CR WaitEsc ;  
 
-( Dot word with no trailing space )
-: .; ( n -- )
-  S->D 0 D.R ;
-
 ( Print the rules )
 : Rules ( -- )
   0 0 Home 0 graph? !
   ." Do you want graphics  (Y=YES)? "  
-  KEY DUP EMIT CR ASCII Y = IF 1 graph? ! ENDIF
+  WaitYN? IF 1 graph? ! ENDIF
   CR ." Do you want the rules (Y=YES)? "  
-  KEY DUP EMIT CR CR ASCII Y = 0= IF ;S ENDIF
+  WaitYN? 0= IF ;S ENDIF
   ." A MUGWUMP IS HIDING IN A " GRIDSIZE .
   ." BY " GRIDSIZE . ." GRID."                   CR
   ." TRY TO FIND HIM BY GUESSING HIS"            CR
@@ -86,7 +93,7 @@ FORTH DEFINITIONS DECIMAL
 : Get# ( -- n )
   BEGIN                   (   )
     KEY DUP ASCII 0 1 - > ( n f ) 
-       OVER ASCII 9 1 + < ( n f f ) 
+    OVER    ASCII 9 1 + < ( n f f ) 
   AND UNTIL               ( n )
   DUP EMIT 48 - ;         ( n )
 
@@ -102,14 +109,14 @@ FORTH DEFINITIONS DECIMAL
 
 : GrInit
   graph? @ 0= IF ;S THEN
-  7 GR. 80 712 ! 80 710 !
-  559 @ 0 559 !
+  7 GR. 80 712 ! 80 COLOR2 !
+  SDMCTL @ 0 SDMCTL !
   8 1 DO 
     BCOL  I 10 * 1 - 40 +  0 PLOT 
-	BCOL  I 10 * 1 - 40 + 79 DRAW
-	BCOL  0 40 + I 10 * 1 - PLOT 
-	BCOL 79 40 + I 10 * 1 - DRAW
-  LOOP 559 ! ;
+    BCOL  I 10 * 1 - 40 + 79 DRAW
+    BCOL  0 40 + I 10 * 1 - PLOT 
+    BCOL 79 40 + I 10 * 1 - DRAW
+  LOOP SDMCTL ! ;
 
 : GrUpdate ( n n -- )
   graph? @ 0= IF DROP DROP ;S THEN
@@ -120,25 +127,23 @@ FORTH DEFINITIONS DECIMAL
 : MainLoop ( -- n )
   GRIDSIZE Rnd hideX !
   GRIDSIZE Rnd hideY ! 
-  0 0 Home
-  GrInit
+  0 0 Home GrInit
   GUESSMAX 0 DO
-	CR ." Mugwump is hiding. You get "
+    CR ." Mugwump is hiding. You get "
     GUESSMAX I - . ." guesses. " CR
-	Get# guessX !  ASCII , EMIT
+    Get# guessX !  ASCII , EMIT
     Get# guessY !  CR CR
     guessX @ hideX @ =
       guessY @ hideY @ = AND
-    IF
-	  I ( return loop# /win ) ;S
-	ELSE
-	  guessX @ hideX @ - ^2
-        guessY @ hideY @ - ^2 +
+    IF I ( return loop# /win ) ;S
+    ELSE
+      guessX @ hideX @ - ^2
+      guessY @ hideY @ - ^2 +
       ." You are " Sqrt .
-	  ." unit(s) from the Mugwump. " ( CR )
-	  ( CR ." Shh... Check gridpoint "
-	  ( hideX @ .; ASCII , EMIT
-	  ( hideY @ .; CR CR 
+      ." unit(s) from the Mugwump. " ( CR 
+      ( CR ." Shh... Check gridpoint "
+      ( hideX @ .; ASCII , EMIT
+      ( hideY @ .; CR CR 
     ENDIF
   guessX @ guessY @ GrUpdate
   LOOP 0 ( return 0 /lost ) ;
@@ -148,7 +153,7 @@ FORTH DEFINITIONS DECIMAL
   ( FIXME : win coord detection )
   -DUP IF 
     CR ." You found him in " 
-	GUESSMAX SWAP - ." guesses!!!" 
+    GUESSMAX SWAP - ." guesses!!!" 
   ELSE
     CR ." Sorry, that's " GUESSMAX .
     ." tries." CR
@@ -156,12 +161,14 @@ FORTH DEFINITIONS DECIMAL
     hideX @ .; ASCII , EMIT
     hideY @ .; 
   THEN
-  CR ." Press ESC, type RUN to play again." 
-  WaitEsc
-  graph? @ IF XGR THEN
-  148 710 C! 2 82 C! 125 EMIT ;
+  CR ." Press ESC." 
+  WaitEsc graph? @ IF XGR THEN 2 148 Home ;
 
 ( Game )
 : RUN ( -- )
-  Title Rules MainLoop ( n )
-  HighScore ;
+  Title
+  BEGIN
+    Rules
+    MainLoop ( n )
+    HighScore
+  AGAIN ;

@@ -1,6 +1,7 @@
 ( MUGWUMP in APX Forth, Atari 8-bit )
-( see "Title" section for program info )
 ( FIXME ) 
+
+( see "Title" section for program info )
 ( TODO: winning crashes; add ":" debugging and detect place of the crash )
 ( TODO: use a gr. mode of 8 colors + txt [?] to make a heatmap! )
 ( TODO: show the last entered coordinates )
@@ -8,11 +9,13 @@
 ( TODO: without FP we get very little info! )
 ( TODO: DLI )
 
-FORTH DEFINITIONS DECIMAL
+DECIMAL FORTH DEFINITIONS CR
 
-( 39 LOAD 50 LOAD ) ( ASM & GRAPH )
+( LOAD ASM & GRAPH ) 
+39 LOAD 50 LOAD CR
+: SKIPPED-BECAUSE-OF-APX-ERROR ( --- ) ;
 
-: GAME ;
+: |APPLICATION| ;
 
 9   CONSTANT GRIDSIZE
 10  CONSTANT GUESSMAX

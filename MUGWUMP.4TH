@@ -9,13 +9,16 @@
 ( TODO: without FP we get very little info! )
 ( TODO: DLI )
 
-DECIMAL FORTH DEFINITIONS CR
+: |APP| DECIMAL FORTH DEFINITIONS EMPTY-BUFFERS ; |APP| 
 
-( LOAD ASM & GRAPH ) 
-39 LOAD 50 LOAD CR
-: SKIPPED-BECAUSE-OF-APX-ERROR ( --- ) ;
+: |INCLUDE|
+  CR 21 LOAD ( debug )
+     39 LOAD ( asm by PM )
+     60 LOAD ( fp )
+     50 LOAD ( graph ) ; |INCLUDE|
 
-: |APPLICATION| ;
+: |SKIP| ( LOAD workaround, dummy word to skip 64 chrs )
+  1 8 ERROR ;S ; |SKIP|
 
 9   CONSTANT GRIDSIZE
 10  CONSTANT GUESSMAX

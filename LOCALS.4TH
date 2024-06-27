@@ -23,8 +23,9 @@
 
 55 44 33 22 11 5
   EXAMPLE    ( execute )
-  220 ?PAIRS ( expected example ) 
-  
+  220 ?PAIRS ( expected ) 
+
+( test similar to the one from FD-V03N6 )
 : BOX
   R> HERE >R >R   ( store HERE below RS top )
   0 DO , LOOP     ( create M locals )

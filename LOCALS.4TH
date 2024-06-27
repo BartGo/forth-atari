@@ -11,8 +11,8 @@
   DUP 64 + EMIT ." =" 'L ? ;
  
 : MYWORD ( c b a -- ) ( example )
-  R> HERE DUP . >R >R ( store HERE below RS top )
-  5 !L    HERE DUP .  ( reserve five locals )
+  R> >R >R ( store HERE below RS top )
+  5 !L     ( reserve five locals )
   1 'L ? ( OK )
   2 'L ?
   3 'L ?
@@ -20,7 +20,7 @@
   5 'L ? 
   6 1 DO I 'L ? LOOP CR ( FAIL in loop )
   6 1 DO I .L   LOOP CR ( FAIL in loop )
-  R> R> DP ! >R ;     ( restore DP )
+  R> R> DP ! >R ;       ( restore DP )
   
 55 44 33 22 11 MYWORD ( e d c b a MYWORD )
 

@@ -2,7 +2,8 @@
 ( Tested on Atari 8-bit, )
 ( APX Forth [no loads]   )
 ( By BartGo, probably in-)
-( spired by FD articles? )
+( spired by FD articles, )
+( e.g. FD-V03N6.pdf p.185)
 ( Will NOT work in loops )
 ( or with R-stack change )
 				

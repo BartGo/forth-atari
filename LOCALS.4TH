@@ -23,4 +23,17 @@
 55 44 33 22 11 5
   EXAMPLE    ( execute )
   220 ?PAIRS ( expected example ) 
-
+  
+: BOX
+  R> HERE >R >R   ( store HERE below RS top )
+  0 DO , LOOP     ( create M locals )
+  1 'L @ 2 'L @ 3 'L @ * *   ( vol )
+  1 'L @ 4 *
+  2 'L @ 4 * + 
+  3 'L @ 4 * +               ( vol edge )  
+  R> R> DP ! >R ; ( old DP ) ( vol edge )
+  
+21 4 8 3 BOX
+  132 ?PAIRS
+  672 ?PAIRS
+  

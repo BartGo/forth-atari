@@ -1,30 +1,22 @@
 : /TOOLS ;
 
 0 VARIABLE 'XW
-
 : INCLUDE$ ." CR" ; ( default )
 ' INCLUDE$ 'XW !
-
 : ?W ( -- pfa | 0 )
   'XW @ 2+ CONTEXT @ @ (FIND)
   IF DROP ELSE 0 THEN ; 
-  
+: NEEDED? 'XW ! ?W 0= ; 
 : XW ( -- ) ( exec a vectored word )
   ?W DUP
   IF CFA EXECUTE ELSE DROP THEN ;
 
-: A$ ." ASSEMBLER" ;
-: E$ ." EDITOR" ;
-: M$ ." )EDIT" ;
+: A$ ." ASSEMBLER" ; : E$ ." EDITOR" ; : M$ ." )EDIT" ;
 
-: LOAD-ED ( -- )
-  ' E$ 'XW ! ?W 0= IF 27 LOAD THEN ;
-: LOAD-ASM-PM ( -- )
-  ' A$ 'XW ! ?W 0= IF 39 LOAD THEN ;
-: LOAD-ASM-WR ( -- )
-  ' A$ 'XW ! ?W 0= IF 75 LOAD THEN ;
-: LOAD-ED-MD ( -- )
-  ' M$ 'XW ! ?W 0= IF 60 LOAD THEN ;
+: LOAD-ED     ( -- ) ' E$ NEEDED? IF 27 LOAD THEN ;
+: LOAD-ASM-PM ( -- ) ' A$ NEEDED? IF 39 LOAD THEN ;
+: LOAD-ASM-WR ( -- ) ' A$ NEEDED? IF 75 LOAD THEN ;
+: LOAD-ED-MD  ( -- ) ' M$ NEEDED? IF 60 LOAD THEN ;
 
 
 ( scanlon_leo_j_forth_programming )

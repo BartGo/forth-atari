@@ -1,5 +1,5 @@
 ( MUGWUMP in APX Forth, Atari 8-bit )
-( FIXME ) 
+( FIXME - crashes when wins ) 
 
 ( see "Title" section for program info )
 ( TODO: winning crashes; add ":" debugging and detect place of the crash )

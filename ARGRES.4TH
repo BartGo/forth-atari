@@ -3,6 +3,8 @@
 ( https://www.forth.org/fd/FD-V03N6.pdf
 ( tunings for Atari 8-but APX Forth by BartGo 
 
+: ARGRES( ;
+
 HEX 0 VARIABLE [ARG] 0 VARIABLE [TO]
 : +ARG <BUILDS , DOES> @ [ARG] @ SWAP - [TO] @ -DUP
   IF 0< IF +! ELSE ! ENDIF ELSE @ ENDIF 0 [TO] ! ;
@@ -14,6 +16,8 @@ HEX 0 VARIABLE [ARG] 0 VARIABLE [TO]
 : RESULTS 2 * [ARG] @ SWAP - SP@ - 2 / 0 DO DROP LOOP
   R> R> [ARG] ! >R ;
 DECIMAL
+
+: )ARGRES ;
 
 : BOX ( n n n -- n n )
   3 ARGUMENTS

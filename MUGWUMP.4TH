@@ -1,5 +1,8 @@
-( MUGWUMP in APX Forth, Atari 8-bit )
 ( FIXME - crashes when wins ) 
+
+( MUGWUMP in APX Forth, Atari 8-bit )
+( PCC Basic Game ported by BartGo 
+( required screens: 39 LOAD 60 LOAD 50 LOAD )
 
 ( see "Title" section for program info )
 ( TODO: winning crashes; add ":" debugging and detect place of the crash )
@@ -20,6 +23,7 @@
 : |SKIP| ( LOAD workaround, dummy word to skip 64 chrs )
   1 8 ERROR ;S ; |SKIP|
 
+
 9   CONSTANT GRIDSIZE
 10  CONSTANT GUESSMAX
 2   CONSTANT BCOL ( board color )
@@ -27,16 +31,32 @@
 559 CONSTANT SDMCTL
 710 CONSTANT COLOR2
 82  CONSTANT LMARGN
+
 0   VARIABLE guessX
 0   VARIABLE guessY
 0   VARIABLE hideX
 0   VARIABLE hideY
 0   VARIABLE graph?
 
+( LOCAL VARIABLES in Forth
+( by: Marc Perkel https://www.forth.org/fd/FD-V03N6.pdf
+( tunings for Atari 8-bit APX Forth by: BartGo 
+HEX 0 VARIABLE [ARG] 0 VARIABLE [TO]
+: +ARG <BUILDS , DOES> @ [ARG] @ SWAP - [TO] @ -DUP
+  IF 0< IF +! ELSE ! ENDIF ELSE @ ENDIF 0 [TO] ! ;
+ 0 +ARG S1  2 +ARG S2  4 +ARG S3  6 +ARG S4
+ 8 +ARG S5  A +ARG S6  C +ARG S7  E +ARG S8 10 +ARG S9
+: TO  1 [TO] ! ; : +TO -1 [TO] ! ;
+: ARGUMENTS R> [ARG] @ >R >R 2 * SP@ + DUP [ARG] !
+  12 - SP@ SWAP - 2 / 0 DO 0 LOOP 0 [TO] ! ;
+: RESULTS 2 * [ARG] @ SWAP - SP@ - 2 / 0 DO DROP LOOP
+  R> R> [ARG] ! >R ; DECIMAL
+( End: LOCAL VARIABLES )
+
 ( Dot word with no trailing space )
 : .; ( n -- ) S->D 0 D.R ;
 
-: WaitEsc ( -- ) BEGIN KEY 27 = UNTIL ;
+: Esc? ( -- ) BEGIN KEY 27 = UNTIL ;
 
 : WaitYN? ( -- n )
   BEGIN
@@ -58,10 +78,10 @@
   ."            MENLO PARK CA           " CR CR
   ." Ported from Basic game published in" CR
   ." 1973-04 / People's Computer Company" CR CR
-  ."     Adaptation: BartGo, 2024-06    " CR
+  ."    2024 port to Forth by: BartGo   " CR
   ."  Written in APX Extended Fig-Forth " CR
   ."           for Atari 8-bit          " CR CR
-  ."             (Press ESC)" CR WaitEsc ;  
+  ."             (Press ESC)"             CR Esc? ;  
 
 ( Print the rules )
 : Rules ( -- )
@@ -89,7 +109,7 @@
   ." AFTER EACH GUESS, I WILL TELL YOU"          CR
   ." HOW FAR (IN A DIRECT LINE) YOU ARE FROM"    CR
   ." THE MUGWUMP."                               CR
-  CR ." Press ESC." WaitEsc  ;
+  CR ." Press ESC." Esc?  ;
   
 ( Random number using POKEY )
 : Rnd ( rng -- rnd )
@@ -126,10 +146,23 @@
     BCOL 79 40 + I 10 * 1 - DRAW
   LOOP SDMCTL ! ;
 
-: GrUpdate ( n n -- )
-  graph? @ 0= IF DROP DROP ;S THEN
-  GCOL ROT ROT PLOT 
-  ( update here ) ;
+: Mark ( col x y -- )
+  3 ARGUMENTS
+    S1 S2    10 * 40 +
+	   S3    10 * PLOT
+    S1 S2 1+ 10 * 40 +
+	   S3    10 * DRAW
+	S1 S2    10 * 40 +
+	   S3 1+ 10 * DRAW
+	S1 S2 1+ 10 * 40 +
+	   S3 1+ 10 * DRAW
+  0 RESULTS ;
+
+: GrUpdate ( x y -- )
+  graph? @ 0= IF
+    DROP DROP ;S
+  THEN
+  GCOL ROT ROT Mark ;
 
 ( Main loop )
 : MainLoop ( -- n )
@@ -170,7 +203,7 @@
     hideY @ .; 
   THEN
   CR ." Press ESC." 
-  WaitEsc graph? @ IF XGR THEN 2 148 Home ;
+  Esc? graph? @ IF XGR THEN 2 148 Home ;
 
 ( Game )
 : RUN ( -- )

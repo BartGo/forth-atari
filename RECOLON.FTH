@@ -1,0 +1,22 @@
+( https://www.forth.org/fd/FD-V06N3.pdf
+
+' : CFA @ CONSTANT DOCOL
+
+: RE-CREATE ( -- )
+  -FIND NOT IF
+    HERE COUNT TYPE ." NOT FOUND" ABORT
+  THEN
+  DROP DUP CFA @ DOCOL = 0= IF
+    HERE COUNT TYPE ." NOT A COLON WORD" ABORT
+  THEN HERE SWAP ! ;
+: RE-EXIT ( -- ) R> R> 2DROP ;
+: RE: ( -- )
+  SP@ CSP ! CURRENT @ CONTEXT ! 
+  RE-CREATE DOCOL , ] ;
+: ;RE ( -- )
+  ?CSP COMPILE RE-EXIT
+  [COMPILE] [ ; IMMEDIATE
+  
+  
+  
+

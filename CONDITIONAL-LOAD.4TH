@@ -54,3 +54,44 @@
   ; |INCLUDE|
   
 
+( NEW APPROACH )
+( FIXME )
+
+FORTH DEFINITIONS DECIMAL
+
+: ?LOAD ( f n -- ) 
+  SWAP IF CR LOAD ELSE DROP THEN
+  ; IMMEDIATE
+
+: $" ( -- ) ( $" XYZ" )
+  ASCII " WORD HERE
+  COUNT PAD OVER OVER C!
+  1+ SWAP CMOVE ; IMMEDIATE
+
+: UNKNOWN? ( -- f ) ( - in dict? )
+  PAD CONTEXT @ @ (FIND)
+  DUP 0= IF
+    DROP PAD CURRENT @ @ (FIND)
+  THEN 
+  IF DROP DROP 0 ELSE 1 THEN ;
+
+: PURGE 0 IN ! ; IMMEDIATE
+
+$" ASSEMBLER" UNKNOWN? 40 ?LOAD 
+$" ASSEMBLER" UNKNOWN? 40 ?LOAD 
+$" ASSEMBLER" UNKNOWN? 40 ?LOAD 
+$" FLOAT"     UNKNOWN? 60 ?LOAD 
+$" GR."       UNKNOWN? 50 ?LOAD 
+$" FLOAT"     UNKNOWN? 60 ?LOAD 
+$" GR."       UNKNOWN? 50 ?LOAD 
+$" FLOAT"     UNKNOWN? 60 ?LOAD 
+$" GR."       UNKNOWN? 50 ?LOAD 
+
+;S
+
+: $. COUNT TYPE ; ( print )
+: $_ COUNT SWAP DROP ; ( len )
+: @" ( @" XYZ" $. ) ( FIXME )
+  ASCII " WORD HERE HERE
+  C@ 1+ ALLOT ; IMMEDIATE
+

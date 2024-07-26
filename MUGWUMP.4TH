@@ -2,27 +2,18 @@
 
 ( MUGWUMP in APX Forth, Atari 8-bit )
 ( PCC Basic Game ported by BartGo 
-( required screens: 39 LOAD 60 LOAD 50 LOAD )
 
 ( see "Title" section for program info )
-( TODO: winning crashes; add ":" debugging and detect place of the crash )
-( TODO: use a gr. mode of 8 colors + txt [?] to make a heatmap! )
+( TODO: winning crashes; add ":" debugging )
+(       and detect place of the crash )
 ( TODO: show the last entered coordinates )
 ( TODO: P/M graphics; laser + mugwump )
-( TODO: without FP we get very little info! )
-( TODO: DLI )
 
-: |APP| DECIMAL FORTH DEFINITIONS EMPTY-BUFFERS ; |APP| 
+DECIMAL FORTH DEFINITIONS
 
-: |INCLUDE|
-  CR 21 LOAD ( debug )
-     39 LOAD ( asm by PM )
-     60 LOAD ( fp )
-     50 LOAD ( graph ) ; |INCLUDE|
+( required screens: 40 LOAD 50 LOAD 60 LOAD )
 
-: |SKIP| ( LOAD workaround, dummy word to skip 64 chrs )
-  1 8 ERROR ;S ; |SKIP|
-
+: |APP| ;
 
 9   CONSTANT GRIDSIZE
 10  CONSTANT GUESSMAX
@@ -38,9 +29,8 @@
 0   VARIABLE hideY
 0   VARIABLE graph?
 
-( LOCAL VARIABLES in Forth
-( by: Marc Perkel https://www.forth.org/fd/FD-V03N6.pdf
-( tunings for Atari 8-bit APX Forth by: BartGo 
+( Start: LOCAL VARIABLES in Forth )
+( *** by Marc Perkel FD-V03N6 *** )
 HEX 0 VARIABLE [ARG] 0 VARIABLE [TO]
 : +ARG <BUILDS , DOES> @ [ARG] @ SWAP - [TO] @ -DUP
   IF 0< IF +! ELSE ! ENDIF ELSE @ ENDIF 0 [TO] ! ;
@@ -58,17 +48,24 @@ HEX 0 VARIABLE [ARG] 0 VARIABLE [TO]
 
 : Esc? ( -- ) BEGIN KEY 27 = UNTIL ;
 
-: WaitYN? ( -- n )
+: YN? ( -- n )
   BEGIN
     KEY DUP
     DUP ASCII Y = SWAP ASCII y = OR IF EMIT 1 ;S THEN
     DUP ASCII N = SWAP ASCII n = OR IF EMIT 0 ;S THEN
   AGAIN ;
 
+: Antic-OFF
+  SDMCTL @ graph? ! 0 SDMCTL ! ;
+
+: Antic-ON
+  graph? @ SDMCTL ! ;
+
 ( Clear screen, set color and margin )
 : Home ( b b -- ) COLOR2 C! LMARGN C! 125 EMIT ;
   
 : Title
+  Antic-OFF
   3 0 Home CR CR
   ." ***********************************" CR
   ."   M    U    G    W    U    M    P  " CR
@@ -81,15 +78,17 @@ HEX 0 VARIABLE [ARG] 0 VARIABLE [TO]
   ."    2024 port to Forth by: BartGo   " CR
   ."  Written in APX Extended Fig-Forth " CR
   ."           for Atari 8-bit          " CR CR
-  ."             (Press ESC)"             CR Esc? ;  
+  ."             (Press ESC)"             CR
+  Antic-ON
+  Esc? ;  
 
 ( Print the rules )
 : Rules ( -- )
   0 0 Home 0 graph? !
   ." Do you want graphics  (Y=YES)? "  
-  WaitYN? IF 1 graph? ! ENDIF
+  YN? IF 1 graph? ! ENDIF
   CR ." Do you want the rules (Y=YES)? "  
-  WaitYN? 0= IF ;S ENDIF
+  YN? 0= IF ;S ENDIF
   CR CR
   ." A MUGWUMP IS HIDING IN A " GRIDSIZE .
   ." BY " GRIDSIZE . ." GRID."                   CR
@@ -136,15 +135,15 @@ HEX 0 VARIABLE [ARG] 0 VARIABLE [TO]
   WHILE + REPEAT DROP SWAP DROP ;
 
 : GrInit
-  graph? @ 0= IF ;S THEN
+  graph? @ 0 > 0= IF ;S THEN
   7 GR. 80 712 ! 80 COLOR2 !
-  SDMCTL @ 0 SDMCTL !
+  Antic-OFF
   8 1 DO 
     BCOL  I 10 * 1 - 40 +  0 PLOT 
     BCOL  I 10 * 1 - 40 + 79 DRAW
     BCOL  0 40 + I 10 * 1 - PLOT 
     BCOL 79 40 + I 10 * 1 - DRAW
-  LOOP SDMCTL ! ;
+  LOOP Antic-ON ;
 
 : Mark ( col x y -- )
   3 ARGUMENTS
@@ -180,11 +179,13 @@ HEX 0 VARIABLE [ARG] 0 VARIABLE [TO]
     ELSE
       guessX @ hideX @ - ^2
       guessY @ hideY @ - ^2 +
-      ." You are " Sqrt .
-      ." unit(s) from the Mugwump. " ( CR 
-      ( CR ." Shh... Check gridpoint "
-      ( hideX @ .; ASCII , EMIT
-      ( hideY @ .; CR CR 
+      ." You are " 
+	  100 * Sqrt 10
+	  /MOD .; ASCII . EMIT .
+      ." unit(s) from the Mugwump. " 
+      ( CR ." Shh... Check gridpoint " )
+      ( hideX @ .; ASCII , EMIT )
+      ( hideY @ .; CR CR )
     ENDIF
   guessX @ guessY @ GrUpdate
   LOOP 0 ( return 0 /lost ) ;
@@ -213,3 +214,20 @@ HEX 0 VARIABLE [ARG] 0 VARIABLE [TO]
     MainLoop ( n )
     HighScore
   AGAIN ;
+
+
+( DEPLOY AUTOMATIC  LOAD )
+( ' RUN CFA ' ABORT 6 + ! )
+  
+( DEPLOY ERROR HANDLING )
+: CRASH ( -- )
+  144 710 C!
+  CR CR ." SYSTEM ERROR!" 
+  CR CR ( UNRAVEL  )
+  CR CR ." PRESS RESET TO REBOOT."
+  BEGIN AGAIN ;
+  
+( ' CRASH CFA ' (ABORT) ! -1 WARNING ! )
+
+;S
+

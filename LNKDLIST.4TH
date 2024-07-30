@@ -3,19 +3,16 @@
 ( by Aggravating_Date_315
 ( adapted for A8 APX Forth by BartGo
 
-: [* here 0 , 0 , ;
-: [@ 2+ @ ;
-: [! 2+ ! ;
-: (+[) swap over [! ;
-: P[ [* SWAP OVER ! ;
-: [> DUP [@ if succ@ RECURSE then ;
-: [PUSH SWAP P[ >succ ;
-: +[ over P[ over [> ([+) drop ;
-: EACH[ ( xt ls -- ) -dup if 
-  2dup @ swap execute
-  succ@ RECURSE else drop then ;
-: ['] [COMPILE] ' ;
-: .[] ['] . SWAP EACH[ ;
-: ], SWAP +[ ;
+: [, HERE 0 , 0 , SWAP OVER ! ;
+: [+ DUP 2+ ! IF [+ RECURSE THEN ;
+: [: SWAP [, [+ ;
+: ], SWAP OVER [, OVER [+ SWAP
+  OVER 2+ ! DROP ;
 
-\ 132 P[ 11 ], 123 ], 321 ], 10 ], constant example-list
+: [EACH -DUP IF 2DUP @ SWAP EXECUTE
+  [: RECURSE ELSE DROP THEN ;
+
+: '[ [COMPILE] ' ;
+: .[ '[ . SWAP [EACH ;
+
+\ 132 [, 11 ], 123 ], 321 ], 10 ], CONSTANT MYLIST[

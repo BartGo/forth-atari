@@ -1,12 +1,7 @@
-( FIXME - broken after moving to mode 15 ) 
 
 ( MUGWUMP in APX Forth, Atari 8-bit )
 ( PCC Basic Game ported by BartGo 
 
-( see "Title" section for program info )
-( TODO: winning crashes; add ":" debugging )
-(       and detect place of the crash )
-( TODO: show the last entered coordinates )
 ( TODO: P/M graphics; laser + mugwump )
 
 DECIMAL FORTH DEFINITIONS
@@ -15,10 +10,15 @@ DECIMAL FORTH DEFINITIONS
 
 : |APP| ;
 
+ 0  CONSTANT DEBUG? ( 0 = DEBUG OFF )
 10  CONSTANT GRIDSIZE
+10  CONSTANT FLD
 10  CONSTANT GUESSMAX
+160 GRIDSIZE FLD * - 2 / 
+    CONSTANT GOFF ( offset; 160: GR.7 )
 2   CONSTANT BCOL ( board color )
 1   CONSTANT GCOL ( guess color )
+3   CONSTANT RCOL ( range color )
 559 CONSTANT SDMCTL
 710 CONSTANT COLOR2
 82  CONSTANT LMARGN
@@ -28,6 +28,10 @@ DECIMAL FORTH DEFINITIONS
 0   VARIABLE hideX
 0   VARIABLE hideY
 0   VARIABLE graph?
+
+: -ROT ROT ROT ;
+
+: G+ GOFF + ;
 
 ( RE-DEFINING A COLON WORD by EHS
 ( https://www.forth.org/fd/FD-V06N3.pdf
@@ -88,11 +92,11 @@ HEX 0 VARIABLE [ARG] 0 VARIABLE [TO]
   ."         A HIDE AND SEEK GAME       " CR
   ."      PEOPLE'S COMPUTER COMPANY     " CR
   ."            MENLO PARK CA           " CR CR
-  ." Ported from Basic game published in" CR
-  ." 1973-04 / People's Computer Company" CR CR
   ."    2024 port to Forth by: BartGo   " CR
   ."  Written in APX Extended Fig-Forth " CR
   ."           for Atari 8-bit          " CR CR
+  ." The original Basic game published in" CR
+  ." 1973-04 / People's Computer Company" CR CR
   ."             (Press ESC)"             CR
   Antic-ON
   Esc? ;  
@@ -113,11 +117,10 @@ HEX 0 VARIABLE [ARG] 0 VARIABLE [TO]
   ." (0 to " GRIDSIZE 1 - .; ." )." CR
   ." THE FIRST NUMBER IS THE DISTANCE"           CR
   ." TO THE RIGHT OF HOMEBASE AND THE SECOND"    CR
-  ." NUMBER IS THE DISTANCE ABOVE THE "          CR
+  ." NUMBER IS THE DISTANCE BELOW THE "          CR
   ." HOMEBASE. FOR EXAMPLE, IF YOU THINK THE"    CR
   ." MUGWUMP IS HIDING 8 UNITS TO THE RIGHT"     CR
-  ." OF HOMEBASE AND 3 UNITS ABOVE HOMEBASE"     CR
-  ." AND 3 UNITS ABOVE HOMEBASE,"                CR
+  ." OF HOMEBASE AND 3 UNITS ABOVE HOMEBASE,"    CR
   ." THEN ENTER 8 3 AS YOUR GUESS."              CR
   ." YOU GET " GUESSMAX . ."  GUESSES."          CR 
   ." AFTER EACH GUESS, I WILL TELL YOU"          CR
@@ -133,7 +136,7 @@ HEX 0 VARIABLE [ARG] 0 VARIABLE [TO]
 ( FIXME: should not leave non-# on stack! )
 ( Enter a number )
 : Get# ( -- n )
-  BEGIN                   (   )
+  BEGIN             (   )
     KEY DUP ASCII 0 1 - > ( n f ) 
     OVER    ASCII 9 1 + < ( n f f ) 
   AND UNTIL               ( n )
@@ -149,68 +152,64 @@ HEX 0 VARIABLE [ARG] 0 VARIABLE [TO]
     OVER OVER / OVER - 2 / DUP
   WHILE + REPEAT DROP SWAP DROP ;
 
-: GrInit
+: GrInit ( -- )
   graph? @ 0 > 0= IF ;S THEN
-  15 GR. 80 712 ! 80 COLOR2 !
-  Antic-OFF
-  GRIDSIZE 0 DO 
-    BCOL  I 10 * 1 - 0 +  0 PLOT 
-    BCOL  I 10 * 1 - 0 + 79 DRAW
-    BCOL  0 0 + I 10 * 1 - PLOT 
-    BCOL 79 0 + I 10 * 1 - DRAW
+  15 GR. 80 712 ! 80 COLOR2 ! Antic-OFF
+  GRIDSIZE 1+ 0 DO 
+    BCOL I FLD * G+              0 G+ PLOT 
+    BCOL I FLD * G+ GRIDSIZE FLD * G+ DRAW
+    BCOL 0 G+              I FLD * G+ PLOT 
+    BCOL GRIDSIZE FLD * G+ I FLD * G+ DRAW
   LOOP Antic-ON ;
 
 : Mark ( col x y -- )
   3 ARGUMENTS
-    S1 S2 10 * 0 +
-	   S3 10 * PLOT
-    S1 S2 10 * 0 +
-	   S3 10 * DRAW
-	S1 S2 10 * 0 +
-	   S3 10 * DRAW
-	S1 S2 10 * 0 +
-	   S3 10 * DRAW
+    S1 S2 FLD * FLD + G+ S3 FLD *       G+ PLOT
+	S1 S2 FLD *       G+ S3 FLD * FLD + G+ DRAW
+	S1 S2 FLD *       G+ S3 FLD *       G+ PLOT
+	S1 S2 FLD * FLD + G+ S3 FLD * FLD + G+ DRAW
   0 RESULTS ;
 
-: GrUpdate ( x y -- )
-  graph? @ 0= IF
-    DROP DROP ;S
-  THEN
-  GCOL ROT ROT Mark ;
+: GrUpdate ( t x y -- )
+  graph? @ 0= IF DROP DROP DROP ;S THEN
+  IF BCOL ELSE GCOL THEN
+  -ROT Mark ;
 
 ( Main loop )
-: MainLoop ( -- n )
+: MainLoop ( -- n ) ; RE: MainLoop
   GRIDSIZE Rnd hideX !
   GRIDSIZE Rnd hideY ! 
   0 0 Home GrInit
+  1 ( loop sentinel )
   GUESSMAX 0 DO
-    CR ." Mugwump is hiding. You get "
-    GUESSMAX I - . ." guesses. " CR
+    DROP ( sentinel | last loop )
+	CR ." Mugwump is hiding. "
+    GUESSMAX I - . ." guesses left: "
     Get# guessX !  ASCII , EMIT
-    Get# guessY !  CR CR
+    Get# guessY !  CR 
     guessX @ hideX @ =
       guessY @ hideY @ = AND
-    IF I ( return loop# /win ) ;S
+    IF
+	  guessX @ guessY @ 1 GrUpdate
+      I LEAVE ( sentinel / leave) 
     ELSE
+      guessX @ guessY @ 0 GrUpdate
       guessX @ hideX @ - ^2
       guessY @ hideY @ - ^2 +
-      ." You are " 
+      guessX @ .; ASCII , EMIT
+	  guessY @ . ." is " 
 	  100 * Sqrt 10
 	  /MOD .; ASCII . EMIT .
       ." unit(s) from the Mugwump. " 
-      ( CR ." Shh... Check gridpoint " )
-      ( hideX @ .; ASCII , EMIT )
-      ( hideY @ .; CR CR )
+	  0 ( sentinel / still playing ) 
     ENDIF
-  guessX @ guessY @ GrUpdate
-  LOOP 0 ( return 0 /lost ) ;
+  LOOP ;RE
 
 ( Ending screen )
 : HighScore ( n -- )
-  ( FIXME : win coord detection )
   -DUP IF 
-    CR ." You found him in " 
-    GUESSMAX SWAP - ." guesses!!!" 
+    1+ CR ." You found him in " .
+	      ." guesses!!!" 
   ELSE
     CR ." Sorry, that's " GUESSMAX .
     ." tries." CR
@@ -221,26 +220,67 @@ HEX 0 VARIABLE [ARG] 0 VARIABLE [TO]
   CR ." Press ESC." 
   Esc? graph? @ IF XGR THEN 2 148 Home ;
 
+  
+( *** MAIN *** ) 
+
 ( Game )
-: RUN ( -- )
+: RUN ( -- ) ; RE: RUN
   Title
-  ( BEGIN )
+  BEGIN
     Rules
     MainLoop ( n )
     HighScore
-  ( AGAIN ) 
-  XGR ;
+  AGAIN
+  XGR ;RE
+  
+( *** TOOLS *** ) 
+  
+: R0 TIB 2 - @    ; ( -- n )
+: S0 18 +ORIGIN @ ; ( -- n )
+: .S SP@ S0 = 0= IF ( --   )
+    SP@ 2 - S0 2 - DO I @ . -2 +LOOP
+  ELSE ." Stack empty " THEN ;
+: S. .S ;
 
+ASSEMBLER CODE RP@ 
+  XSAVE STX, TSX, TXA, PHA,
+  1 # LDA, XSAVE LDX, PUSH JMP,
+FORTH
 
-( DEPLOY AUTOMATIC  LOAD )
-( ' RUN CFA ' ABORT 6 + ! )
+( ***** AUGMENTED TRACE ***** )
+( https://www.forth.org/fd/FD-V06N5.pdf )
+( REQUIRES: assembler [39], RP@, R0     )
+( FIXME: UNRAVEL sometimes fails, with  )
+(        short words and other cases    )
+: (UN CR SPACE DUP 4 .R SPACE ;
+: UNRAVEL ( -- )
+  BEGIN RP@ R0 = 0= WHILE
+    R> DUP CFA @ DUP DUP @
+    [ ' : @ @ ] LITERAL = SWAP @ C@
+	[ ' FORTH @ C@ ] LITERAL = OR
+    IF   (UN NFA ID. DROP
+    ELSE (UN DROP U. THEN
+  REPEAT
+  DEBUG? IF
+    QUIT ELSE BEGIN AGAIN THEN ;
+    
+: CRASH ( -- )
+  125 EMIT 144 710 C!
+  CR ." SYSTEM ERROR!"
+  CR ." PRESS RESET TO REBOOT." CR
+  DEBUG? IF 
+    CR ." ENTERING DEBUG MODE." 
+  THEN
+  CR CR .S CR UNRAVEL ;
   
 ( DEPLOY ERROR HANDLING )
-: CRASH ( -- )
-  144 710 C!
-  CR CR ." SYSTEM ERROR!" 
-  CR CR ( UNRAVEL  )
-  CR CR ." PRESS RESET TO REBOOT."
-  BEGIN AGAIN ;
+' CRASH CFA ' (ABORT) ! -1 WARNING !
+
+( modified prompt: fig-Forth 1.1* )
+ASCII * 7903 C! 
+  
+( DEPLOY AUTOMATIC  LOAD )
+' RUN CFA ' ABORT 6 + !
+( SAVE ) COLD
   
 ;S

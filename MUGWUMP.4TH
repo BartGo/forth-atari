@@ -1,4 +1,4 @@
-( FIXME - crashes when wins ) 
+( FIXME - broken after moving to mode 15 ) 
 
 ( MUGWUMP in APX Forth, Atari 8-bit )
 ( PCC Basic Game ported by BartGo 
@@ -15,7 +15,7 @@ DECIMAL FORTH DEFINITIONS
 
 : |APP| ;
 
-9   CONSTANT GRIDSIZE
+10  CONSTANT GRIDSIZE
 10  CONSTANT GUESSMAX
 2   CONSTANT BCOL ( board color )
 1   CONSTANT GCOL ( guess color )
@@ -28,6 +28,21 @@ DECIMAL FORTH DEFINITIONS
 0   VARIABLE hideX
 0   VARIABLE hideY
 0   VARIABLE graph?
+
+( RE-DEFINING A COLON WORD by EHS
+( https://www.forth.org/fd/FD-V06N3.pdf
+' : CFA @ CONSTANT DOCOL
+: (RE:) ( -- )
+  -FIND 0= IF HERE COUNT TYPE
+  ."  NOT FOUND" QUIT THEN
+  DROP DUP CFA @ DOCOL = 0= IF
+  HERE COUNT TYPE ."  NOT A COLON WORD"
+  QUIT THEN HERE SWAP ! ;
+: (;RE) ( -- ) R> R> 2DROP ;
+: RE: ( -- ) SP@ CSP ! CURRENT @
+  CONTEXT ! (RE:) DOCOL , ] ;
+: ;RE ( -- ) ?CSP COMPILE (;RE)
+  [COMPILE] [ ; IMMEDIATE
 
 ( Start: LOCAL VARIABLES in Forth )
 ( *** by Marc Perkel FD-V03N6 *** )
@@ -95,7 +110,7 @@ HEX 0 VARIABLE [ARG] 0 VARIABLE [TO]
   ." TRY TO FIND HIM BY GUESSING HIS"            CR
   ." GRIDPOINT. HOMEBASE IS GRIDPOINT 0,0 "      CR
   ." AND A GUESS IS A PAIR OF WHOLE NUMBERS"     CR
-  ." (0 to " GRIDSIZE .; ." )." CR
+  ." (0 to " GRIDSIZE 1 - .; ." )." CR
   ." THE FIRST NUMBER IS THE DISTANCE"           CR
   ." TO THE RIGHT OF HOMEBASE AND THE SECOND"    CR
   ." NUMBER IS THE DISTANCE ABOVE THE "          CR
@@ -136,25 +151,25 @@ HEX 0 VARIABLE [ARG] 0 VARIABLE [TO]
 
 : GrInit
   graph? @ 0 > 0= IF ;S THEN
-  7 GR. 80 712 ! 80 COLOR2 !
+  15 GR. 80 712 ! 80 COLOR2 !
   Antic-OFF
-  8 1 DO 
-    BCOL  I 10 * 1 - 40 +  0 PLOT 
-    BCOL  I 10 * 1 - 40 + 79 DRAW
-    BCOL  0 40 + I 10 * 1 - PLOT 
-    BCOL 79 40 + I 10 * 1 - DRAW
+  GRIDSIZE 0 DO 
+    BCOL  I 10 * 1 - 0 +  0 PLOT 
+    BCOL  I 10 * 1 - 0 + 79 DRAW
+    BCOL  0 0 + I 10 * 1 - PLOT 
+    BCOL 79 0 + I 10 * 1 - DRAW
   LOOP Antic-ON ;
 
 : Mark ( col x y -- )
   3 ARGUMENTS
-    S1 S2    10 * 40 +
-	   S3    10 * PLOT
-    S1 S2 1+ 10 * 40 +
-	   S3    10 * DRAW
-	S1 S2    10 * 40 +
-	   S3 1+ 10 * DRAW
-	S1 S2 1+ 10 * 40 +
-	   S3 1+ 10 * DRAW
+    S1 S2 10 * 0 +
+	   S3 10 * PLOT
+    S1 S2 10 * 0 +
+	   S3 10 * DRAW
+	S1 S2 10 * 0 +
+	   S3 10 * DRAW
+	S1 S2 10 * 0 +
+	   S3 10 * DRAW
   0 RESULTS ;
 
 : GrUpdate ( x y -- )
@@ -209,11 +224,12 @@ HEX 0 VARIABLE [ARG] 0 VARIABLE [TO]
 ( Game )
 : RUN ( -- )
   Title
-  BEGIN
+  ( BEGIN )
     Rules
     MainLoop ( n )
     HighScore
-  AGAIN ;
+  ( AGAIN ) 
+  XGR ;
 
 
 ( DEPLOY AUTOMATIC  LOAD )
@@ -227,7 +243,4 @@ HEX 0 VARIABLE [ARG] 0 VARIABLE [TO]
   CR CR ." PRESS RESET TO REBOOT."
   BEGIN AGAIN ;
   
-( ' CRASH CFA ' (ABORT) ! -1 WARNING ! )
-
 ;S
-

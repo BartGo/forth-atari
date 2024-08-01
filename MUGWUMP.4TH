@@ -208,7 +208,8 @@ HEX 0 VARIABLE [ARG] 0 VARIABLE [TO]
 	S1 S2 FLD * FLD + G+ S3 FLD * FLD + G+ DRAW
   0 RESULTS ;
 
-: Circle ( x y r c -- ) ; RE: Circle
+:   Circle ( x y r c -- ) ;
+RE: Circle
   4 ARGUMENTS
   360 0 DO 
 	I COS 1000 / S3 * 10 / S1 + TO S5
@@ -217,10 +218,18 @@ HEX 0 VARIABLE [ARG] 0 VARIABLE [TO]
   18 +LOOP ( step: approx. circle )
   0 RESULTS ;RE
   
-: GrUpdate ( t x y -- )
-  graph? @ 0= IF DROP DROP DROP ;S THEN
+: GrUpdate ( x y t -- )
   IF BCOL ELSE GCOL THEN
   -ROT Mark ;
+
+( TODO: TEST and FIX )
+:   Range ( sqr1 sqr2 X Y col -- ) ;
+RE: Range
+  5 ARGUMENTS
+  S5 S3 10 * S4 10 * PLOT
+  S3 S4 S2 100 * S3 100 * + 100 / S5
+    Circle
+  0 RESULTS ;RE 
 
 ( Main loop )
 : MainLoop ( -- n ) ; RE: MainLoop
@@ -237,17 +246,19 @@ HEX 0 VARIABLE [ARG] 0 VARIABLE [TO]
     guessX @ hideX @ =
       guessY @ hideY @ = AND
     IF
-	  guessX @ guessY @ 1 GrUpdate
+	  graph? @ IF guessX @ guessY @ 1 GrUpdate THEN
       I LEAVE ( sentinel / leave) 
     ELSE
-      guessX @ guessY @ 0 GrUpdate
+      graph? @ IF guessX @ guessY @ 0 GrUpdate THEN
       guessX @ hideX @ - ^2
       guessY @ hideY @ - ^2 +
       guessX @ .; ASCII , EMIT
 	  guessY @ . ." is " 
 	  100 * Sqrt 10
-	  /MOD .; ASCII . EMIT .
-      ." unit(s) from the Mugwump. " 
+	  /MOD OVER OVER
+	    .; ASCII . EMIT .
+        ." unit(s) from the Mugwump. " 
+	  ( guessX @ guessY @ GCOL Range )
 	  0 ( sentinel / still playing ) 
     ENDIF
   LOOP ;RE

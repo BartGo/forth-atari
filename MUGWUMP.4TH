@@ -20,6 +20,7 @@ DECIMAL FORTH DEFINITIONS
     : G+ GOFF + ; : C+ G+ FLD 2 / + ;
 2   CONSTANT BCOL ( board color )
 1   CONSTANT GCOL ( guess color )
+3   CONSTANT RCOL ( range color )
 2   CONSTANT CCOL ( circle color )
 559 CONSTANT SDMCTL
 710 CONSTANT COLOR2
@@ -219,11 +220,11 @@ HEX 0 VARIABLE [ARG] 0 VARIABLE [TO]
   5 ARGUMENTS
   S1 1000 * S2 100 * + 100 / TO S1
   S3 S4 S1 S5 Circle
-  0 RESULTS ;RE
-  
-: GrUpdate ( x y t -- )
-  IF BCOL ELSE GCOL THEN
-  -ROT Mark ;
+  0 RESULTS ;RE 
+
+: GrUpdate ( x y t -- ) ; RE: GrUpdate
+  IF GCOL ELSE BCOL THEN
+  -ROT Mark ;RE
 
 ( Main loop )
 : MainLoop ( -- n ) ; RE: MainLoop
@@ -248,11 +249,12 @@ HEX 0 VARIABLE [ARG] 0 VARIABLE [TO]
       guessY @ hideY @ - ^2 +
       guessX @ .; ASCII , EMIT
 	  guessY @ . ." is " 
-	  100 * Sqrt 10 /MOD
-	  OVER OVER
+	  100 * Sqrt 10
+	  /MOD OVER OVER
 	    .; ASCII . EMIT .
         ." unit(s) from the Mugwump. " 
-	    SWAP guessX @ guessY @ CCOL Range
+	    guessX @ guessY @ GCOL Range 
+	  ( DROP DROP : if Range not used )
 	  0 ( sentinel / still playing ) 
     ENDIF
   LOOP ;RE

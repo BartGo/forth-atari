@@ -208,18 +208,15 @@ HEX 0 VARIABLE [ARG] 0 VARIABLE [TO]
 	S1 S2 FLD * FLD + G+ S3 FLD * FLD + G+ DRAW
   0 RESULTS ;
 
-: Circle ( x y r -- ) ; RE: Circle
-  3 ARGUMENTS
-  90 0 DO 
-	CCOL                    ( c )
-	I COS S3 * 1000 / S1 +  ( c x' )
-	I SIN S3 * 1000 / S2 +  ( c x' y' )
-	PON CR ." i" I .
-	." cos" I COS .	." sin" I SIN . 
-	." x" OVER . ." y" DUP . S. POFF
-	PLOT ( c x y -- )       ( - )
-  LOOP 0 RESULTS ;RE
-
+: Circle ( x y r c -- ) ; RE: Circle
+  4 ARGUMENTS
+  360 0 DO 
+	I COS 1000 / S3 * 10 / S1 + TO S5
+	I SIN 1000 / S3 * 10 / S2 + TO S6
+	S4 S5 S6 PLOT 
+  18 +LOOP ( step: approx. circle )
+  0 RESULTS ;RE
+  
 : GrUpdate ( t x y -- )
   graph? @ 0= IF DROP DROP DROP ;S THEN
   IF BCOL ELSE GCOL THEN

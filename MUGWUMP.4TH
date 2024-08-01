@@ -1,3 +1,7 @@
+( ----
+( FIXME: range does not always show
+( an accurate circle - e.g. range 1 
+( ----
 
 ( MUGWUMP in APX Forth, Atari 8-bit )
 ( PCC Basic Game ported by BartGo 

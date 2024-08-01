@@ -17,11 +17,10 @@ DECIMAL FORTH DEFINITIONS
 10  CONSTANT GUESSMAX
 160 GRIDSIZE FLD * - 2 / 
     CONSTANT GOFF ( offset; 160: GR.7 )
-    : G+ GOFF + ;
+    : G+ GOFF + ; : C+ G+ FLD 2 / + ;
 2   CONSTANT BCOL ( board color )
 1   CONSTANT GCOL ( guess color )
-3   CONSTANT RCOL ( range color )
-1   CONSTANT CCOL ( circle color )
+2   CONSTANT CCOL ( circle color )
 559 CONSTANT SDMCTL
 710 CONSTANT COLOR2
 82  CONSTANT LMARGN
@@ -39,7 +38,6 @@ DECIMAL FORTH DEFINITIONS
   ELSE ." Stack empty " THEN ;
 : S. .S ;
 
-( TODO: podać źródło )
 : (SINTAB) <BUILDS 0 ,              
  174 , 348  ,  522 ,  696 ,  870 ,
  1044 , 1218 , 1390 , 1564 , 
@@ -208,28 +206,24 @@ HEX 0 VARIABLE [ARG] 0 VARIABLE [TO]
 	S1 S2 FLD * FLD + G+ S3 FLD * FLD + G+ DRAW
   0 RESULTS ;
 
-:   Circle ( x y r c -- ) ;
-RE: Circle
+: Circle ( x y r c -- ) ; RE: Circle
   4 ARGUMENTS
   360 0 DO 
-	I COS 1000 / S3 * 10 / S1 + TO S5
-	I SIN 1000 / S3 * 10 / S2 + TO S6
+	I COS 1000 / S3 * 10 / S1 10 * + C+ TO S5
+	I SIN 1000 / S3 * 10 / S2 10 * + C+ TO S6
 	S4 S5 S6 PLOT 
-  18 +LOOP ( step: approx. circle )
+  9 +LOOP ( step: approx. circle )
+  0 RESULTS ;RE
+  
+: Range ( r1 r2 x y c ) ; RE: Range  
+  5 ARGUMENTS
+  S1 1000 * S2 100 * + 100 / TO S1
+  S3 S4 S1 S5 Circle
   0 RESULTS ;RE
   
 : GrUpdate ( x y t -- )
   IF BCOL ELSE GCOL THEN
   -ROT Mark ;
-
-( TODO: TEST and FIX )
-:   Range ( sqr1 sqr2 X Y col -- ) ;
-RE: Range
-  5 ARGUMENTS
-  S5 S3 10 * S4 10 * PLOT
-  S3 S4 S2 100 * S3 100 * + 100 / S5
-    Circle
-  0 RESULTS ;RE 
 
 ( Main loop )
 : MainLoop ( -- n ) ; RE: MainLoop
@@ -254,11 +248,11 @@ RE: Range
       guessY @ hideY @ - ^2 +
       guessX @ .; ASCII , EMIT
 	  guessY @ . ." is " 
-	  100 * Sqrt 10
-	  /MOD OVER OVER
+	  100 * Sqrt 10 /MOD
+	  OVER OVER
 	    .; ASCII . EMIT .
         ." unit(s) from the Mugwump. " 
-	  ( guessX @ guessY @ GCOL Range )
+	    SWAP guessX @ guessY @ CCOL Range
 	  0 ( sentinel / still playing ) 
     ENDIF
   LOOP ;RE

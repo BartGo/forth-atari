@@ -6,19 +6,22 @@
 
 DECIMAL FORTH DEFINITIONS
 
-( required screens: 40 LOAD 50 LOAD 60 LOAD )
+( required screens: 40 LOAD 50 LOAD )
+( screen 60 [FP] to consider )
 
 : |APP| ;
 
- 0  CONSTANT DEBUG? ( 0 = DEBUG OFF )
+ 1  CONSTANT DEBUG? ( 0 = DEBUG OFF )
 10  CONSTANT GRIDSIZE
 10  CONSTANT FLD
 10  CONSTANT GUESSMAX
 160 GRIDSIZE FLD * - 2 / 
     CONSTANT GOFF ( offset; 160: GR.7 )
+    : G+ GOFF + ;
 2   CONSTANT BCOL ( board color )
 1   CONSTANT GCOL ( guess color )
 3   CONSTANT RCOL ( range color )
+1   CONSTANT CCOL ( circle color )
 559 CONSTANT SDMCTL
 710 CONSTANT COLOR2
 82  CONSTANT LMARGN
@@ -30,8 +33,33 @@ DECIMAL FORTH DEFINITIONS
 0   VARIABLE graph?
 
 : -ROT ROT ROT ;
+: S0 18 +ORIGIN @ ; ( -- n )
+: .S SP@ S0 = 0= IF ( --   )
+    SP@ 2 - S0 2 - DO I @ . -2 +LOOP
+  ELSE ." Stack empty " THEN ;
+: S. .S ;
 
-: G+ GOFF + ;
+( TODO: podać źródło )
+: (SINTAB) <BUILDS 0 ,              
+ 174 , 348  ,  522 ,  696 ,  870 , 1044 , 1218 , 1390 , 1564 , 
+1736 , 1908 , 2078 , 2248 , 2418 , 2588 , 2756 , 2922 , 3090 , 
+3254 , 3420 , 3582 , 3746 , 3906 , 4066 , 4226 , 4382 , 4538 , 
+4694 , 4848 , 5000 , 5150 , 5298 , 5446 , 5590 , 5734 , 5876 , 
+6018 , 6156 , 6292 , 6426 , 6560 , 6690 , 6818 , 6946 , 7070 , 
+7192 , 7312 , 7430 , 7546 , 7660 , 7770 , 7880 , 7986 , 8090 , 
+8190 , 8290 , 8386 , 8480 , 8570 , 8660 , 8746 , 8828 , 8910 , 
+8986 , 9062 , 9134 , 9204 , 9270 , 9334 , 9396 , 9454 , 9510 ,
+9562 , 9612 , 9658 , 9702 , 9742 , 9780 , 9816 , 9848 , 9876 ,
+9902 , 9924 , 9944 , 9960 , 9974 , 9986 , 9992 , 9998 ,
+10000 , DOES> SWAP 2 * + @ ;
+
+(SINTAB) SINTAB 
+
+: S180 DUP 90 > IF 180 SWAP -
+  THEN SINTAB ; : SIN
+  360 MOD DUP 0< IF 360 + THEN
+  DUP 180 > IF 180 - S180 MINUS
+  ELSE S180 THEN ; : COS 90 + SIN ;
 
 ( RE-DEFINING A COLON WORD by EHS
 ( https://www.forth.org/fd/FD-V06N3.pdf
@@ -170,6 +198,18 @@ HEX 0 VARIABLE [ARG] 0 VARIABLE [TO]
 	S1 S2 FLD * FLD + G+ S3 FLD * FLD + G+ DRAW
   0 RESULTS ;
 
+: Circle ( x y r -- ) ; RE: Circle
+  3 ARGUMENTS
+  90 0 DO 
+	CCOL                    ( c )
+	I COS S3 * 1000 / S1 +  ( c x' )
+	I SIN S3 * 1000 / S2 +  ( c x' y' )
+	PON CR ." i" I .
+	." cos" I COS .	." sin" I SIN . 
+	." x" OVER . ." y" DUP . S. POFF
+	PLOT ( c x y -- )       ( - )
+  LOOP 0 RESULTS ;RE
+
 : GrUpdate ( t x y -- )
   graph? @ 0= IF DROP DROP DROP ;S THEN
   IF BCOL ELSE GCOL THEN
@@ -236,12 +276,6 @@ HEX 0 VARIABLE [ARG] 0 VARIABLE [TO]
 ( *** TOOLS *** ) 
   
 : R0 TIB 2 - @    ; ( -- n )
-: S0 18 +ORIGIN @ ; ( -- n )
-: .S SP@ S0 = 0= IF ( --   )
-    SP@ 2 - S0 2 - DO I @ . -2 +LOOP
-  ELSE ." Stack empty " THEN ;
-: S. .S ;
-
 ASSEMBLER CODE RP@ 
   XSAVE STX, TSX, TXA, PHA,
   1 # LDA, XSAVE LDX, PUSH JMP,
@@ -274,13 +308,12 @@ FORTH
   CR CR .S CR UNRAVEL ;
   
 ( DEPLOY ERROR HANDLING )
-' CRASH CFA ' (ABORT) ! -1 WARNING !
-
+( ' CRASH CFA ' ) ( ABORT )
+( ! -1 WARNING ! )
 ( modified prompt: fig-Forth 1.1* )
-ASCII * 7903 C! 
-  
+( ASCII * 7903 C! )
 ( DEPLOY AUTOMATIC  LOAD )
-' RUN CFA ' ABORT 6 + !
-( SAVE ) COLD
+( ' RUN CFA ' ABORT 6 + ! )
+( SAVE COLD )
   
 ;S

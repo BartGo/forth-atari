@@ -186,12 +186,16 @@ HEX 0 VARIABLE [ARG] 0 VARIABLE [TO]
 ( Square )
 : ^2 DUP * ; ( n -- n*n )
 
-( Square root, Newton Method    )
+( ** Square root, Newton Method  )
 ( https://sametwice.com/sqrt.fs ) 
 : Sqrt ( n -- n )
   1 BEGIN
     OVER OVER / OVER - 2 / DUP
   WHILE + REPEAT DROP SWAP DROP ;
+( *** SQRT, FP VERSION          )
+( *** APX REV.2 MANUAL P. 24    )
+( : FSQRT FLOG FP 2.0 F/ FEXP ; )
+( USAGE EX.: FP 256 FSQRT FIX . )
 
 : GrInit ( -- )
   graph? @ 0 > 0= IF ;S THEN

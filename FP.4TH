@@ -1,0 +1,4 @@
+( APX REV.2 MANUAL P. 24 )
+: FSQRT FLOG FP 2.0 F/ FEXP ;
+( EX: FP 256 FSQRT FIX . )
+ 

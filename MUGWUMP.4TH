@@ -188,10 +188,10 @@ HEX 0 VARIABLE [ARG] 0 VARIABLE [TO]
 
 ( ** Square root, Newton Method  )
 ( https://sametwice.com/sqrt.fs ) 
-: Sqrt ( n -- n )
-  1 BEGIN
-    OVER OVER / OVER - 2 / DUP
-  WHILE + REPEAT DROP SWAP DROP ;
+( : Sqrt ( n -- n )
+(   1 BEGIN
+(     OVER OVER / OVER - 2 / DUP
+(   WHILE + REPEAT DROP SWAP DROP ;
 ( *** SQRT, FP VERSION          )
 ( *** APX REV.2 MANUAL P. 24    )
 ( : FSQRT FLOG FP 2.0 F/ FEXP ; )
@@ -215,19 +215,25 @@ HEX 0 VARIABLE [ARG] 0 VARIABLE [TO]
 	S1 S2 FLD * FLD + G+ S3 FLD * FLD + G+ DRAW
   0 RESULTS ;
 
-: Circle ( x y r c -- ) ; RE: Circle
-  4 ARGUMENTS
+: Ellipse ( x y r1 r2 color step ) ; RE: Ellipse
+  6 ARGUMENTS
   360 0 DO 
-	I COS 1000 / S3 * 10 / S1 10 * + C+ TO S5
-	I SIN 1000 / S3 * 10 / S2 10 * + C+ TO S6
-	S4 S5 S6 PLOT 
-  9 +LOOP ( step: approx. circle )
+	I COS 1000 / S3 * 10 / S1 10 * + C+ TO S7
+	I SIN 1000 / S4 * 10 / S2 10 * + C+ TO S8
+	S5 S7 S8 PLOT 
+  S6 +LOOP ( step: approx. circle )
   0 RESULTS ;RE
+
+: Circle ( x y r c -- ) ; RE: Circle
+  >R DUP R> 1 Ellipse ;RE
   
-: Range ( r1 r2 x y c ) ; RE: Range  
+: CircleN ( x y c r n -- ) ; RE: SquashedX2
+  * SWAP Ellipse ;RE
+
+: Range ( sqr1 sqr2 x y color ) ; RE: Range  
   5 ARGUMENTS
-  S1 1000 * S2 100 * + 100 / TO S1
-  S3 S4 S1 S5 Circle
+  S1 1000 * S2 100 * + 100 / TO S1 ( r )
+  S3 S4 S5 S1 2 CircleN
   0 RESULTS ;RE 
 
 : GrUpdate ( x y t -- ) ; RE: GrUpdate

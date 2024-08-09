@@ -28,3 +28,16 @@ EXAMPLE:
 : -ROT '( a b c -- b c a) ROT ROT ;
 21 LOAD
 DECOMP X
+
+;S
+
+: CLIST ( -- ) ( VLIST with stack comments )
+  CLIT 128 OUT ! CONTEXT @ @
+  BEGIN
+    OUT @ C/L > IF CR 0 OUT ! THEN
+    DUP ID.
+    ( DUP ' MYWORD ' '( = IF ' MYWORD 2+ CR COUNT TYPE THEN ' ) ( FIXME )
+    SPACE SPACE PFA LFA @
+    DUP 0= ?TERMINAL OR
+  UNTIL DROP ;
+

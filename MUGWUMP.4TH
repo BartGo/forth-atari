@@ -1,11 +1,13 @@
 ( MUGWUMP in APX Forth, Atari 8-bit )
-( PCC Basic Game ported by BartGo 
+( PCC Basic Game ported by BartGo   )
 
 DECIMAL FORTH DEFINITIONS
 
 ( required screens: 40 LOAD 50 LOAD )
 
 : |APP| ;
+: |DEL| ' FIL FENCE ! ;
+  ( FORGET |APP| )
 
 ( constants )
  1  CONSTANT DEBUG? ( 0 = DEBUG OFF )
@@ -117,8 +119,9 @@ DECIMAL
   SWAP       ( f1 c  )
   ASCII y =  ( f1 f2 ) 
   OR         ( f3    )
-  IF 1 ASCII Y EMIT ;S ( 1 ) THEN 
-     0 ASCII N EMIT    ( 0 ) ;RE
+  IF 1 ASCII Y EMIT ( 1 ) ELSE
+     0 ASCII N EMIT ( 0 ) THEN
+  ;RE
 
 : ANTIC-OFF
   SDMCTL @ GRAPH? ! 0 SDMCTL ! ;
@@ -149,8 +152,9 @@ DECIMAL
 ( Print the rules )
 : RULES ( -- )
   0 0 HOME 0 GRAPH? !
-  ." Do you want graphics  (Y=YES)? "  
-  YN? IF 1 GRAPH? ! ENDIF
+  ( ." Do you want graphics  (Y=YES)? "  )
+  ( YN? IF 1 GRAPH? ! ENDIF )
+  1 GRAPH? !
   CR ." Do you want the rules (Y=YES)? "  
   YN? 0= IF ;S ENDIF
   CR CR
@@ -203,7 +207,7 @@ DECIMAL
 ( USAGE EX.: FP 256 FSQRT FIX . )
 
 : GRINIT ( -- )
-  GRAPH? @ 0 > 0= IF ;S THEN
+  ( GRAPH? @ 0 > 0= IF ;S THEN )
   15 GR. 80 712 ! 80 COLOR2 ! ANTIC-OFF
   GRIDSIZE 1+ 0 DO 
     BCOL I FLD * G+              0 G+ PLOT 
@@ -212,12 +216,12 @@ DECIMAL
     BCOL GRIDSIZE FLD * G+ I FLD * G+ DRAW
   LOOP ANTIC-ON ;
 
-: MARK ( col x y -- )
+: MARK ( x y col -- )
   3 ARGUMENTS
-    S1 S2 FLD * FLD + G+ S3 FLD *       G+ PLOT
-    S1 S2 FLD *       G+ S3 FLD * FLD + G+ DRAW
-    S1 S2 FLD *       G+ S3 FLD *       G+ PLOT
-    S1 S2 FLD * FLD + G+ S3 FLD * FLD + G+ DRAW
+    S3 S1 FLD * FLD + G+ S2 FLD *       G+ PLOT
+    S3 S1 FLD *       G+ S2 FLD * FLD + G+ DRAW
+    S3 S1 FLD *       G+ S2 FLD *       G+ PLOT
+    S3 S1 FLD * FLD + G+ S2 FLD * FLD + G+ DRAW
   0 RESULTS ;
 
 : ELLIPSE ( x y r1 r2 color step ) ;
@@ -236,8 +240,8 @@ DECIMAL
     S6 +LOOP ( step: approx. circle )
   0 RESULTS ;RE
 
-15 CONSTANT STEP
-: CIRCLE ( x y c r scale -- ) ;
+5 CONSTANT STEP
+: CIRCLE ( x y col r scale -- ) ;
   RE: CIRCLE
   5 ARGUMENTS
     S1 S2 S4 S5 * S4 S5 * S3 STEP
@@ -247,13 +251,13 @@ DECIMAL
 : RANGE ( sqr1 sqr2 x y color ) ;
   RE: RANGE  
   5 ARGUMENTS
-    S1 1000 * S2 100 * + 100 / TO S6 ( r )
-    S3 S4 S5 S6 2 CIRCLE
+    S2 1000 * S3 100 * + 100 / TO S6 ( r )
+    S3 S4 S5 S6 1 CIRCLE
   0 RESULTS ;RE 
 
-: GRUPDATE ( x y t -- ) ; RE: GRUPDATE
+: GRUPDATE ( x y t -- x y c ) ; RE: GRUPDATE
   IF GCOL ELSE BCOL THEN
-  -ROT Mark ;RE
+  MARK ;RE
 
 ( Main loop )
 : MAINLOOP ( -- n ) ; RE: MAINLOOP
@@ -270,12 +274,12 @@ DECIMAL
     GUESSX @ HIDEX @ =
       GUESSY @ HIDEY @ = AND
     IF
-      GRAPH? @ IF GUESSX @ GUESSY @
-        1 GRUPDATE THEN
+      ( GRAPH? @ IF ) GUESSX @ GUESSY @
+        1 GRUPDATE ( THEN )
       I LEAVE ( sentinel / leave) 
     ELSE
-      GRAPH? @ IF GUESSX @ GUESSY @
-        0 GRUPDATE THEN
+      ( GRAPH? @ ) IF GUESSX @ GUESSY @
+        0 GRUPDATE ( THEN )
       GUESSX @ HIDEX @ - ^2
       GUESSY @ HIDEY @ - ^2 +
       GUESSX @ .; ASCII , EMIT
@@ -284,8 +288,9 @@ DECIMAL
       /MOD OVER OVER
         .; ASCII . EMIT .
         ." unit(s) from the Mugwump. " 
-        GUESSX @ GUESSY @ GCOL RANGE 
-      ( DROP DROP : if RANGE not used )
+        ( GRAPH? IF )
+		  GUESSX @ GUESSY @ GCOL RANGE 
+        ( ELSE DROP DROP THEN )
       0 ( sentinel / still playing ) 
     ENDIF
   LOOP ;RE
@@ -303,7 +308,7 @@ DECIMAL
     HIDEY @ .; 
   THEN
   CR ." Press ESC." 
-  ESC? GRAPH? @ IF XGR THEN
+  ESC? ( GRAPH? @ IF ) XGR ( THEN )
   2 148 HOME ;
 
   

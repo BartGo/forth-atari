@@ -1,17 +1,9 @@
-( ----
-( FIXME: range does not always show
-( an accurate circle - e.g. range 1 
-( ----
-
 ( MUGWUMP in APX Forth, Atari 8-bit )
 ( PCC Basic Game ported by BartGo 
-
-( TODO: P/M graphics; laser + mugwump )
 
 DECIMAL FORTH DEFINITIONS
 
 ( required screens: 40 LOAD 50 LOAD )
-( screen 60 [FP] to consider )
 
 : |APP| ;
 
@@ -94,7 +86,9 @@ DOES> SWAP 2 * + @ ;
 
 ( Start: LOCAL VARIABLES in Forth )
 ( *** by Marc Perkel FD-V03N6 *** )
-HEX 0 VARIABLE [ARG] 0 VARIABLE [TO]
+HEX
+0 VARIABLE [ARG]
+0 VARIABLE [TO]
 : +ARG <BUILDS , DOES> @ [ARG] @
   SWAP - [TO] @ -DUP IF
     0< IF +! ELSE ! ENDIF
@@ -108,7 +102,8 @@ HEX 0 VARIABLE [ARG] 0 VARIABLE [TO]
   SWAP - 2 / 0 DO 0 LOOP 0 [TO] ! ;
 : RESULTS 2 * [ARG] @ SWAP -
   SP@ - 2 / 0 DO DROP LOOP
-  R> R> [ARG] ! >R ; DECIMAL
+  R> R> [ARG] ! >R ;
+DECIMAL
 ( End: LOCAL VARIABLES )
 
 ( Dot word with no trailing space )
@@ -203,6 +198,7 @@ HEX 0 VARIABLE [ARG] 0 VARIABLE [TO]
   WHILE + REPEAT DROP SWAP DROP ;
 ( *** SQRT, FP VERSION          )
 ( *** APX REV.2 MANUAL P. 24    )
+( FP, screen 60 would be needed )
 ( : FSQRT FLOG FP 2.0 F/ FEXP ; )
 ( USAGE EX.: FP 256 FSQRT FIX . )
 
@@ -224,25 +220,35 @@ HEX 0 VARIABLE [ARG] 0 VARIABLE [TO]
     S1 S2 FLD * FLD + G+ S3 FLD * FLD + G+ DRAW
   0 RESULTS ;
 
-: ELLIPSE ( x y r1 r2 color step ) ; RE: ELLIPSE
+: ELLIPSE ( x y r1 r2 color step ) ;
+  RE: ELLIPSE
   6 ARGUMENTS
-  360 0 DO 
-    I COS 1000 / S3 * 10 / S1 10 * + C+ TO S7
-    I SIN 1000 / S4 * 10 / S2 10 * + C+ TO S8
-    S5 S7 S8 PLOT 
-  S6 +LOOP ( step: approx. circle )
+    360 0 DO 
+        I COS 1000 /
+	      S3 * 10 /
+	    S1 10 *
+	  + C+ TO S7
+        I SIN 1000 /
+	      S4 * 10 /
+	    S2 10 *
+	  + C+ TO S8
+      S5 S7 S8 PLOT 
+    S6 +LOOP ( step: approx. circle )
   0 RESULTS ;RE
 
-: CIRCLE ( x y r c -- ) ; RE: CIRCLE
-  >R DUP R> 1 ELLIPSE ;RE
-  
-: CIRCLEN ( x y c r n -- ) ; RE: CIRCLEN
-  * SWAP ELLIPSE ;RE
-
-: RANGE ( sqr1 sqr2 x y color ) ; RE: RANGE  
+15 CONSTANT STEP
+: CIRCLE ( x y c r scale -- ) ;
+  RE: CIRCLE
   5 ARGUMENTS
-  S1 1000 * S2 100 * + 100 / TO S1 ( r )
-  S3 S4 S5 S1 2 CIRCLEN
+    S1 S2 S4 S5 * S4 S5 * S3 STEP
+	  ELLIPSE
+  0 RESULTS ;RE
+
+: RANGE ( sqr1 sqr2 x y color ) ;
+  RE: RANGE  
+  5 ARGUMENTS
+    S1 1000 * S2 100 * + 100 / TO S6 ( r )
+    S3 S4 S5 S6 2 CIRCLE
   0 RESULTS ;RE 
 
 : GRUPDATE ( x y t -- ) ; RE: GRUPDATE

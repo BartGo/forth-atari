@@ -355,14 +355,16 @@ FORTH
     CR ." ENTERING DEBUG MODE." 
   THEN
   CR CR .S CR UNRAVEL ;
-  
+
+( modified prompt: fig-Forth 1.1* )
+( ASCII * 7903 C! )
+
 ( DEPLOY ERROR HANDLING )
 ( ' CRASH CFA ' ) ( ABORT )
 ( ! -1 WARNING ! )
-( modified prompt: fig-Forth 1.1* )
-( ASCII * 7903 C! )
+
 ( DEPLOY AUTOMATIC  LOAD )
-( ' RUN CFA ' ABORT 6 + ! )
+( ' RUN CFA ' ABORT 4 + ! )
 ( SAVE COLD )
   
 ;S

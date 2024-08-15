@@ -15,37 +15,38 @@ DECIMAL FORTH DEFINITIONS
 
 : |APP| ;
 
+( constants )
  1  CONSTANT DEBUG? ( 0 = DEBUG OFF )
-10  CONSTANT GRIDSIZE
+10  CONSTANT GRIDSIZE 
 10  CONSTANT FLD
-10  CONSTANT GUESSMAX
+10  CONSTANT GUESSMAX 
 160 GRIDSIZE FLD * - 2 / 
     CONSTANT GOFF ( offset; 160: GR.7 )
     : G+ GOFF + ; : C+ G+ FLD 2 / + ;
-2   CONSTANT BCOL ( board color )
-1   CONSTANT GCOL ( guess color )
-3   CONSTANT RCOL ( range color )
-2   CONSTANT CCOL ( circle color )
+2   CONSTANT BCOL ( board )
+1   CONSTANT GCOL ( guess )
+3   CONSTANT RCOL ( range )
+2   CONSTANT CCOL ( crcle )
 559 CONSTANT SDMCTL
 710 CONSTANT COLOR2
 82  CONSTANT LMARGN
 
-0   VARIABLE guessX
-0   VARIABLE guessY
-0   VARIABLE hideX
-0   VARIABLE hideY
-0   VARIABLE graph?
+( variables )
+0 VARIABLE GUESSX
+0 VARIABLE GUESSY
+0 VARIABLE HIDEX
+0 VARIABLE HIDEY
+0 VARIABLE GRAPH?
 
 : -ROT ROT ROT ;
 : S0 18 +ORIGIN @ ; ( -- n )
-: .S SP@ S0 = 0= IF ( --   )
+: .S SP@ S0 = 0= IF ( -- )
     SP@ 2 - S0 2 - DO I @ . -2 +LOOP
-  ELSE ." Stack empty " THEN ;
-: S. .S ;
+  ELSE ." Stack empty " THEN ; : S. .S ;
 
 : (SINTAB) <BUILDS 0 ,              
  174 , 348  ,  522 ,  696 ,  870 ,
- 1044 , 1218 , 1390 , 1564 , 
+1044 , 1218 , 1390 , 1564 , 
 1736 , 1908 , 2078 , 2248 , 2418 ,
 2588 , 2756 , 2922 , 3090 , 
 3254 , 3420 , 3582 , 3746 , 3906 ,
@@ -63,8 +64,8 @@ DECIMAL FORTH DEFINITIONS
 9562 , 9612 , 9658 , 9702 , 9742 ,
 9780 , 9816 , 9848 , 9876 ,
 9902 , 9924 , 9944 , 9960 , 9974 ,
-9986 , 9992 , 9998 ,
-10000 , DOES> SWAP 2 * + @ ;
+9986 , 9992 , 9998 , 10000       ,
+DOES> SWAP 2 * + @ ;
 
 (SINTAB) SINTAB 
 
@@ -74,15 +75,17 @@ DECIMAL FORTH DEFINITIONS
   DUP 180 > IF 180 - S180 MINUS
   ELSE S180 THEN ; : COS 90 + SIN ;
 
-( RE-DEFINING A COLON WORD by EHS
-( https://www.forth.org/fd/FD-V06N3.pdf
+( RE-DEFINING A COLON WORD     )
+( by EHS https://www.forth.org )
+(             /fd/FD-V06N3.pdf )
 ' : CFA @ CONSTANT DOCOL
 : (RE:) ( -- )
   -FIND 0= IF HERE COUNT TYPE
   ."  NOT FOUND" QUIT THEN
-  DROP DUP CFA @ DOCOL = 0= IF
-  HERE COUNT TYPE ."  NOT A COLON WORD"
-  QUIT THEN HERE SWAP ! ;
+  DROP DUP CFA @ DOCOL = 0=
+  IF HERE COUNT
+     TYPE ."  NOT A COLON WORD"
+     QUIT THEN HERE SWAP ! ;
 : (;RE) ( -- ) R> R> 2DROP ;
 : RE: ( -- ) SP@ CSP ! CURRENT @
   CONTEXT ! (RE:) DOCOL , ] ;
@@ -92,61 +95,67 @@ DECIMAL FORTH DEFINITIONS
 ( Start: LOCAL VARIABLES in Forth )
 ( *** by Marc Perkel FD-V03N6 *** )
 HEX 0 VARIABLE [ARG] 0 VARIABLE [TO]
-: +ARG <BUILDS , DOES> @ [ARG] @ SWAP - [TO] @ -DUP
-  IF 0< IF +! ELSE ! ENDIF ELSE @ ENDIF 0 [TO] ! ;
- 0 +ARG S1  2 +ARG S2  4 +ARG S3  6 +ARG S4
- 8 +ARG S5  A +ARG S6  C +ARG S7  E +ARG S8 10 +ARG S9
+: +ARG <BUILDS , DOES> @ [ARG] @
+  SWAP - [TO] @ -DUP IF
+    0< IF +! ELSE ! ENDIF
+  ELSE @ ENDIF 0 [TO] ! ;
+ 0 +ARG S1  2 +ARG S2  4 +ARG S3
+ 6 +ARG S4  8 +ARG S5  A +ARG S6 
+ C +ARG S7  E +ARG S8 10 +ARG S9
 : TO  1 [TO] ! ; : +TO -1 [TO] ! ;
-: ARGUMENTS R> [ARG] @ >R >R 2 * SP@ + DUP [ARG] !
-  12 - SP@ SWAP - 2 / 0 DO 0 LOOP 0 [TO] ! ;
-: RESULTS 2 * [ARG] @ SWAP - SP@ - 2 / 0 DO DROP LOOP
+: ARGUMENTS R> [ARG] @ >R >R 2 *
+  SP@ + DUP [ARG] ! 12 - SP@
+  SWAP - 2 / 0 DO 0 LOOP 0 [TO] ! ;
+: RESULTS 2 * [ARG] @ SWAP -
+  SP@ - 2 / 0 DO DROP LOOP
   R> R> [ARG] ! >R ; DECIMAL
 ( End: LOCAL VARIABLES )
 
 ( Dot word with no trailing space )
 : .; ( n -- ) S->D 0 D.R ;
 
-: Esc? ( -- ) BEGIN KEY 27 = UNTIL ;
+: ESC? ( -- ) BEGIN KEY 27 = UNTIL ;
 
-: YN? ( -- n )
-  BEGIN
-    KEY DUP
-    DUP ASCII Y = SWAP ASCII y = OR IF EMIT 1 ;S THEN
-    DUP ASCII N = SWAP ASCII n = OR IF EMIT 0 ;S THEN
-  AGAIN ;
+: YN? ( -- n ) ; RE: YN?
+  KEY DUP    ( c c   )
+  ASCII Y =  ( c f1  )
+  SWAP       ( f1 c  )
+  ASCII y =  ( f1 f2 ) 
+  OR         ( f3    )
+  IF 1 ASCII Y EMIT ;S ( 1 ) THEN 
+     0 ASCII N EMIT    ( 0 ) ;RE
 
-: Antic-OFF
-  SDMCTL @ graph? ! 0 SDMCTL ! ;
+: ANTIC-OFF
+  SDMCTL @ GRAPH? ! 0 SDMCTL ! ;
 
-: Antic-ON
-  graph? @ SDMCTL ! ;
+: ANTIC-ON
+  GRAPH? @ SDMCTL ! ;
 
 ( Clear screen, set color and margin )
-: Home ( b b -- ) COLOR2 C! LMARGN C! 125 EMIT ;
+: HOME ( b b -- )
+  COLOR2 C! LMARGN C! 125 EMIT ;
   
-: Title
-  Antic-OFF
-  3 0 Home CR CR
-  ." ***********************************" CR
-  ."   M    U    G    W    U    M    P  " CR
-  ." ***********************************" CR CR
-  ."         A HIDE AND SEEK GAME       " CR
-  ."      PEOPLE'S COMPUTER COMPANY     " CR
-  ."            MENLO PARK CA           " CR CR
-  ."    2024 port to Forth by: BartGo   " CR
-  ."  Written in APX Extended Fig-Forth " CR
-  ."           for Atari 8-bit          " CR CR
+: TITLE
+  ANTIC-OFF 3 0 HOME CR CR
+  ." ***********************************"  CR
+  ."   M    U    G    W    U    M    P  "  CR
+  ." ***********************************"  CR CR
+  ."         A HIDE AND SEEK GAME       "  CR
+  ."      PEOPLE'S COMPUTER COMPANY     "  CR
+  ."            MENLO PARK CA           "  CR CR
+  ."    2024 port to Forth by: BartGo   "  CR
+  ."  Written in APX Extended Fig-Forth "  CR
+  ."           for Atari 8-bit          "  CR CR
   ." The original Basic game published in" CR
-  ." 1973-04 / People's Computer Company" CR CR
-  ."             (Press ESC)"             CR
-  Antic-ON
-  Esc? ;  
+  ." 1973-04 / People's Computer Company"  CR CR
+  ."             (Press ESC)"              CR
+  ANTIC-ON ESC? ;  
 
 ( Print the rules )
-: Rules ( -- )
-  0 0 Home 0 graph? !
+: RULES ( -- )
+  0 0 HOME 0 GRAPH? !
   ." Do you want graphics  (Y=YES)? "  
-  YN? IF 1 graph? ! ENDIF
+  YN? IF 1 GRAPH? ! ENDIF
   CR ." Do you want the rules (Y=YES)? "  
   YN? 0= IF ;S ENDIF
   CR CR
@@ -167,16 +176,16 @@ HEX 0 VARIABLE [ARG] 0 VARIABLE [TO]
   ." AFTER EACH GUESS, I WILL TELL YOU"          CR
   ." HOW FAR (IN A DIRECT LINE) YOU ARE FROM"    CR
   ." THE MUGWUMP."                               CR
-  CR ." Press ESC." Esc?  ;
+  CR ." Press ESC." ESC?  ;
   
 ( Random number using POKEY )
-: Rnd ( rng -- rnd )
+: RND ( rng -- rnd )
   -11766 C@ -11766 C@ 256 * +
   SWAP MOD ABS ; 
 
 ( FIXME: should not leave non-# on stack! )
 ( Enter a number )
-: Get# ( -- n )
+: GET# ( -- n )
   BEGIN             (   )
     KEY DUP ASCII 0 1 - > ( n f ) 
     OVER    ASCII 9 1 + < ( n f f ) 
@@ -188,116 +197,119 @@ HEX 0 VARIABLE [ARG] 0 VARIABLE [TO]
 
 ( ** Square root, Newton Method  )
 ( https://sametwice.com/sqrt.fs ) 
-( : Sqrt ( n -- n )
-(   1 BEGIN
-(     OVER OVER / OVER - 2 / DUP
-(   WHILE + REPEAT DROP SWAP DROP ;
+: SQRT ( n -- n )
+  1 BEGIN
+    OVER OVER / OVER - 2 / DUP
+  WHILE + REPEAT DROP SWAP DROP ;
 ( *** SQRT, FP VERSION          )
 ( *** APX REV.2 MANUAL P. 24    )
 ( : FSQRT FLOG FP 2.0 F/ FEXP ; )
 ( USAGE EX.: FP 256 FSQRT FIX . )
 
-: GrInit ( -- )
-  graph? @ 0 > 0= IF ;S THEN
-  15 GR. 80 712 ! 80 COLOR2 ! Antic-OFF
+: GRINIT ( -- )
+  GRAPH? @ 0 > 0= IF ;S THEN
+  15 GR. 80 712 ! 80 COLOR2 ! ANTIC-OFF
   GRIDSIZE 1+ 0 DO 
     BCOL I FLD * G+              0 G+ PLOT 
     BCOL I FLD * G+ GRIDSIZE FLD * G+ DRAW
     BCOL 0 G+              I FLD * G+ PLOT 
     BCOL GRIDSIZE FLD * G+ I FLD * G+ DRAW
-  LOOP Antic-ON ;
+  LOOP ANTIC-ON ;
 
-: Mark ( col x y -- )
+: MARK ( col x y -- )
   3 ARGUMENTS
     S1 S2 FLD * FLD + G+ S3 FLD *       G+ PLOT
-	S1 S2 FLD *       G+ S3 FLD * FLD + G+ DRAW
-	S1 S2 FLD *       G+ S3 FLD *       G+ PLOT
-	S1 S2 FLD * FLD + G+ S3 FLD * FLD + G+ DRAW
+    S1 S2 FLD *       G+ S3 FLD * FLD + G+ DRAW
+    S1 S2 FLD *       G+ S3 FLD *       G+ PLOT
+    S1 S2 FLD * FLD + G+ S3 FLD * FLD + G+ DRAW
   0 RESULTS ;
 
-: Ellipse ( x y r1 r2 color step ) ; RE: Ellipse
+: ELLIPSE ( x y r1 r2 color step ) ; RE: ELLIPSE
   6 ARGUMENTS
   360 0 DO 
-	I COS 1000 / S3 * 10 / S1 10 * + C+ TO S7
-	I SIN 1000 / S4 * 10 / S2 10 * + C+ TO S8
-	S5 S7 S8 PLOT 
+    I COS 1000 / S3 * 10 / S1 10 * + C+ TO S7
+    I SIN 1000 / S4 * 10 / S2 10 * + C+ TO S8
+    S5 S7 S8 PLOT 
   S6 +LOOP ( step: approx. circle )
   0 RESULTS ;RE
 
-: Circle ( x y r c -- ) ; RE: Circle
-  >R DUP R> 1 Ellipse ;RE
+: CIRCLE ( x y r c -- ) ; RE: CIRCLE
+  >R DUP R> 1 ELLIPSE ;RE
   
-: CircleN ( x y c r n -- ) ; RE: SquashedX2
-  * SWAP Ellipse ;RE
+: CIRCLEN ( x y c r n -- ) ; RE: CIRCLEN
+  * SWAP ELLIPSE ;RE
 
-: Range ( sqr1 sqr2 x y color ) ; RE: Range  
+: RANGE ( sqr1 sqr2 x y color ) ; RE: RANGE  
   5 ARGUMENTS
   S1 1000 * S2 100 * + 100 / TO S1 ( r )
-  S3 S4 S5 S1 2 CircleN
+  S3 S4 S5 S1 2 CIRCLEN
   0 RESULTS ;RE 
 
-: GrUpdate ( x y t -- ) ; RE: GrUpdate
+: GRUPDATE ( x y t -- ) ; RE: GRUPDATE
   IF GCOL ELSE BCOL THEN
   -ROT Mark ;RE
 
 ( Main loop )
-: MainLoop ( -- n ) ; RE: MainLoop
-  GRIDSIZE Rnd hideX !
-  GRIDSIZE Rnd hideY ! 
-  0 0 Home GrInit
+: MAINLOOP ( -- n ) ; RE: MAINLOOP
+  GRIDSIZE RND HIDEX !
+  GRIDSIZE RND HIDEY ! 
+  0 0 HOME GRINIT
   1 ( loop sentinel )
   GUESSMAX 0 DO
     DROP ( sentinel | last loop )
-	CR ." Mugwump is hiding. "
+    CR ." Mugwump is hiding. "
     GUESSMAX I - . ." guesses left: "
-    Get# guessX !  ASCII , EMIT
-    Get# guessY !  CR 
-    guessX @ hideX @ =
-      guessY @ hideY @ = AND
+    GET# GUESSX !  ASCII , EMIT
+    GET# GUESSY !  CR 
+    GUESSX @ HIDEX @ =
+      GUESSY @ HIDEY @ = AND
     IF
-	  graph? @ IF guessX @ guessY @ 1 GrUpdate THEN
+      GRAPH? @ IF GUESSX @ GUESSY @
+        1 GRUPDATE THEN
       I LEAVE ( sentinel / leave) 
     ELSE
-      graph? @ IF guessX @ guessY @ 0 GrUpdate THEN
-      guessX @ hideX @ - ^2
-      guessY @ hideY @ - ^2 +
-      guessX @ .; ASCII , EMIT
-	  guessY @ . ." is " 
-	  100 * Sqrt 10
-	  /MOD OVER OVER
-	    .; ASCII . EMIT .
+      GRAPH? @ IF GUESSX @ GUESSY @
+        0 GRUPDATE THEN
+      GUESSX @ HIDEX @ - ^2
+      GUESSY @ HIDEY @ - ^2 +
+      GUESSX @ .; ASCII , EMIT
+      GUESSY @ . ." is " 
+      100 * SQRT 10
+      /MOD OVER OVER
+        .; ASCII . EMIT .
         ." unit(s) from the Mugwump. " 
-	    guessX @ guessY @ GCOL Range 
-	  ( DROP DROP : if Range not used )
-	  0 ( sentinel / still playing ) 
+        GUESSX @ GUESSY @ GCOL RANGE 
+      ( DROP DROP : if RANGE not used )
+      0 ( sentinel / still playing ) 
     ENDIF
   LOOP ;RE
 
 ( Ending screen )
-: HighScore ( n -- )
+: HIGHSCORE ( n -- )
   -DUP IF 
     1+ CR ." You found him in " .
-	      ." guesses!!!" 
+          ." guesses!!!" 
   ELSE
     CR ." Sorry, that's " GUESSMAX .
     ." tries." CR
     ." Mugwump is at gridpoint "
-    hideX @ .; ASCII , EMIT
-    hideY @ .; 
+    HIDEX @ .; ASCII , EMIT
+    HIDEY @ .; 
   THEN
   CR ." Press ESC." 
-  Esc? graph? @ IF XGR THEN 2 148 Home ;
+  ESC? GRAPH? @ IF XGR THEN
+  2 148 HOME ;
 
   
 ( *** MAIN *** ) 
 
 ( Game )
 : RUN ( -- ) ; RE: RUN
-  Title
+  TITLE
   BEGIN
-    Rules
-    MainLoop ( n )
-    HighScore
+    RULES
+    MAINLOOP ( n )
+    HIGHSCORE
   AGAIN
   XGR ;RE
   
@@ -319,7 +331,7 @@ FORTH
   BEGIN RP@ R0 = 0= WHILE
     R> DUP CFA @ DUP DUP @
     [ ' : @ @ ] LITERAL = SWAP @ C@
-	[ ' FORTH @ C@ ] LITERAL = OR
+    [ ' FORTH @ C@ ] LITERAL = OR
     IF   (UN NFA ID. DROP
     ELSE (UN DROP U. THEN
   REPEAT

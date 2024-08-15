@@ -30,7 +30,7 @@ DECIMAL FORTH DEFINITIONS
 0 VARIABLE GUESSY
 0 VARIABLE HIDEX
 0 VARIABLE HIDEY
-0 VARIABLE GRAPH?
+0 VARIABLE SDMCTLMEM
 
 : -ROT ROT ROT ;
 : S0 18 +ORIGIN @ ; ( -- n )
@@ -119,15 +119,17 @@ DECIMAL
   SWAP       ( f1 c  )
   ASCII y =  ( f1 f2 ) 
   OR         ( f3    )
-  IF 1 ASCII Y EMIT ( 1 ) ELSE
-     0 ASCII N EMIT ( 0 ) THEN
-  ;RE
+  IF
+    1 ASCII Y EMIT ( 1 )
+  ELSE
+     0 ASCII N EMIT ( 0 )
+  THEN ;RE
 
 : ANTIC-OFF
-  SDMCTL @ GRAPH? ! 0 SDMCTL ! ;
+  SDMCTL @ SDMCTLMEM ! 0 SDMCTL ! ;
 
 : ANTIC-ON
-  GRAPH? @ SDMCTL ! ;
+  SDMCTLMEM @ SDMCTL ! ;
 
 ( Clear screen, set color and margin )
 : HOME ( b b -- )
@@ -151,10 +153,7 @@ DECIMAL
 
 ( Print the rules )
 : RULES ( -- )
-  0 0 HOME 0 GRAPH? !
-  ( ." Do you want graphics  (Y=YES)? "  )
-  ( YN? IF 1 GRAPH? ! ENDIF )
-  1 GRAPH? !
+  0 0 HOME 
   CR ." Do you want the rules (Y=YES)? "  
   YN? 0= IF ;S ENDIF
   CR CR
@@ -184,12 +183,17 @@ DECIMAL
 
 ( FIXME: should not leave non-# on stack! )
 ( Enter a number )
-: GET# ( -- n )
-  BEGIN             (   )
-    KEY DUP ASCII 0 1 - > ( n f ) 
-    OVER    ASCII 9 1 + < ( n f f ) 
-  AND UNTIL               ( n )
-  DUP EMIT 48 - ;         ( n )
+: GET# ( -- c ) ;
+  RE: GET#
+  0          ( sentinel set up )
+  BEGIN             
+    DROP ( ...sentinel or last )
+	KEY                ( c     )
+	DUP  ASCII 0 1 - > ( c f   ) 
+    OVER ASCII 9 1 + < ( c f f ) 
+  AND                  ( c f   )
+  UNTIL                ( c     )
+  DUP EMIT 48 - ;RE    ( c     )
 
 ( Square )
 : ^2 DUP * ; ( n -- n*n )
@@ -207,7 +211,6 @@ DECIMAL
 ( USAGE EX.: FP 256 FSQRT FIX . )
 
 : GRINIT ( -- )
-  ( GRAPH? @ 0 > 0= IF ;S THEN )
   15 GR. 80 712 ! 80 COLOR2 ! ANTIC-OFF
   GRIDSIZE 1+ 0 DO 
     BCOL I FLD * G+              0 G+ PLOT 
@@ -224,7 +227,7 @@ DECIMAL
     S3 S1 FLD * FLD + G+ S2 FLD * FLD + G+ DRAW
   0 RESULTS ;
 
-: ELLIPSE ( x y r1 r2 color step ) ;
+: ELLIPSE ( x y r1 r2 color step -- ) ;
   RE: ELLIPSE
   6 ARGUMENTS
     360 0 DO 
@@ -248,7 +251,7 @@ DECIMAL
 	  ELLIPSE
   0 RESULTS ;RE
 
-: RANGE ( sqr1 sqr2 x y color ) ;
+: RANGE ( sqr1 sqr2 x y color -- ) ;
   RE: RANGE  
   5 ARGUMENTS
     S2 1000 * S3 100 * + 100 / TO S6 ( r )
@@ -274,12 +277,10 @@ DECIMAL
     GUESSX @ HIDEX @ =
       GUESSY @ HIDEY @ = AND
     IF
-      ( GRAPH? @ IF ) GUESSX @ GUESSY @
-        1 GRUPDATE ( THEN )
+      GUESSX @ GUESSY @ 1 GRUPDATE 
       I LEAVE ( sentinel / leave) 
     ELSE
-      ( GRAPH? @ ) IF GUESSX @ GUESSY @
-        0 GRUPDATE ( THEN )
+      GUESSX @ GUESSY @ 0 GRUPDATE 
       GUESSX @ HIDEX @ - ^2
       GUESSY @ HIDEY @ - ^2 +
       GUESSX @ .; ASCII , EMIT
@@ -288,9 +289,7 @@ DECIMAL
       /MOD OVER OVER
         .; ASCII . EMIT .
         ." unit(s) from the Mugwump. " 
-        ( GRAPH? IF )
 		  GUESSX @ GUESSY @ GCOL RANGE 
-        ( ELSE DROP DROP THEN )
       0 ( sentinel / still playing ) 
     ENDIF
   LOOP ;RE
@@ -308,8 +307,7 @@ DECIMAL
     HIDEY @ .; 
   THEN
   CR ." Press ESC." 
-  ESC? ( GRAPH? @ IF ) XGR ( THEN )
-  2 148 HOME ;
+  ESC? XGR 2 148 HOME ;
 
   
 ( *** MAIN *** ) 

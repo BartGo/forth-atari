@@ -1,12 +1,25 @@
 ( ----------------------------- )
-(  compiled comments by BartGo  )
-( * for Atari 8-bit APX Forth * )
+( "compiled" comments by BartGo )
+(   for Atari 8-bit APX Forth   )
 ( ----------------------------- )
 
-: // R COUNT DUP 1+ R> + >R DROP DROP ;
-: '( STATE @ 0= IF ASCII ) WORD ELSE
-  COMPILE // ASCII ) WORD HERE C@ 1+ ALLOT
+( // is a modified word (.") 
+( but instead of printing, keeps
+( the string in the dictionary
+: // R COUNT DUP 1+ R> + >R
+  DROP DROP ;
+
+( '( is a modified version of ."
+( but using // instead of (.")
+( and used to put the string
+( into the dictionary 
+: '( STATE @ 0= IF
+    ASCII ) WORD ELSE
+    COMPILE // ASCII ) WORD HERE
+    C@ 1+ ALLOT
   THEN ; IMMEDIATE
+
+( ELIST is VLIST which prints the // comments
 : ELIST '( enhanced VLIST: -- )
   CR CONTEXT @ @ BEGIN
     DUP DUP

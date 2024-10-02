@@ -2,11 +2,12 @@
 ( "This feature of /MOD can be used to create records in block files as well. For example assuming 64 byte records:" )
 
 ( NOT WORKING YET ON A8 )
-( TODO: DEFINE UM* and UM/MOD, TEST )
+( TODO: DEFINE UM/MOD, TEST )
 
 FORTH DEFINITIONS DECIMAL 
 64   CONSTANT #REC
 1024 CONSTANT #PAG
+: UM* ( n1 n2 — d) M* DABS ;
 : RECORD  ( rec# -- addr)
   #REC UM*
   #PAG UM/MOD ( offset blk#)

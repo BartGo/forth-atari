@@ -7,8 +7,6 @@
 : '( STATE @ 0= IF ASCII ) WORD ELSE
   COMPILE // ASCII ) WORD HERE C@ 1+ ALLOT
   THEN ; IMMEDIATE
-
-( VLIST with stack comments )
 : ELIST '( enhanced VLIST: -- )
   CR CONTEXT @ @ BEGIN
     DUP DUP
@@ -21,6 +19,9 @@
     PFA LFA @
     DUP 0= ?TERMINAL OR
   UNTIL DROP ; 
+
+SAVE COLD
+;S
 
 ( test )
 : -ROT '( backrot: a b c -- b c a ) ROT ROT ;

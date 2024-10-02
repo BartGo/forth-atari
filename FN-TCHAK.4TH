@@ -151,25 +151,3 @@ DECIMAL
 14 P : FLH ( -- ) CR (FLH) 8 0 DO I   U. ." : " I .FLH" CR LOOP ; 
 15 P ;S
 
-
-
-
----------------
-
-( OTHER WAY TO DO STRINGS )
-
-( BFOX9900 https://www.reddit.com/r/Forth/comments/1diqg25/the_word_word_use_examples/ )
-0 VARIABLE MYSTRING 80 ALLOT 
-: PLACE ( src n dst -- ) OVER OVER  C! 1+ SWAP CMOVE ;
-: GETAWORD  BL WORD  HERE COUNT MYSTRING PLACE ; 
-: MYSTRING:" GETAWORD ; IMMEDIATE
-( test me !!!)
-MYSTRING:" ASSEMBLY
-MYSTRING COUNT TYPE
-
-( beautified tuning of the above )
-0 VARIABLE $ 80 ALLOT 
-: $" ASCII " WORD HERE COUNT $ OVER
-  OVER C! 1+ SWAP CMOVE ; IMMEDIATE
-$" HELLO WORLD!" $ COUNT TYPE
-

@@ -8,14 +8,6 @@
   COMPILE // ASCII ) WORD HERE C@ 1+ ALLOT
   THEN ; IMMEDIATE
 
-: VLIST '( standard VLIST: -- )
-  128 OUT ! CONTEXT @ @
-  BEGIN
-    OUT @ C/L > IF CR 0 OUT ! THEN
-    DUP ID. SPACE SPACE PFA LFA @
-    DUP 0= ?TERMINAL OR
-  UNTIL DROP ; FORGET VLIST
-
 ( VLIST with stack comments )
 : ELIST '( enhanced VLIST: -- )
   CR CONTEXT @ @ BEGIN

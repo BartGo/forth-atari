@@ -8,14 +8,16 @@
 : BB ." I am B! " AA ; 
 : CC ." I am C! " BB AA ; 
 
+( CRASH FIXME )
+( UNCLEAR HOW TO PREPARE AND UPDATE SLOT )
 : ::NS ( hide a series of earlier words )
-  0 IF 0 THEN  ( LFA "memory slot", init to 0 )
+  0 IF 99 THEN ( LFA "memory slot", init to 99 )
   ' AA LFA @   ( first word to hide is AA = ( n1 )
   ( ['] LFA @  ( TODO: custom word to hide from )
   [ SMUDGE ] ' ::NS
   [ SMUDGE ]   ( own PFA ( n2 )
   2DUP         ( n1 n2 n1 n2 )
-  2+ 2+ 2+ !   ( LFA to "slot" behind 0 IF )
+  2+ 2+ 2+ !   ( LFA to "slot" )
   LFA ! ;      ( ::NS behind AA )
 
 
@@ -24,7 +26,7 @@
   ['] DUP DUP DUP ( n n n n )
   IF ( only if LFA memory <> 0 ) ( n n n )
     LFA !    ( restore link ) ( n )
-    0 SWAP ! ( put 0 back into the LFA memory )
+    99 SWAP ! ( put 99 back into the LFA memory )
   ELSE DROP DROP DROP THEN ( - ) ;
 
 AA BB CC ( OK )

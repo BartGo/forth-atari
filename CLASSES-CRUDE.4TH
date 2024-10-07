@@ -1,13 +1,14 @@
 ( primitive "classes" )
 ( APX Forth, Atari 8 bit )
-( BartGo 2024 / MIT )
+( BartGo 2024 )
 
-( TODO: HOW TO MANAGE OTHER TYPES - FLOATS, STRINGS? )
+( TODO: CAN WE MANAGE OTHER TYPES - FLOATS, STRINGS? )
+( TODO: CAN WE MAKE THESE "CLASSES" NON-STATIC? )
+( TODO: INHERITING SHOULD BE POSSIBLE, CHECK )
+( TODO: INSTEAD OF ' XYZ SCAL VOC FOR THE LAST CLASS )
 
-: CLASS <BUILDS HERE , DOES> ; 
-: OF 2 * 4 + + ; 
-: CID 2+ @ ;
-: U? @ U. ;
+: CLASS <BUILDS HERE , DOES> ; : OF 2 * 4 + + ; 
+: CID 2+ @ ; : U? @ U. ;
 
 CLASS SHOP
   9999 , ( 0 : # apples )
@@ -16,7 +17,7 @@ CLASS SHOP
   9999 , ( 3 : price )
   9999 , ( 4 : value )
   : SHOP/INIT ( -- )
-    10  ' SHOP 0 OF ! ( TODO: ' SHOP -> voc srch )
+    10  ' SHOP 0 OF ! 
     200 ' SHOP 1 OF !	  
     5   ' SHOP 2 OF ! 
     500 ' SHOP 3 OF !	  

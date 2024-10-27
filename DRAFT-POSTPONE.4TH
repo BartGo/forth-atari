@@ -1,6 +1,7 @@
 ( from turbo forth )
 ( to be ported to fig / A8 )
 ( http://turboforth.net/resources/postpone.html )
+( compare: https://github.com/ForthHub/discussion/discussions/105 )
 
 : compLit ( n -- )
   compile lit , ;

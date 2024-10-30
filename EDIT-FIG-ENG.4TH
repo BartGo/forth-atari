@@ -2,6 +2,8 @@
 ( by bartgo, 2024, apx forth for atari 8-bit )
 ( ERRORS PRESENT AFTER MOVING TO EDITOR VOC )
 ( - better create basic EDITOR words in FORTH voc! )
+( compare also with  'Some New Editor Extensions' ) 
+(   by Kim Harris - FD II/6 p. 156 )
 
 FORTH DECIMAL EDITOR DEFINITIONS
 : TASK ; : (NOP) ;

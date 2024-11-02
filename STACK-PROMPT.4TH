@@ -11,5 +11,7 @@
   (.S) 35 EMIT BASE @ DUP DECIMAL .
   BASE ! THEN PROMPT ;
 : STACK
-  ' (PROMPT) @ ' 0 CFA = IF ' 1 ELSE ' 0 THEN CFA ' (PROMPT) !
+  ' (PROMPT) @ ' 0 CFA = IF ' 1 ELSE ' 0 THEN
+  CFA ' (PROMPT) ! ;
+
 ' (PROMPT) CFA ' QUIT  26 + ! 

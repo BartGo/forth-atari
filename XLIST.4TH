@@ -2,7 +2,7 @@
 ( tested on APX Forth / A8 )
 
 FORTH DEFINITIONS HEX
-: XLIST ( -- )
+: XLIST 
   CR CR 80 OUT ! CONTEXT @ @ 
   ." PFA  SI WORD CFA\PFA LNK-TO " CR
   ." ---------------------------" CR
@@ -25,5 +25,3 @@ FORTH DEFINITIONS HEX
     PFA LFA @ DUP 0= ?TERMINAL OR CR
   UNTIL DROP ;
 DECIMAL
-
-;S

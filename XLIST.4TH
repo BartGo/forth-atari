@@ -13,15 +13,15 @@ FORTH DEFINITIONS HEX
     DUP @ 40 AND IF ." I" ELSE ." -" THEN
     DUP SPACE ID. 
     DUP PFA CFA @ 
-           DUP 1441 = IF ." (:)"
-      ELSE DUP 147D = IF ." (CONSTANT)"
-      ELSE DUP 1499 = IF ." (VARIABLE)"
-      ELSE DUP 14B2 = IF ." (USER)"
-      ELSE DUP 18D8 = IF ." (DOES>)"
+           DUP 1441 = IF ." :\"
+      ELSE DUP 147D = IF ." CONSTANT\"
+      ELSE DUP 1499 = IF ." VARIABLE\"
+      ELSE DUP 14B2 = IF ." USER\"
+      ELSE DUP 18D8 = IF ." DOES>\"
     THEN THEN THEN THEN THEN
 	U.
 	DUP PFA LFA @ DUP 0= IF
-      ." -- " DROP ELSE ID. THEN
+      ." \-- " DROP ELSE ." \" ID. THEN
     PFA LFA @ DUP 0= ?TERMINAL OR CR
   UNTIL DROP ;
 DECIMAL

@@ -14,33 +14,48 @@
 
 -- APX FORTH, FIXME
 
-( INCLUDE ASM, GR, FP )
-39 LOAD 50 LOAD 60 LOAD 21 LOAD
+( _3D Plot_ )
+( APX Forth )
+( Atari 8-b )
+
+39 LOAD 50 LOAD 60 LOAD ( ASM/GR/FP )
+21 LOAD ( optional DBG )
 
 : TASK ;
-: FARRAY <BUILDS 6 * ALLOT
-  DOES> SWAP 6 * + ;
-FP   0 FVARIABLE FX1
-FP   0 FVARIABLE FY1
-FP 320 FARRAY    FM#
+: CLS 125 EMIT ;
+320 CONSTANT Z
+: FBYTES 6 * ; 
+: FARRAY <BUILDS FBYTES ALLOT
+  DOES> SWAP FBYTES + ;
+: #0 ( size pfa --  ) 
+  SWAP FBYTES
+  OVER + SWAP ( pfa+size pfa )
+  DO 0 I C! LOOP ;
+Z FARRAY F#MAP Z FBYTES ' F#MAP #0
+FP 0 FVARIABLE FX1 
+FP 0 FVARIABLE FY1 
+
 : DEMO ( -- )
-  FM# HERE FLOAT FSWAP F- FSIZE ERASE   
-  8 GRAPHICS 1 SETCOLOR
+  8 GR.
+  1 1 1 SETCOLOR
   145 1 DO             ( -- )
-	I DUP 70 - DUP *     ( E C )
+	I DUP 70 - DUP *   ( E C )
 	145 1 DO
     DUP I 70 - DUP * + ( E C C+D^2 )
-	  FLOAT              ( E C FL1 ) 
-	    FP -1.0E-03 F*   ( E C FL2 )
-	    FEXP  FP 80 F*   ( E C FL3 )  
-	  FX1 F! OVER I +    ( E C E+X )
-	  FLOAT              ( E C FL1 ) 
-	    FX1 F@ F+ FY1 F! ( E C )
-	  FOVER FM# F@ 
-	  ...
-	  FP 1.1 0 FM() F!
-	  0 FM() F?
-    ...
+	  FLOAT            ( E C FL1 ) 
+	    FP -1.0E-03 F* ( E C FL2 )
+	    FEXP  FP 80 F* ( E C FL3 )  
+	  FX1 F! OVER I +  ( E C E+X )
+	  FLOAT            ( E C FL1 ) 
+	    FX1 F@ F+
+		FY1 F!         ( E C )
+	  ( FOVER F#MAP F@ 
+	  ( ...
+	  ( FP 1.1 0 FM F!
+	  ( 0 F#MAP F?
+	  ( col x y PLOT )
+    ( ...
 	LOOP
+	DROP DROP            ( -- )
   2 +LOOP                ( -- )
   BEGIN KEY UNTIL  ;

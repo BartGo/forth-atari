@@ -1,9 +1,12 @@
 ( XLIST, an eXtended VLIST )
 ( tested on APX Forth / A8 )
 
-FORTH DEFINITIONS HEX
+ FORTH DEFINITIONS HEX
 : XLIST 
-  CR CR 80 OUT ! CONTEXT @ @ 
+  CR 80 OUT ! CONTEXT @ @ 
+  CR ." Context Current: "
+  CONTEXT @ 4 - NFA ID.
+  CURRENT @ 4 - NFA ID. CR CR
   ." PFA  SI WORD CFA\PFA LNK-TO " CR
   ." ---------------------------" CR
   BEGIN

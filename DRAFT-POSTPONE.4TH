@@ -1,37 +1,37 @@
-( from turbo forth )
-( to be ported to fig / A8 )
-( http://turboforth.net/resources/postpone.html )
-( compare: https://github.com/ForthHub/discussion/discussions/105 )
+( NOT WORKING YET, MIGHT NEVER BE )
 
-: compLit ( n -- )
-  compile lit , ;
+( TO BE PORTED TO FIG / A8 )
+( FROM TURBO FORTH )
+( HTTP://TURBOFORTH.NET/RESOURCES/POSTPONE.HTML )
 
-: postpone ( "<spaces>name" -- )
-  >in @ >r
-  state @ 0= abort" POSTPONE: Illegal in interpretation state"
-  bl word find ?dup if
-    \ found
-    1+ if
-      \ immediate
-      ,
-    else
-      \ non-immediate
-      compile compile ,
-    then
-  else
-    \ not found
-    drop  r@ >in !
-    bl word number if
-      \ not a number
-      r@ >in !
-      cr ." POSTPONE: " bl word type ."  not found, " 
-      ." in " latest @ 2+ dup @ 15 and swap 2+ swap type cr
-      blk @ ?dup if ." in block #" . then abort
-    else
-      \ it's a number
-      $A052 @ if swap compile lit , compile compLit then
-      compile lit , compile compLit
-    then
-  then
-  r> drop 
-; immediate
+: ABORT"
+  STATE @ IF COMPILE 0BRANCH HERE
+  0 , COMPILE (.") ASCII " WORD
+  HERE C@ 1+ ALLOT COMPILE QUIT
+  HERE OVER - SWAP ! ELSE IF ASCII "
+  WORD HERE COUNT TYPE QUIT THEN
+  THEN ; IMMEDIATE
+
+: COMPLIT ( N -- )
+  COMPILE LIT , ;
+
+: POSTPONE ( "<SPACES>NAME" -- )
+  IN @ >R STATE @ 0=
+  ABORT" POSTPONE ILLEGAL IN INTERPRETATION "
+  BL WORD -FIND -DUP IF
+    1+ IF , ELSE COMPILE COMPILE , THEN
+  ELSE
+    DROP R IN !
+    BL WORD NUMBER IF
+      R IN !
+      CR ." POSTPONE: " BL WORD
+	  TYPE ."  NOT FOUND, IN " LATEST @ 2+
+	  DUP @ 15 AND SWAP 2+ SWAP TYPE CR
+      BLK @ -DUP IF ." IN BLOCK #" . THEN ABORT
+    ELSE
+	  41042 ( A052 ) @ IF SWAP COMPILE
+	  LIT , COMPILE COMPLIT THEN
+      COMPILE LIT , COMPILE COMPLIT
+    THEN
+  THEN
+  R> DROP ; IMMEDIATE

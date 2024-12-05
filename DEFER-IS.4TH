@@ -1,0 +1,18 @@
+(          * DEFER-IS *         )
+(  from Henry Laxen FDvVnr6p35  )
+( Adapted by BartGo for Atari's )
+(    APX  Extended Fig-Forth    )
+
+: NOP ;
+: DEFER ( DEFER X -- )
+  <BUILDS [ ' NOP CFA ] LITERAL , 
+  DOES> @ EXECUTE ; 
+: IS ( pfa IS deferred-word -- )
+  CFA [COMPILE] ' 2 + ! ; IMMEDIATE
+
+;S
+
+DEFER OP
+OP
+' + IS OP  2 1 OP .
+' - IS OP  2 1 OP .

@@ -7,36 +7,31 @@
 ( how to run, example: ' WORD SCAN
 ( *** )
 
-  ' : CFA @
-CONSTANT DOCOL
-
-  ' LIT LFA
-CONSTANT XLIT
-
-: FINDID. ( addr -- )
+: (FINDID.) ( addr -- )
   BEGIN
-    DUP XLIT = SWAP 1 -
-    DUP 1+ @ DOCOL = DUP
-    IF OVER 1+ 0 4 D.R SPACE
+    DUP
+    [ ' LIT LFA ] LITERAL
+    = SWAP 1 - DUP 1+ @
+    [ ' : CFA @ ] LITERAL
+    = DUP IF
+      OVER 1+ 0 4 D.R SPACE
     THEN ROT OR
   UNTIL 3 + NFA ID.
   CR ;
 
-: FINDNO ( addr nl n2 -- )
+: (FINDNO) ( addr nl n2 -- )
   CR CR ." LOOKING FOR "
   DUP 0 4 D.R
   SPACE DUP 2+ NFA ID.
   CR ROT ROT OVER + SWAP
-  DO DUP I @ =
-    IF I 0 4 D.R SPACE
-    I FINDID.
-  THEN
-  LOOP
-  DROP ; 
+  DO DUP I @ = IF
+    I 0 4 D.R SPACE
+    I (FINDID.)
+  THEN LOOP DROP ; 
   
 : SCAN ( pfa -- )
   CFA
   ' LIT CFA ' LATEST CFA 
-  ROT FINDNO ;
+  ROT (FINDNO) ;
  
 ;S

@@ -1,4 +1,4 @@
-( XLIST compatible w COMPENT )
+( XLIST w/ compiled comments )
 ( shows details on each word )
 ( and comments - if compiled )
 ( -- OK with Atari APX Forth )
@@ -9,8 +9,37 @@
 ( NOTE: redefining "'(" as "(" for      )
 ( the "production" version saves memory )
 
+( // is a modified word (.") 
+( but instead of printing, keeps
+( the string in the dictionary
+: // R COUNT DUP 1+ R> + >R
+  DROP DROP ;
+
+( '( is a modified version of ."
+( but using // instead of (.")
+( and used to put the string
+( into the dictionary 
+: '( STATE @ 0= IF
+    ASCII ) WORD ELSE
+    COMPILE // ASCII ) WORD HERE
+    C@ 1+ ALLOT
+  THEN ; IMMEDIATE
+
+( ELIST is VLIST which prints the // comments
+: ELIST '( enhanced VLIST: -- )
+  CR CONTEXT @ @ BEGIN
+    DUP DUP
+    PFA @ ' // CFA = IF ( // 1st )
+      DUP ID. ." // "
+      PFA 2+ COUNT TYPE CR
+    ELSE
+      ID. SPACE SPACE
+    THEN
+    PFA LFA @
+    DUP 0= ?TERMINAL OR
+  UNTIL DROP ; 
+
 FORTH DEFINITIONS HEX
-: TEST '( Drop equivalent: a --) ;
 : ['] '( Compile tick: --)
   [COMPILE] ' ;
 : XLIST '( Extended VLIST w/ compents: --)
@@ -44,3 +73,5 @@ FORTH DEFINITIONS HEX
 DECIMAL
 
  
+: TEST '( Drop equivalent: a --) ;
+: -ROT '( backrot: a b c -- b c a ) ROT ROT ;

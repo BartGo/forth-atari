@@ -7,6 +7,12 @@ FORTH DEFINITIONS DECIMAL
 
 : FRE 741 @ HERE - U. ." bytes free" ;
 
+: TUNINGS ;
+
+: -->  DUP 2 * 712 C! [COMPILE] --> ; 
+
+: LOAD DUP 2 * 712 C! [COMPILE] LOAD DECIMAL ;
+
 : (MESSAGE) ( n -- )
   DUP WARNING @ 0= IF
     ." MSG # " . CR DROP ;S ELSE DROP THEN
@@ -28,13 +34,12 @@ FORTH DEFINITIONS DECIMAL
   DUP 24 = IF ." Declare VOCABULARY" CR DROP ;S THEN
   DROP ;
 
-' (MESSAGE) CFA ' MESSAGE    ! ( was ' WARNING CFA )
-' ;S        CFA ' MESSAGE 2+ ! ( was ' @ CFA )
-
-: HELLO ( -- )
-  EMPTY-BUFFERS 
+: (HELLO) ( -- )
+  EMPTY-BUFFERS
+  80 SCR ! 
   CR FRE
   CR ." In-memory MESSAGE enabled"
+  CR ." Current Screen is #" SCR ?
   CR ." Type 'HELP' for help"
   CR QUIT ;
   
@@ -54,11 +59,17 @@ FORTH DEFINITIONS DECIMAL
     C@ 1+ ALLOT
   THEN ; IMMEDIATE
 
-FORTH DEFINITIONS HEX
+FORTH DEFINITIONS
+
+HEX
+
 : ['] '( Compile tick: --)
   [COMPILE] ' ;
 : XLIST '( Extended VLIST w/ compents: --)
-  CR 80 OUT ! CR
+  CR 80 OUT ! CONTEXT @ @ 
+  CR ." Context Current: "
+  CONTEXT @ 4 - NFA ID.
+  CURRENT @ 4 - NFA ID. CR CR
   ." PFA  SI WORD CFA\PFA LNK-TO " CR
   ." ---------------------------" CR
   BEGIN
@@ -83,10 +94,15 @@ FORTH DEFINITIONS HEX
     PFA LFA @ DUP 0= ?TERMINAL OR CR
   UNTIL DROP ;
 
-: TEXT HERE C/L 1+ BLANKS WORD HERE PAD C/L 1+ CMOVE ;
-: LINE DUP FFF0 AND 17 ?ERROR SCR @ (LINE) DROP ;
-: -MOVE LINE C/L CMOVE UPDATE ; 
-: P 1 TEXT PAD 1+ SWAP -MOVE ;
+( fig edit minimal subset in FORTH vocabulary )
+: TEXT/ HERE C/L 1+ BLANKS WORD HERE PAD C/L 1+ CMOVE ;
+: LINE/ DUP FFF0 AND 17 ?ERROR SCR @ (LINE) DROP ;
+: -MOVE/ LINE/ C/L CMOVE UPDATE ; 
+: | 1 TEXT/ PAD 1+ SWAP -MOVE/ ;
+: XX LINE/ C/L BL FILL UPDATE ; 
+: L. SCR @ LIST ; : FL. FLUSH ; : EB. EMPTY-BUFFERS ;
+: N. 1 SCR +! L. ; : P. -1 SCR +! L. ;
+
 DECIMAL
 
 : (HOME) '( -- ; clear the screen )
@@ -97,20 +113,10 @@ DECIMAL
   SP@ 188 = 0= IF SP@ 2 - 186 DO
   I @ . -2 +LOOP THEN 41 EMIT SPACE ;
 
-1 VARIABLE BASECOL
-: BASECOL-ON  1 BASECOL ! ; ( -- )
-: BASECOL-OFF 0 BASECOL ! ; ( -- )
 : (PROMPT) ( -- )
-  0 IF
-    (.S)
-	( // 35 EMIT BASE @ DUP )
-    ( // DECIMAL . BASE ! )
-  THEN
+  0 IF (.S) THEN
   PFLAG @ 0 PFLAG ! ." ok" PFLAG ! ( prompt )
-  BASECOL @ 1 = IF 
-    BASE @ DUP 10 = IF DROP 0 THEN
-    712 C!
-  ELSE 0 712 ! THEN ;  
+  BASE @ DUP 10 = IF DROP 0 THEN 712 C! ;  
   
 : STACK '( -- ; toggle stack display )
   ' (PROMPT) @ ' 0 CFA = IF ' 1 ELSE ' 0 THEN
@@ -136,32 +142,6 @@ DECIMAL
     B/SCR /MOD 5 .R 4 SPACES 2 .R
     132 + ?TERMINAL IF LEAVE THEN
   LOOP DROP CR ;
-  
-: HELP '( -- ; display help )
-  CR ." Type VER for version"
-  CR ." Type XLIST for enhanced VLIST"
-  CR ." Type STACK to toggle stack display"
-  CR ." Type .CC for CONTEXT, CURRENT"
-  CR ." Type .BUFS to show buffers"
-  CR ." Type DECOMP ABC to decompile
-  CR ." Type ' ABC SCAN to locate uses"
-  CR ." Type FRE for free bytes"
-  CR ." Frame color -> Base@
-  CR ." Editor      -> Fig (P)"
-  CR CR ;
-  
-: VER '( -- display version )
-  CR ." ** Extended Fig-Forth Rev.2 **"
-  CR ."  by Patrick L. Mullarky, 1982 "
-  CR ." Published by Atari through APX"
-  CR ." (2025 tunings collected by BG)"
-  CR CR ;
-
-' (PROMPT) CFA 7860 ! ( in QUIT )
-' (HOME)   CFA 7884 ! ( in ABORT )
-' HELLO    CFA 7913 ! ( in ABORT )
-  ASCII h      7903 C! 
-  ASCII x      7904 C! 
 
 : (FINDID.) ( addr -- )
   BEGIN
@@ -190,6 +170,64 @@ DECIMAL
   ' LIT CFA ' LATEST CFA 
   ROT (FINDNO) ;
   
-( SAVE COLD )
+: HELP '( -- ; display help )
+  CR ." Type VER for version"
+  CR ." Type XLIST for enhanced VLIST"
+  CR ." Type EDITOR for its help"
+  CR ." Type STACK to toggle stack display"
+  CR ." Type .CC for CONTEXT, CURRENT"
+  CR ." Type .BUFS to show buffers"
+  ( CR ." Type DECOMP ABC to decompile )
+  CR ." Type ' ABC SCAN to locate uses"
+  CR ." Type FRE for free bytes"
+  CR ." Frame color depends on BASE 
+  CR ." Kill: CLEAN FORGET TUNINGS SAVE COLD"
+  CR CR ;
+
+: EDITOR ( -- )
+  CR ." 'n |'  to add text in line n (P)"
+  CR ." 'n XX' to delete text in line n (E)"
+  CR ." 'FL.'   to save (FLUSH)"
+  CR ." 'EB.'  to undo (EMPTY-BUFFERS)"
+  CR ." 'L.'   to LIST current screen"
+  CR ." 'N.'/'P.' LIST next/previous screen"
+  CR CR ;
+  
+: VER '( -- display version )
+  CR ." ******************************"
+  CR ." *  Extended Fig-Forth Rev.2  *"
+  CR ."  by Patrick L. Mullarky, 1982 "
+  CR ." published by Atari through APX"
+  CR ."  2025 tunings collected by BG "
+  CR ." ******************************"
+  CR CR ;
+
+: FLAVOR 
+  ' (MESSAGE)
+    CFA ' MESSAGE    ! ( was ' WARNING CFA )
+  ' ;S        
+    CFA ' MESSAGE 2+ ! ( was ' @ CFA )
+  ' (PROMPT) CFA 7860 ! ( in QUIT )
+  ' (HOME)   CFA 7884 ! ( in ABORT )
+  ' (HELLO)  CFA 7913 ! ( in ABORT )
+  ASCII h      7903 C! 
+  ASCII x      7904 C!  ;
+
+: CLEAN 
+  ' WARNING CFA ' MESSAGE    ! 
+  ' @       CFA ' MESSAGE 2+ ! 
+  ' PROMPT  CFA 7860 ! 
+  ' CR      CFA 7884 ! 
+  ' QUIT    CFA 7913 ! 
+  BL 7903 C! 
+  BL 7904 C! 
+  148 710 !
+  ' FRE FENCE !  
+  125 EMIT ;
+
+: TASK ;
+  
+( FLAVOR SAVE COLD )
+
 
   

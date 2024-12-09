@@ -19,13 +19,12 @@ FORTH DEFINITIONS DECIMAL
 : FRE ( -- )
   741 @ HERE - U. ." bytes free" ;
 
-: (RED-BLINK) ( -- )
-  710 @ 49 710 ! 710 ! ;
-
 : (MESSAGE) ( n -- )
   DUP WARNING @ 0= IF
     ." MSG # " . CR DROP ;S ELSE DROP THEN
-  DUP  4 = 0= IF (RED-BLINK) THEN
+  DUP  4 = 0= IF 
+    49 712 !
+  THEN
   DUP  1 = IF ." Stack empty" CR DROP ;S THEN
   DUP  2 = IF ." Dictionary full" CR DROP ;S THEN
   DUP  3 = IF ." Wrong address mode" CR DROP ;S THEN
@@ -115,8 +114,38 @@ HEX
 : XX LINE/ C/L BL FILL UPDATE ;  ( = E ) 
 : L. SCR @ LIST ; : FL. FLUSH ; : EB. EMPTY-BUFFERS ;
 : N. 1 SCR +! L. ; : P. -1 SCR +! L. ;
+: WHERE DUP B/SCR / DUP SCR
+    ! ." SCR # " DECIMAL .
+    SWAP C/L /MOD C/L * ROT BLOCK +
+    CR C/L -TRAILING TYPE CR
+    HERE C@ - SPACES 1 2FE C!
+    1C EMIT 0 2FE C! SP! QUIT ; 
+: CLEAR ( n -- )
+  SCR ! 10 0 DO I XX LOOP ; 
+: CLEARS ( n m -- ) 
+  DO I CLEAR FLUSH LOOP ; 
+: COPY B/SCR * OFFSET @ + SWAP
+  B/SCR * B/SCR OVER + SWAP DO
+  DUP I BLOCK 2 - ! 1+ UPDATE
+  LOOP DROP FLUSH ;
+: #LOCATE R# @ C/L /MOD ;
+: #LEAD #LOCATE LINE/ SWAP ;
+: #LAG  #LEAD DUP >R + C/L R> - ;
+: (1LINE) #LAG PAD COUNT MATCH R# +! ; 
+: (M) R# +! CR SPACE #LEAD TYPE
+  17 EMIT #LAG TYPE #LOCATE . DROP ;
 
 DECIMAL
+
+( SEARCH SCREENS )
+0 VARIABLE SRCHCNT
+: (BUMP) 1 SRCHCNT +! SRCHCNT @ 56
+    > IF 0 SRCHCNT ! CR THEN ;
+: SEARCH '( from# to# -- string ; search within screens )
+    CR 01 TEXT 0 SRCHCNT ! 1+ SWAP
+    DO FORTH I SCR ! TOP BEGIN
+      (1LINE) IF 0 (M) SCR ? (BUMP) THEN
+    1023 R# @ < UNTIL LOOP ; 
 
 : (HOME) ( -- )
   146 710 ! 125 EMIT ;
@@ -440,8 +469,9 @@ CR CR ;
   CR ." Type .CC for CONTEXT, CURRENT"
   CR ." Type .BUFS to show buffers"
   ( CR ." Type DECOMP ABC to decompile )
-  CR ." Type ' ABC SCAN to locate uses"
   CR ." Type FRE for free bytes"
+  CR ." Type ' ABC SCAN to locate word usage"
+  CR ." Type n m SEARCH MYSTRING to search screens"
   CR ." Frame color depends on BASE 
   CR ." Kill: CLEAN FORGET TUNINGS SAVE COLD"
   CR CR ;

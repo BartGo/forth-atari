@@ -5,13 +5,13 @@
 
 FORTH DEFINITIONS DECIMAL
 
-: FRE 741 @ HERE - U. ." bytes free" ;
-
 : TUNINGS ;
 
 : -->  DUP 2 * 712 C! [COMPILE] --> ; 
 
 : LOAD DUP 2 * 712 C! [COMPILE] LOAD DECIMAL ;
+
+: FRE 741 @ HERE - U. ." bytes free" ;
 
 : (MESSAGE) ( n -- )
   DUP WARNING @ 0= IF
@@ -58,8 +58,6 @@ FORTH DEFINITIONS DECIMAL
     COMPILE // ASCII ) WORD HERE
     C@ 1+ ALLOT
   THEN ; IMMEDIATE
-
-FORTH DEFINITIONS
 
 HEX
 
@@ -210,8 +208,8 @@ DECIMAL
   ' (PROMPT) CFA 7860 ! ( in QUIT )
   ' (HOME)   CFA 7884 ! ( in ABORT )
   ' (HELLO)  CFA 7913 ! ( in ABORT )
-  ASCII h      7903 C! 
-  ASCII x      7904 C!  ;
+  ASCII x      7903 C! 
+  ASCII 0      7904 C!  ;
 
 : CLEAN 
   ' WARNING CFA ' MESSAGE    ! 
@@ -222,7 +220,7 @@ DECIMAL
   BL 7903 C! 
   BL 7904 C! 
   148 710 !
-  ' FRE FENCE !  
+  ' ASCII FENCE !  
   125 EMIT ;
 
 : TASK ;

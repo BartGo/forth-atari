@@ -183,6 +183,7 @@ DECIMAL
   CR CR ;
 
 : EDITOR ( -- )
+  CR ." 'm SCR !' selects screen m"
   CR ." 'n |'  to add text in line n (P)"
   CR ." 'n XX' to delete text in line n (E)"
   CR ." 'FL.'   to save (FLUSH)"

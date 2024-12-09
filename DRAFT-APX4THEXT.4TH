@@ -6,17 +6,26 @@
 
 FORTH DEFINITIONS DECIMAL
 
-: TASK ; : TUNINGS ;
+: TASK ;
+: TUNINGS ;
 
-: -->  DUP 2 * 712 C! [COMPILE] --> ; 
+: --> ( -- )
+  SCR @ 1+ 2 * 712 C! [COMPILE] --> ; 
 
-: LOAD DUP 2 * 712 C! [COMPILE] LOAD DECIMAL ;
+: LOAD ( -- ) 
+  DUP 2 * 712 C! [COMPILE] LOAD
+  DECIMAL ;
 
-: FRE 741 @ HERE - U. ." bytes free" ;
+: FRE ( -- )
+  741 @ HERE - U. ." bytes free" ;
+
+: (RED-BLINK) ( -- )
+  710 @ 49 710 ! 710 ! ;
 
 : (MESSAGE) ( n -- )
   DUP WARNING @ 0= IF
     ." MSG # " . CR DROP ;S ELSE DROP THEN
+  DUP  4 = 0= IF (RED-BLINK) THEN
   DUP  1 = IF ." Stack empty" CR DROP ;S THEN
   DUP  2 = IF ." Dictionary full" CR DROP ;S THEN
   DUP  3 = IF ." Wrong address mode" CR DROP ;S THEN
@@ -67,9 +76,9 @@ FORTH DEFINITIONS DECIMAL
 
 HEX
 
-: ['] '( Compile tick: --)
-  [COMPILE] ' ;
-: XLIST '( Extended VLIST w/ compents: --)
+: ['] [COMPILE] ' ;
+
+: XLIST '( -- ; enahnced VLIST )
   CR 80 OUT ! CONTEXT @ @ 
   CR ." Context Current: "
   CONTEXT @ 4 - NFA ID.
@@ -98,18 +107,18 @@ HEX
     PFA LFA @ DUP 0= ?TERMINAL OR CR
   UNTIL DROP ;
 
-( fig edit minimal subset in FORTH vocabulary )
+( fig edit minimal subset, in the FORTH vocabulary )
 : TEXT/ HERE C/L 1+ BLANKS WORD HERE PAD C/L 1+ CMOVE ;
 : LINE/ DUP FFF0 AND 17 ?ERROR SCR @ (LINE) DROP ;
 : -MOVE/ LINE/ C/L CMOVE UPDATE ; 
-: | 1 TEXT/ PAD 1+ SWAP -MOVE/ ;
-: XX LINE/ C/L BL FILL UPDATE ; 
+: | 1 TEXT/ PAD 1+ SWAP -MOVE/ ; ( = P )
+: XX LINE/ C/L BL FILL UPDATE ;  ( = E ) 
 : L. SCR @ LIST ; : FL. FLUSH ; : EB. EMPTY-BUFFERS ;
 : N. 1 SCR +! L. ; : P. -1 SCR +! L. ;
 
 DECIMAL
 
-: (HOME) '( -- ; clear the screen )
+: (HOME) ( -- )
   146 710 ! 125 EMIT ;
 
 : (.S) '( -- ; display stack )
@@ -131,7 +140,7 @@ DECIMAL
   CONTEXT @ 4 - NFA ID.
   CURRENT @ 4 - NFA ID. CR ; 
 
-: .BUFS ( -- )
+: .BUFS '( -- ; show buffers )
 ( display addresses of all the buffers )
   CR ." #  Addr(hex) Upd Block#  Screen  -sub"
   FIRST
@@ -169,7 +178,7 @@ DECIMAL
     I (FINDID.)
   THEN LOOP DROP ; 
   
-: SCAN ( pfa -- )
+: SCAN '( pfa -- ; where the word has been used? )
   CFA
   ' LIT CFA ' LATEST CFA 
   ROT (FINDNO) ;
@@ -200,7 +209,7 @@ DECIMAL
   125 EMIT ;
 
 
-VOCABULARY MDEDIT IMMEDIATE
+VOCABULARY MDEDIT IMMEDIATE '( -- ; enhanced editor, the vocabulary )
 MDEDIT DEFINITIONS
 
  ( EDIT - BY M. DOUGHERTY )
@@ -381,7 +390,8 @@ MDEDIT DEFINITIONS
 
 
 ( EDIT - ends ) ( n EDIT ) 
-: EDIT SETSCR EREAD DISPLAY 0 STOP ! BEGIN
+: EDIT '( m -- ; edit screen m with MDEDIT )
+  SETSCR EREAD DISPLAY 0 STOP ! BEGIN
     KEY CASES
       27  CASE ESC          IS  155 CASE RETURN      IS
       28  CASE UP-CURSOR    IS  29  CASE DOWN-CURSOR IS
@@ -397,7 +407,7 @@ MDEDIT DEFINITIONS
 
 FORTH DEFINITIONS
  
-: EDITOR ( -- ; display EDITOR help )
+: EDITOR '( -- ; display FIG EDITOR help )
   CR ." m SCR ! -> select screen m"
   CR ." --------- BASIC FIG EDITOR
   CR ." n |     -> add text in line n (P)"

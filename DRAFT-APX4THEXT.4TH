@@ -398,14 +398,20 @@ MDEDIT DEFINITIONS
 FORTH DEFINITIONS
  
 : EDITOR ( -- ; display EDITOR help )
-  CR ." 'm SCR !' selects screen m"
-  CR ." 'n |'  to add text in line n (P)"
-  CR ." 'n XX' to delete text in line n (E)"
-  CR ." 'FL.'   to save (FLUSH)"
-  CR ." 'EB.'  to undo (EMPTY-BUFFERS)"
-  CR ." 'L.'   to LIST current screen"
-  CR ." 'N.'/'P.' LIST next/previous screen"
-  CR CR ;
+  CR ." m SCR ! -> select screen m"
+  CR ." --------- BASIC FIG EDITOR
+  CR ." n |     -> add text in line n (P)"
+  CR ." n XX    -> delete text in line n (E)"
+  CR ." FL.     -> save (FLUSH)"
+  CR ." EB.     -> undo (EMPTY-BUFFERS)"
+  CR ." L.      -> LIST current screen"
+  CR ." N. / P. -> LIST next/previous screen"
+  CR ." --------- ADVANCED EDITOR (MDEDIT)"
+  CR ." MDEDIT  -> enable advanced editor"
+  CR ." m EDIT  -> edit screen m"
+  CR ."            Esc+H opens help page"
+  CR ."  FORTH  -> hide advanced editor"
+CR CR ;
   
 : VER '( -- ; display version )
   CR ." ******************************"
@@ -419,7 +425,7 @@ FORTH DEFINITIONS
 : HELP '( -- ; display help )
   CR ." Type VER for version"
   CR ." Type XLIST for enhanced VLIST"
-  CR ." Type EDITOR for its help"
+  CR ." Type EDITOR for screen editing help"
   CR ." Type STACK to toggle stack display"
   CR ." Type .CC for CONTEXT, CURRENT"
   CR ." Type .BUFS to show buffers"

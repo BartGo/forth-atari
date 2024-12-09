@@ -1,11 +1,12 @@
-( -------------------- )
-( APX Forth Extensions )
-( -------------------- )
+
+( APX Extended Fig-Forth )
+( & s*p*a*c*e fig4th 1.1 )
+( 2025 Extensions -- WIP )
 
 
 FORTH DEFINITIONS DECIMAL
 
-: TUNINGS ;
+: TASK ; : TUNINGS ;
 
 : -->  DUP 2 * 712 C! [COMPILE] --> ; 
 
@@ -49,13 +50,18 @@ FORTH DEFINITIONS DECIMAL
 : // R COUNT DUP 1+ R> + >R
   DROP DROP ;
 
+( redefined as Space Forth won't have it )
+: (ASCII) BL WORD HERE 1+ C@
+  STATE @ IF COMPILE CLIT C,
+  THEN ;  IMMEDIATE
+
 ( '( is a modified version of ."
 ( but using // instead of (.")
 ( and used to put the string
 ( into the dictionary 
 : '( STATE @ 0= IF
-    ASCII ) WORD ELSE
-    COMPILE // ASCII ) WORD HERE
+    (ASCII) ) WORD ELSE
+    COMPILE // (ASCII) ) WORD HERE
     C@ 1+ ALLOT
   THEN ; IMMEDIATE
 
@@ -168,6 +174,50 @@ DECIMAL
   ' LIT CFA ' LATEST CFA 
   ROT (FINDNO) ;
   
+: FLAVOR ( -- )
+  ' (MESSAGE)
+    CFA ' MESSAGE    ! ( was ' WARNING CFA )
+  ' ;S        
+    CFA ' MESSAGE 2+ ! ( was ' @ CFA )
+  ' (PROMPT) CFA ' QUIT 26 + ! ( in QUIT )
+  ' (HOME)   CFA ' ABORT 6 + ! ( in ABORT )
+  ' (HELLO)  CFA ' ABORT 35 + ! ( in ABORT )
+  ( (ASCII)
+  ( x      7903 C! )
+  ( (ASCII)
+  ( 0      7904 C! ) ;
+
+: CLEAN ( -- )
+  ' WARNING CFA ' MESSAGE    ! 
+  ' @       CFA ' MESSAGE 2+ ! 
+  ' PROMPT  CFA ' QUIT 26 + ! 
+  ' CR      CFA ' ABORT 6 + ! 
+  ' QUIT    CFA ' ABORT 35 + ! 
+  ( BL 7903 C! )
+  ( BL 7904 C! )
+  148 710 !
+  ' TASK FENCE !  
+  125 EMIT ;
+
+: EDITOR ( -- ; display EDITOR help )
+  CR ." 'm SCR !' selects screen m"
+  CR ." 'n |'  to add text in line n (P)"
+  CR ." 'n XX' to delete text in line n (E)"
+  CR ." 'FL.'   to save (FLUSH)"
+  CR ." 'EB.'  to undo (EMPTY-BUFFERS)"
+  CR ." 'L.'   to LIST current screen"
+  CR ." 'N.'/'P.' LIST next/previous screen"
+  CR CR ;
+  
+: VER '( -- ; display version )
+  CR ." ******************************"
+  CR ." *  Extended Fig-Forth Rev.2  *"
+  CR ."  by Patrick L. Mullarky, 1982 "
+  CR ." published by Atari through APX"
+  CR ."  2025 tunings collected by BG "
+  CR ." ******************************"
+  CR CR ;
+
 : HELP '( -- ; display help )
   CR ." Type VER for version"
   CR ." Type XLIST for enhanced VLIST"
@@ -182,50 +232,6 @@ DECIMAL
   CR ." Kill: CLEAN FORGET TUNINGS SAVE COLD"
   CR CR ;
 
-: EDITOR ( -- )
-  CR ." 'm SCR !' selects screen m"
-  CR ." 'n |'  to add text in line n (P)"
-  CR ." 'n XX' to delete text in line n (E)"
-  CR ." 'FL.'   to save (FLUSH)"
-  CR ." 'EB.'  to undo (EMPTY-BUFFERS)"
-  CR ." 'L.'   to LIST current screen"
-  CR ." 'N.'/'P.' LIST next/previous screen"
-  CR CR ;
-  
-: VER '( -- display version )
-  CR ." ******************************"
-  CR ." *  Extended Fig-Forth Rev.2  *"
-  CR ."  by Patrick L. Mullarky, 1982 "
-  CR ." published by Atari through APX"
-  CR ."  2025 tunings collected by BG "
-  CR ." ******************************"
-  CR CR ;
-
-: FLAVOR 
-  ' (MESSAGE)
-    CFA ' MESSAGE    ! ( was ' WARNING CFA )
-  ' ;S        
-    CFA ' MESSAGE 2+ ! ( was ' @ CFA )
-  ' (PROMPT) CFA 7860 ! ( in QUIT )
-  ' (HOME)   CFA 7884 ! ( in ABORT )
-  ' (HELLO)  CFA 7913 ! ( in ABORT )
-  ASCII x      7903 C! 
-  ASCII 0      7904 C!  ;
-
-: CLEAN 
-  ' WARNING CFA ' MESSAGE    ! 
-  ' @       CFA ' MESSAGE 2+ ! 
-  ' PROMPT  CFA 7860 ! 
-  ' CR      CFA 7884 ! 
-  ' QUIT    CFA 7913 ! 
-  BL 7903 C! 
-  BL 7904 C! 
-  148 710 !
-  ' ASCII FENCE !  
-  125 EMIT ;
-
-: TASK ;
-  
 ( FLAVOR SAVE COLD )
 
 

@@ -23,3 +23,19 @@ FORTH DEFINITIONS DECIMAL
   ' R/W CFA DUP
     ' BLOCK  48 + !
     ' BUFFER 44 + ! ;
+
+
+
+;S
+
+( FIXME )
+: VIRTUAL
+  1 IF ' (VR/W) CR HI LO - 1024 / CR . 
+  ELSE ' R/W CR CR ." DISABLING" THEN
+  CFA DUP  
+  ' BLOCK  48 + !
+  ' BUFFER 44 + !
+  EMPTY-BUFFERS CR ." VSCREEN(S)"
+  ' (VR/W) @ ' 0 CFA = IF ' 1
+  ELSE ' 0 THEN
+  CFA ' (VR/W) ! ;

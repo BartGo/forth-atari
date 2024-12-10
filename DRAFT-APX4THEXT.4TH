@@ -1,13 +1,17 @@
-
 ( APX Extended Fig-Forth )
 ( & s*p*a*c*e fig4th 1.1 )
 ( 2025 Extensions -- WIP )
-
 
 FORTH DEFINITIONS DECIMAL
 
 : TASK ;
 : TUNINGS ;
+
+VOCABULARY EDITOR IMMEDIATE 
+FORTH DEFINITIONS 
+
+: FRE ( -- )
+  741 @ HERE - U. ." bytes free" ;
 
 : --> ( -- )
   SCR @ 1+ 2 * 712 C! [COMPILE] --> ; 
@@ -16,15 +20,10 @@ FORTH DEFINITIONS DECIMAL
   DUP 2 * 712 C! [COMPILE] LOAD
   DECIMAL ;
 
-: FRE ( -- )
-  741 @ HERE - U. ." bytes free" ;
-
 : (MESSAGE) ( n -- )
   DUP WARNING @ 0= IF
     ." MSG # " . CR DROP ;S ELSE DROP THEN
-  DUP  4 = 0= IF 
-    49 712 !
-  THEN
+  DUP  4 = 0= IF 49 712 ! CR QUIT THEN ( TODO: ? )
   DUP  1 = IF ." Stack empty" CR DROP ;S THEN
   DUP  2 = IF ." Dictionary full" CR DROP ;S THEN
   DUP  3 = IF ." Wrong address mode" CR DROP ;S THEN
@@ -47,8 +46,8 @@ FORTH DEFINITIONS DECIMAL
   EMPTY-BUFFERS
   80 SCR ! 
   CR FRE
-  CR ." In-memory MESSAGE enabled"
-  CR ." Current Screen is #" SCR ?
+  CR ." Current Screen is: #" SCR ?
+  CR ." FLAVOR enabled, 'CLEAN' disables"
   CR ." Type 'HELP' for help"
   CR QUIT ;
   
@@ -77,7 +76,7 @@ HEX
 
 : ['] [COMPILE] ' ;
 
-: XLIST '( -- ; enahnced VLIST )
+: XLIST '( -- ; enhanced VLIST )
   CR 80 OUT ! CONTEXT @ @ 
   CR ." Context Current: "
   CONTEXT @ 4 - NFA ID.
@@ -105,6 +104,24 @@ HEX
 	ELSE DROP THEN
     PFA LFA @ DUP 0= ?TERMINAL OR CR
   UNTIL DROP ;
+
+
+: RE-CREATE ( -- )
+  -FIND 0= IF
+    HERE COUNT TYPE ."  NOT FOUND" ABORT
+  THEN
+  DROP DUP CFA @ [ ' : CFA @ ] LITERAL = 0= IF
+    HERE COUNT TYPE ."  NOT A COLON WORD" ABORT
+  THEN HERE SWAP ! ;
+: RE-EXIT ( -- ) R> R> 2DROP ;
+: RE: ( -- )
+  SP@ CSP ! CURRENT @ CONTEXT ! 
+  RE-CREATE [ ' : CFA @ ] LITERAL , ] ;
+: ;RE ( -- )
+  ?CSP COMPILE RE-EXIT
+  [COMPILE] [ ; IMMEDIATE
+( : XX 1 . ; XX RE: XX 2 . ;RE XX
+
 
 ( fig edit minimal subset, in the FORTH vocabulary )
 : TEXT/ HERE C/L 1+ BLANKS WORD HERE PAD C/L 1+ CMOVE ;
@@ -134,6 +151,7 @@ HEX
 : (1LINE) #LAG PAD COUNT MATCH R# +! ; 
 : (M) R# +! CR SPACE #LEAD TYPE
   17 EMIT #LAG TYPE #LOCATE . DROP ;
+: TOP 0 R# ! ; 
 
 DECIMAL
 
@@ -142,7 +160,7 @@ DECIMAL
 : (BUMP) 1 SRCHCNT +! SRCHCNT @ 56
     > IF 0 SRCHCNT ! CR THEN ;
 : SEARCH '( from# to# -- string ; search within screens )
-    CR 01 TEXT 0 SRCHCNT ! 1+ SWAP
+    CR 01 TEXT/ 0 SRCHCNT ! 1+ SWAP
     DO FORTH I SCR ! TOP BEGIN
       (1LINE) IF 0 (M) SCR ? (BUMP) THEN
     1023 R# @ < UNTIL LOOP ; 
@@ -157,8 +175,11 @@ DECIMAL
 
 : (PROMPT) ( -- )
   0 IF (.S) THEN
-  PFLAG @ 0 PFLAG ! ." ok" PFLAG ! ( prompt )
+  PFLAG @ 0 PFLAG ! ." ok"
+  ' EDITOR CONTEXT @ 4 - = IF ." (editor)" THEN
+  PFLAG ! ( prompt )
   BASE @ DUP 10 = IF DROP 0 THEN 712 C! ;  
+: ok(editor) ; ( omit it like ok )  
   
 : STACK '( -- ; toggle stack display )
   ' (PROMPT) @ ' 0 CFA = IF ' 1 ELSE ' 0 THEN
@@ -211,35 +232,44 @@ DECIMAL
   CFA
   ' LIT CFA ' LATEST CFA 
   ROT (FINDNO) ;
-  
-: FLAVOR ( -- )
-  ' (MESSAGE)
-    CFA ' MESSAGE    ! ( was ' WARNING CFA )
-  ' ;S        
-    CFA ' MESSAGE 2+ ! ( was ' @ CFA )
-  ' (PROMPT) CFA ' QUIT 26 + ! ( in QUIT )
-  ' (HOME)   CFA ' ABORT 6 + ! ( in ABORT )
-  ' (HELLO)  CFA ' ABORT 35 + ! ( in ABORT )
-  ( (ASCII)
-  ( x      7903 C! )
-  ( (ASCII)
-  ( 0      7904 C! ) ;
 
+( DOS-like DIR )
+: (INDEX) ( scr -- ; commented lines #0 ) 
+  DUP SCR ! 0 SWAP (LINE) SWAP DUP C@ ASCII (
+  = 0= IF 2DROP ;S THEN CR ." #"
+  SCR ? SWAP -TRAILING TYPE ;      
+: INDICES ( 1st last -- ; INDEX on non-empty )
+  1+ SWAP DO I (INDEX)
+    ?TERMINAL IF LEAVE THEN LOOP ;
+: DIR 0 89 INDICES ;
+: D:  DR0 ;
+: D1: DR0 ;
+: D2: DR1 ;
+
+( enable / disable "system bindings" )
+: FLAVOR ( -- )
+  ' (MESSAGE) CFA ' MESSAGE !
+  ' ;S        CFA ' MESSAGE 2+ !
+  ' (PROMPT)  CFA ' QUIT  26 + !
+  ' (HOME)    CFA ' ABORT  6 + !
+  ' (HELLO)   CFA ' ABORT 35 + !
+  125 EMIT  
+  ." FLAVOR is ON." CR FRE CR
+  ." 'SAVE' and 'COLD' to proceed." CR CR ;
+  
 : CLEAN ( -- )
-  ' WARNING CFA ' MESSAGE    ! 
-  ' @       CFA ' MESSAGE 2+ ! 
+  ( ' WARNING CFA ' MESSAGE    ! )
+  ( ' @       CFA ' MESSAGE 2+ ! )
   ' PROMPT  CFA ' QUIT 26 + ! 
   ' CR      CFA ' ABORT 6 + ! 
   ' QUIT    CFA ' ABORT 35 + ! 
-  ( BL 7903 C! )
-  ( BL 7904 C! )
   148 710 !
-  ' TASK FENCE !  
-  125 EMIT ;
-
-
-VOCABULARY MDEDIT IMMEDIATE '( -- ; enhanced editor, the vocabulary )
-MDEDIT DEFINITIONS
+  ' TASK FENCE ! 125 EMIT
+  ." FLAVOR is OFF." CR FRE CR
+  ." 'FORGET TUNINGS' to purge if needed." CR
+  ." 'SAVE' and 'COLD' to proceed." CR CR ;
+  
+EDITOR DEFINITIONS
 
  ( EDIT - BY M. DOUGHERTY )
  DECIMAL : CLS 125 EMIT ;
@@ -251,67 +281,56 @@ MDEDIT DEFINITIONS
    0 VARIABLE SAV-BUF 64 ALLOT  HLP# VARIABLE HLPM
    3 VARIABLE LINEOFF              3 VARIABLE CHAROFF 
    0 VARIABLE CLINE                0 VARIABLE CCHAR
- : EREAD 16 0 DO I SCR @ (LINE) 
-   DROP UPDATE DROP LOOP 0 CLINE ! 0 CCHAR ! 0 SIDE ! ;  ( why read updates?! )
- : POINT-CURSOR 85 ! 84 C! ;     712 CONSTANT FRM#
- : CURSOR@ CLINE @ LINEOFF @ +
-   CCHAR @ SIDE @ IF 32 - ENDIF   CHAROFF @ + ;
- : CURSOR CURSOR@ POINT-CURSOR ; 
-
- ( EDIT - SCREEN-CURSOR, ... ) 
- : SCREEN-CURSOR CURSOR@ SWAP 40 * + 106 C@ 256 *
-   960 - + DUP C@ 128 XOR SWAP C! ;
- : HLINE 34 0 DO TOP-BOT EMIT LOOP ;
- : LADDR CLINE @ SCR @ (LINE) DROP
-   SIDE @ IF 32 + ENDIF ;
- : EADDR CLINE @ SCR @ (LINE) DROP
-   SIDE @ 0= IF 32 + ENDIF ;
- : ELINE LEDGE EMIT LADDR 32 TYPE REDGE EMIT ;
- : XLINE LEDGE EMIT EADDR 32 TYPE REDGE EMIT ;
- : WRITE-LINE CLINE @ LINEOFF @ + CHAROFF @ 1 -
-   POINT-CURSOR ELINE ;
- : WRITE-EXTRA EXTRAOFF @ LINEOFF @ + CHAROFF @ 1 -
-   POINT-CURSOR XLINE ; : FRE 741 @ HERE - ;
- : 2TOP LINEOFF @ 1 - CHAROFF @ 1 - POINT-CURSOR HLINE ; 
-
-
- ( EDIT - DISPLAY, CASE )
- : BOT LINEOFF @ 16 + CHAROFF @ 1 - POINT-CURSOR HLINE ; 
- : ETITLE 0 CHAROFF @ POINT-CURSOR ." EDIT / Dr" 
-   OFFSET @ 0= 0= . ." Scr" 
-   SCR ? ." Side" SIDE
-   ? ." Free" FRE U. ; 
- : DISPLAY CLS 1 CRSINH C! ETITLE 2TOP CLINE @ 
-   16 0 DO I CLINE ! WRITE-LINE LOOP CLINE !
-   SIDE @ IF 32 ELSE 0 ENDIF CCHAR ! BOT
-   WRITE-EXTRA CURSOR SCREEN-CURSOR ;
- : ANYK CR ." (Return)" KEY DROP ; : ANYKD ANYK DISPLAY ;
- : CASES ?COMP CSP @ !CSP 4 ; IMMEDIATE
- : CASE 4 ?PAIRS COMPILE OVER COMPILE =
-   COMPILE 0BRANCH HERE 0 , COMPILE DROP 5 ; IMMEDIATE
- : IS 5 ?PAIRS COMPILE BRANCH HERE 0 ,
-   SWAP 2 [COMPILE] ENDIF 4 ; IMMEDIATE
-
-
- ( EDIT - CASE, MOVEMENT )
- : END-CASES 4 ?PAIRS COMPILE DROP
-   BEGIN SP@ CSP @ = 0= WHILE
-   2 [COMPILE] ENDIF REPEAT
-   CSP ! ; IMMEDIATE
- : MOVE-RIGHT CCHAR @ 1 + SIDE @ IF
-   DUP 64 = IF DROP 32 ENDIF ELSE
-   DUP 32 = IF DROP 0  ENDIF ENDIF
-   CCHAR ! ;
- : RIGHT MOVE-RIGHT SCREEN-CURSOR ;
- : RIGHT-CURSOR SCREEN-CURSOR RIGHT ;
- : MOVE-LEFT CCHAR @ 1 - SIDE @ IF
-   DUP 31 = IF DROP 63 ENDIF ELSE
-   DUP -1 = IF DROP 31 ENDIF ENDIF
-   CCHAR ! ; 
- : LEFT MOVE-LEFT SCREEN-CURSOR ; 
-
- 
-( EDIT - MOVEMENT, KEYJOY )
+: EREAD 16 0 DO I SCR @ (LINE) 
+  DROP UPDATE DROP LOOP 0 CLINE ! 0 CCHAR ! 0 SIDE ! ; (FIXME )
+: POINT-CURSOR 85 ! 84 C! ;     712 CONSTANT FRM#
+: CURSOR@ CLINE @ LINEOFF @ +
+  CCHAR @ SIDE @ IF 32 - ENDIF   CHAROFF @ + ;
+: CURSOR CURSOR@ POINT-CURSOR ; 
+: SCREEN-CURSOR CURSOR@ SWAP 40 * + 106 C@ 256 *
+  960 - + DUP C@ 128 XOR SWAP C! ;
+: HLINE 34 0 DO TOP-BOT EMIT LOOP ;
+: LADDR CLINE @ SCR @ (LINE) DROP
+  SIDE @ IF 32 + ENDIF ;
+: EADDR CLINE @ SCR @ (LINE) DROP
+  SIDE @ 0= IF 32 + ENDIF ;
+: ELINE LEDGE EMIT LADDR 32 TYPE REDGE EMIT ;
+: XLINE LEDGE EMIT EADDR 32 TYPE REDGE EMIT ;
+: WRITE-LINE CLINE @ LINEOFF @ + CHAROFF @ 1 -
+  POINT-CURSOR ELINE ;
+: WRITE-EXTRA EXTRAOFF @ LINEOFF @ + CHAROFF @ 1 -
+  POINT-CURSOR XLINE ; : FRE 741 @ HERE - ;
+: 2TOP LINEOFF @ 1 - CHAROFF @ 1 - POINT-CURSOR HLINE ; 
+: BOT LINEOFF @ 16 + CHAROFF @ 1 - POINT-CURSOR HLINE ; 
+: ETITLE 0 CHAROFF @ POINT-CURSOR ." EDIT / Dr" 
+  OFFSET @ 0= 0= . ." Scr" 
+  SCR ? ." Side" SIDE
+  ? ." Free" FRE U. ; 
+: DISPLAY CLS 1 CRSINH C! ETITLE 2TOP CLINE @ 
+  16 0 DO I CLINE ! WRITE-LINE LOOP CLINE !
+  SIDE @ IF 32 ELSE 0 ENDIF CCHAR ! BOT
+  WRITE-EXTRA CURSOR SCREEN-CURSOR ;
+: ANYK CR ." (Return)" KEY DROP ; : ANYKD ANYK DISPLAY ;
+: CASES ?COMP CSP @ !CSP 4 ; IMMEDIATE
+: CASE 4 ?PAIRS COMPILE OVER COMPILE =
+  COMPILE 0BRANCH HERE 0 , COMPILE DROP 5 ; IMMEDIATE
+: IS 5 ?PAIRS COMPILE BRANCH HERE 0 ,
+  SWAP 2 [COMPILE] ENDIF 4 ; IMMEDIATE
+: END-CASES 4 ?PAIRS COMPILE DROP
+  BEGIN SP@ CSP @ = 0= WHILE
+  2 [COMPILE] ENDIF REPEAT
+  CSP ! ; IMMEDIATE
+: MOVE-RIGHT CCHAR @ 1 + SIDE @ IF
+  DUP 64 = IF DROP 32 ENDIF ELSE
+  DUP 32 = IF DROP 0  ENDIF ENDIF
+  CCHAR ! ;
+: RIGHT MOVE-RIGHT SCREEN-CURSOR ;
+: RIGHT-CURSOR SCREEN-CURSOR RIGHT ;
+: MOVE-LEFT CCHAR @ 1 - SIDE @ IF
+  DUP 31 = IF DROP 63 ENDIF ELSE
+  DUP -1 = IF DROP 31 ENDIF ENDIF
+  CCHAR ! ; 
+: LEFT MOVE-LEFT SCREEN-CURSOR ; 
 : LEFT-CURSOR SCREEN-CURSOR LEFT ;
 : MOVE-UP CLINE @ 1 - 15 AND
   CLINE ! WRITE-EXTRA ;
@@ -326,10 +345,6 @@ MDEDIT DEFINITIONS
 : EABORT EMPTY-BUFFERS 1 STOP ! [COMPILE] FORTH ;
 : FLASH FRM# @ 255 XOR FRM# ! ; ( FIXME )
 : BEEPF BEEP FLASH ; 
-
-
-
-( EDIT - REFORTH, SCREEN<>, HLP )
 : SH CLS 0 CRSINH C! IN @ >R BLK @ >R 0 IN ! 
   0 BLK ! CR QUERY INTERPRET R> BLK ! R> IN ! ANYKD ; 
 : UNDOSCR EMPTY-BUFFERS SCR +! EREAD DISPLAY ; ( n -- )
@@ -362,9 +377,6 @@ MDEDIT DEFINITIONS
  ." Ctl-BckSpc: del;  Esc-0: cold" CR
  ." Clear: clear screen (Shf> Ctl>)" CR
     ANYKD DISPLAY ; 
-
-
-( EDIT - DELETE, INSERT )
 : DELETE-CHAR ADDR SWAP CCHAR @ -
   -DUP IF 0 DO DUP 1 + C@ OVER C!
   1 + LOOP ENDIF BL SWAP C! ;
@@ -380,9 +392,6 @@ MDEDIT DEFINITIONS
   -1 +LOOP ENDIF CLINE @ L-A 64 BLANKS ;
 : INSERT-LINE INSERT-L DISPLAY ;
 : DELETE-LINE DELETE-L DISPLAY ; 
-
-
-( EDIT - PUTLINE, TAB )
 : PUT-LINE INSERT-L SAV-BUF CLINE @
   L-A 64 CMOVE DISPLAY ;
 : TAB 2 0 DO RIGHT-CURSOR LOOP ;
@@ -398,9 +407,6 @@ MDEDIT DEFINITIONS
 : PIN3 CLS SCR @ TRIAD  ANYKD ; ( triad )
 : PIN4 CLS DR0 18 SCR ! ANYKD ; ( set DR0, 18th screen )
 : PIN5 CLS SCR @ LOAD   ANYKD ; ( load  )
-
-
-( EDIT - COMMANDS ) 
 : REVB FRM# @ 128 XOR FRM# ! ;  ( reverse frame when Esc )
 : ESC REVB KEY CASES
     82 CASE CHSIDE    IS ( R )  47 CASE CHSIDE IS  ( / )
@@ -416,9 +422,6 @@ MDEDIT DEFINITIONS
   BEEPF END-CASES REVB ;
 : DEEP SP@ 12 +ORIGIN @ SWAP - 2 / ; ( if no DEPTH dfnd )
 : SETSCR DEEP 0= IF HLP# ENDIF SCR ! ;  
-
-
-( EDIT - ends ) ( n EDIT ) 
 : EDIT '( m -- ; edit screen m with MDEDIT )
   SETSCR EREAD DISPLAY 0 STOP ! BEGIN
     KEY CASES
@@ -436,7 +439,7 @@ MDEDIT DEFINITIONS
 
 FORTH DEFINITIONS
  
-: EDITOR '( -- ; display FIG EDITOR help )
+: ED-HELP '( -- ; display FIG EDITOR help )
   CR ." m SCR ! -> select screen m"
   CR ." --------- BASIC FIG EDITOR
   CR ." n |     -> add text in line n (P)"
@@ -446,10 +449,10 @@ FORTH DEFINITIONS
   CR ." L.      -> LIST current screen"
   CR ." N. / P. -> LIST next/previous screen"
   CR ." --------- ADVANCED EDITOR (MDEDIT)"
-  CR ." MDEDIT  -> enable advanced editor"
+  CR ." EDITOR  -> enable advanced editor"
   CR ." m EDIT  -> edit screen m"
-  CR ."            Esc+H opens help page"
-  CR ."  FORTH  -> hide advanced editor"
+  CR ."            Esc+H opens help"
+  CR ."  FORTH  -> disable advanced editor"
 CR CR ;
   
 : VER '( -- ; display version )
@@ -462,21 +465,18 @@ CR CR ;
   CR CR ;
 
 : HELP '( -- ; display help )
-  CR ." Type VER for version"
-  CR ." Type XLIST for enhanced VLIST"
-  CR ." Type EDITOR for screen editing help"
-  CR ." Type STACK to toggle stack display"
-  CR ." Type .CC for CONTEXT, CURRENT"
-  CR ." Type .BUFS to show buffers"
-  ( CR ." Type DECOMP ABC to decompile )
-  CR ." Type FRE for free bytes"
-  CR ." Type ' ABC SCAN to locate word usage"
-  CR ." Type n m SEARCH MYSTRING to search screens"
-  CR ." Frame color depends on BASE 
-  CR ." Kill: CLEAN FORGET TUNINGS SAVE COLD"
+  CR ." VER for version"
+  CR ." XLIST for enhanced VLIST"
+  CR ." ED-HELP for screen editing help"
+  CR ." STACK to toggle stack display"
+  CR ." .CC for CONTEXT and CURRENT info"
+  CR ." .BUFS to show disc buffers"
+  ( CR ." DECOMP ABC to decompile )
+  CR ." FRE to show free bytes"
+  CR ." ' aaa SCAN to locate uses of aaa"
+  CR ." n m SEARCH aaa to search screens"
+  CR ." D1:/D2:/DIR to browse floppies"
+  CR ." RE: and ;RE to redefine"
   CR CR ;
 
-( FLAVOR SAVE COLD )
-
-
-  
+( FLAVOR SAVE COLD ) 

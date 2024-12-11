@@ -88,10 +88,10 @@ DECIMAL
     CR FORTH I EDITOR DUP 2 .R SCR @
 	(LINE) -TRAILING ."  | " TYPE
   LOOP 6 84 C! (>) ;
-: UL  0 SCR @  (E) ;
-: LL  1 SCR @  (E) ;  
-: \N  1 SCR +! (E) ;
-: \P -1 SCR +! (E) ;
+: UL  0 SCR @ (E) ;
+: LL  1 SCR @ (E) ;  
+: \N  1 SCR +! UL ;
+: \P -1 SCR +! UL ;
 : \S MARK FLUSH ;
 : \Q EMPTY-BUFFERS (OK-ON) 2 82 C! 125 EMIT ;
 

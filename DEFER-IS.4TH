@@ -13,3 +13,8 @@
 DEFER OP
 ' + IS OP  2 1 OP .
 ' - IS OP  2 1 OP .
+
+( https://www.softsynth.com/pforth/pf_ref.php#Customising-FORGET )
+: WHAT'S ( ... )
+  ' CFA @ NFA ID. ; ( UNTESTED )
+WHAT'S OP ( - )

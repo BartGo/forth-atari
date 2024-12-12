@@ -2,7 +2,7 @@
 ( by bartgo, 2024, apx forth for atari 8-bit )
 ( includes many pieces of fig editor, by FIG )
 
-( FIXME: SAVES ASCII 0 FOR EMPTY LINES )
+( FIXME: P/| on empty lines )
 
 FORTH DEFINITIONS DECIMAL
 32 ' C/L !  ( shorter lines )
@@ -24,8 +24,13 @@ EDITOR DEFINITIONS
 : H LINE PAD 1+ C/L DUP PAD C! CMOVE ;
 : MARK 20 0 DO I LINE UPDATE DROP LOOP ;
 : E LINE C/L BL FILL UPDATE ;
-: P 1 TEXT PAD 1+ SWAP -MOVE ;
-: | P ; ( FIXME: SAVES ASCII 0 )
+( old: no text, put ascii 0 )
+( : P 1 TEXT PAD 1+ SWAP -MOVE ; )
+( new: if no text entered, delete )
+: P 1 TEXT PAD 1+ DUP C@ 1 < IF
+  DROP DROP ;S THEN
+  SWAP -MOVE ;
+: | P ;
 : CLEAR ( n -- )
   SCR ! 20 0 DO I E LOOP ; 
 : CLEARS ( n m -- ) 
@@ -77,8 +82,8 @@ DECIMAL
      (>) ."  ( *EDIT*  \N=Next \P=Prev )"
   CR (>) ."  ( \S=Save \U=Undo \Q=Quit )" 
   CR (>) ."  ( n m SEARCH XYZ searches )" 
-  CR (>) 2 SPACES
-      .  ." SCR ! EMPTY-BUFFERS UL" 
+  CR (>) SPACE
+      .  ." \S SCR ! EMPTY-BUFFERS UL" 
   CR (>) DUP IF
           ."  UL ( see Upper Lines / LL )"
   ELSE

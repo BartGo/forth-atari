@@ -74,12 +74,11 @@ DECIMAL
   ' PROMPT CFA ' QUIT 26 + ! ;
 : (>)     ( -- )
   5 0 DO 31 EMIT LOOP  ; 
-: (.U) FIRST LIMIT FIRST - B/BUF / 1+ 1 DO
-  DUP @ 32768 AND 0= 0= 0 = IF ." --"
-  ELSE  ." ()" THEN 132 + LOOP DROP ;
 : (BAR)    ( -- )
-  CR CR 3 SPACES ." ( " ( 8 0 DO ." ----" LOOP )
-  (.U) ;
+  CR CR 3 SPACES ." ( " 
+  FIRST LIMIT FIRST - B/BUF / 1+ 1 DO
+  DUP @ 32768 AND 0= 0= 0 = IF ." --"
+  ELSE  ." []" THEN 132 + LOOP DROP ;
 : (E)      ( f scr -- )
   125 EMIT 
   DUP SCR !
@@ -101,7 +100,8 @@ DECIMAL
 : LL  1 SCR @ (E) ;  
 : \N  1 SCR +! UL ;
 : \P -1 SCR +! UL ;
-: \S MARK FLUSH ;
+: \U EMPTY-BUFFERS UL ;
+: \S MARK FLUSH UL ;
 : \Q EMPTY-BUFFERS (OK-ON) 2 82 C! 125 EMIT ;
 
 : EDIT ( scr -- )

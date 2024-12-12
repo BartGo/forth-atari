@@ -1,3 +1,4 @@
+	
 ( BGEDIT: "scr EDIT" ) 
 ( by bartgo, 2024, apx forth for atari 8-bit )
 ( includes many pieces of fig editor, by FIG )
@@ -73,9 +74,12 @@ DECIMAL
   ' PROMPT CFA ' QUIT 26 + ! ;
 : (>)     ( -- )
   5 0 DO 31 EMIT LOOP  ; 
+: (.U) FIRST LIMIT FIRST - B/BUF / 1+ 1 DO
+  DUP @ 32768 AND 0= 0= 0 = IF ." --"
+  ELSE  ." ()" THEN 132 + LOOP DROP ;
 : (BAR)    ( -- )
-  CR CR 3 SPACES ." ( " 7 0 DO
-    ." ----" LOOP ." ----" ;
+  CR CR 3 SPACES ." ( " ( 8 0 DO ." ----" LOOP )
+  (.U) ;
 : (E)      ( f scr -- )
   125 EMIT 
   DUP SCR !

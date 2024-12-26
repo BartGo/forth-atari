@@ -18,3 +18,15 @@ DEFER OP
 : WHAT'S ( ... )
   ' CFA @ NFA ID. ; ( UNTESTED )
 WHAT'S OP ( - )
+
+( __ TEST ME _________________ )
+
+( 2nd way FD v7n5 )
+: <BUILDS 2 ALLOT DOES> @ EXECUTE ;
+: (IS) R @ CFA ! R> 2 + >R ;
+: IS STATE @ IF
+    COMPILE (IS) ELSE ' CFA !
+  THEN ; IMMEDIATE
+
+
+

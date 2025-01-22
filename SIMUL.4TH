@@ -2,20 +2,14 @@
 ( BY BARTGO )
 ( WIP )
 
-( FIXME: HANGUPS )
+( FIXME: HANGUPS - stack overflow )
 
 FORTH DEFINITIONS DECIMAL
 
-20   VARIABLE P ( PEOPLE )
-100  VARIABLE G ( GOODS )
-0    VARIABLE E ( ENERGY )
-0    VARIABLE C ( SOLAR CELLS / POWER PLANTS )
-200  VARIABLE M ( MONEY )
-0    VARIABLE A ( FARMS )
-0    VARIABLE F ( FACTORIES )
-1    VARIABLE S ( STORAGE )
-0    VARIABLE T ( TIME )
-0    VARIABLE H ( HUNGRY DAYS )
+: .S ( -- )
+  40 EMIT SPACE
+  SP@ 188 = 0= IF SP@ 2 - 186 DO
+  I @ . -2 +LOOP THEN 41 EMIT SPACE ;
 
 1      CONSTANT #LASTYR
 52 7 * CONSTANT #D/YR
@@ -30,24 +24,35 @@ FORTH DEFINITIONS DECIMAL
 50     CONSTANT #FF ( YIELD )
 10     CONSTANT #AA ( YIELD )
 10     CONSTANT #CC ( YIELD )
-50     CONSTANT #SS ( CAPCT )
+100    CONSTANT #SS ( CAPCT )
+
+20   VARIABLE P ( PEOPLE )
+#SS  VARIABLE G ( GOODS )
+0    VARIABLE E ( ENERGY )
+0    VARIABLE C ( SOLAR CELLS / POWER PLANTS )
+200  VARIABLE M ( MONEY )
+0    VARIABLE A ( FARMS )
+0    VARIABLE F ( FACTORIES )
+1    VARIABLE S ( STORAGE )
+0    VARIABLE T ( TIME )
+0    VARIABLE H ( HUNGRY DAYS )
 
 : PRODUCE ( -- )
   A @ #AA * G +!   ( FARMING!  )
   C @ #CC * E +!   ( ENERGY!   )
   E @ 0 > IF       ( ENERGY?   )
     F @ #FF * G +! ( INDUSTRY! )
-  THEN ;
+  THEN
+  S @ #SS * G @ < IF ( STORAGE CAP )
+    S @ #SS * G ! THEN ;
 
 : CONSUME ( -- )
 	#FC F @ * E @ > 0= IF ( USE ENERGY )
-	  E @ #FC F @ * - E !
-	ELSE
-	  0 E !
+	  E @ #FC F @ * - E ! ELSE 0 E !
 	THEN
 	G @ P @ #H * < 0= IF
-	  G @ P @ #H * - G ! ( CONSUME )
-	  0 H !              ( NO HUNGER )
+	  G @ P @ #H * - G !  ( CONSUME )
+	  0 H !               ( NO HUNGER )
 	ELSE
 	  0 G !
 	  H @ 0 > IF
@@ -56,7 +61,7 @@ FORTH DEFINITIONS DECIMAL
 		THEN
 	  ELSE 1 H ! THEN
 	THEN
-	( TODO: PEOPLE USE ENERGY TOO )	;
+	( TODO: PEOPLE CAN USE ENERGY TOO )	;
 	
 : REPRODUCE ( -- )
 	T @ #D/YR MOD 0= IF ( EVERY NEW YEAR )
@@ -67,13 +72,12 @@ FORTH DEFINITIONS DECIMAL
   1 T +! ;
 
 : SEP ( -- )
-  CR ." -------------------------" ;
+  CR 24 0 DO 18 EMIT LOOP ;
    
 : UI ( -- )
 	125 EMIT
-	SEP
-	F @ A @ > IF CR ." INDUSTRIAL KINGDOM OF X" 
-	ELSE  CR ." FARMING KINGDOM OF X" THEN	
+	F @ A @ > IF ." INDUSTRIAL KINGDOM OF X" 
+	ELSE  ." FARMING KINGDOM OF X" THEN	
 	SEP
 	CR ."   YEAR: " T @ #D/YR / 1+ .
 	CR ."    DAY: " T @ . H @ 0 > IF
@@ -95,7 +99,7 @@ FORTH DEFINITIONS DECIMAL
     CR ." -> (P)wrPlnt /$" #C .
     CR ." -> (T)radeGds/$" #G .
     CR ." -> trd(E)nrgy/$" #E .
-    CR ." -> (N)ext" ; 
+    CR ." -> (D)ebug (N)ext" ; 
 	
 : GET-INPUT ( -- )
   0 BEGIN
@@ -114,9 +118,16 @@ FORTH DEFINITIONS DECIMAL
 	    1 S +! M @ #S - M ! THEN 
 	DUP ASCII P = M @ #C < 0= AND IF
 	    1 C +! M @ #C - M ! THEN 
+	DUP ASCII D = IF 
+	    CR .S CR BEGIN QUERY INTERPRET AGAIN THEN
   REPEAT DROP ;
   
+: INIT ( -- )
+  8 82 C!
+  210 710 ! ;
+  
 : MAIN ( -- )
+  INIT
   BEGIN
 	#D/YR #LASTYR * T @ >
   WHILE
@@ -124,3 +135,5 @@ FORTH DEFINITIONS DECIMAL
 	CONSUME	REPRODUCE
     GET-INPUT
   REPEAT ;
+  
+: RUN MAIN ;

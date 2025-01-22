@@ -1,38 +1,53 @@
 ( HAMURABI-LIKE GAME FOR APX FORTH )
 ( BY BARTGO )
 ( WIP )
+
 ( FIXME: HANGUPS )
 
 FORTH DEFINITIONS DECIMAL
 
 20   VARIABLE P ( PEOPLE )
 100  VARIABLE G ( GOODS )
+0    VARIABLE E ( ENERGY )
+0    VARIABLE C ( SOLAR CELLS / POWER PLANTS )
 200  VARIABLE M ( MONEY )
 0    VARIABLE A ( FARMS )
 0    VARIABLE F ( FACTORIES )
-0    VARIABLE S ( STORAGE )
+1    VARIABLE S ( STORAGE )
 0    VARIABLE T ( TIME )
 0    VARIABLE H ( HUNGRY DAYS )
 
-2      CONSTANT #LASTYR
+1      CONSTANT #LASTYR
 52 7 * CONSTANT #D/YR
-2      CONSTANT #C  ( APETITE )
+2      CONSTANT #H  ( APETITE )
 10     CONSTANT #G  ( PRICE )
 30     CONSTANT #A  ( PRICE )
 120    CONSTANT #F  ( PRICE )
+10     CONSTANT #FC ( ENERGY USAGE )
 40     CONSTANT #S  ( PRICE )
+90     CONSTANT #C  ( PRICE )
+10     CONSTANT #E  ( PRICE )
 50     CONSTANT #FF ( YIELD )
 10     CONSTANT #AA ( YIELD )
-100    CONSTANT #SS ( CAPCT )
+10     CONSTANT #CC ( YIELD )
+50     CONSTANT #SS ( CAPCT )
 
 : PRODUCE ( -- )
-  A @ #AA * G @ + G !
-  F @ #FF * G @ + G ! ;
+  A @ #AA * G +!   ( FARMING!  )
+  C @ #CC * E +!   ( ENERGY!   )
+  E @ 0 > IF       ( ENERGY?   )
+    F @ #FF * G +! ( INDUSTRY! )
+  THEN ;
 
 : CONSUME ( -- )
-	G @ P @ > IF
-	  G @ P @ #C * - G ! ( CONSUME )
-	  0 H !         ( NO HUNGER )
+	#FC F @ * E @ > 0= IF ( USE ENERGY )
+	  E @ #FC F @ * - E !
+	ELSE
+	  0 E !
+	THEN
+	G @ P @ #H * < 0= IF
+	  G @ P @ #H * - G ! ( CONSUME )
+	  0 H !              ( NO HUNGER )
 	ELSE
 	  0 G !
 	  H @ 0 > IF
@@ -40,7 +55,8 @@ FORTH DEFINITIONS DECIMAL
 		  P @ H @ - P ! 
 		THEN
 	  ELSE 1 H ! THEN
-	THEN ;
+	THEN
+	( TODO: PEOPLE USE ENERGY TOO )	;
 	
 : REPRODUCE ( -- )
 	T @ #D/YR MOD 0= IF ( EVERY NEW YEAR )
@@ -49,39 +65,62 @@ FORTH DEFINITIONS DECIMAL
 
 : SUNRISE ( -- )
   1 T +! ;
- 
+
+: SEP ( -- )
+  CR ." -------------------------" ;
+   
 : UI ( -- )
-	125 EMIT CR
-		F @ A @ > IF CR ." INDUSTRIAL KINGDOM OF X" 
+	125 EMIT
+	SEP
+	F @ A @ > IF CR ." INDUSTRIAL KINGDOM OF X" 
 	ELSE  CR ." FARMING KINGDOM OF X" THEN	
-		CR ."   YEAR: " T @ #D/YR / 1+ .
-	CR ."    DAY: " T @ .
+	SEP
+	CR ."   YEAR: " T @ #D/YR / 1+ .
+	CR ."    DAY: " T @ . H @ 0 > IF
+	  ." - IN HUNGER:" H ?
+	THEN
 	CR ."  MONEY: " M @ .
-	CR ."  FARMS: " A @ . ." * " #AA .
-	CR ." FACTORIES: " F @ . ." * " #FF . 
+	CR ." PEOPLE: " P @ . 
 	CR ."  GOODS: " G @ . 
-	CR ." PEOPLE: " P @ . H @ 0 > IF
-  CR ." DAYS IN HUNGER:" H ? THEN
-	CR ." STORAGE LEFT: " S @ #SS * G @ - .
-	CR ." -> (A)gro (F)actory (T)rade (N)ext" ; 
+	CR ." ENERGY: " E @ . 
+	SEP
+	CR ."     FARMS: " A @ . ." * " #AA .
+	CR ." FACTORIES: " F @ . ." * " #FF . 
+	CR ." POWPLANTS: " C @ . ." * " #CC .
+	CR ."   STORAGE: " S @ . ." * " #SS .
+    SEP
+	CR ." -> f(A)rm:   /$" #A .
+    CR ." -> (F)actory /$" #F .
+	CR ." -> (S)torage /$" #S .
+    CR ." -> (P)wrPlnt /$" #C .
+    CR ." -> (T)radeGds/$" #G .
+    CR ." -> trd(E)nrgy/$" #E .
+    CR ." -> (N)ext" ; 
 	
 : GET-INPUT ( -- )
   0 BEGIN
-	  DUP ASCII N = 0=
+	DUP ASCII N = 0=
   WHILE
-	  UI KEY
-	  DUP ASCII A = M @ #A < 0= AND IF
+	UI KEY
+	DUP ASCII A = M @ #A < 0= AND IF
 	    1 A +! M @ #A - M ! THEN
-	  DUP ASCII F = M @ #F < 0= AND IF
+	DUP ASCII F = M @ #F < 0= AND IF
 	    1 F +! M @ #F - M ! THEN 
-	  DUP ASCII T = G @ 0 > AND IF 
+	DUP ASCII T = G @ 0 > AND IF 
 	    -1 G +! #G M +! THEN
+	DUP ASCII E = E @ 0 > AND IF 
+	    -1 E +! #E M +! THEN
+	DUP ASCII S = M @ #S < 0= AND IF
+	    1 S +! M @ #S - M ! THEN 
+	DUP ASCII P = M @ #C < 0= AND IF
+	    1 C +! M @ #C - M ! THEN 
   REPEAT DROP ;
   
 : MAIN ( -- )
   BEGIN
-    #D/YR #LASTYR * T @ >
+	#D/YR #LASTYR * T @ >
   WHILE
-	  SUNRISE	PRODUCE	CONSUME	REPRODUCE
+	SUNRISE	PRODUCE
+	CONSUME	REPRODUCE
     GET-INPUT
   REPEAT ;

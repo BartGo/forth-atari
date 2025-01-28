@@ -1,9 +1,18 @@
 
 # this:
-#   txt -> atari forth line-32 screen file
+#   txt -> atari forth line-32 screen file (atr)
+
 # reverse:
 #   fold -b -w 32 out.atr > out.fld
 #   sed -e :a -e 'N;s/\n\s*$//;ta' out.fld > out.4th
+
+# atr2txt:
+#     tail +17c  source.atr > noheader.atr # general valforth & apxforth, remove header
+#   OR:
+#     tail +1041 source.atr > noheader.atr # hack for apxforth (17+1024), remove header and "difficulties" (carefully)
+#   THEN:
+#   fold -b -w 32 ./noheader.ATR > temp.txt
+
 # FIXME: sometimes wrongly removes empty lines mid-file
 
 awk -v max_line_len=32 -v max_file_size=92160 '

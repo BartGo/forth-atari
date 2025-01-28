@@ -1,6 +1,6 @@
 
 # this:
-#   txt -> atari forth line-32 screen file (atr)
+#   txt -> atari forth line-32 screen file (atr, NO HEADER)
 
 # reverse:
 #   fold -b -w 32 out.atr > out.fld

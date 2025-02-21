@@ -2,11 +2,17 @@
 (        by Salman, Tisserand, Toulout 1983      )
 (  **     tested on Atari 8-bit, APX Forth    ** )
 
+FORTH DEFINITIONS DECIMAL 
+( 39 LOAD 50 LOAD )
+
+FORTH DEFINITIONS DECIMAL 
+FORTH DEFINITIONS DECIMAL 
+
 : ARRAY <BUILDS OVER , * ALLOT
         DOES> DUP @ ROT * + + 2+ ;
 
-36 CONSTANT DIMX
-20 CONSTANT DIMY
+32 CONSTANT DIMX
+23 CONSTANT DIMY
 DIMX DIMY ARRAY UNIVERSE
 
 : HOME
@@ -16,15 +22,19 @@ DIMX DIMY ARRAY UNIVERSE
 : ALIVE 20 EMIT ;
 : NONE SPACE ;
 : J R> R> R> R R# ! >R >R >R R# @ ;
-: INS ( indX indY -- )
+: INS ( indX indY -- )         
   UNIVERSE 1 SWAP C! ;
 : N-INS ( xn yn .. n -- )
   0 DO INS LOOP ; 
 : DEL ( indX indY -- )
   UNIVERSE 0 SWAP C! ;
+
 : CLEAR ( -- )
-  DIMY 0 DO DIMX 0 DO I J DEL
-  LOOP LOOP ;
+  DIMY 0 DO
+    DIMX 0 DO I J DEL LOOP
+  LOOP ;
+( : CLEAR.GR CLEAR 3 GR. ; )
+  
 : VERIFY
   DUP 3 = IF DROP 2+ ELSE
     2 = 0= IF 4 + THEN THEN ; 
@@ -38,15 +48,21 @@ DIMX DIMY ARRAY UNIVERSE
 	SWAP OVER - VERIFY
     I J UNIVERSE C!
   LOOP LOOP ; 
+
 : SHOW ( -- )
   HOME DIMY 0 DO DIMX 0 DO
     I J UNIVERSE C@
     IF ALIVE ELSE NONE THEN
   LOOP CR LOOP ;
+( : SHOW.GR ( -- )
+(   DIMY 0 DO DIMX 0 DO
+(     I J UNIVERSE C@ I J PLOT
+(   LOOP LOOP ; )
 : DBG.SHOW ( -- )
   CR CR DIMY 0 DO DIMX 0 DO
     I J UNIVERSE C@ 48 + EMIT
   LOOP CR LOOP ;  
+
 : GENERATE ( -- )
   DIMY 0 DO DIMX 0 DO
     I J UNIVERSE DUP C@ DUP
@@ -55,15 +71,23 @@ DIMX DIMY ARRAY UNIVERSE
 	THEN SWAP C!
   LOOP LOOP ;    
 
+: NO-ATTRACT 0 77 C! ;
+
 : X ( -- )
-  CLEAR
-  11 10  10 11  12  10
-  12 11  12 12  5 N-INS ( GLIDER )
+  CLEAR ( .GR
+  11 10  10 11  12 10
+  12 11  12 12
+  ( glider 1 ) 5 N-INS
+  15 12 14 13
+  16 12 17 14
+  17 12
+  ( glider 2 ) 5 N-INS
   BEGIN
     ?TERMINAL IF ;S THEN
-    SHOW
+    SHOW ( .GR
 	PREPARE
 	GENERATE 
+	NO-ATTRACT
   AGAIN
-  SHOW 
+  SHOW ( .GR
   BYE ;

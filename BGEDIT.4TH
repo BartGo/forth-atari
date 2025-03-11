@@ -3,8 +3,10 @@
 ( by bartgo, 2024, apx forth for atari 8-bit )
 ( includes many pieces of fig editor, by FIG )
 
+( FIXME: C/L set to 32 may block LOAD )
+
 FORTH DEFINITIONS DECIMAL
-32 ' C/L !  ( shorter lines )
+32 ' C/L !  ( shorter lines ) ( FIXME, causes dictionary full )
 32 10233 C! ( LIST to know that )
 : TASK ;
 
@@ -55,6 +57,21 @@ EDITOR DEFINITIONS
 ( end fig edit )
 
 DECIMAL
+: .BUFS ( -- )
+( display addresses of all the buffers )
+  CR ." #  Addr(hex) Upd Block#  Screen  -sub"
+  FIRST
+  LIMIT FIRST - B/BUF / ( #BUFF )
+  1+ 1 DO
+    CR I 2 .R 2 SPACES
+    DUP 2+ HEX 6 0 SWAP D.R DECIMAL 3 SPACES
+    DUP @ 32768 AND
+    0= 0= 32 + EMIT 2 SPACES
+    DUP @ 32767 AND
+	DUP 6 .R 4 SPACES
+    B/SCR /MOD 5 .R 4 SPACES 2 .R
+    132 + ?TERMINAL IF LEAVE THEN
+  LOOP DROP CR ; 
 
 0 VARIABLE SRCHCNT
 : BUMP 1 SRCHCNT +! SRCHCNT @ 56
@@ -75,8 +92,11 @@ DECIMAL
 : (BAR)    ( -- )
   CR CR 3 SPACES ." ( " 
   FIRST LIMIT FIRST - B/BUF / 1+ 1 DO
-  DUP @ 32768 AND 0= 0= 0 = IF ." --"
-  ELSE  ." []" THEN 132 + LOOP DROP ;
+  DUP @ 32768 AND 0= 0= 0 = IF
+    ASCII - EMIT SPACE 
+  ELSE 
+    ASCII - 128 + EMIT SPACE 
+  THEN 132 + LOOP DROP ;
 : (E)      ( f scr -- )
   125 EMIT 
   DUP SCR !
@@ -86,13 +106,13 @@ DECIMAL
   CR (>) SPACE
       .  ." SCR ! \S ( FETCH, SAVE )" 
   CR (>) DUP IF
-          ."  UL ( see Upper Lines / LL )"
+    ."  UL ( see Upper Lines / LL )"
   ELSE
-          ."  LL ( see Lower Lines / UL )"
+    ."  LL ( see Lower Lines / UL )"
   THEN (BAR)
   0= IF 16 0 ELSE 32 16 THEN DO 
     CR FORTH I EDITOR DUP 2 .R SCR @
-	(LINE) -TRAILING ."  | " TYPE
+    (LINE) -TRAILING ."  | " TYPE
   LOOP 6 84 C! (>) ;
 : UL  0 SCR @ (E) ;
 : LL  1 SCR @ (E) ;  
@@ -104,8 +124,11 @@ DECIMAL
 
 : EDIT ( scr -- )
   (OK-OFF) 0 82 C!
-  SCR ! UL ; 
+  SCR !
+  EDITOR UL ; 
 
 ;S
+
+FORTH DEFINITIONS EDITOR
 
 17 EDIT

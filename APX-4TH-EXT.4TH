@@ -105,7 +105,6 @@ HEX
     PFA LFA @ DUP 0= ?TERMINAL OR CR
   UNTIL DROP ;
 
-
 : RE-CREATE ( -- )
   -FIND 0= IF
     HERE COUNT TYPE ."  NOT FOUND" ABORT
@@ -154,6 +153,21 @@ HEX
 : TOP 0 R# ! ; 
 
 DECIMAL
+
+( OUTLINE )
+: OUTLINE ( #scr -- ) 
+  DUP CR CR ." Screen # " . DUP SCR !
+  15 0 DO
+    DUP I SWAP  ( scr#, ln#, scr# )
+    (LINE) SWAP ( scr#, 64, lineaddr )
+    DUP C@ BL = 0=      
+    I 0= OR IF  ( 1st line or non-space? )         
+      SWAP -TRAILING CR TYPE ( print line )
+    ELSE DROP DROP THEN ( skip line )
+  LOOP DROP CR ;                
+: OUTLINES ( #1st-screen #last-screen -- )
+  1+ SWAP DO I OUTLINE LOOP ;
+
 
 ( SEARCH SCREENS )
 0 VARIABLE SRCHCNT
@@ -343,8 +357,8 @@ EDITOR DEFINITIONS
 : RETURN SCREEN-CURSOR SIDE @ IF
   32 ELSE 0 ENDIF CCHAR ! DOWN ;
 : EABORT EMPTY-BUFFERS 1 STOP ! [COMPILE] FORTH ;
-: FLASH FRM# @ 255 XOR FRM# ! ; ( FIXME )
-: BEEPF BEEP FLASH ; 
+( : FLASH FRM# @ 255 XOR FRM# ! ; )
+( : BEEPF BEEP FLASH ; )
 : SH CLS 0 CRSINH C! IN @ >R BLK @ >R 0 IN ! 
   0 BLK ! CR QUERY INTERPRET R> BLK ! R> IN ! ANYKD ; 
 : UNDOSCR EMPTY-BUFFERS SCR +! EREAD DISPLAY ; ( n -- )
@@ -404,7 +418,7 @@ EDITOR DEFINITIONS
 : BGRC 710 THEME ;    : FNTC 709 THEME ;
 : PIN1 CLS VLIST        ANYKD ; ( vlist )
 : PIN2 CLS SCR @ LIST   ANYKD ; ( list  )
-: PIN3 CLS SCR @ TRIAD  ANYKD ; ( triad )
+: PIN3 CLS .BUFS        ANYKD ; ( buffers )
 : PIN4 CLS DR0 18 SCR ! ANYKD ; ( set DR0, 18th screen )
 : PIN5 CLS SCR @ LOAD   ANYKD ; ( load  )
 : REVB FRM# @ 128 XOR FRM# ! ;  ( reverse frame when Esc )
@@ -419,7 +433,7 @@ EDITOR DEFINITIONS
     66 CASE SH        IS ( B )  53 CASE PIN5   IS  ( 5 ) 
     48 CASE BOOT      IS ( 0 )  84 CASE BGRC   IS  ( T )
     72 CASE HLP       IS ( H )  70 CASE FNTC   IS  ( F )
-  BEEPF END-CASES REVB ;
+  ( BEEPF ) END-CASES REVB ;
 : DEEP SP@ 12 +ORIGIN @ SWAP - 2 / ; ( if no DEPTH dfnd )
 : SETSCR DEEP 0= IF HLP# ENDIF SCR ! ;  
 : EDIT '( m -- ; edit screen m with MDEDIT )
@@ -435,7 +449,8 @@ EDITOR DEFINITIONS
       DUP ADDKEY 
     END-CASES
   STOP @ UNTIL   
-  CLS 0 CRSINH ! ;   
+  CLS 0 CRSINH ! ;  
+: E. SCR @ EDIT ;  
 
 FORTH DEFINITIONS
  
@@ -448,9 +463,10 @@ FORTH DEFINITIONS
   CR ." EB.     -> undo (EMPTY-BUFFERS)"
   CR ." L.      -> LIST current screen"
   CR ." N. / P. -> LIST next/previous screen"
-  CR ." --------- ADVANCED EDITOR (MDEDIT)"
+  CR ." --------- ADVANCED EDITOR"
   CR ." EDITOR  -> enable advanced editor"
   CR ." m EDIT  -> edit screen m"
+  CR ." E.      -> edit current screen"
   CR ."            Esc+H opens help"
   CR ."  FORTH  -> disable advanced editor"
 CR CR ;
@@ -460,6 +476,10 @@ CR CR ;
   CR ." *  Extended Fig-Forth Rev.2  *"
   CR ."  by Patrick L. Mullarky, 1982 "
   CR ." published by Atari through APX"
+  CR ." ******************************"
+  CR ." *   EDIT - by M. Dougherty   *"
+  CR ." as published in Micro Magazine"
+  CR ." ******************************"
   CR ."  2025 tunings collected by BG "
   CR ." ******************************"
   CR CR ;
@@ -473,10 +493,11 @@ CR CR ;
   CR ." .BUFS to show disc buffers"
   ( CR ." DECOMP ABC to decompile )
   CR ." FRE to show free bytes"
+  CR ." RE: and ;RE to redefine words"
   CR ." ' aaa SCAN to locate uses of aaa"
-  CR ." n m SEARCH aaa to search screens"
   CR ." D1:/D2:/DIR to browse floppies"
-  CR ." RE: and ;RE to redefine"
+  CR ." n m SEARCH aaa for screen search"
+  CR ." s1 s2 OUTLINE for screen summary"
   CR CR ;
 
 ( FLAVOR SAVE COLD ) 

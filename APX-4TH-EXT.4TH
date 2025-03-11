@@ -270,8 +270,8 @@ DECIMAL
   ." FLAVOR is ON." CR FRE CR
   ." 'SAVE' and 'COLD' to proceed." CR CR ;
   
-: CLEAN ( -- )
-  ( ' WARNING  CFA ' MESSAGE    ! )
+: CLEAN ( -- ) ( FIXME )
+  ( ' WARNING  CFA ' MESSAGE    ! ) 
   ( ' @        CFA ' MESSAGE 2+ ! )
   ' PROMPT     CFA ' QUIT 26 +  ! 
   ' CR         CFA ' ABORT 6 +  ! 
@@ -279,7 +279,7 @@ DECIMAL
   ' EXTENSIONS LFA @ PFA FENCE  !
   148 710 ! 125 EMIT
   ." FLAVOR is OFF." CR FRE CR
-  ." 'FORGET TUNINGS' to purge if needed." CR
+  ." 'FORGET EXTENSIONS' to purge if needed." CR
   ." 'SAVE' and 'COLD' to proceed." CR CR ;
   
 EDITOR DEFINITIONS

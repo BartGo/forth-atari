@@ -4,13 +4,12 @@
 
 FORTH DEFINITIONS DECIMAL
 
-: TASK ;
-: TUNINGS ;
+: EXTENSIONS ;
 
 VOCABULARY EDITOR IMMEDIATE 
 FORTH DEFINITIONS 
 
-: FRE ( -- )
+: .FRE ( -- )
   741 @ HERE - U. ." bytes free" ;
 
 : --> ( -- )
@@ -272,13 +271,13 @@ DECIMAL
   ." 'SAVE' and 'COLD' to proceed." CR CR ;
   
 : CLEAN ( -- )
-  ( ' WARNING CFA ' MESSAGE    ! )
-  ( ' @       CFA ' MESSAGE 2+ ! )
-  ' PROMPT  CFA ' QUIT 26 + ! 
-  ' CR      CFA ' ABORT 6 + ! 
-  ' QUIT    CFA ' ABORT 35 + ! 
-  148 710 !
-  ' TASK FENCE ! 125 EMIT
+  ( ' WARNING  CFA ' MESSAGE    ! )
+  ( ' @        CFA ' MESSAGE 2+ ! )
+  ' PROMPT     CFA ' QUIT 26 +  ! 
+  ' CR         CFA ' ABORT 6 +  ! 
+  ' QUIT       CFA ' ABORT 35 + ! 
+  ' EXTENSIONS LFA @ PFA FENCE  !
+  148 710 ! 125 EMIT
   ." FLAVOR is OFF." CR FRE CR
   ." 'FORGET TUNINGS' to purge if needed." CR
   ." 'SAVE' and 'COLD' to proceed." CR CR ;
@@ -472,16 +471,17 @@ FORTH DEFINITIONS
 CR CR ;
   
 : VER '( -- ; display version )
-  CR ." ******************************"
-  CR ." *  Extended Fig-Forth Rev.2  *"
+  CR
+  CR ." =============================="
+  CR ."    Extended Fig-Forth Rev.2   "
   CR ."  by Patrick L. Mullarky, 1982 "
   CR ." published by Atari through APX"
-  CR ." ******************************"
-  CR ." *   EDIT - by M. Dougherty   *"
+  CR ." ------------------------------"
+  CR ."     EDIT - by M. Dougherty    "
   CR ." as published in Micro Magazine"
-  CR ." ******************************"
+  CR ." ------------------------------"
   CR ."  2025 tunings collected by BG "
-  CR ." ******************************"
+  CR ." =============================="
   CR CR ;
 
 : HELP '( -- ; display help )
@@ -492,7 +492,7 @@ CR CR ;
   CR ." .CC for CONTEXT and CURRENT info"
   CR ." .BUFS to show disc buffers"
   ( CR ." DECOMP ABC to decompile )
-  CR ." FRE to show free bytes"
+  CR ." .FRE to show free bytes"
   CR ." RE: and ;RE to redefine words"
   CR ." ' aaa SCAN to locate uses of aaa"
   CR ." D1:/D2:/DIR to browse floppies"

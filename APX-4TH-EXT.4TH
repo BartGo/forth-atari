@@ -256,7 +256,7 @@ DECIMAL
 
 ( DOS-like DIR )
 : (INDEX) ( scr -- ; commented lines #0 ) 
-  DUP SCR ! 0 SWAP (LINE) SWAP DUP C@ ASCII (
+  DUP SCR ! 0 SWAP (LINE) SWAP DUP C@ (ASCII) (
   = 0= IF 2DROP ;S THEN CR ." #"
   SCR ? SWAP -TRAILING TYPE ;      
 : INDICES ( 1st last -- ; INDEX on non-empty )
@@ -289,9 +289,14 @@ DECIMAL
   ." FLAVOR is OFF." CR .FRE CR
   ." 'FORGET EXTENSIONS' to purge if needed." CR
   ." 'SAVE' and 'COLD' to proceed." CR CR ;
-  
-EDITOR DEFINITIONS
 
+( space forth has no EDITOR )
+VOCABULARY EDITOR IMMEDIATE
+EDITOR DEFINITIONS
+: -EXE ( -EXE myword -- )
+  -FIND IF DROP CFA EXECUTE
+  THEN ; IMMEDIATE  
+  
  ( EDIT - BY M. DOUGHERTY )
  DECIMAL : CLS 125 EMIT ;
  752 CONSTANT CRSINH              59 CONSTANT HLP#               
@@ -303,7 +308,7 @@ EDITOR DEFINITIONS
    3 VARIABLE LINEOFF              3 VARIABLE CHAROFF 
    0 VARIABLE CLINE                0 VARIABLE CCHAR
 : EREAD 16 0 DO I SCR @ (LINE) 
-  DROP UPDATE DROP LOOP 0 CLINE ! 0 CCHAR ! 0 SIDE ! ; (FIXME )
+  DROP UPDATE DROP LOOP 0 CLINE ! 0 CCHAR ! 0 SIDE ! ; ( FIXME )
 : POINT-CURSOR 85 ! 84 C! ;     712 CONSTANT FRM#
 : CURSOR@ CLINE @ LINEOFF @ +
   CCHAR @ SIDE @ IF 32 - ENDIF   CHAROFF @ + ;
@@ -425,7 +430,7 @@ EDITOR DEFINITIONS
 : BGRC 710 THEME ;    : FNTC 709 THEME ;
 : PIN1 CLS VLIST        ANYKD ; ( vlist )
 : PIN2 CLS SCR @ LIST   ANYKD ; ( list  )
-: PIN3 CLS .BUFS        ANYKD ; ( buffers )
+: PIN3 CLS -EXE .BUFS   ANYKD ; ( buffers )
 : PIN4 CLS DR0 18 SCR ! ANYKD ; ( set DR0, 18th screen )
 : PIN5 CLS SCR @ LOAD   ANYKD ; ( load  )
 : REVB FRM# @ 128 XOR FRM# ! ;  ( reverse frame when Esc )
@@ -438,12 +443,12 @@ EDITOR DEFINITIONS
     86 CASE PUT-LINE  IS ( V )  51 CASE PIN3   IS  ( 3 )           
     90 CASE 0 UNDOSCR IS ( Z )  52 CASE PIN4   IS  ( 4 ) 
     66 CASE SH        IS ( B )  53 CASE PIN5   IS  ( 5 ) 
-    48 CASE BOOT      IS ( 0 )  84 CASE BGRC   IS  ( T )
+    48 CASE CLS COLD  IS ( 0 )  84 CASE BGRC   IS  ( T )
     72 CASE HLP       IS ( H )  70 CASE FNTC   IS  ( F )
-  ( BEEPF ) END-CASES REVB ;
+  END-CASES REVB ;
 : DEEP SP@ 12 +ORIGIN @ SWAP - 2 / ; ( if no DEPTH dfnd )
 : SETSCR DEEP 0= IF HLP# ENDIF SCR ! ;  
-: EDIT '( m -- ; edit screen m with MDEDIT )
+: EDIT ( m -- ; edit screen m with MDEDIT )
   SETSCR EREAD DISPLAY 0 STOP ! BEGIN
     KEY CASES
       27  CASE ESC          IS  155 CASE RETURN      IS

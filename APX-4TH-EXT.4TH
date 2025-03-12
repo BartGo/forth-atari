@@ -2,6 +2,14 @@
 ( & s*p*a*c*e fig4th 1.1 )
 ( 2025 Extensions -- WIP )
 
+( todo: include GOESINTO modified    )
+(   or better RDCP but accomodate // )
+( todo: include S0,R0,.S,.RS         )
+( todo: include RP@ in machine code  )
+( todo: include CALL in machine code )
+( todo: include BREAK/GO             )
+
+
 FORTH DEFINITIONS DECIMAL
 
 : EXTENSIONS ;
@@ -44,7 +52,7 @@ FORTH DEFINITIONS
 : (HELLO) ( -- )
   EMPTY-BUFFERS
   80 SCR ! 
-  CR FRE
+  CR .FRE
   CR ." Current Screen is: #" SCR ?
   CR ." FLAVOR enabled, 'CLEAN' disables"
   CR ." Type 'HELP' for help"
@@ -80,11 +88,11 @@ HEX
   CR ." Context Current: "
   CONTEXT @ 4 - NFA ID.
   CURRENT @ 4 - NFA ID. CR CR
-  ." PFA  SI WORD CFA\PFA LNK-TO " CR
-  ." ---------------------------" CR
+  ." SI WORD DEFINED LNK-TO" CR
+  ." ----------------------" CR
   BEGIN
     OUT @ C/L 2 / > 0= IF CR 0 OUT ! THEN
-    DUP PFA 4 .R SPACE 
+    ( DUP PFA 4 .R SPACE )
     DUP @ 20 AND IF ." S" ELSE ." -" THEN
     DUP @ 40 AND IF ." I" ELSE ." -" THEN
     DUP SPACE ID. 
@@ -267,7 +275,7 @@ DECIMAL
   ' (HOME)    CFA ' ABORT  6 + !
   ' (HELLO)   CFA ' ABORT 35 + !
   125 EMIT  
-  ." FLAVOR is ON." CR FRE CR
+  ." FLAVOR is ON." CR .FRE CR
   ." 'SAVE' and 'COLD' to proceed." CR CR ;
   
 : CLEAN ( -- ) ( FIXME )
@@ -278,7 +286,7 @@ DECIMAL
   ' QUIT       CFA ' ABORT 35 + ! 
   ' EXTENSIONS LFA @ PFA FENCE  !
   148 710 ! 125 EMIT
-  ." FLAVOR is OFF." CR FRE CR
+  ." FLAVOR is OFF." CR .FRE CR
   ." 'FORGET EXTENSIONS' to purge if needed." CR
   ." 'SAVE' and 'COLD' to proceed." CR CR ;
   
@@ -312,13 +320,13 @@ EDITOR DEFINITIONS
 : WRITE-LINE CLINE @ LINEOFF @ + CHAROFF @ 1 -
   POINT-CURSOR ELINE ;
 : WRITE-EXTRA EXTRAOFF @ LINEOFF @ + CHAROFF @ 1 -
-  POINT-CURSOR XLINE ; : FRE 741 @ HERE - ;
+  POINT-CURSOR XLINE ; : (FRE) 741 @ HERE - ;
 : 2TOP LINEOFF @ 1 - CHAROFF @ 1 - POINT-CURSOR HLINE ; 
 : BOT LINEOFF @ 16 + CHAROFF @ 1 - POINT-CURSOR HLINE ; 
 : ETITLE 0 CHAROFF @ POINT-CURSOR ." EDIT / Dr" 
   OFFSET @ 0= 0= . ." Scr" 
   SCR ? ." Side" SIDE
-  ? ." Free" FRE U. ; 
+  ? ." Free" (FRE) U. ; 
 : DISPLAY CLS 1 CRSINH C! ETITLE 2TOP CLINE @ 
   16 0 DO I CLINE ! WRITE-LINE LOOP CLINE !
   SIDE @ IF 32 ELSE 0 ENDIF CCHAR ! BOT
@@ -454,7 +462,9 @@ EDITOR DEFINITIONS
 FORTH DEFINITIONS
  
 : ED-HELP '( -- ; display FIG EDITOR help )
+  CR
   CR ." m SCR ! -> select screen m"
+  CR ." .BUFS   -> show buffers"
   CR ." --------- BASIC FIG EDITOR
   CR ." n |     -> add text in line n (P)"
   CR ." n XX    -> delete text in line n (E)"
@@ -485,6 +495,7 @@ CR CR ;
   CR CR ;
 
 : HELP '( -- ; display help )
+  CR
   CR ." VER for version"
   CR ." XLIST for enhanced VLIST"
   CR ." ED-HELP for screen editing help"

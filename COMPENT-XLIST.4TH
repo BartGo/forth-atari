@@ -5,7 +5,9 @@
 ( by BartGo             2024 ) 
 
 ( NOTE: plain DECOMP is not compatible, )
-( consider patch from COMPENT code      )
+( needs patch, described below          )
+( as a screen change                    )
+
 ( NOTE: redefining "'(" as "(" for      )
 ( the "production" version saves memory )
 
@@ -75,3 +77,23 @@ DECIMAL
  
 : TEST '( Drop equivalent: a --) ;
 : -ROT '( backrot: a b c -- b c a ) ROT ROT ;
+
+( ---------- )
+( DECOMP FIX )
+( ---------- )
+
+27 LOAD ( run manually )
+25 LIST
+EDITOR
+ 8 P ( added // => compents BG '24 )
+ 9 P : CKIT DUP ZBRAN = OVER BRAN = OR
+10 P  OVER PLOOP = OR OVER PPLOOP = OR  
+11 P  IF BRNCH ELSE DUP .LIT = IF
+12 P  1WORD ELSE DUP .CLIT = IF 1BYTE
+13 P  ELSE DUP PDOTQ = OVER ' // CFA
+14 P  = OR IF STG ELSE PWORD THEN
+15 P  THEN THEN THEN ; -->
+FLUSH
+21 LOAD ( run manually )
+DECOMP -ROT
+;S

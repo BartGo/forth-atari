@@ -1,20 +1,21 @@
 # forth-atari
 
-Snippets of Forth code, mainly for Atari 8-bit and its APX Extended Fig-Forth by Patrick Mullarky.
-
-Source and possible issues with the code mentioned in comments.
-
-Recommended method of using: paste code into Altirra and test.
+Snippets of Forth code, mainly for Atari 8-bit and its APX Extended Fig-Forth by Patrick Mullarky. Source and possible issues with the code are mentioned in the comments. Work in progress is usually in the "drafts" folder. Recommended method of using: paste code into Altirra and test. In some cases code is suited for storage on "screens" and it has to be put on the floppy / ATR by using the FIG editor commands.
 
 ## snippets (stable)
 
-* -INCLUDE.4TH - experimental and useless conditional load in APX Forth
+* -EXE.FORTH - EXECUTE conditionally (by myself)
+* ANON.4TH - anonymous variables (by Leonard Morgenstern, FDv06n1)
+* APX-4TH-EXT.4TH - extensions for APX Forth to make it more friendly to study Forth (by myself but combining multiple tools by others)
 * ARGRES.4TH - simple local variables (by Marc Perkel, FDv03n6)
-* CASEINSENS.4TH - making APX Forth case insensitive (from pns-Forth)
-* CO.4TH - a simple "coroutine" mechanism
-* COMPENT.4TH - compiled comments (by myself)
-* EDIT.4TH - full-screen editor (by Mike Dougherty, Micro Magazine)
+* ATARI-CONCEPTS.TXT - probable Atari Coin-Op department's documentation for dev tools using Forth (from "figasm, f69asm, computype master.atr", originally present at: "http://annex.retroarchive.org/disks/Atari/Forth-Disks/")
+* CASEINSENS.4TH - making APX Forth case insensitive (extracted from pns-Forth)
+* CO.4TH - a simple "coroutine" mechanism (described in multiple places, see the file for details)
+* COMPENT-XLIST.4TH - compiled comments (by myself)
+* EDIT.4TH - very nice screen editor (by Mike Dougherty, published in the Micro Magazine)
+* EDIT-BG.4TH - a simple screen editor (by myself)
 * ESCAPE.4TH - graphical demo (ported by John Mattes
+* INCLUDE.4TH - experimental and useless conditional load in APX Forth
 * LOCALS.4TH - most primitive local variables (by myself)
 * PANTOLA-TA.4TH - FORTH-EDYTOR by Roland Pantoła (together with EDYTOR WPROWADZANIA and very slightly tuned Ragsdale Assembler)
 * RECOLON.4TH - redefine colon words (by EHS, FDv06n3)
@@ -60,5 +61,5 @@ Recommended method of using: paste code into Altirra and test.
 * WORD-HIDING.4TH (still broken)
  
 ## misc
-* ATARI-CONCEPTS.TXT - Atari Coin-Op's documentation for dev tools using Forth
+
 

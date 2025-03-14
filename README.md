@@ -4,16 +4,22 @@ Snippets of Forth code, mainly for Atari 8-bit and its APX Extended Fig-Forth by
 
 ## snippets (stable)
 
-* -EXE.FORTH - EXECUTE conditionally (by myself)
+* -EXE.4TH - EXECUTE conditionally (by myself)
 * ANON.4TH - anonymous variables (by Leonard Morgenstern, FDv06n1)
-* APX-4TH-EXT.4TH - extensions for APX Forth to make it more friendly to study Forth (by myself but combining multiple tools by others)
+* APX-4TH-EXT.4TH - extensions for APX Forth to make it more friendly to study Forth (by myself but combining multiple tools by others, see comments)
 * ARGRES.4TH - simple local variables (by Marc Perkel, FDv03n6)
 * ATARI-CONCEPTS.TXT - probable Atari Coin-Op department's documentation for dev tools using Forth (from "figasm, f69asm, computype master.atr", originally present at: "http://annex.retroarchive.org/disks/Atari/Forth-Disks/")
+* BREAKPOINTS.4TH - breakpoints (BREAK & GO) by Frank Seuberling and Kim Harris, published in FDv05n1 - in an article signed by Leo Brodie
 * CASEINSENS.4TH - making APX Forth case insensitive (extracted from pns-Forth)
+* CLASSES-CRUDE.4TH - a primitive class-like mechanism (by myself)
 * CO.4TH - a simple "coroutine" mechanism (described in multiple places, see the file for details)
 * COMPENT-XLIST.4TH - compiled comments (by myself)
-* EDIT.4TH - very nice screen editor (by Mike Dougherty, published in the Micro Magazine)
+* DEFER-IS.4TH - example of deferred words (vectored execution), based on Henry Laxen's code published in FDv05n6p35
+* DISASM - ...
+* DISKSIMUL - ...
+* EDIT.4TH - very nice screen editor (by Mike Dougherty, published in the Micro Magazine nr __)
 * EDIT-BG.4TH - a simple screen editor (by myself)
+* EDIT-FIG-MINI.4TH - ...
 * ESCAPE.4TH - graphical demo (ported by John Mattes
 * INCLUDE.4TH - experimental and useless conditional load in APX Forth
 * LOCALS.4TH - most primitive local variables (by myself)

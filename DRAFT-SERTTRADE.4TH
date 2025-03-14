@@ -65,3 +65,70 @@ DECIMAL EDITOR
 15 P   OVER	PAD-SWAP PAD-SWAP PAD-SWAP	LOOP DROP ; : SERT&TRADE/ ;
 
 FLUSH
+
+
+
+----------------------- 2nd draft, still faulty
+
+
+( https://www.atarimagazines.com/compute/issue30/044_1_The_FORTH_Page.php )
+
+( COMPUTE, The FORTH Page, Disk Management)
+( Michael Riley, Philadelphia )
+( COMPUTE! ISSUE 30 / NOVEMBER 1982 / PAGE 232 )
+( The words SERT and TRADE allow you to move and mass-move screens around )
+( on a disk without fear of accidentally erasing something of value.      )
+( No matter how you use these commands, no screens are ever overwritten.  )
+( They simply end up somewhere else. )
+
+( SERT / N1 N2 N3 — / )
+(Deletes the group of screens numbered N1 through N2 and reinserts them   )
+( between the screens numbered N3 and N3 + 1. )
+
+( TRADE / N1 N2 N3 — / )
+( Swaps a group of screens numbered N1 through N2 with a group of screens )
+( starting at N3. The two groups are assumed to be the same size.
+
+( Adapted for Atari 8-bit APX Forth by BG )
+( - BLOCK replaced by "B/SCR *" )
+( - message numbers corrected   )
+ 
+0 VARIABLE B-DST 0 VARIABLE LIM 0 VARIABLE CNT
+0 VARIABLE S-DST 0 VARIABLE STRT
+0 VARIABLE PADB 2048 ALLOT ( pad-like buffer )
+
+: PAD-SWAP ( N1 --- / SWAP SCR W/ PADB )
+  DUP B/SCR * PADB 1024 + 1024 CMOVE
+	 PADB SWAP B/SCR * 1024 CMOVE UPDATE
+	 PADB 1024 + PADB 1024 CMOVE ;
+
+: (SERT) ( N1 N2 N3 --- )
+  DUP LIM ! SWAP - S-DST ! STRT !
+  LIM @ STRT @ - B-DST ! 0 CNT ! STRT @
+  BEGIN
+    DUP PAD-SWAP
+    BEGIN
+	  S-DST @ + DUP LIM @ > 0 =
+      IF B-DST @ - THEN
+      DUP PAD-SWAP 1 CNT +! DUP STRT @ = 	
+    UNTIL CNT @ B-DST @ <
+    WHILE 1 STRT +! 1+
+  REPEAT DROP ; 
+
+: RANGE? ( N1 --- N1 / LEGAL SCREEN NUMBER? )
+  1 OVER > OVER 88 ( MAX SCR ) > OR 8 ?ERROR ;
+
+: FX ( N1 N2 --- N2 N1 [OR] N1 N2 )
+  OVER OVER > IF SWAP THEN ;
+
+: SERT ( 1ST LAST DEST --- / REINSERT SCRS AT DEST )
+  1+ RANGE? SWAP 1+ RANGE? ROT RANGE?
+  FX >R FX R> FX (SERT) ;
+
+: TRADE ( IST LAST DEST --- / TRADE WITH SCRS AT DEST )
+ ROT >R R SWAP - B-DST ! ( LAST )
+ 1+ R> ( LAST + 1 1ST )
+ DO
+   I RANGE? I B-DST @ - RANGE? ( I I + DST)
+   OVER PAD-SWAP PAD-SWAP PAD-SWAP
+ LOOP DROP ; 

@@ -1,18 +1,21 @@
-( CRASH on APX Forth - FIXME !!!
-( originally written in Micromotion Forth-79
 
 ( *** )
-( TRANSIENT DEFINITIONS
-( BY Phillip Wasson
-( FD v93 nr5 p171
-( https://archive.org/details/Forth_Dimension_Volume_03_Number_6/page/n5/mode/1up 
+( TRANSIENT DEFINITIONS )
+( BY Phillip Wasson     )
+( FD v93 nr5 p171       )
 
-FIRST 1000 - CONSTANT TAREA
+( https://archive.org/details/Forth_Dimension_Volume_03_Number_6/page/n5/mode/1up 
+( originally written in Micromotion Forth-79
+( adapted for APX Atari Forth by BG )
+
+FORTH DEFINITIONS DECIMAL
+741 CONSTANT CEILING 
+CEILING @ 1024 - CONSTANT TAREA
 0 VARIABLE TP  TAREA TP !
 
 : TRANSIENT ( -- ADDR )
   HERE TP @ DP ! ;
-: PERMANENT ( -- ADDR )
+: PERMANENT ( ADDR -- )
   HERE TP ! DP ! ;
 : DISPOSE   ( -- )
   TAREA TP ! VOC-LINK

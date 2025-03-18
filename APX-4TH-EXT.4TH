@@ -11,13 +11,14 @@
 ( todo: include CALL in machine code )
 ( todo: include BREAK/GO             )
 
-
-FORTH DEFINITIONS 
-VOCABULARY EDITOR IMMEDIATE 
-FORTH DEFINITIONS 
 DECIMAL
+FORTH DEFINITIONS 
 
 : EXTENSIONS ;
+
+VOCABULARY EDITOR IMMEDIATE 
+FORTH DEFINITIONS 
+
 
 : .FRE ( -- )
   741 @ HERE - U. ." bytes free" ;
@@ -62,8 +63,7 @@ DECIMAL
   80 SCR ! 
   CR .FRE
   CR ." Current Screen is: #" SCR ?
-  CR ." FLAVOR enabled, 'CLEAN' disables"
-  CR ." Type 'HELP' for help"
+  CR ." FLAVOR enabled, 'HELP' for help"
   CR QUIT ;
   
 ( // is a modified word (.") 
@@ -190,6 +190,9 @@ DECIMAL
 : (HOME) ( -- )
   146 710 ! 125 EMIT ;
 
+: S0 18 +ORIGIN @ ; ( -- n )
+: R0 20 +ORIGIN @ ; ( -- n )
+
 : .S '( -- ; display stack )
   40 EMIT SPACE
   SP@ 188 = 0= IF SP@ 2 - 186 DO
@@ -277,16 +280,16 @@ DECIMAL
   ." FLAVOR is ON." CR .FRE CR
   ." 'SAVE' and 'COLD' to proceed." CR CR ;
   
-: CLEAN ( -- ) ( FIXME )
-  ( ' WARNING  CFA ' MESSAGE    ! ) 
-  ( ' @        CFA ' MESSAGE 2+ ! )
+: CLEAN ( -- ) 
+  ' WARNING    CFA ' MESSAGE    !  
+  ' @          CFA ' MESSAGE 2+ ! 
   ' PROMPT     CFA ' QUIT 26 +  ! 
   ' CR         CFA ' ABORT 6 +  ! 
   ' QUIT       CFA ' ABORT 35 + ! 
   ' EXTENSIONS LFA @ PFA FENCE  !
   148 710 ! 125 EMIT
   ." FLAVOR is OFF." CR .FRE CR
-  ." 'FORGET EXTENSIONS' to purge if needed." CR
+  ." 'FORGET EXTENSIONS' obliterates," CR
   ." 'SAVE' and 'COLD' to proceed." CR CR ;
 
 EDITOR DEFINITIONS
@@ -462,7 +465,51 @@ EDITOR DEFINITIONS
 : E. SCR @ EDIT ;  
 
 FORTH DEFINITIONS
- 
+
+
+( *******   GOESINTO    ****** )
+( Decompiler by R. D. Ackerman )
+( -- Forth Dimension Vol14 Nr2 )
+( "GOIN word", RET/SPC/Q ) 
+0 VARIABLE GIN 
+: GIN+ GIN @ 2+ DUP GIN ! SPACES ; 
+: GCHK DUP @ 2+ ' COMPILE =
+  IF  2+ DUP @ 2+ NFA ID. 2+
+  ELSE DUP @ 2+ DUP ' LIT =
+  OVER ' BRANCH  = OR OVER ' 0BRANCH = OR
+  OVER ' (LOOP)  = OR SWAP ' (+LOOP) = OR
+  IF 2+ DUP @ SPACE . 2+ ELSE DUP @ 2+ ' CLIT =
+  IF 2+ DUP C@ SPACE . 1+ ELSE DUP @ 2+ 
+  DUP ' (.") = SWAP ' // = OR IF ( BG )
+  2+ DUP COUNT TYPE 
+  DUP C@ 1+ + ELSE 2+ THEN THEN THEN THEN 
+  -2 GIN +! ; 
+: MYSELF LATEST PFA CFA , ; IMMEDIATE
+: DIN GIN @ SPACES ;
+: (GOESINTO) ( pfa -- )
+  DUP CFA @ ' : CFA @ =
+  OVER ' ERROR =
+  0= AND IF
+	BEGIN
+ 	  DUP @ DUP ' ;S CFA =
+      OVER ' (;CODE) CFA =
+	OR 0= WHILE
+	  2+ CR OVER U. DUP GIN+
+	  NFA ID. KEY 
+      DUP 81 = IF SP! QUIT ELSE 155 =
+      IF MYSELF ELSE DROP THEN THEN
+      GCHK
+    REPEAT
+	2+ CR OVER U. DIN NFA ID.
+  THEN DROP ; ( 81=Q, 155=RETURN )
+: GOESINTO -FIND IF
+    DROP 0 GIN ! CR
+    CR ." * GOESINTO decomp by R. D. Ackerman *" 
+    CR ." * Q=bye / Space=next / Enter=gointo *"
+    CR (GOESINTO)
+  ELSE ." NOT FOUND" CR THEN ;
+: DECOMP GOESINTO ;
+
 : ED-HELP '( -- ; display FIG EDITOR help )
   CR
   CR ." m SCR ! -> select screen m"
@@ -513,6 +560,7 @@ CR CR ;
   CR ." n m SEARCH aaa for screen search"
   CR ." s1 s2 OUTLINE for screen summary"
   CR ." : X ; RE: X ;RE to redefine"
+  CR ." CLEAN removes extension bindings"
   CR CR ;
 
 ( FLAVOR SAVE COLD )

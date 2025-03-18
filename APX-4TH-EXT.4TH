@@ -1,3 +1,4 @@
+
 ( APX Extended Fig-Forth )
 ( & s*p*a*c*e fig4th 1.1 )
 ( 2025 Extensions -- WIP )
@@ -220,6 +221,7 @@ DECIMAL
     132 + ?TERMINAL IF LEAVE THEN
   LOOP DROP CR ;
 
+( fixme: not always finds! )
 : (FINDID.) ( addr -- )
   BEGIN
     DUP
@@ -248,15 +250,14 @@ DECIMAL
 ( DOS-like DIR )
 : (INDEX) ( scr -- ; commented lines #0 ) 
   DUP SCR ! 0 SWAP (LINE) SWAP DUP C@ (ASCII) (
+  ( ) 
   = 0= IF 2DROP ;S THEN CR ." #"
   SCR ? SWAP -TRAILING TYPE ;      
 : INDICES ( 1st last -- ; INDEX on non-empty )
   1+ SWAP DO I (INDEX)
     ?TERMINAL IF LEAVE THEN LOOP ;
-: DIR 0 89 INDICES ;
-: D:  DR0 ;
-: D1: DR0 ;
-: D2: DR1 ;
+: DIR 0 89 INDICES ; 
+: D:  DR0 ; : D1: DR0 ; : D2: DR1 ;
 
 ( enable / disable "bindings" )
 : FLAVOR ( -- )
@@ -357,7 +358,8 @@ EDITOR DEFINITIONS
 : DOWN-CURSOR SCREEN-CURSOR DOWN ;
 : RETURN SCREEN-CURSOR SIDE @ IF
   32 ELSE 0 ENDIF CCHAR ! DOWN ;
-: EABORT EMPTY-BUFFERS 1 STOP ! [COMPILE] FORTH ;
+: EABORT CLS EMPTY-BUFFERS 1 STOP !
+ [COMPILE] FORTH ;
 : SH CLS 0 CRSINH C! IN @ >R BLK @ >R 0 IN ! 
   0 BLK ! CR QUERY INTERPRET R> BLK ! R> IN ! ANYKD ; 
 : UNDOSCR EMPTY-BUFFERS SCR +! EREAD DISPLAY ; ( n -- )
@@ -371,27 +373,26 @@ EDITOR DEFINITIONS
   DUP 1 - C@ OVER C! 1 - LOOP ENDIF BL SWAP C! ;
 : INSERT SIDE @ IF 63 ELSE 31 ENDIF 
   INSERT-CHAR WRITE-LINE CURSOR SCREEN-CURSOR ;
-: HLP 
-  125 EMIT
-  ." ( EDIT - HELP ) --> Esc-H: help" CR
-  ." Arrows, Ins, BckSp, Tab: normal" CR
-  ." Esc-Q:  quit (empty-buffers)" CR
-  ." Esc-S:  save (flush)" CR
-  ." Esc-Z:  undo (empty-buffers) " CR
+: HLP 125 EMIT
+  ." EDIT by M. Dougherty (Esc-H: help)" CR
+  ." Arrows, Ins, BckSp, Tab: normal use" CR
   ." Return: next line" CR
-  ." Shf-Ins: ins ln*; Esc-1:5: plgns" CR
+  ." Ctl-Ins: insert space " CR
+  ." Ctl-BckSpc: delete;  Esc-0: cold" CR
+  ." Clear: clear screen (Shf> Ctl>)" CR 
+  ." Esc-Q: quit (empty-buffers)" CR
+  ." Esc-S: save (flush)" CR
+  ." Esc-Z: undo (empty-buffers) " CR
+  ." Esc-B: forth command line" CR
+  ." Esc-N: screen+1 (empty-buf)( > )" CR
+  ." Esc-L: screen-1 (empty-buf)( < )" CR
+  ." Esc-R: rotate/sides        ( / )" CR
   ." Shf-Del: del ln*; Esc-T/F: color" CR
   ." Esc-V: ins last del ln*" CR
-  ." Esc-B: forth command line" CR
-  ." Esc-R: rotate/sides     ( / )" CR
-  ." Esc-N: screen+1/empt-bf ( > )" CR
-  ." Esc-L: screen-1/empt-bf ( < )" CR
-  ." Ctl-Ins: ins space; " CR
-  ." Ctl-BckSpc: del;  Esc-0: cold" CR
-  ." Clear: clear screen (Shf> Ctl>)" CR CR
-  ." 1-5: 1/VLIST 2/LIST this 3/.BUFS" CR
-  ."      4/SCR18 5/LOAD this" CR CR
- ANYKD DISPLAY ; 
+  ." Shf-Ins: ins ln; Esc-1:5: plgns" CR
+  ."         1/VLIST 2/LIST-this 3/.BUFS" CR
+  ."         4/SCR18 5/LOAD-this" CR 
+  CR ANYKD DISPLAY ; 
 : DELETE-CHAR ADDR SWAP CCHAR @ -
   -DUP IF 0 DO DUP 1 + C@ OVER C!
   1 + LOOP ENDIF BL SWAP C! ;
@@ -454,7 +455,6 @@ EDITOR DEFINITIONS
 : E. SCR @ EDIT ;  
 
 FORTH DEFINITIONS
-
 
 ( *******   GOESINTO    ****** )
 ( Decompiler by R. D. Ackerman )
@@ -606,5 +606,7 @@ DISPOSE
 : GO '( -- ; proceed after BREAK )
   RP@ RP* @ = IF R> DROP R> DROP
   ELSE ." can't resume " QUIT THEN ;
+
+: TASK '( -- ; end of EXTENSIONS ) ;
 
 SAVE COLD  

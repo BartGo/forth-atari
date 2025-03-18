@@ -235,7 +235,6 @@ DECIMAL
   CR ;
 : (FINDNO) ( addr nl n2 -- )
   CR CR ." LOOKING FOR "
-  DUP 0 4 D.R
   SPACE DUP 2+ NFA ID.
   CR ROT ROT OVER + SWAP
   DO DUP I @ = IF
@@ -593,14 +592,15 @@ PERMANENT
   FORTH
 DISPOSE
 
+: .RS ( -- )
+  CR ." RS: " RP@ R0 2 -
+  DO I @ U. -2 +LOOP CR ;
+
 0 VARIABLE RP*
 : BREAK '( -- ; BREAK&GO debugging method )
-  CR ." (BREAK reached, type GO to proceed)"
-  CR ." S= " .S CR ." R= " 
-  RP@ R0 = 0= IF
-    RP@ R0 DO I @ U. -2 +LOOP
-  THEN CR RP@ 4 - RP* ! 0 BLK !
-  BEGIN QUERY INTERPRET ." aok" CR AGAIN ;
+  CR RP@ 4 - RP* ! 0 BLK !  BEGIN
+    QUERY INTERPRET ." aok [GO]" CR
+  AGAIN ;
 : || '( -- ; alias for BREAK ) BREAK ;
 : ?| '( f -- ; BREAK if f ) IF BREAK THEN ;
 : GO '( -- ; proceed after BREAK )

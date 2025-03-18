@@ -12,6 +12,7 @@
 ( todo: include BREAK/GO             )
 
 DECIMAL
+0 WARNING !
 FORTH DEFINITIONS 
 
 : EXTENSIONS ;
@@ -510,6 +511,29 @@ FORTH DEFINITIONS
   ELSE ." NOT FOUND" CR THEN ;
 : DECOMP GOESINTO ;
 
+( TRANSIENT DEFINITIONS )
+741 CONSTANT CEILING 
+CEILING @ 1024 512 + - CONSTANT TAREA
+( default is 1.5kb for the Ragsdale ASM )
+0 VARIABLE TP  TAREA TP !
+: TRANSIENT ( -- ADDR )
+  HERE TP @ DP ! ;
+: PERMANENT ( ADDR -- )
+  HERE TP ! DP ! ;
+: DISPOSE   ( -- )
+  TAREA TP ! VOC-LINK
+  BEGIN DUP
+   BEGIN @ DUP TAREA U< UNTIL DUP
+   ROT ! DUP 0=
+  UNTIL DROP VOC-LINK @
+  BEGIN DUP 4 -
+   BEGIN DUP
+    BEGIN PFA LFA @ DUP TAREA U<
+	UNTIL DUP ROT PFA LFA ! DUP 0=
+   UNTIL DROP @ DUP 0=
+  UNTIL DROP
+  [COMPILE] FORTH DEFINITIONS ;
+  
 : ED-HELP '( -- ; display FIG EDITOR help )
   CR
   CR ." m SCR ! -> select screen m"
@@ -553,7 +577,9 @@ CR CR ;
   CR ." .FRE to show free bytes"
   CR ." .BUFS to show disc buffers"
   CR ." STACK to toggle stack display"
-  ( CR ." DECOMP ABC to decompile )
+  CR ." DECOMP ABC to decompile"
+  CR ." BREAK to debug, GO to proceed"
+  CR ." || is BREAK, ?| is conditional"
   CR ." RE: and ;RE to redefine words"
   CR ." ' aaa SCAN to locate uses of aaa"
   CR ." D1:/D2:/DIR to browse floppies"
@@ -563,4 +589,34 @@ CR CR ;
   CR ." CLEAN removes extension bindings"
   CR CR ;
 
-( FLAVOR SAVE COLD )
+FLAVOR
+
+TRANSIENT 
+75 LOAD
+PERMANENT
+  ASSEMBLER
+  CODE RP@ 
+    XSAVE STX,
+    TSX, TXA, PHA,
+    1 # LDA,
+    XSAVE LDX,
+    PUSH JMP,
+  END-CODE
+  FORTH
+DISPOSE
+
+0 VARIABLE RP*
+: BREAK '( -- ; BREAK&GO debugging method )
+  CR ." (BREAK reached, type GO to proceed)"
+  CR ." S= " .S CR ." R= " 
+  RP@ R0 = 0= IF
+    RP@ R0 DO I @ U. -2 +LOOP
+  THEN CR RP@ 4 - RP* ! 0 BLK !
+  BEGIN QUERY INTERPRET ." aok" CR AGAIN ;
+: || '( -- ; alias for BREAK ) BREAK ;
+: ?| '( f -- ; BREAK if f ) IF BREAK THEN ;
+: GO '( -- ; proceed after BREAK )
+  RP@ RP* @ = IF R> DROP R> DROP
+  ELSE ." can't resume " QUIT THEN ;
+
+SAVE COLD  

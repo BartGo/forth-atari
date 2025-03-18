@@ -2,6 +2,8 @@
 ( & s*p*a*c*e fig4th 1.1 )
 ( 2025 Extensions -- WIP )
 
+( fixme: after error, things on stack)
+
 ( todo: include GOESINTO modified    )
 (   or better RDCP but accomodate // )
 ( todo: include S0,R0,.S,.RS         )
@@ -10,12 +12,12 @@
 ( todo: include BREAK/GO             )
 
 
-FORTH DEFINITIONS DECIMAL
-
-: EXTENSIONS ;
-
+FORTH DEFINITIONS 
 VOCABULARY EDITOR IMMEDIATE 
 FORTH DEFINITIONS 
+DECIMAL
+
+: EXTENSIONS ;
 
 : .FRE ( -- )
   741 @ HERE - U. ." bytes free" ;
@@ -27,10 +29,14 @@ FORTH DEFINITIONS
   DUP 2 * 712 C! [COMPILE] LOAD
   DECIMAL ;
 
+: BEEP 253 EMIT ;
 : (MESSAGE) ( n -- )
+  ( blink red on real err, orange on warning / msg 4 )
+  710 @ SWAP DUP 4 = 0= IF
+    49 710 ! ELSE 20 710 !
+  THEN BEEP SWAP 710 ! ( n )
   DUP WARNING @ 0= IF
     ." MSG # " . CR DROP ;S ELSE DROP THEN
-  DUP  4 = 0= IF 49 712 ! CR QUIT THEN ( TODO: ? )
   DUP  1 = IF ." Stack empty" CR DROP ;S THEN
   DUP  2 = IF ." Dictionary full" CR DROP ;S THEN
   DUP  3 = IF ." Wrong address mode" CR DROP ;S THEN
@@ -47,7 +53,9 @@ FORTH DEFINITIONS
   DUP 22 = IF ." Use only when loading" CR DROP ;S THEN
   DUP 23 = IF ." Off current screen" CR DROP ;S THEN
   DUP 24 = IF ." Declare VOCABULARY" CR DROP ;S THEN
-  DROP ;
+  DROP CR ;
+' (MESSAGE) CFA ' MESSAGE !
+' ;S        CFA ' MESSAGE 2+ !
 
 : (HELLO) ( -- )
   EMPTY-BUFFERS
@@ -59,8 +67,8 @@ FORTH DEFINITIONS
   CR QUIT ;
   
 ( // is a modified word (.") 
-( but instead of printing, keeps
-( the string in the dictionary
+( but instead of printing, keeps )
+( the string in the dictionary )
 : // R COUNT DUP 1+ R> + >R
   DROP DROP ;
 
@@ -69,10 +77,8 @@ FORTH DEFINITIONS
   STATE @ IF COMPILE CLIT C,
   THEN ;  IMMEDIATE
 
-( '( is a modified version of ."
-( but using // instead of (.")
-( and used to put the string
-( into the dictionary 
+( '( is a modified version of ." )
+( to compile comments as help for word definitions )
 : '( STATE @ 0= IF
     (ASCII) ) WORD ELSE
     COMPILE // (ASCII) ) WORD HERE
@@ -80,22 +86,18 @@ FORTH DEFINITIONS
   THEN ; IMMEDIATE
 
 HEX
-
-: ['] [COMPILE] ' ;
-
 : XLIST '( -- ; enhanced VLIST )
   CR 80 OUT ! CONTEXT @ @ 
   CR ." Context Current: "
   CONTEXT @ 4 - NFA ID.
   CURRENT @ 4 - NFA ID. CR CR
-  ." SI WORD DEFINED LNK-TO" CR
-  ." ----------------------" CR
+  ." SI WORD         DEFINED-BY" CR
+  ." --------------------------" CR
   BEGIN
     OUT @ C/L 2 / > 0= IF CR 0 OUT ! THEN
-    ( DUP PFA 4 .R SPACE )
-    DUP @ 20 AND IF ." S" ELSE ." -" THEN
-    DUP @ 40 AND IF ." I" ELSE ." -" THEN
-    DUP SPACE ID. 
+    DUP @ 20 AND IF ." S" ELSE SPACE THEN
+    DUP @ 40 AND IF ." I" ELSE SPACE THEN
+    DUP SPACE ID. 3 SPACES
 	DUP PFA CFA @ 
            DUP 1441 = IF ." :\"
       ELSE DUP 147D = IF ." CONSTANT\"
@@ -104,31 +106,30 @@ HEX
       ELSE DUP 18D8 = IF ." DOES>\"
     THEN THEN THEN THEN THEN
 	U.
-	DUP PFA LFA @ DUP 0= IF
-      ." \-- " DROP ELSE ." \" ID. THEN
 	DUP PFA DUP @ [ ' // CFA ] LITERAL = IF
       CR 2+ COUNT TYPE CR 
 	ELSE DROP THEN
     PFA LFA @ DUP 0= ?TERMINAL OR CR
   UNTIL DROP ;
 
-: RE-CREATE ( -- )
+HEX
+: (RE-CREATE) ( -- )
   -FIND 0= IF
     HERE COUNT TYPE ."  NOT FOUND" ABORT
   THEN
   DROP DUP CFA @ [ ' : CFA @ ] LITERAL = 0= IF
     HERE COUNT TYPE ."  NOT A COLON WORD" ABORT
   THEN HERE SWAP ! ;
-: RE-EXIT ( -- ) R> R> 2DROP ;
+: (RE-EXIT) ( -- ) R> R> 2DROP ;
 : RE: ( -- )
   SP@ CSP ! CURRENT @ CONTEXT ! 
-  RE-CREATE [ ' : CFA @ ] LITERAL , ] ;
+  (RE-CREATE) [ ' : CFA @ ] LITERAL , ] ;
 : ;RE ( -- )
-  ?CSP COMPILE RE-EXIT
+  ?CSP COMPILE (RE-EXIT)
   [COMPILE] [ ; IMMEDIATE
-( : XX 1 . ; XX RE: XX 2 . ;RE XX
+( : XX 1 . ; XX RE: XX 2 . ;RE XX )
 
-
+HEX
 ( fig edit minimal subset, in the FORTH vocabulary )
 : TEXT/ HERE C/L 1+ BLANKS WORD HERE PAD C/L 1+ CMOVE ;
 : LINE/ DUP FFF0 AND 17 ?ERROR SCR @ (LINE) DROP ;
@@ -189,13 +190,13 @@ DECIMAL
 : (HOME) ( -- )
   146 710 ! 125 EMIT ;
 
-: (.S) '( -- ; display stack )
+: .S '( -- ; display stack )
   40 EMIT SPACE
   SP@ 188 = 0= IF SP@ 2 - 186 DO
   I @ . -2 +LOOP THEN 41 EMIT SPACE ;
 
 : (PROMPT) ( -- )
-  0 IF (.S) THEN
+  0 IF .S THEN
   PFLAG @ 0 PFLAG ! ." ok"
   ' EDITOR CONTEXT @ 4 - = IF ." (editor)" THEN
   PFLAG ! ( prompt )
@@ -238,7 +239,6 @@ DECIMAL
     THEN ROT OR
   UNTIL 3 + NFA ID.
   CR ;
-
 : (FINDNO) ( addr nl n2 -- )
   CR CR ." LOOKING FOR "
   DUP 0 4 D.R
@@ -248,7 +248,6 @@ DECIMAL
     I 0 4 D.R SPACE
     I (FINDID.)
   THEN LOOP DROP ; 
-  
 : SCAN '( pfa -- ; where the word has been used? )
   CFA
   ' LIT CFA ' LATEST CFA 
@@ -267,7 +266,7 @@ DECIMAL
 : D1: DR0 ;
 : D2: DR1 ;
 
-( enable / disable "system bindings" )
+( enable / disable "bindings" )
 : FLAVOR ( -- )
   ' (MESSAGE) CFA ' MESSAGE !
   ' ;S        CFA ' MESSAGE 2+ !
@@ -290,8 +289,6 @@ DECIMAL
   ." 'FORGET EXTENSIONS' to purge if needed." CR
   ." 'SAVE' and 'COLD' to proceed." CR CR ;
 
-( space forth has no EDITOR )
-VOCABULARY EDITOR IMMEDIATE
 EDITOR DEFINITIONS
 : -EXE ( -EXE myword -- )
   -FIND IF DROP CFA EXECUTE
@@ -369,8 +366,6 @@ EDITOR DEFINITIONS
 : RETURN SCREEN-CURSOR SIDE @ IF
   32 ELSE 0 ENDIF CCHAR ! DOWN ;
 : EABORT EMPTY-BUFFERS 1 STOP ! [COMPILE] FORTH ;
-( : FLASH FRM# @ 255 XOR FRM# ! ; )
-( : BEEPF BEEP FLASH ; )
 : SH CLS 0 CRSINH C! IN @ >R BLK @ >R 0 IN ! 
   0 BLK ! CR QUERY INTERPRET R> BLK ! R> IN ! ANYKD ; 
 : UNDOSCR EMPTY-BUFFERS SCR +! EREAD DISPLAY ; ( n -- )
@@ -386,23 +381,25 @@ EDITOR DEFINITIONS
   INSERT-CHAR WRITE-LINE CURSOR SCREEN-CURSOR ;
 : HLP 
   125 EMIT
- ." ( EDIT - HELP ) --> Esc-H: help" CR
- ." Arrows, Ins, BckSp, Tab: normal" CR
- ." Esc-Q:  quit (empty-buffers)" CR
- ." Esc-S:  save (flush)" CR
- ." Esc-Z:  undo (empty-buffers) " CR
- ." Return: next line" CR
- ." Shf-Ins: ins ln*; Esc-1:5: plgns" CR
- ." Shf-Del: del ln*; Esc-T/F: color" CR
- ." Esc-V: ins last del ln*" CR
- ." Esc-B: forth command line" CR
- ." Esc-R: rotate/sides     ( / )" CR
- ." Esc-N: screen+1/empt-bf ( > )" CR
- ." Esc-L: screen-1/empt-bf ( < )" CR
- ." Ctl-Ins: ins space; " CR
- ." Ctl-BckSpc: del;  Esc-0: cold" CR
- ." Clear: clear screen (Shf> Ctl>)" CR
-    ANYKD DISPLAY ; 
+  ." ( EDIT - HELP ) --> Esc-H: help" CR
+  ." Arrows, Ins, BckSp, Tab: normal" CR
+  ." Esc-Q:  quit (empty-buffers)" CR
+  ." Esc-S:  save (flush)" CR
+  ." Esc-Z:  undo (empty-buffers) " CR
+  ." Return: next line" CR
+  ." Shf-Ins: ins ln*; Esc-1:5: plgns" CR
+  ." Shf-Del: del ln*; Esc-T/F: color" CR
+  ." Esc-V: ins last del ln*" CR
+  ." Esc-B: forth command line" CR
+  ." Esc-R: rotate/sides     ( / )" CR
+  ." Esc-N: screen+1/empt-bf ( > )" CR
+  ." Esc-L: screen-1/empt-bf ( < )" CR
+  ." Ctl-Ins: ins space; " CR
+  ." Ctl-BckSpc: del;  Esc-0: cold" CR
+  ." Clear: clear screen (Shf> Ctl>)" CR CR
+  ." 1-5: 1/VLIST 2/LIST this 3/.BUFS" CR
+  ."      4/SCR18 5/LOAD this" CR CR
+ ANYKD DISPLAY ; 
 : DELETE-CHAR ADDR SWAP CCHAR @ -
   -DUP IF 0 DO DUP 1 + C@ OVER C!
   1 + LOOP ENDIF BL SWAP C! ;
@@ -470,7 +467,7 @@ FORTH DEFINITIONS
   CR
   CR ." m SCR ! -> select screen m"
   CR ." .BUFS   -> show buffers"
-  CR ." --------- BASIC FIG EDITOR
+  CR ." --------- BASIC FIG EDITOR"
   CR ." n |     -> add text in line n (P)"
   CR ." n XX    -> delete text in line n (E)"
   CR ." FL.     -> save (FLUSH)"
@@ -482,7 +479,7 @@ FORTH DEFINITIONS
   CR ." m EDIT  -> edit screen m"
   CR ." E.      -> edit current screen"
   CR ."            Esc+H opens help"
-  CR ."  FORTH  -> disable advanced editor"
+  CR ." FORTH   -> disable advanced editor"
 CR CR ;
   
 : VER '( -- ; display version )
@@ -504,16 +501,18 @@ CR CR ;
   CR ." VER for version"
   CR ." XLIST for enhanced VLIST"
   CR ." ED-HELP for screen editing help"
-  CR ." STACK to toggle stack display"
+  CR ." .S to show the stack"
   CR ." .CC for CONTEXT and CURRENT info"
-  CR ." .BUFS to show disc buffers"
-  ( CR ." DECOMP ABC to decompile )
   CR ." .FRE to show free bytes"
+  CR ." .BUFS to show disc buffers"
+  CR ." STACK to toggle stack display"
+  ( CR ." DECOMP ABC to decompile )
   CR ." RE: and ;RE to redefine words"
   CR ." ' aaa SCAN to locate uses of aaa"
   CR ." D1:/D2:/DIR to browse floppies"
   CR ." n m SEARCH aaa for screen search"
   CR ." s1 s2 OUTLINE for screen summary"
+  CR ." : X ; RE: X ;RE to redefine"
   CR CR ;
 
-( FLAVOR SAVE COLD ) 
+( FLAVOR SAVE COLD )

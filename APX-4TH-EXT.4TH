@@ -2,24 +2,10 @@
 ( & s*p*a*c*e fig4th 1.1 )
 ( 2025 Extensions -- WIP )
 
-( fixme: after error, things on stack)
+( todo: consider RDCP instead of GOESINTO  )
 
-( todo: include GOESINTO modified    )
-(   or better RDCP but accomodate // )
-( todo: include S0,R0,.S,.RS         )
-( todo: include RP@ in machine code  )
-( todo: include CALL in machine code )
-( todo: include BREAK/GO             )
-
-DECIMAL
-0 WARNING !
-FORTH DEFINITIONS 
-
-: EXTENSIONS ;
-
-VOCABULARY EDITOR IMMEDIATE 
-FORTH DEFINITIONS 
-
+FORTH DEFINITIONS DECIMAL 0 WARNING ! : EXTENSIONS ;
+VOCABULARY EDITOR IMMEDIATE FORTH DEFINITIONS 
 
 : .FRE ( -- )
   741 @ HERE - U. ." bytes free" ;
@@ -32,6 +18,7 @@ FORTH DEFINITIONS
   DECIMAL ;
 
 : BEEP 253 EMIT ;
+
 : (MESSAGE) ( n -- )
   ( blink red on real err, orange on warning / msg 4 )
   710 @ SWAP DUP 4 = 0= IF
@@ -56,15 +43,16 @@ FORTH DEFINITIONS
   DUP 23 = IF ." Off current screen" CR DROP ;S THEN
   DUP 24 = IF ." Declare VOCABULARY" CR DROP ;S THEN
   DROP CR ;
-' (MESSAGE) CFA ' MESSAGE !
-' ;S        CFA ' MESSAGE 2+ !
+
+' (MESSAGE) CFA ' MESSAGE    ! ( ex: WARNING )
+' ;S        CFA ' MESSAGE 2+ ! ( ex: @ )
 
 : (HELLO) ( -- )
-  EMPTY-BUFFERS
-  80 SCR ! 
+  EMPTY-BUFFERS 80 SCR ! 
+  CR ." using extensions by BG - March, 2025" CR
   CR .FRE
-  CR ." Current Screen is: #" SCR ?
-  CR ." FLAVOR enabled, 'HELP' for help"
+  CR ." Current Screen is #" SCR ?
+  CR ." 'HELP' for help"
   CR QUIT ;
   
 ( // is a modified word (.") 

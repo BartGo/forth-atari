@@ -1,8 +1,3 @@
-( FIXME: CRASH )
-
-( * RDCP, a Recursive Decompiler * )
-(  by Norman L. Hills / FDv5n6p16  )
-
 ( CASE BY C. EAKER FD V02N03 P 36 )
 : /CASE
   ?COMP CSP @ !CSP
@@ -31,7 +26,8 @@
   CSP ! ; IMMEDIATE  
     
   
-( RDCP itself )
+
+( RDCP )
 
 HEX
 0 VARIABLE GIN
@@ -61,11 +57,11 @@ HEX
 : 1KEY KEYSW @
   IF ?TERMINAL IF ASCII Q
   ELSE DUP RDFEN @ U<
-  IF BL ELSE 0D THEN THEN
+  IF BL ELSE CR THEN THEN
   ELSE KEY THEN ;
 
 : GCHK ( pfa -- pfa2 )
-  /CASE GOV ' COMPILE =
+  1 /CASE GOV ' COMPILE =
     /OF 2+D @ 2+ NFA ID. /ENDOF
        GOV GCHKTYP
     /OF 2+D @ SPACE U. /ENDOF
@@ -103,13 +99,13 @@ HEX
  	  2+ GIN+ DUP NFA DISTYPE
  	  1KEY /CASE
  	    ASCII Q /OF
- 	  	SP! BASESAV @
- 	  	BASE ! QUIT /ENDOF
- 	    0D      /OF
- 	  	MYSELF /ENDOF
+ 	  	  SP! BASESAV @
+ 	  	  BASE ! QUIT /ENDOF
+ 	    155 ( CR ) /OF
+ 	  	  MYSELF /ENDOF
  	    ASCII U /OF
- 	  	DROP DROP R>
- 	  	DROP -2 GIN +! /ENDOF
+ 	  	  DROP DROP R>
+ 	  	  DROP -2 GIN +! /ENDOF
  	    DROP
  	  /ENDCASE
  	  GCHK

@@ -5,21 +5,27 @@
 
 ( todo: consider RDCP instead of GOESINTO  )
 
-FORTH DEFINITIONS DECIMAL 0 WARNING ! : EXTENSIONS ;
+FORTH DEFINITIONS DECIMAL
+0 WARNING !
+: EXTENSIONS ;
 VOCABULARY EDITOR IMMEDIATE FORTH DEFINITIONS 
 
 : .FRE ( -- )
   741 @ HERE - U. ." bytes free" ;
 
+( blink border while loading )
 : --> ( -- )
   SCR @ 1+ 2 * 712 C! [COMPILE] --> ; 
 
-: LOAD ( -- ) 
+( blink border while loading )
+: LOAD ( n -- ) 
   DUP 2 * 712 C! [COMPILE] LOAD
   DECIMAL ;
 
 : BEEP 253 EMIT ;
 
+( static messages are needed as a bigger kernel overwrites )
+( first screens, including those with messages )
 : (MESSAGE) ( n -- )
   ( blink red on real err, orange on warning / msg 4 )
   710 @ SWAP DUP 4 = 0= IF
@@ -55,7 +61,8 @@ VOCABULARY EDITOR IMMEDIATE FORTH DEFINITIONS
   CR ." Current Screen is #" SCR ?
   CR ." 'HELP' for help"
   CR QUIT ;
-  
+
+( by BG )
 ( // is a modified word (.") 
 ( but instead of printing, keeps )
 ( the string in the dictionary )
@@ -67,6 +74,7 @@ VOCABULARY EDITOR IMMEDIATE FORTH DEFINITIONS
   STATE @ IF COMPILE CLIT C,
   THEN ;  IMMEDIATE
 
+( by BG )
 ( '( is a modified version of ." )
 ( to compile comments as help for word definitions )
 : '( STATE @ 0= IF
@@ -76,6 +84,7 @@ VOCABULARY EDITOR IMMEDIATE FORTH DEFINITIONS
   THEN ; IMMEDIATE
 
 HEX
+( by BG )
 : XLIST '( -- ; enhanced VLIST )
   CR 80 OUT ! CONTEXT @ @ 
   CR ." Context Current: "
@@ -103,6 +112,8 @@ HEX
   UNTIL DROP ;
 
 HEX
+( Re-Defining a Colon Word )
+( by E. H. Schmauch, FDv6n3p20 )
 : (RE-CREATE) ( -- )
   -FIND 0= IF
     HERE COUNT TYPE ."  NOT FOUND" ABORT
@@ -120,7 +131,7 @@ HEX
 ( : XX 1 . ; XX RE: XX 2 . ;RE XX )
 
 HEX
-( fig edit minimal subset, in the FORTH vocabulary )
+( FIG edit minimal subset, in the FORTH vocabulary )
 : TEXT/ HERE C/L 1+ BLANKS WORD HERE PAD C/L 1+ CMOVE ;
 : LINE/ DUP FFF0 AND 17 ?ERROR SCR @ (LINE) DROP ;
 : -MOVE/ LINE/ C/L CMOVE UPDATE ; 
@@ -152,7 +163,8 @@ HEX
 
 DECIMAL
 
-( OUTLINE )
+( Source Screen Documentation Tool )
+( Kim Harris, FDv4n2p23 )
 : OUTLINE ( #scr -- ) 
   DUP CR CR ." Screen # " . DUP SCR !
   15 0 DO
@@ -167,7 +179,8 @@ DECIMAL
   1+ SWAP DO I OUTLINE LOOP ;
 
 
-( SEARCH SCREENS )
+( Search )
+( John S. James, FDv2N6p165 with errata )
 0 VARIABLE SRCHCNT
 : (BUMP) 1 SRCHCNT +! SRCHCNT @ 56
     > IF 0 SRCHCNT ! CR THEN ;
@@ -205,6 +218,8 @@ DECIMAL
   CONTEXT @ 4 - NFA ID.
   CURRENT @ 4 - NFA ID. CR ; 
 
+( Diagnostics on Disk Buffers )
+( Timothy Huang, FDv3nr6p183 )
 : .BUFS '( -- ; show buffers )
 ( display addresses of all the buffers )
   CR ." #  Addr(hex) Upd Block#  Screen  -sub"
@@ -221,7 +236,14 @@ DECIMAL
     132 + ?TERMINAL IF LEAVE THEN
   LOOP DROP CR ;
 
-( fixme: not always finds! )
+( *** )
+( KEYWORDS - WHERE USED
+( FD VOL VII, NO 1
+( COPYRIGHT [C] 1983
+( by Nicholas L. Pappas, PhD
+( + SCAN macro by BartGo
+( how to run, example: ' WORD SCAN
+( *** )
 : (FINDID.) ( addr -- )
   BEGIN
     DUP
@@ -235,15 +257,17 @@ DECIMAL
   CR ;
 : (FINDNO) ( addr nl n2 -- )
   CR CR ." LOOKING FOR "
+  DUP 0 4 D.R
   SPACE DUP 2+ NFA ID.
   CR ROT ROT OVER + SWAP
   DO DUP I @ = IF
     I 0 4 D.R SPACE
     I (FINDID.)
   THEN LOOP DROP ; 
-: SCAN '( pfa -- ; where the word has been used? )
-  CFA
-  ' LIT CFA ' LATEST CFA 
+: SCAN ( pfa -- )
+  CFA            ( n1 )
+  ' LIT CFA      ( n1 n2 )
+  LATEST PFA CFA ( n1 n2 n3 )
   ROT (FINDNO) ;
 
 ( DOS-like DIR )
@@ -498,7 +522,8 @@ FORTH DEFINITIONS
   ELSE ." NOT FOUND" CR THEN ;
 : DECOMP GOESINTO ;
 
-( TRANSIENT DEFINITIONS )
+( Transient Definitions )
+( Phillip Wasson, FDv3n6p171 )
 741 CONSTANT CEILING 
 CEILING @ 1024 512 + - CONSTANT TAREA
 ( default is 1.5kb for the Ragsdale ASM )
@@ -578,6 +603,9 @@ CR CR ;
 
 FLAVOR
 
+
+( RP@ code finally found in the Blazin' Forth sources )
+( - the assembler is disposed of, after compiling RP@  )
 TRANSIENT 
 75 LOAD
 PERMANENT
@@ -592,10 +620,12 @@ PERMANENT
   FORTH
 DISPOSE
 
+( Add a Break Point Tool / BREAK & GO )
+( Frank Seuberling / Kim Harris - FDv5n1p19 )
+( with small tunings by BG )
 : .RS ( -- )
   CR ." RS: " RP@ R0 2 -
   DO I @ U. -2 +LOOP CR ;
-
 0 VARIABLE RP*
 : BREAK '( -- ; BREAK&GO debugging method )
   CR RP@ 4 - RP* ! 0 BLK !  BEGIN

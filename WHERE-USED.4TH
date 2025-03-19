@@ -6,7 +6,6 @@
 ( + SCAN macro by BartGo
 ( how to run, example: ' WORD SCAN
 ( *** )
-
 : (FINDID.) ( addr -- )
   BEGIN
     DUP
@@ -18,7 +17,6 @@
     THEN ROT OR
   UNTIL 3 + NFA ID.
   CR ;
-
 : (FINDNO) ( addr nl n2 -- )
   CR CR ." LOOKING FOR "
   DUP 0 4 D.R
@@ -28,10 +26,8 @@
     I 0 4 D.R SPACE
     I (FINDID.)
   THEN LOOP DROP ; 
-  
 : SCAN ( pfa -- )
-  CFA
-  ' LIT CFA ' LATEST CFA 
+  CFA            ( n1 )
+  ' LIT CFA      ( n1 n2 )
+  LATEST PFA CFA ( n1 n2 n3 )
   ROT (FINDNO) ;
- 
-;S

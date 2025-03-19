@@ -282,6 +282,34 @@ DECIMAL
 : DIR 0 89 INDICES ; 
 : D:  DR0 ; : D1: DR0 ; : D2: DR1 ;
 
+( most basic string operations )
+: $" ( $ -- ; define counted string )
+  ASCII " WORD HERE COUNT ROT OVER
+  OVER C! 1+ SWAP CMOVE ; IMMEDIATE
+: CTYPE ( a -- ; type counted )
+  COUNT TYPE ; 
+: ZTYPE ( n -- ; type zeroed )
+  0 ENCLOSE     ( a n1 n2 n3 )
+  ROT DROP DROP ( a ct )
+  TYPE ;
+: CZ! ( a1 -- ) ( convert counted to zeroed )
+  DUP COUNT ( a1 a1' ct )
+  ROT SWAP  ( a1' a1 ct )
+  2DUP + >R ( a1' al ct R: al+ct )
+  CMOVE     ( R: al+ct )
+  0 R> C! ; ( -- )  
+ 
+( tests )
+( 0 VARIABLE A$ 80 ALLOT 
+( 0 VARIABLE B$ 80 ALLOT 
+( A$ $" HELLO WORLD!"
+( A$ CTYPE
+( B$ $" HELLO UNIVERSE!"
+( B$ CTYPE
+( A$ CZ!
+( A$ ZTYPE
+( done )
+
 ( enable / disable "bindings" )
 : FLAVOR ( -- )
   ' (MESSAGE) CFA ' MESSAGE !
@@ -592,6 +620,7 @@ CR CR ;
   CR ." DECOMP ABC to decompile"
   CR ." BREAK to debug, GO to proceed"
   CR ." || is BREAK, ?| is conditional"
+  CR ." UNRAVEL-ON /-OFF - error trace"
   CR ." RE: and ;RE to redefine words"
   CR ." ' aaa SCAN to locate uses of aaa"
   CR ." D1:/D2:/DIR to browse floppies"
@@ -604,20 +633,39 @@ CR CR ;
 FLAVOR
 
 
-( RP@ code finally found in the Blazin' Forth sources )
-( - the assembler is disposed of, after compiling RP@  )
+( The assembler is disposed of after compiling )
 TRANSIENT 
 75 LOAD
 PERMANENT
-  ASSEMBLER
-  CODE RP@ 
-    XSAVE STX,
-    TSX, TXA, PHA,
-    1 # LDA,
-    XSAVE LDX,
-    PUSH JMP,
-  END-CODE
-  FORTH
+ASSEMBLER HEX
+
+( RP@ code finally found in the Blazin' Forth sources )
+CODE RP@ 
+  XSAVE STX,
+  TSX, TXA, PHA,
+  1 # LDA,
+  XSAVE LDX,
+  PUSH JMP,
+END-CODE
+
+( ** CALL ** )
+( David Held, Forth Dimension V/5 p. 22 )
+( David Held, Forth Dimension V/3 p. 23 )
+( Test: call selftest ->  HEX E471 CALL )
+CODE (CALL)
+    XSAVE STX,    0 JSR,
+    XSAVE LDX, NEXT JMP,
+END-CODE
+FORTH
+HEX
+' (CALL) 3 + CONSTANT CALL-ADDR
+: CALL CALL-ADDR ! (CALL) ; ( addr -- )
+
+( Call QMEG's MLM )
+: MLM ( -- )
+  E480 CALL ;
+DECIMAL
+
 DISPOSE
 
 ( Add a Break Point Tool / BREAK & GO )
@@ -628,6 +676,7 @@ DISPOSE
   DO I @ U. -2 +LOOP CR ;
 0 VARIABLE RP*
 : BREAK '( -- ; BREAK&GO debugging method )
+  CR ." Breapoint!"
   CR RP@ 4 - RP* ! 0 BLK !  BEGIN
     QUERY INTERPRET ." aok [GO]" CR
   AGAIN ;
@@ -636,6 +685,28 @@ DISPOSE
 : GO '( -- ; proceed after BREAK )
   RP@ RP* @ = IF R> DROP R> DROP
   ELSE ." can't resume " QUIT THEN ;
+
+( ***** AUGMENTED TRACE ***** )
+( https://www.forth.org/fd/FD-V06N5.pdf )
+( REQUIRES: assembler [39], RP@, R0     )
+( FIXME: UNRAVEL sometimes fails, with  )
+(        short words and other cases    )
+: HIGH? ( cfa -- f )
+  DUP  @    [ ' : @ @ ] LITERAL =
+  SWAP @ C@ [ ' FORTH @ C@ ] LITERAL = OR ;
+: (UNLINE CR SPACE DUP 4 .R SPACE ;
+: UNRAVEL ( -- )
+  BEGIN RP@ R0 = 0= WHILE
+    R> DUP CFA @ DUP ( n2 n n ) 
+    HIGH?            ( n2 n f  )
+    IF   (UNLINE NFA ID. DROP
+    ELSE (UNLINE DROP U. THEN
+  REPEAT QUIT ; ( original QUIT replaced with BREAK? )
+
+( *** stack trace ON / OFF *** )
+: UNRAVEL-ON ( -- ) ' UNRAVEL CFA 7290 ! ;
+( ^ replace 'QUIT' IN 'ERROR' with UNRAVEL + QUIT )
+: UNRAVEL-OFF ( -- ) ' QUIT    CFA 7290 ! ; ( default )
 
 : TASK '( -- ; end of EXTENSIONS ) ;
 

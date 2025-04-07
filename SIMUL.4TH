@@ -266,3 +266,54 @@ VAR H ( HUNGRY DAYS )
   REPEAT ;
   
 : X INIT MAIN ;
+
+
+;S
+;S
+
+
+pieniadze $, towary @, ludzie #, czas *
+Money Goods People Time
+
+x(n): obecny okres, x(n+1): nastepny
+
+M(n=0): 200; M(n+1)= 5*F+1*A (kazdego dnia fabryka produkuje 20 a farma 1)
+G(n=0): 100; G(n+1)= 20*F+4*A (kazdego dnia fabryka produkuje 50 a farma 10)
+ludzie zuzywaja G - kazda osoba 1 dziennie
+brak G, ludzie sie nie mnoza a potem zaczynaja umierac 
+P(n=0): 20; P(n+[7*52]) / |P/2*0,5| co 52 tygodnie (1 dziecko); tez ubywa - 1 osoba na rok?
+ogolnie: P(n)=P(0)*(1.25-m)^n (m=mortality rate, e.g. 0.02)
+P(n+1)=P(n)*1.23^n
+-> zmiana na 1.14, wyglada realniej (#8476 po 50 latach)
+dobra sie psuja z niskim prawdopodobienstwem, w lato wyzsze
+farma produkuje malo jedzenia w zime, fabryka lepiej ale i tak bez zapasow nie dacie rady
+T(n=0): 0; T(n+1); 1 = tydzien; T(max) = 18200 (7 dni*52 tygodnie*50 lat )
+
+najlepiej zrobic serie liczb i wykresy, na razie pominmy pieniadze, tylko G
+farmy to A, fabryki to F
+T(0)=0; P(0)=20; G(0)=100; A(0)=0; F(0)=0
+T(1)=1; P(1)=20; G(1)=G(0)-P(0)=80; 
+T(2)=2; P(2)=20; G(2)=G(1)-P(1)=60; 
+
+IF MOD(T(n))/(52*7)==0
+  P(n)=P(n-1)*8/7
+THEN
+----
+
+nowe
+$ iles na start, produkowane w fabrykach - i moze z podatkow??
+@ z farm (A) lub fabryk (F)
+# z innych ludzi (pewien procent par, zalezny od warunkow)
+* postarza, eliminuje lub dodaje ludzi i towary
+
+ludzie: #, wymagają towarow do zycia i mnozenia sie, generuja troche $ (podatki)?
+farmy: produkują towary, potrzebuja ludzi (minimum 2 osoby) i deszczu, dotarczaja wiecej $
+fabryki: produkują towary, wymagają ludzi (minimum 10) i $, dotarczaja duzo $
+
+może upgrade - ludzie płacą podatki ale konsumują energię i więcej dóbr, może być wojsko
+
+drzewko rozwoju, jak zrobić - state machine?
+
+uwaga na przepełnienie typów
+
+===

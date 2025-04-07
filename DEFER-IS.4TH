@@ -69,4 +69,15 @@ XXX X
 : YYY ['] VLIST IS! X ;
 YYY X
 
+( ---------- another attempt )
+
+( v8n5p26 )
+: (DEFER) 
+  R> COUNT 2DUP + >R DROP FIND
+  IF EXECUTE ELSE
+    COUNT TYPE TRUE ABORT" is undefined." 
+  THEN ;
+: DEFER 
+  COMPILE (DEFER) BL WORD
+  C@ 1+ ALLOT ; IMMEDIATE
 

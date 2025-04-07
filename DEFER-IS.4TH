@@ -28,5 +28,24 @@ WHAT'S OP ( - )
     COMPILE (IS) ELSE ' CFA !
   THEN ; IMMEDIATE
 
+( ___ some ideas to be tested ____ )
+
+: -EXE ( -EXE myword -- )
+  -FIND IF DROP CFA EXECUTE
+  THEN ; IMMEDIATE  
+
+: \EXE ( -EXE myword -- )
+  -FIND IF
+    [COMPILE] -EXE EXECUTE
+  ELSE DEFER THEN ; IMMEDIATE  
+
+-EXE CR
+DEFER S.
+
+: EXAMPLE ( -- )
+  10 0 DO
+    I CR -EXE S.
+  LOOP -EXE S. ;
+  
 
 

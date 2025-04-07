@@ -4,48 +4,69 @@
 (    APX  Extended Fig-Forth    )
 
 : DEFER ( DEFER X -- )
-  <BUILDS [ ' ;S CFA ] LITERAL , 
+  <BUILDS [ ' ;S CFA ]
+  LITERAL , 
   DOES> @ EXECUTE ; 
-: IS ( pfa IS deferred-word -- )
-  CFA [COMPILE] ' 2 + ! ; IMMEDIATE
+: IS ( pfa IS defrrd-word -- )
+  CFA [COMPILE] '
+  2 + ! ; IMMEDIATE
+: ['] [COMPILE] ' ; IMMEDIATE
 
-;S
 DEFER OP
-' + IS OP  2 1 OP .
+
+( https://www.softsynth.com  )
+( /pforth/pf_ref.php         )
+( #Customising-FORGET        )
+: WHATS  ( WHATS OP -- )
+  [COMPILE] ' ( op's pfa )
+  2+ @ ( op's target's cfa )
+  2+   ( target's cfa->pfa )
+  NFA ID. ; IMMEDIATE
+
+WHATS OP ( ;S )
+' + IS OP 2 1 OP . 
+WHATS OP ( +  )
 ' - IS OP  2 1 OP .
+WHATS OP ( -  )
 
-( https://www.softsynth.com/pforth/pf_ref.php#Customising-FORGET )
-: WHAT'S ( ... )
-  ' CFA @ NFA ID. ; ( UNTESTED )
-WHAT'S OP ( - )
+( this version is not working )
+( in compile mode!! )
 
-( __ TEST ME _________________ )
+( --------------------------------
 
-( 2nd way FD v7n5 )
-: <BUILDS 2 ALLOT DOES> @ EXECUTE ;
-: (IS) R @ CFA ! R> 2 + >R ;
-: IS STATE @ IF
-    COMPILE (IS) ELSE ' CFA !
+( CRASHES
+( 2nd way FD v7n5p28 )
+( adapted by bartgo
+
+
+( faulty )
+: DEFER ( DEFER VAR -- )
+  <BUILDS [ ' ;S CFA ] LITERAL ,
+  DOES> @ EXECUTE ; 
+: (IS) ( pfa -- )
+  CFA R @ 2+ !
+  R> 2+ >R ;
+: IS  ( pfa -- )
+  STATE @ IF
+	COMPILE (IS)
+  ELSE
+    CFA [COMPILE] ' 2+ !
   THEN ; IMMEDIATE
 
-( ___ some ideas to be tested ____ )
-
-: -EXE ( -EXE myword -- )
-  -FIND IF DROP CFA EXECUTE
-  THEN ; IMMEDIATE  
-
-: \EXE ( -EXE myword -- )
-  -FIND IF
-    [COMPILE] -EXE EXECUTE
-  ELSE DEFER THEN ; IMMEDIATE  
-
--EXE CR
-DEFER S.
-
-: EXAMPLE ( -- )
-  10 0 DO
-    I CR -EXE S.
-  LOOP -EXE S. ;
-  
+( corrections )
+: DEFER ( DEFER VAR -- )
+  <BUILDS [ ' ;S CFA ] LITERAL ,
+  DOES> @ EXECUTE ; 
+: ['] [COMPILE] ' ; 
+: IS CFA ' 2+ ! ; IMMEDIATE
+    
+DEFER X
+X
+' CR IS X
+X
+: XXX ['] CR [COMPILE] IS! X ; 
+XXX X
+: YYY ['] VLIST IS! X ;
+YYY X
 
 

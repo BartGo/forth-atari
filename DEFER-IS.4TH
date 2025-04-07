@@ -1,7 +1,8 @@
 (          * DEFER-IS *         )
-(  from Henry Laxen FDvVnr6p35  )
+(  from Henry Laxen FDv5nr6p35  )
 ( Adapted by BartGo for Atari's )
 (    APX  Extended Fig-Forth    )
+( see also: FDv3nr6p174 [Laxen] )
 
 : DEFER ( DEFER X -- )
   <BUILDS [ ' ;S CFA ]

@@ -1,29 +1,31 @@
 	
-( BGEDIT: "scr EDIT" ) 
+( BGEDIT: "scr BED" ) 
 ( by bartgo, 2024, apx forth for atari 8-bit )
 ( includes many pieces of fig editor, by FIG )
 
-( FIXME: C/L set to 32 may block LOAD )
+( FIXME: always on UL )
+( FIXME: test LOAD with C/L set to 32 )
 
-FORTH DEFINITIONS DECIMAL
-32 ' C/L !  ( shorter lines ) ( FIXME, causes dictionary full )
-32 10233 C! ( LIST to know that )
-: TASK ;
-
-HEX
-
-( tuned fig editor )
+FORTH DEFINITIONS : TASK ;
 
 VOCABULARY EDITOR IMMEDIATE 
-EDITOR DEFINITIONS 
+EDITOR DEFINITIONS HEX
+
+( tuned fig editor )
+HEX
+20 CONSTANT C/L ( in EDITOR only 32 characters )
+400 C/L /       ( screen 1kb / 32chr/ln ) 
+   CONSTANT LNS ( lines in a screen )
 
 : TEXT HERE C/L 1+ BLANKS
   WORD HERE PAD C/L 1+ CMOVE ;
+: (LINE) >R C/L B/BUF */MOD R>
+  B/SCR * + BLOCK + C/L ;
 : LINE DUP FFE0 AND 11 ?ERROR
   SCR @ (LINE) DROP ;
 : -MOVE LINE C/L CMOVE UPDATE ; 
 : H LINE PAD 1+ C/L DUP PAD C! CMOVE ;
-: MARK 20 0 DO I LINE UPDATE DROP LOOP ;
+: MARK LNS 0 DO I LINE UPDATE DROP LOOP ;
 : E LINE C/L BL FILL UPDATE ;
 ( old: no text, put ascii 0 )
 ( : P 1 TEXT PAD 1+ SWAP -MOVE ; )
@@ -33,7 +35,7 @@ EDITOR DEFINITIONS
   SWAP -MOVE ;
 : | P ;
 : CLEAR ( n -- )
-  SCR ! 20 0 DO I E LOOP ; 
+  SCR ! LNS 0 DO I E LOOP ; 
 : CLEARS ( n m -- ) 
   DO I CLEAR FLUSH LOOP ; 
 : COPY B/SCR * OFFSET @ + SWAP
@@ -54,6 +56,9 @@ EDITOR DEFINITIONS
   CR C/L -TRAILING TYPE CR
   HERE C@ - SPACES 1 2FE C!
   1C EMIT 0 2FE C! SP! QUIT ; 
+: LIST DECIMAL CR DUP SCR ! ." SCR = # "
+  LNS 0 DO CR 1 3 .R SPACE I SCR @ .LINE  
+  LOOP CR ;
 ( end fig edit )
 
 DECIMAL
@@ -73,16 +78,6 @@ DECIMAL
     132 + ?TERMINAL IF LEAVE THEN
   LOOP DROP CR ; 
 
-0 VARIABLE SRCHCNT
-: BUMP 1 SRCHCNT +! SRCHCNT @ 56
-  > IF 0 SRCHCNT ! CR THEN ;
-: SEARCH ( FROM TO -- STRING )
-  125 EMIT CR 01 TEXT 0 SRCHCNT ! 1+ SWAP
-  DO FORTH I EDITOR SCR ! TOP BEGIN
-    1LINE IF 0 M SCR ? BUMP THEN
-  1023 R# @ < UNTIL LOOP
-  CR ." n EDIT to proceed with editing..." CR ; 
-
 : (OK-OFF) ( -- )
   ' TASK CFA ' QUIT 26 + ! ;
 : (OK-ON)  ( -- )
@@ -99,18 +94,11 @@ DECIMAL
   THEN 132 + LOOP DROP ;
 : (E)      ( f scr -- )
   125 EMIT 
-  DUP SCR !
-     (>) ."  ( *EDIT*  \N=Next \P=Prev )"
-  CR (>) ."  ( \S=Save \U=Undo \Q=Quit )" 
-  CR (>) ."  ( n m SEARCH XYZ searches )" 
-  CR (>) SPACE
-      .  ." SCR ! \S ( FETCH, SAVE )" 
-  CR (>) DUP IF
-    ."  UL ( see Upper Lines / LL )"
-  ELSE
-    ."  LL ( see Lower Lines / UL )"
-  THEN (BAR)
-  0= IF 16 0 ELSE 32 16 THEN DO 
+  DUP SCR ! 
+  ."   ( EDIT \Nxt \Prv \Sav \Undo \Quit )"
+  CR ."        \S " SCR ? ." SCR ! "
+  DUP IF ." UL" ELSE ." LL" THEN
+  (BAR) 0= IF 16 0 ELSE 32 16 THEN DO 
     CR FORTH I EDITOR DUP 2 .R SCR @
     (LINE) -TRAILING ."  | " TYPE
   LOOP 6 84 C! (>) ;
@@ -131,4 +119,6 @@ DECIMAL
 
 FORTH DEFINITIONS EDITOR
 
-17 EDIT
+( 17 EDIT )
+
+

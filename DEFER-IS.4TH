@@ -82,3 +82,15 @@ YYY X
   COMPILE (DEFER) BL WORD
   C@ 1+ ALLOT ; IMMEDIATE
 
+( --- gemini's ideas, quite fresh )
+
+: DEFER CREATE 0 , ; IMMEDIATE
+
+: IS ( cfa 'deferred-addr -- ) ! ; IMMEDIATE  \ If compile-time association
+
+: LATER-IS ( 'deferred-addr cfa -- ) SWAP ! ; \ If runtime association
+
+: MY-DEFERRED ( -- ... )
+  @ ?DUP IF EXECUTE ELSE ." Undefined!" CR THEN ;
+
+

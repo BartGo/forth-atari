@@ -3,7 +3,11 @@
 ( by bartgo, 2024, apx forth for atari 8-bit )
 ( includes many pieces of fig editor, by FIG )
 
-( FIXME: always on UL )
+( FIXME: always on UL, consider below )
+( 32 10233 C!        ( hack  LIST)
+( ' (C/L) CFA 8709 ! ( hack (LINE)
+( ' (C/L) CFA 8727 ! ( hack (LINE)
+
 ( FIXME: test LOAD with C/L set to 32 )
 
 FORTH DEFINITIONS : TASK ;

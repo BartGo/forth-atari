@@ -1,3 +1,6 @@
+( RDCP decompiler )
+( see also DISFORTHer FDv10n2 )
+
 ( CASE BY C. EAKER FD V02N03 P 36 )
 : /CASE
   ?COMP CSP @ !CSP

@@ -1,3 +1,5 @@
+( ONLY DRAFT / SNIPPETS )
+
 ( FujiNet host list in APX 4th )
 ( - by Thom )
 ( http://www.atari.org.pl/forum/viewtopic.php?id=17467 ) 

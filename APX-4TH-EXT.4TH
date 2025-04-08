@@ -695,12 +695,18 @@ CODE (CALL)
 END-CODE
 FORTH
 HEX
-' (CALL) 3 + CONSTANT CALL-ADDR
-: CALL CALL-ADDR ! (CALL) ; ( addr -- )
+: CALL
+  [ ' (CALL) 3 + ]
+  LITERAL ! (CALL) ;
 
-( Call QMEG's MLM )
-: MLM ( -- )
-  E480 CALL ;
+( ** QMEG & MLM ** )
+: MEMUP
+  LATEST 0C +ORIGIN ! ( NTOP )
+  HERE   1C +ORIGIN ! ( FENCE )
+  HERE   1E +ORIGIN ! ; ( DP )
+: MLM MEMUP E480 CALL ;
+: QMG MEMUP E471 CALL ;
+: MON MLM ; 
 DECIMAL
 
 DISPOSE

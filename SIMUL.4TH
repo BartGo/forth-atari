@@ -2,6 +2,14 @@
 ( HAMURABI-LIKE GAME )
 ( FOR APX FORTH BY BARTGO )
 
+( TODO: document the algorithms better )
+( TODO: count # of productive people )
+(  minus children and retired, and only )
+(  allow as many buildings as people, e.g. )
+(  farm/plant/storage requires two )
+(  factory requires ten )
+(  make charts to visualize this and record history of goods and spends )
+
 FORTH DEFINITIONS DECIMAL
 
 : DEV( ;

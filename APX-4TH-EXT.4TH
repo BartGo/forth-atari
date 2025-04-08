@@ -628,6 +628,9 @@ CEILING @ 1024 512 + - CONSTANT TAREA
   CR ." E.      -> edit current screen"
   CR ."            Esc+H opens help"
   CR ." FORTH   -> disable advanced editor"
+  CR ." --------- QMEG"
+  CR ." QMG     -> enters QMEG's drive menu"
+  CR ." MLM or MON enters QMEG's monitor"
 CR CR ;
   
 : VER '( -- ; display version )
@@ -701,9 +704,14 @@ HEX
 
 ( ** QMEG & MLM ** )
 : MEMUP
+  FORTH DEFINITIONS
   LATEST 0C +ORIGIN ! ( NTOP )
   HERE   1C +ORIGIN ! ( FENCE )
-  HERE   1E +ORIGIN ! ; ( DP )
+  HERE   1E +ORIGIN ! ( DP )
+  ; ( TODO: how is it different from )
+    ( the partial content of (SAVE)
+    ( which also touches VOC-LINK etc
+  
 : MLM MEMUP E480 CALL ;
 : QMG MEMUP E471 CALL ;
 : MON MLM ; 

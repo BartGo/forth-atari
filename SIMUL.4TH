@@ -200,8 +200,8 @@ VAR H ( HUNGRY DAYS )
      CR ." -> (F)actory /$" #F .
      CR ." -> (G)dsSell /$" #G .
      CR ." -> (E)nrgSell/$" #E .
-	 CR ." -> (W)iseMen"
-	 CR ." -> (C)harts"
+     CR ." -> (C)harts (M)ap"
+     CR ." -> (W)iseMen"
      CR ." -> (D)ebug"
   ( 12 14 XYRE A )
   ( 12 15 XYRE S )

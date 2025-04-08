@@ -172,10 +172,12 @@ VAR H ( HUNGRY DAYS )
   ELSE  ." FARMING KINGDOM OF X"
   THEN	
   SEP
-  CR ."   YEAR: " T @
-    #D/YR / 1+ .
-  CR ."    DAY: " T @ . H @ 0 >
-  IF
+
+  CR ."   DATE: YR "
+  T @ #D/YR / 1+ .
+  ." / DAY " T @ . 
+
+  H @ 0 > IF
     ." - IN HUNGER: " H ?
   THEN
   CR ."  MONEY: " M @ .
@@ -198,6 +200,8 @@ VAR H ( HUNGRY DAYS )
      CR ." -> (F)actory /$" #F .
      CR ." -> (G)dsSell /$" #G .
      CR ." -> (E)nrgSell/$" #E .
+	 CR ." -> (W)iseMen"
+	 CR ." -> (C)harts"
      CR ." -> (D)ebug"
   ( 12 14 XYRE A )
   ( 12 15 XYRE S )

@@ -1,5 +1,8 @@
+( FIXME )
+
 ( https://www.atarimagazines.com/hi-res/v1n2/strollingforth.php ) 
 ( Screen Listings For WUMPUS In Forth )
+
 ( FIXME )
 
 : --> ; ( no screens )

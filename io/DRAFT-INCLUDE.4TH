@@ -1,3 +1,5 @@
+( a simple concept of conditional loading )
+
 ( 27 LOAD )
 
 FORTH DEFINITIONS DECIMAL 

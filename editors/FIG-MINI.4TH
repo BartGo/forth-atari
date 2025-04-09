@@ -1,5 +1,5 @@
-( mini fig ed )
-( Ted Shapin, FD-V03N2 )
+( mini fig editor, from fig )
+( a subset suggested by Ted Shapin, FD-V03N2 )
 ( tested with APX Forth on Atari 8-bit )
 
 HEX
@@ -8,3 +8,9 @@ HEX
 : -MOVE LINE C/L CMOVE UPDATE ; 
 : P 1 TEXT PAD 1+ SWAP -MOVE ;
 DECIMAL
+
+;S
+
+( not originally suggested but very useful )
+: E LINE C/L BL FILL UPDATE ;
+( also, consider adding: MARK, CLEAR, COPY, WHERE )

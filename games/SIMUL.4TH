@@ -1,4 +1,5 @@
 ( *WIP* )
+( THE FORTH KINGDOM )
 ( HAMURABI-LIKE GAME )
 ( FOR APX FORTH BY BARTGO )
 
@@ -12,43 +13,50 @@
 
 FORTH DEFINITIONS DECIMAL
 
-: DEV( ;
-
-( SHOW STACK )
-: .S ( -- )
-  40 EMIT SPACE
-  SP@ 188 = 0= IF SP@ 2 -
-  186 DO
-  I @ . -2 +LOOP THEN 41
-  EMIT SPACE ;
-  
-( RE-DEFINING A COLON WORD )
-( by EHS )
-( https://www.forth.org/fd )
-( /FD-V06N3.pdf )
-' : CFA @ CONSTANT DOCOL
-: RE-CREATE ( -- )
-  -FIND 0= IF
-	HERE COUNT
-	TYPE ."  NOT FOUND"
-	ABORT
-  THEN
-  DROP DUP CFA @ DOCOL = 0=
-  IF
-	HERE COUNT TYPE
-	."  NOT A COLON WORD"
-	ABORT
-  THEN HERE SWAP ! ;
-: RE-EXIT ( -- ) R> R>
-  2DROP ;
-: R: ( -- )
-  SP@ CSP ! CURRENT @
-  CONTEXT ! 
-  RE-CREATE DOCOL , ] ;
-: ;R ( -- )
-  ?CSP COMPILE RE-EXIT
-  [COMPILE] [ ; IMMEDIATE
-  
+: DEV( ; 
+	( SHOW STACK )
+	: .S ( -- )
+	  40 EMIT SPACE
+	  SP@ 188 = 0= IF SP@ 2 -
+	  186 DO
+	  I @ . -2 +LOOP THEN 41
+	  EMIT SPACE ;
+	( RE-DEFINING A COLON WORD )
+	( by EHS )
+	( https://www.forth.org/fd )
+	( /FD-V06N3.pdf )
+	' : CFA @ CONSTANT DOCOL
+	: RE-CREATE ( -- )
+	  -FIND 0= IF
+		HERE COUNT
+		TYPE ."  NOT FOUND"
+		ABORT
+	  THEN
+	  DROP DUP CFA @ DOCOL = 0=
+	  IF
+		HERE COUNT TYPE
+		."  NOT A COLON WORD"
+		ABORT
+	  THEN HERE SWAP ! ;
+	: RE-EXIT ( -- ) R> R>
+	  2DROP ;
+	: R: ( -- )
+	  SP@ CSP ! CURRENT @
+	  CONTEXT ! 
+	  RE-CREATE DOCOL , ] ;
+	: ;R ( -- )
+	  ?CSP COMPILE RE-EXIT
+	  [COMPILE] [ ; IMMEDIATE
+    ( TODO: ADD BREAK / GO )
+    ( TODO: ADD TRACING )	
+	( * CRASH IF A WORD IS NOT )
+	( * COMPILED )
+	: DONE: -FIND 0= IF
+	    ." (!) NOT COMPILED" CR
+	    BEGIN
+ 	      KEY 27 = IF QUIT THEN
+	    AGAIN
+	  THEN ; IMMEDIATE
 : )DEV ;
 
 1    CONSTANT #H  ( APETITE )
@@ -56,17 +64,26 @@ FORTH DEFINITIONS DECIMAL
 30   CONSTANT #A  ( PRICE )
 120  CONSTANT #F  ( PRICE )
 10   CONSTANT #FC ( ENERGY USE )
-40   CONSTANT #S  ( PRICE )
-90   CONSTANT #C  ( PRICE )
-10   CONSTANT #E  ( PRICE )
+40   CONSTANT #SP ( PRICE )
+90   CONSTANT #CP ( PRICE )
+10   CONSTANT #EP ( PRICE )
 50   CONSTANT #FF ( YIELD )
 10   CONSTANT #AA ( YIELD )
 10   CONSTANT #CC ( YIELD )
 100  CONSTANT #SS ( CAPCT )
 1    CONSTANT #LASTYR ( LASTYR )
-52  7 * CONSTANT #D/YR 
+52 7 *
+  CONSTANT #D/YR 
+20 4 / DUP *     ( 25 MAX BLD )
+  CONSTANT #MAXB ( ON SCREEN  )
+9999 CONSTANT #MAXM ( TODO )
+9999 CONSTANT #MAXE ( TODO )
+9999 CONSTANT #MAXG ( TODO )
+#D/YR
+  CONSTANT #MAXH
 
 : VAR 0 VARIABLE ; IMMEDIATE
+
 VAR P ( PEOPLE )
 VAR G ( GOODS )
 VAR E ( ENERGY )
@@ -79,11 +96,12 @@ VAR T ( TIME )
 VAR H ( HUNGRY DAYS )
 
 : >= < 0= ( a b -- f ) ;
-: ASSERT< ( a b -- ) < 1
-  ?PAIRS ;
+: ASSERT< ( a b -- )
+  < 1 ?PAIRS ;
 
 84   CONSTANT #Y
 85   CONSTANT #X
+
 : POS  ( x y -- ) #Y C! #X ! ; 
 : XYRE ( x y -- )
        ( 10 10 XYRE Q )
@@ -113,6 +131,9 @@ VAR H ( HUNGRY DAYS )
    G @ PGUSAGE@ - ; ( G LEFT )
 : PLEFT@   (   -- a ) 
    P @ H @ -      ; ( P LEFT )
+: ?BLD     (   -- f )
+   S @ A @ + C @ F @ + +
+   #MAXB < ;
 
 : CONSUME ( -- )
   ELEFT@ 0 > IF
@@ -143,6 +164,7 @@ VAR H ( HUNGRY DAYS )
 	( ANOTHER DAY OF HUNGER )
   THEN
   H @ T @ ASSERT< ;
+DONE: CONSUME
 	
 : PRODUCE ( -- )
   AYIELD@ G +!   ( FARMING  )
@@ -159,6 +181,7 @@ VAR H ( HUNGRY DAYS )
   SCAP@ G @ < IF ( G CAP )
     SCAP@ G !
   THEN ;
+DONE: PRODUCE
 	
 : BREED ( -- )
 	T @ #D/YR MOD 0= IF
@@ -167,8 +190,7 @@ VAR H ( HUNGRY DAYS )
 	  ( INCREASE POPULATION )
 	THEN ;
 
-: SUNRISE ( -- )
-  1 T +! ;
+: SUNRISE ( -- ) 1 T +! ;
 
 : SEP ( -- )
   CR 24 0 DO 18 EMIT LOOP ;
@@ -176,12 +198,10 @@ VAR H ( HUNGRY DAYS )
 : UI ( -- )
   125 EMIT
   F @ A @ > IF
-    ." INDUSTRIAL KINGDOM OF X" 
-  ELSE  ." FARMING KINGDOM OF X"
+    ." THE 4TH INDUSTRIAL KINGDOM" 
+  ELSE  ." THE 4TH FARMING KINGDOM"
   THEN	
-  SEP
-
-  CR ."   DATE: YR "
+  SEP CR ."   DATE: YR "
   T @ #D/YR / 1+ .
   ." / DAY " T @ . 
 
@@ -203,84 +223,86 @@ VAR H ( HUNGRY DAYS )
   ." ( " S @ #SS * . ."  )"
      SEP
   CR ." -> (A)groFrm:/$" #A .
-  CR ." -> (S)torage /$" #S .
-     CR ." -> (P)wrPlnt /$" #C .
-     CR ." -> (F)actory /$" #F .
-     CR ." -> (G)dsSell /$" #G .
-     CR ." -> (E)nrgSell/$" #E .
-     CR ." -> (C)harts (M)ap"
-     CR ." -> (W)iseMen"
-     CR ." -> (D)ebug"
-  ( 12 14 XYRE A )
-  ( 12 15 XYRE S )
-  ( 12 16 XYRE P )
-  ( 12 17 XYRE F )
+  CR ." -> (S)torage /$" #SP .
+  CR ." -> (P)wrPlnt /$" #CP .
+  CR ." -> (F)actory /$" #F .
+  CR ." -> (G)dsSell /$" #G .
+  CR ." -> (E)nrgSell/$" #EP .
+  CR ." -> (C)harts (M)ap"
+  CR ." -> (W)iseMen"
+  CR ." -> (D)ebug"
   CR ." -> (N)ext (Q)uit" ; 
+DONE: UI
 
 : INIT ( -- ) 
-  20  P !
-  0   E !
-  0   C !
-  200 M !
-  0   A !
-  0   F !
-  2   S !
-  SCAP@ G ! 
-  0   T !
-  0   H ! ;
+  20  P ! ( people )
+  0   E ! ( energy )
+  0   C ! ( cells / pwr plants )
+  200 M ! ( money )
+  0   A ! ( agro-farms )
+  0   F ! ( factories )
+  2   S ! ( storages / silos )
+  SCAP@ G ! ( fill silos ) 
+  0   T ! ( time )
+  0   H ! ( days of hunger ) ;
 
 : FINALIZE ( -- )
   2 82 C! 148 710 ! ;
 
 : GET-INPUT ( -- )
-  0
-  BEGIN
+  0 BEGIN
 	ASCII N = 0= ( f )
   WHILE
-	UI KEY ( a )
+	UI KEY ( S: a )
 	DUP ASCII A = M @ #A >=
-	AND IF
-	    1 A +! M @ #A - M ! THEN
+	  AND ?BLD AND IF ( agro )
+		  1 A +! M @ #A - M !
+	  THEN
 	DUP ASCII F = M @ #F >=
-	AND IF
-	    1 F +! M @ #F - M ! THEN
+	  AND ?BLD AND IF ( fctry )
+	      1 F +! M @ #F - M !
+	  THEN	
+	DUP ASCII S = M @ #SP >=
+	  AND ?BLD AND IF ( strge )
+	    1 S +! M @ #SP - M !
+	  THEN
+	DUP ASCII P = M @ #CP >=
+	  AND ?BLD AND IF ( pwrplnt )
+	    1 C +! M @ #CP - M !
+	  THEN
+	( S: a )
 	DUP ASCII G = G @   0 >
-	AND IF 
-	    -1 G +! #G M +!     THEN
+	  AND IF ( sellgd )
+	      -1 G +! #G M +!     
+      THEN
 	DUP ASCII E = E @   0 >
-	AND IF 
-	    -1 E +! #E M +!     THEN
-	DUP ASCII S = M @ #S >=
-	AND IF
-	    1 S +! M @ #S - M ! THEN
-	DUP ASCII P = M @ #C >=
-	AND IF
-	    1 C +! M @ #C - M ! THEN
-	( a )
+	  AND IF ( sell energy )
+	    -1 E +! #EP M +!     
+	  THEN
 	DUP ASCII Q = IF 
 	    DROP FINALIZE 125 EMIT
 		QUIT
-	THEN ( - )
+	THEN ( S: - )
 	DUP ASCII D = IF 
 	    DROP CR .S CR
 		BEGIN QUERY INTERPRET
-	AGAIN THEN ( - )
+	AGAIN THEN ( S: - )
+	( TODO: to implement C/M/W )
   REPEAT ;
+DONE: GET-INPUT
  
 : MAIN ( -- )
   8 82 C! 210 710 !
   BEGIN
 	#D/YR #LASTYR * T @ >
   WHILE
-	SUNRISE	CONSUME	
-	PRODUCE BREED
-    GET-INPUT
+	SUNRISE	CONSUME	PRODUCE
+	BREED GET-INPUT
   REPEAT ;
+DONE: MAIN
   
 : X INIT MAIN ;
 
-
-;S
 ;S
 
 

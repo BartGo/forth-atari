@@ -246,6 +246,20 @@ DONE: UI
   0   T ! ( time )
   0   H ! ( days of hunger ) ;
 
+: BBUY ( o m p -- f )
+( ownd@ m@ #price -- ?bought )
+(   if enough $ and if below )
+(   building limit, buy and  )
+(   substract price from $.  )
+(   leave t/f result flag.   ) 
+  OVER OVER      ( o m p m p )
+  SWAP @ < ?BLD  ( o m p f f )
+  AND IF             ( o m p )
+    MINUS SWAP +!        ( o )
+    1 SWAP +! 1         ( tf )
+  ELSE 2DROP  0         ( ff )
+  THEN ;                 ( f )
+
 : FINALIZE ( -- )
   2 82 C! 148 710 ! ;
 
@@ -254,22 +268,14 @@ DONE: UI
 	ASCII N = 0= ( f )
   WHILE
 	UI KEY ( S: a )
-	DUP ASCII A = M @ #A >=
-	  AND ?BLD AND IF ( agro )
-		  1 A +! M @ #A - M !
-	  THEN
-	DUP ASCII F = M @ #F >=
-	  AND ?BLD AND IF ( fctry )
-	      1 F +! M @ #F - M !
-	  THEN	
-	DUP ASCII S = M @ #SP >=
-	  AND ?BLD AND IF ( strge )
-	    1 S +! M @ #SP - M !
-	  THEN
-	DUP ASCII P = M @ #CP >=
-	  AND ?BLD AND IF ( pwrplnt )
-	    1 C +! M @ #CP - M !
-	  THEN
+	DUP ASCII A = IF
+	  A M #A  BBUY DROP THEN
+	DUP ASCII F = IF
+	  F M #F  BBUY DROP THEN
+	DUP ASCII S = IF
+	  S M #SP BBUY DROP THEN
+	DUP ASCII P = IF
+	  C M #CP BBUY DROP THEN
 	( S: a )
 	DUP ASCII G = G @   0 >
 	  AND IF ( sellgd )

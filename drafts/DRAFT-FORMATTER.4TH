@@ -1,8 +1,15 @@
 entry in progress
 https://archive.org/details/Forth_Dimension_Volume_08_Number_2/page/n1/mode/2up?q=FORMATTER
 
-( 70 LOAD )
+( SCREEN FORMATTER )
+( CRASH )
+
 ( REQUIRED RAGSDALE ASM )
+  ( 70 LOAD )
+( REQUIRED PICK )
+
+' ASSEMBLER DROP
+' PICK DROP
 
 VOCABULARY FORMATTER IMMEDIATE
 FORMATTER DEFINITIONS
@@ -25,15 +32,15 @@ ASCII ( CONSTANT PAREN
 : (FND) -FIND DROP DROP ;
 : BUILD 0 VARIABLE -2 ALLOT ; IMMEDIATE
 
-: PICK NOT-IMPLEMENTED ;
-
 BUILD QUOTES  1 , (FND) ." ,
 BUILD STARTS  2 , (FND) :  ,      
                   (FND) CODE ,
 BUILD ENDS    4 , (FND) ; ,
                   (FND) NEXT ,
                   (FND) ;S ,
+              ASSEMBLER
  				  (FND) END-CODE ,
+              FORTH
 BUILD OUTS    6 , (FND) UNTIL ,
                   (FND) LOOP ,
 				  (FND) +LOOP ,
@@ -64,7 +71,7 @@ BUILD IN+OUTS 4 , (FND) ELSE  ,
 : NEW-LINE
   0 TAB ! CR? ;
 : DONE?
-  IN @ 1023 >= ;
+  IN @ 1023 < 0= ;
 : PARSE
   IX @ IN ! BL WORD DROP ;
 : <TYPE>
@@ -90,21 +97,44 @@ BUILD IN+OUTS 4 , (FND) ELSE  ,
   CR? TYPE-IT WORD C@ 1+ HERE C!
   BL HERE DUP C@ 1+ + C! <TYPE> CR? ;
 : TYPE-TO-END-OF-LINE
-  CR? TYPE-IT BLK @ BLOCK IN @ + IN @ 63
-  COM AND 64 + DUP >R IN @ - -TRAILING TYPE CR? R> IN ! ;
-: F+L F+L-INIT
-  BEGIN 0 FND ! IN @ IX ! FIND 
-   QUOTES ??   IF A"     TYPE-TO-      THEN
-   DUP PAREN = IF RPAREN TYPE-TO-      THEN
-   DUP BSLASH = IF TYPE-TO-END-OF-LINE THEN
-   STARTS ?? IF NEW-LINE TYPE-IT IN @ IX !
-                      TYPE-IT 2 INDENT THEN
-   INS ?? IF 1 INDENT TYPE-IT 1 INDENT THEN
-   OUTS ?? IF 1 OUTDENT TYPE-IT 1 OUTDENT THEN
-   ENDS ?? IF 2 OUTDENT TYPE-IT CR?    THEN
-   IN+OUTS ?? IF 1 OUTDENT TYPE-IT 1 INDENT THEN
-  DROP DONE? IF NEW-LINE TYPE-IT CR (FF) 1 ELSE 0 THEN
-   FND @ NOT IF TYPE-IT                 THEN
-  UNTIL IN ! BLK ! ;
+  CR? TYPE-IT BLK @ BLOCK IN @ + IN @ 63 MOD
+  ( FIXME: MOD = COM ?) 
+  AND 64 + DUP >R IN @ - -TRAILING TYPE CR? R> IN ! ;
+
+: F+L ( n -- ; list frmtd scr )
+  F+L-INIT
+  BEGIN
+    0 FND ! IN @ IX !
+    -FIND QUOTES ?? IF
+	  A" TYPE-TO- THEN
+    DUP PAREN = IF
+	  RPAREN TYPE-TO-
+	THEN
+    DUP BSLASH = IF
+	  TYPE-TO-END-OF-LINE
+	THEN
+    STARTS ?? IF
+	  NEW-LINE TYPE-IT
+	  IN @ IX ! TYPE-IT 2 INDENT
+	THEN
+    INS ?? IF
+	  1 INDENT TYPE-IT 1 INDENT
+    THEN
+    OUTS ?? IF
+	  1 OUTDENT TYPE-IT 1
+	  OUTDENT
+	THEN
+    ENDS ?? IF
+	  2 OUTDENT TYPE-IT CR?
+	THEN
+    IN+OUTS ?? IF
+	  1 OUTDENT TYPE-IT 1 INDENT 
+	THEN
+    DROP DONE? IF
+	  NEW-LINE TYPE-IT CR (FF) 1
+    ELSE 0 THEN
+    FND @ 0= IF TYPE-IT THEN
+  UNTIL
+  IN ! BLK ! ;
   
   

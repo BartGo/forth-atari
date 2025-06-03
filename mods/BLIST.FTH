@@ -57,11 +57,18 @@ DECIMAL FORTH DEFINITIONS
 	I BLIST ( - )
   LOOP ;
   
-( valFORTH: ON P: )
+( valFORTH: )
+(           ON P: )
 (           0 999 BLISTS )
 (           OFF P: )
 
-( APXFORTH: PON )
+( APXFORTH: )
+(           PON )
 (           0 999 BLISTS )
 (           POFF )
+
+( APXFORTH/PANTOLA: )
+(           32 ' C/L ! PON )
+(           0 999 BLISTS )
+(           POFF 64 ' C/L ! )
 

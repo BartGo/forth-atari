@@ -8,19 +8,20 @@
 ( the characters from 1st line )
 ( of a screen being between BL )
 ( and z.                       )
+( A line consisting of null    )
 
 DECIMAL FORTH DEFINITIONS
 
 ( fn: is it a screen of text?  )
 : ?SCRTXT ( b -- f )
-  1 0 ROT (LINE) ( tf a len )
-  OVER + SWAP    ( tf a+len a )  
+  1 0 ROT (LINE)  ( tf a len )
+  OVER + SWAP     ( tf a+len a )  
   DO
-    I C@ DUP     ( tf|f c c )
-	31 > SWAP    ( tf|f f c )
-	123 < AND    ( tf|f f )
-    AND          ( f )
-  LOOP ;         ( f )
+    I C@          ( tf|f c )
+	DUP 31 > SWAP ( tf|f f c )
+	123 < AND     ( tf|f f )
+    AND           ( f )
+  LOOP ;          ( f )
 
 ( main: list a single screen )
 ( ex: 80 BLIST )
@@ -55,3 +56,12 @@ DECIMAL FORTH DEFINITIONS
   SWAP DO
 	I BLIST ( - )
   LOOP ;
+  
+( valFORTH: ON P: )
+(           0 999 BLISTS )
+(           OFF P: )
+
+( APXFORTH: PON )
+(           0 999 BLISTS )
+(           POFF )
+

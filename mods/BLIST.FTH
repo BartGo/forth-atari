@@ -1,6 +1,11 @@
+( ---------------------------- )
 ( A Better List ; n BLIST --   )
+( ---------------------------- )
 ( By BartGo 2025 / MIT license )
-( APX-/valFORTH for Atari 8-bit)
+( ---------------------------- )
+( tested: Atari 8bit / Altirra )
+( / APX Forth and valFORTH     )
+( ---------------------------- )
 ( This word works like LIST but)
 ( lists also screens w/ binary )
 ( data, presenting it in hex.  )
@@ -8,7 +13,10 @@
 ( the characters from 1st line )
 ( of a screen being between BL )
 ( and z.                       )
-( A line consisting of null    )
+( ---------------------------- )
+( TO DO: detect text/binary by )
+(        line, not by "screen" )
+( ---------------------------- )
 
 DECIMAL FORTH DEFINITIONS
 

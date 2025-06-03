@@ -1,63 +1,57 @@
 ( A Better List ; n BLIST --   )
-
-( APX FORTH for Atari 8-bit    )
-( TO DO: make it compatible w/ )
-(        APX- and val- Forths  )
-( TO DO: adapt INDEX/OUTLINE   )
-
+( By BartGo 2025 / MIT license )
+( APX-/valFORTH for Atari 8-bit)
 ( This word works like LIST but)
 ( lists also screens w/ binary )
 ( data, presenting it in hex.  )
-( Binary is recognised by the  )
-( 1st character not being space)
-( nor left bracket nor colon.  )
+( Text is recognised by all    )
+( the characters from 1st line )
+( of a screen being between BL )
+( and z.                       )
 
-FORTH DEFINITIONS DECIMAL
+DECIMAL FORTH DEFINITIONS
 
-( sub: is the screen binary )
-: ?SCR-TXT ( b -- f )
-  0 SWAP (LINE)      ( a len )
-  DROP C@ DUP        ( c c )
-  ASCII ( = SWAP DUP ( f1 c c )
-  ASCII : = SWAP     ( f1 f2 c )
-  BL      = OR OR ;  ( f )
+( fn: is it a screen of text?  )
+: ?SCRTXT ( b -- f )
+  1 0 ROT (LINE) ( tf a len )
+  OVER + SWAP    ( tf a+len a )  
+  DO
+    I C@ DUP     ( tf|f c c )
+	31 > SWAP    ( tf|f f c )
+	123 < AND    ( tf|f f )
+    AND          ( f )
+  LOOP ;         ( f )
 
-( main: list a screen )
+( main: list a single screen )
+( ex: 80 BLIST )
 : BLIST ( b -- ; LIST+data/hex )
-  DECIMAL           ( b / R: - )
-  C/L >R 32 ' C/L ! ( R: C/L )
-  CR DUP DUP        ( b b b )
-  SCR ! ." SCR # "  ( b b )
-  DUP .             ( b )
-  ." [ " DUP 2 *    ( b 2b )
-  DUP 1 + SWAP      ( b 2b+1 2b )
-  . ." - " . ." ]"  ( b )
-  ?SCR-TXT 0= IF
-    ." ( data as hex )"
+  DECIMAL             ( b )
+  CR DUP DUP          ( b b b )
+  SCR ! ." SCR # " .  ( b )
+  ?SCRTXT 0= IF
+    ." ( hex/data )"
   ELSE
-    ." ( text )"
-  THEN CR            ( - )
-  1024 C/L / 0 DO
-    CR I 3 .R        ( - )
-    SPACE            ( - )
-    SCR @ ?SCR-TXT   ( f )
-    IF               ( - )
-      I SCR @ .LINE  ( - )
+    ." ( txt )"
+  THEN                ( - )
+  B/BUF B/SCR * C/L / ( scrsiz )
+  0 DO
+    CR I 3 .R         ( - )
+    SPACE             ( - )
+    SCR @ ?SCRTXT    ( f )
+    IF                ( - )
+      I SCR @ .LINE   ( - )
     ELSE
-      I SCR @ (LINE) ( a len )
-      OVER + SWAP    ( a2 a1 )
+      I SCR @ (LINE)  ( a len )
+      OVER + SWAP     ( a2 a1 )
       DO 
         HEX I C@ U. DECIMAL
       LOOP 
-    THEN             ( - )
-  LOOP CR            ( R: C/L )
-  R> ' C/L ! ;
-  
-: BLISTS ( upper lower -- )  
-  DO
-    I BLIST ( - )
+    THEN              ( - )
+  LOOP CR ;
+
+( main: list range of screens )  
+( ex: 0 100 BLISTS )
+: BLISTS ( lower upper -- )  
+  SWAP DO
+	I BLIST ( - )
   LOOP ;
-  
-( 200 0 BLISTS )
-
-

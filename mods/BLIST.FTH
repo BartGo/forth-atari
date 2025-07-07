@@ -20,8 +20,16 @@
 
 DECIMAL FORTH DEFINITIONS
 
+( 0 no force, 1 txt, 2 bin )
+0 CONSTANT #FORCE_MOD
+
 ( fn: is it a screen of text?  )
 : ?SCRTXT ( b -- f )
+  #FORCE_MOD IF
+    DROP
+    #FORCE_MOD 1 = IF 1 ;S THEN
+    #FORCE_MOD 2 = IF 0 ;S THEN
+  THEN
   1 0 ROT (LINE)  ( tf a len )
   OVER + SWAP     ( tf a+len a )  
   DO

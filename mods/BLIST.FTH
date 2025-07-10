@@ -20,6 +20,10 @@
 
 DECIMAL FORTH DEFINITIONS
 
+( LIST fix for hardcoded #lines )
+: LIST.16 16 ' LIST 23 + C! ;
+: LIST.32 32 ' LIST 23 + C! ;
+
 ( 0 no force, 1 txt, 2 bin )
 0 CONSTANT #FORCE_MOD
 

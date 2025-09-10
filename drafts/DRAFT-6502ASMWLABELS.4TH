@@ -1,5 +1,273 @@
+( ROUGHLY PORTED )
+( NO MAJOR CODE ISSUES, UNTESTED, DANGEROUSLY NOT WORKING )
+
+
 ( A 6502 ASSEMBLER BY CHESTER H. PAGE )
 ( FDv9n5 with errata from FDv10n2p9 )
 ( https://archive.org/details/Forth_Dimension_Volume_10_Number_2/page/n8/mode/1up )
+
+(  *** CHP-6502 Assembler *** )
+(  6502 Assembler with labels  )
+(    - by Chester H. Page -    )
+(  https://www.forth.org/fd    )
+(         /FD-V10N2.pdf        )
+( port for Atari APX fig-Forth )
+(          by BartGo           )
+( included PICK, ROLL, ARRAY,  )
+(          S0, ABORT", 1-, 2-  )
+
+( Format for this assembler
+( ASSEMBLE TEST
+(   0 # LDA, 80 # LDY,
+(   101 300 ,Y STA, DEY,
+(   101 BPL, GONEXT
+( END )
+
+HEX VOCABULARY ASSEMBLER 
+ASSEMBLER DEFINITIONS
+
+: VAR 0 VARIABLE ;
+: ARRAY <BUILDS 2 * ALLOT DOES>
+  SWAP 2 * + ;
+: S0 12 +ORIGIN @ ; ( dec18 )
+: PICK ( n -- n )
+  2 * SP@ OVER 1 < SWAP ROT +
+  SWAP OVER
+  S0 < 0= OR IF
+    ." PICK: out of range"
+	CR ABORT
+  ELSE @ THEN ;
+: ROLL ( n -- )
+  2 * SP@ OVER 1 < SWAP ROT +
+  SWAP OVER 
+  S0 < 0= OR IF
+    ." ROLL: out of range"
+	CR ABORT
+  ELSE
+    DUP @ >R SP@ 2+ SWAP DO
+	  I 2 - @ I ! -2
+	+LOOP
+    DROP R>
+  THEN ;
+: ABORT"
+  STATE @ IF
+    COMPILE 0BRANCH HERE 0 ,
+    COMPILE (.") ASCII "
+	WORD HERE C@ 1+ ALLOT
+	COMPILE QUIT HERE
+	OVER - SWAP !
+  ELSE
+    IF
+	  ASCII " WORD HERE
+	  COUNT TYPE QUIT
+    THEN
+  THEN ; IMMEDIATE
+: 1- 1 - ;
+: 2- 2 - ;
+
+14 CONSTANT #AS ( dec20 labels )
+VAR MODE
+VAR MODE.KEY
+VAR REF.TABLE 0 , 0 ,
+    56 ALLOT ( dec86 refs, 30? )
+VAR REF.POINTER
+VAR LONG.ADDR
+#AS ARRAY LABEL.TABLE
+ 
+: CLEAR.TABLES #AS 1+ 1 DO
+    0 I LABEL.TABLE ! LOOP
+  REF.TABLE 3 + REF.POINTER ! ;
+
+: SHOW.TABLES CR #AS 1 DO
+    I LABEL.TABLE @ U. LOOP CR ;
+    
+( Adds 4 to opcode )
+: ZP 0 MODE ! 0   MODE.KEY ! ;
+: ,X 1 MODE ! 1   MODE.KEY ! ;
+: ,Y 2 MODE ! 202 MODE.KEY ! ; 
+: X) 3 MODE ! 4   MODE.KEY ! ; 
+: )Y 4 MODE ! 8   MODE.KEY ! ;
+: #  5 MODE ! 110 MODE.KEY ! ;
+: ,A 6 MODE ! 20  MODE.KEY ! ; 
+: )  7 MODE ! 40  MODE.KEY ! ;
+(    8 )
+(    9 )
+(    A )
+
+VAR ADD.TABLE
+    1404 , 0014 , 0810 , 2C08 ,
+	1C0C , 18 C,
+
+: ?LEGAL ( C -- C )
+  DUP 1+ C@ MODE.KEY @ AND FF
+  AND ABORT"  Illegal Opcode"
+  DUP C@ 20 = 0= IF
+    OVER 100 U< 0= IF
+	  MODE.KEY @ 0C AND
+      ABORT"  Illegal Indirect"
+	THEN THEN ;
+	
+: ABS.ADDR
+  DUP 1+ @ MODE.KEY @ DUP 3C AND
+  ABORT" Illegal address"
+  DUP 40 = IF DROP DROP ELSE
+    AND 200 = IF -1 MODE +! THEN
+	8 MODE +!
+  THEN 1 LONG.ADDR ! ;
+  
+: ?ZP ( C -- C )
+  MODE.KEY @ 20 = 0= IF
+    OVER 100 U< 0= OVER 1 + C@
+	MODE.KEY @ OVER OR 262 =
+	SWAP 3F = OR OR
+    IF ABS.ADDR THEN
+  THEN ;
+
+: ?IMM
+  DUP 1+ @ MODE.KEY @ AND 100 =
+  IF -2 MODE +! THEN ; 
+
+: LABEL.SAVE
+  FF AND DUP LABEL.TABLE @
+  ABORT"  Duplicate label"
+  HERE SWAP LABEL.TABLE ! ;
+  
+: LC1 SP@ S0 4 - = IF
+    SWAP LABEL.SAVE THEN ;
+: LC2 SP@ S0 6 - = IF
+    ROT  LABEL.SAVE THEN ;
+
+: COMPILE.ADDRESS ( A -- )
+  DUP FF00 AND 100 = IF ( lbl? )
+    HERE REF.POINTER @ 0 OVER C!
+    1+ ! 3 REF.POINTER +!
+  THEN LONG.ADDR @
+  IF , ELSE C, THEN ;
+
+: M/CPU
+  <BUILDS 2 ALLOT C, , DOES>
+  0 LONG.ADDR !
+  LC2 ?LEGAL ?ZP ?IMM C@ MODE C@
+  ADD.TABLE + C@ + C,
+  MODE.KEY @ 20 = 0= IF
+    COMPILE.ADDRESS THEN ZP ;
+	
+: CPU
+  <BUILDS 2 ALLOT C, DOES>
+  LC1 C@ C, ZP ;
+
+: BRANCHES
+  <BUILDS 2 ALLOT C, DOES>
+  LC2 C@ C, C,
+  HERE 1- REF.POINTER @
+  1 OVER C! 
+  1+ [COMPILE] ' ( ? )
+  3 REF.POINTER +! ZP ; 
+
+: SECOND.PASS
+  BEGIN -3 REF.POINTER +!
+    REF.POINTER @ DUP 1+ @
+  DUP WHILE
+    DUP C@ DUP LABEL.TABLE @
+    3 ROLL C@ IF
+	  2 PICK - 1- DUP ABS 7F >
+      IF DROP CR ." Branch to "
+        100 + . ." is too far "
+        ." (or label missing)"
+        SP! QUIT
+      THEN ROT C!
+    ELSE ROT ! THEN	DROP
+  REPEAT DROP DROP ; 
+
+0060 61 M/CPU ADC,
+0060 21 M/CPU AND,
+0060 C1 M/CPU CMP,
+0060 41 M/CPU EOR,
+0060 01 M/CPU ORA,
+0060 E1 M/CPU SBC,
+0060 81 M/CPU STA,
+0060 A1 M/CPU LDA,
+025E 02 M/CPU ASL,
+025E 42 M/CPU LSR,
+025E 22 M/CPU ROL,
+025E 62 M/CPU ROR,
+027E C2 M/CPU DEC,
+027E E2 M/CPU INC,
+016F E0 M/CPU CPX,
+016F C0 M/CPU CPY,
+036D A2 M/CPU LDX,
+016E A0 M/CPU LDY,
+027D 82 M/CPU STX,
+007E 80 M/CPU STY,
+007F 20 M/CPU BIT,
+003F 40 M/CPU JMP,
+00 CPU BRK,
+18 CPU CLC,
+D8 CPU CLD,
+58 CPU CLI,
+B8 CPU CLV,
+CA CPU DEX,
+88 CPU DEY,
+E8 CPU INX,
+C8 CPU INY,
+EA CPU NOP,
+48 CPU PHA,
+08 CPU PHP,
+68 CPU PLA,
+28 CPU PLP,
+40 CPU RTI,
+60 CPU RTS,
+38 CPU SEC,
+F8 CPU SED,
+78 CPU SEI,
+AA CPU TAX,
+A8 CPU TAY,
+BA CPU TSX,
+8A CPU TXA,
+9A CPU TXS,
+98 CPU TYA,
+90 BRANCHES BCC,
+B0 BRANCHES BCS,
+F0 BRANCHES BEQ,
+30 BRANCHES BMI,
+D0 BRANCHES BNE,
+10 BRANCHES BPL,
+50 BRANCHES BVC,
+70 BRANCHES BVS,
+
+: JSR,
+  SP@ S0 4 - = IF
+    SWAP LABEL.SAVE
+  THEN DUP 20 C, , DUP 200 U<
+  SWAP 100 U< 0= AND IF
+    REF.POINTER @ DUP 0 SWAP C!
+	1+ HERE 2- SWAP ! 
+    3 REF.POINTER +!
+  THEN ;
+	
+ : ,,
+   SP@ S0 4 - = IF
+     SWAP LABEL.SAVE
+   THEN , ;
+ : C,,
+   SP@ S0 4 - = IF
+     SWAP LABEL.SAVE
+   THEN C, ;
+ : END
+   SECOND.PASS
+   CURRENT @ CONTEXT !
+   ?EXEC ?CSP ; IMMEDIATE
+ : GONEXT ' NEXT CFA JMP, ;
+ : ^ ' CFA JSR, ; 
+ 
+FORTH DEFINITIONS
+: PRIM -2 ALLOT HERE 2+ , ;
+: ASSEMBLE
+  ?EXEC CREATE ASSEMBLER
+  PRIM [ ASSEMBLER ] 
+  CLEAR.TABLES
+  ZP !CSP ; IMMEDIATE 
+   
+DECIMAL
 
 

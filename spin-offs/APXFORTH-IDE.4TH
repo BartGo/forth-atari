@@ -1,9 +1,9 @@
 
-( APX Extended Fig-Forth )
-( & s*p*a*c*e fig4th 1.1 )
-( 2025 Extensions -- WIP )
+( * APX Extended Fig-Forth /IDE combined for ATARI 8-BIT * )
+( from multiple 1980s/90s sources, mainly Forth Dimensions ) 
 
 ( todo: consider RDCP instead of GOESINTO  )
+( todo: document compilation of below      )
 
 FORTH DEFINITIONS DECIMAL
 0 WARNING !

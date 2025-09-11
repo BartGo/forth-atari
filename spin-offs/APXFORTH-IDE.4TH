@@ -1,4 +1,3 @@
-
 ( * APX Extended Fig-Forth /IDE combined for ATARI 8-BIT * )
 ( from multiple 1980s/90s sources, mainly Forth Dimensions ) 
 
@@ -76,43 +75,6 @@ VOCABULARY EDITOR IMMEDIATE FORTH DEFINITIONS
   STATE @ IF COMPILE CLIT C,
   THEN ;  IMMEDIATE
 
-( by BG )
-( '( is a modified version of ." )
-( to compile comments as help for word definitions )
-: '( STATE @ 0= IF
-    (ASCII) ) WORD ELSE
-    COMPILE // (ASCII) ) WORD HERE
-    C@ 1+ ALLOT
-  THEN ; IMMEDIATE
-
-HEX
-( by BG )
-: XLIST '( -- ; enhanced VLIST )
-  CR 80 OUT ! CONTEXT @ @ 
-  CR ." Context Current: "
-  CONTEXT @ 4 - NFA ID.
-  CURRENT @ 4 - NFA ID. CR CR
-  ." SI WORD         DEFINED-BY" CR
-  ." --------------------------" CR
-  BEGIN
-    OUT @ C/L 2 / > 0= IF CR 0 OUT ! THEN
-    DUP @ 20 AND IF ." S" ELSE SPACE THEN
-    DUP @ 40 AND IF ." I" ELSE SPACE THEN
-    DUP SPACE ID. 3 SPACES
-	DUP PFA CFA @ 
-           DUP 1441 = IF ." :\"
-      ELSE DUP 147D = IF ." CONSTANT\"
-      ELSE DUP 1499 = IF ." VARIABLE\"
-      ELSE DUP 14B2 = IF ." USER\"
-      ELSE DUP 18D8 = IF ." DOES>\"
-    THEN THEN THEN THEN THEN
-	U.
-	DUP PFA DUP @ [ ' // CFA ] LITERAL = IF
-      CR 2+ COUNT TYPE CR 
-	ELSE DROP THEN
-    PFA LFA @ DUP 0= ?TERMINAL OR CR
-  UNTIL DROP ;
-
 HEX
 ( Re-Defining a Colon Word )
 ( by E. H. Schmauch, FDv6n3p20 )
@@ -165,28 +127,12 @@ HEX
 
 DECIMAL
 
-( Source Screen Documentation Tool )
-( Kim Harris, FDv4n2p23 )
-: OUTLINE ( #scr -- ) 
-  DUP CR CR ." Screen # " . DUP SCR !
-  15 0 DO
-    DUP I SWAP  ( scr#, ln#, scr# )
-    (LINE) SWAP ( scr#, 64, lineaddr )
-    DUP C@ BL = 0=      
-    I 0= OR IF  ( 1st line or non-space? )         
-      SWAP -TRAILING CR TYPE ( print line )
-    ELSE DROP DROP THEN ( skip line )
-  LOOP DROP CR ;                
-: OUTLINES ( #1st-screen #last-screen -- )
-  1+ SWAP DO I OUTLINE LOOP ;
-
-
 ( Search )
 ( John S. James, FDv2N6p165 with errata )
 0 VARIABLE SRCHCNT
 : (BUMP) 1 SRCHCNT +! SRCHCNT @ 56
     > IF 0 SRCHCNT ! CR THEN ;
-: SEARCH '( from# to# -- string ; search within screens )
+: SEARCH ( from# to# -- string ; search within screens )
     CR 01 TEXT/ 0 SRCHCNT ! 1+ SWAP
     DO FORTH I SCR ! TOP BEGIN
       (1LINE) IF 0 (M) SCR ? (BUMP) THEN
@@ -198,7 +144,7 @@ DECIMAL
 : S0 18 +ORIGIN @ ; ( -- n )
 : R0 20 +ORIGIN @ ; ( -- n )
 
-: .S '( -- ; display stack )
+: .S ( -- ; display stack )
   40 EMIT SPACE
   SP@ 188 = 0= IF SP@ 2 - 186 DO
   I @ . -2 +LOOP THEN 41 EMIT SPACE ;
@@ -211,18 +157,18 @@ DECIMAL
   BASE @ DUP 10 = IF DROP 0 THEN 712 C! ;  
 : ok(editor) ; ( omit it like ok )  
   
-: STACK '( -- ; toggle stack display )
+: STACK ( -- ; toggle stack display )
   ' (PROMPT) @ ' 0 CFA = IF ' 1 ELSE ' 0 THEN
   CFA ' (PROMPT) ! ;
 
-: .CC '( -- ; show CONTEXT and CURRENT)
+: .CC ( -- ; show CONTEXT and CURRENT)
   CR ." Context Current: "
   CONTEXT @ 4 - NFA ID.
   CURRENT @ 4 - NFA ID. CR ; 
 
 ( Diagnostics on Disk Buffers )
 ( Timothy Huang, FDv3nr6p183 )
-: .BUFS '( -- ; show buffers )
+: .BUFS ( -- ; show buffers )
 ( display addresses of all the buffers )
   CR ." #  Addr(hex) Upd Block#  Screen  -sub"
   FIRST
@@ -311,25 +257,6 @@ DECIMAL
 ( A$ CZ!
 ( A$ ZTYPE
 ( done )
-
-( TURNING THE STACK INTO LOCAL VARIABLES
-( Marc Perkel 
-( https://www.forth.org/fd/FD-V03N6.pdf
-( tunings for Atari 8-but APX Forth by BartGo 
-HEX 0 VARIABLE [ARG] 0 VARIABLE [TO]
-: +ARG <BUILDS , DOES> @ [ARG] @ SWAP - [TO] @ -DUP
-  IF 0< IF +! ELSE ! ENDIF ELSE @ ENDIF 0 [TO] ! ;
- 0 +ARG S1  2 +ARG S2  4 +ARG S3  6 +ARG S4
- 8 +ARG S5  A +ARG S6  C +ARG S7  E +ARG S8 10 +ARG S9
-: TO  1 [TO] ! ; : +TO -1 [TO] ! ;
-: ARGUMENTS R> [ARG] @ >R >R 2 * SP@ + DUP [ARG] !
-  12 - SP@ SWAP - 2 / 0 DO 0 LOOP 0 [TO] ! ;
-: RESULTS 2 * [ARG] @ SWAP - SP@ - 2 / 0 DO DROP LOOP
-  R> R> [ARG] ! >R ;
-DECIMAL
-
-( similar method below, explore which one is better, )
-( but separate stack for locals seems more flexible! )
 
 ( Local variables )
 ( Baranov, Nozdrunov )
@@ -513,7 +440,7 @@ EDITOR DEFINITIONS
 : PIN1 CLS VLIST        ANYKD ; ( vlist )
 : PIN2 CLS SCR @ LIST   ANYKD ; ( list  )
 : PIN3 CLS -EXE .BUFS   ANYKD ; ( buffers )
-: PIN4 CLS DR0 18 SCR ! ANYKD ; ( set DR0, 18th screen )
+: PIN4 CLS DR0 80 SCR ! ANYKD ; ( set DR0, 80th screen )
 : PIN5 CLS SCR @ LOAD   ANYKD ; ( load  )
 : REVB FRM# @ 128 XOR FRM# ! ;  ( reverse frame when Esc )
 : ESC REVB KEY CASES
@@ -543,7 +470,8 @@ EDITOR DEFINITIONS
       ( joy directions +300 not to collide w/ keys )
       314 CASE UP-CURSOR    IS  313 CASE DOWN-CURSOR IS
       307 CASE RIGHT-CURSOR IS  311 CASE LEFT-CURSOR IS
-      DUP DUP 315 = 0= IF ADDKEY ELSE DROP THEN
+      ( todo: add diagonals )
+      DUP DUP 300 < IF ADDKEY ELSE DROP THEN
     END-CASES
   STOP @ UNTIL   
   CLS 0 CRSINH ! ;  
@@ -618,7 +546,7 @@ CEILING @ 1024 512 + - CONSTANT TAREA
   UNTIL DROP
   [COMPILE] FORTH DEFINITIONS ;
   
-: ED-HELP '( -- ; display FIG EDITOR help )
+: ED-HELP ( -- ; display FIG EDITOR help )
   CR
   CR ." m SCR ! -> select screen m"
   CR ." .BUFS   -> show buffers"
@@ -640,7 +568,7 @@ CEILING @ 1024 512 + - CONSTANT TAREA
   CR ." MLM or MON enters QMEG's monitor"
 CR CR ;
   
-: VER '( -- ; display version )
+: VER ( -- ; display version )
   CR
   CR ." =============================="
   CR ."    Extended Fig-Forth Rev.2   "
@@ -654,10 +582,9 @@ CR CR ;
   CR ." =============================="
   CR CR ;
 
-: HELP '( -- ; display help )
+: HELP ( -- ; display help )
   CR
   CR ." VER for version"
-  CR ." XLIST for enhanced VLIST"
   CR ." ED-HELP for screen editing help"
   CR ." .S to show the stack"
   CR ." .CC for CONTEXT and CURRENT info"
@@ -681,6 +608,7 @@ FLAVOR
 
 
 ( The assembler is disposed of after compiling )
+( FIXME: IS IT?! )
 TRANSIENT 
 75 LOAD
 PERMANENT
@@ -733,14 +661,14 @@ DISPOSE
   CR ." RS: " RP@ R0 2 -
   DO I @ U. -2 +LOOP CR ;
 0 VARIABLE RP*
-: BREAK '( -- ; BREAK&GO debugging method )
+: BREAK ( -- ; BREAK&GO debugging method )
   CR ." Breapoint!"
   CR RP@ 4 - RP* ! 0 BLK !  BEGIN
     QUERY INTERPRET ." aok [GO]" CR
   AGAIN ;
-: || '( -- ; alias for BREAK ) BREAK ;
-: ?| '( f -- ; BREAK if f ) IF BREAK THEN ;
-: GO '( -- ; proceed after BREAK )
+: || ( -- ; alias for BREAK ) BREAK ;
+: ?| ( f -- ; BREAK if f ) IF BREAK THEN ;
+: GO ( -- ; proceed after BREAK )
   RP@ RP* @ = IF R> DROP R> DROP
   ELSE ." can't resume " QUIT THEN ;
 
@@ -766,6 +694,6 @@ DISPOSE
 ( ^ replace 'QUIT' IN 'ERROR' with UNRAVEL + QUIT )
 : UNRAVEL-OFF ( -- ) ' QUIT    CFA 7290 ! ; ( default )
 
-: TASK '( -- ; end of EXTENSIONS ) ;
+: TASK ( -- ; end of EXTENSIONS ) ;
 
 SAVE COLD  

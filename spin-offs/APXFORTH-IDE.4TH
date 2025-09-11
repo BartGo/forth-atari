@@ -15,15 +15,6 @@ VOCABULARY EDITOR IMMEDIATE FORTH DEFINITIONS
 : .FRE ( -- )
   741 @ HERE - U. ." bytes free" ;
 
-( blink border while loading )
-: --> ( -- )
-  SCR @ 1+ 2 * 712 C! [COMPILE] --> ; 
-
-( blink border while loading )
-: LOAD ( n -- ) 
-  DUP 2 * 712 C! [COMPILE] LOAD
-  DECIMAL ;
-
 : BEEP 253 EMIT ;
 
 ( static messages are needed as a bigger kernel overwrites )
@@ -149,17 +140,28 @@ DECIMAL
   SP@ 188 = 0= IF SP@ 2 - 186 DO
   I @ . -2 +LOOP THEN 41 EMIT SPACE ;
 
+: (REFRM) ( -- )
+  BASE @ DUP 10 = IF DROP 0 THEN 712 C! ;
+
 : (PROMPT) ( -- )
   0 IF .S THEN
   PFLAG @ 0 PFLAG ! ." ok"
   ' EDITOR CONTEXT @ 4 - = IF ." (editor)" THEN
   PFLAG ! ( prompt )
-  BASE @ DUP 10 = IF DROP 0 THEN 712 C! ;  
+  (REFRM) ;  
 : ok(editor) ; ( omit it like ok )  
   
 : STACK ( -- ; toggle stack display )
   ' (PROMPT) @ ' 0 CFA = IF ' 1 ELSE ' 0 THEN
   CFA ' (PROMPT) ! ;
+
+( blink border while loading )
+: --> ( -- )
+  SCR @ 1+ 2 * 712 C! [COMPILE] --> (REFRM) ; 
+
+( blink border while loading )
+: LOAD ( n -- ) 
+  DUP 2 * 712 C! [COMPILE] LOAD DECIMAL (REFRM) ;
 
 : .CC ( -- ; show CONTEXT and CURRENT)
   CR ." Context Current: "

@@ -302,9 +302,6 @@ DECIMAL
   ." 'SAVE' and 'COLD' to proceed." CR CR ;
 
 EDITOR DEFINITIONS
-: -EXE ( -EXE myword -- )
-  -FIND IF DROP CFA EXECUTE
-  THEN ; IMMEDIATE  
   
  ( EDIT - BY M. DOUGHERTY )
  DECIMAL : CLS 125 EMIT ;
@@ -405,14 +402,14 @@ EDITOR DEFINITIONS
   ." Esc-S: save (flush)" CR
   ." Esc-Z: undo (empty-buffers) " CR
   ." Esc-B: forth command line" CR
-  ." Esc-N: screen+1 (empty-buf)( > )" CR
-  ." Esc-L: screen-1 (empty-buf)( < )" CR
+  ." Esc-N: screen+1 (empty-buf)( ] )" CR
+  ." Esc-L: screen-1 (empty-buf)( [ )" CR
   ." Esc-R: rotate/sides        ( / )" CR
   ." Shf-Del: del ln*; Esc-T/F: color" CR
   ." Esc-V: ins last del ln*" CR
   ." Shf-Ins: ins ln; Esc-1:5: plgns" CR
   ."         1/VLIST 2/LIST-this 3/.BUFS" CR
-  ."         4/SCR18 5/LOAD-this" CR 
+  ."         4/SCR80 5/LOAD-this" CR 
   CR ANYKD DISPLAY ; 
 : DELETE-CHAR ADDR SWAP CCHAR @ -
   -DUP IF 0 DO DUP 1 + C@ OVER C!
@@ -441,14 +438,14 @@ EDITOR DEFINITIONS
 : BGRC 710 THEME ;    : FNTC 709 THEME ;
 : PIN1 CLS VLIST        ANYKD ; ( vlist )
 : PIN2 CLS SCR @ LIST   ANYKD ; ( list  )
-: PIN3 CLS -EXE .BUFS   ANYKD ; ( buffers )
+: PIN3 CLS .BUFS        ANYKD ; ( buffers )
 : PIN4 CLS DR0 80 SCR ! ANYKD ; ( set DR0, 80th screen )
 : PIN5 CLS SCR @ LOAD   ANYKD ; ( load  )
 : REVB FRM# @ 128 XOR FRM# ! ;  ( reverse frame when Esc )
 : ESC REVB KEY CASES
     82 CASE CHSIDE    IS ( R )  47 CASE CHSIDE IS  ( / )
-    78 CASE ENEXT     IS ( N )  62 CASE ENEXT  IS  ( > )
-    76 CASE ELAST     IS ( L )  60 CASE ENEXT  IS  ( < )
+    78 CASE ENEXT     IS ( N )  91 CASE ENEXT  IS  ( ] )
+    76 CASE ELAST     IS ( L )  93 CASE ENEXT  IS  ( [ )
     83 CASE SAVESCR   IS ( S )  49 CASE PIN1   IS  ( 1 )           
     81 CASE EABORT    IS ( Q )  50 CASE PIN2   IS  ( 2 )           
     86 CASE PUT-LINE  IS ( V )  51 CASE PIN3   IS  ( 3 )           
@@ -458,8 +455,8 @@ EDITOR DEFINITIONS
     72 CASE HLP       IS ( H )  70 CASE FNTC   IS  ( F )
   END-CASES REVB ;
 : DEEP SP@ 12 +ORIGIN @ SWAP - 2 / ; ( if no DEPTH dfnd )
-: SETSCR DEEP 0= IF HLP# ENDIF SCR ! ;  
-: EDIT ( m -- ; edit screen m with MDEDIT )
+: SETSCR DEEP 0= IF HLP# DUP ENDIF SCR ! ; ( -- | 80 )
+: (EDIT) ( m -- ; edit screen m with MDEDIT )
   SETSCR EREAD DISPLAY 0 STOP ! BEGIN
     JOYKEY CASES
       27  CASE ESC          IS  155 CASE RETURN      IS
@@ -477,9 +474,9 @@ EDITOR DEFINITIONS
     END-CASES
   STOP @ UNTIL   
   CLS 0 CRSINH ! ;  
-: E. SCR @ EDIT ;  
-
 FORTH DEFINITIONS
+: EDIT EDITOR (EDIT) FORTH ; ( n -- | -- : scr 80 )
+: E. EDITOR SCR @ (EDIT) FORTH ; ( -- : current ) 
 
 ( *******   GOESINTO    ****** )
 ( Decompiler by R. D. Ackerman )
@@ -552,22 +549,20 @@ CEILING @ 1024 512 + - CONSTANT TAREA
   CR
   CR ." m SCR ! -> select screen m"
   CR ." .BUFS   -> show buffers"
-  CR ." --------- BASIC FIG EDITOR"
+  CR ." --------- SOURCE EDITOR"
+  CR ." m EDIT  -> edit screen m"
+  CR ." E.      -> edit current screen"
+  CR ."            Esc+H opens help"
+  CR ." --------- FIG LINE EDITOR"
   CR ." n |     -> add text in line n (P)"
   CR ." n XX    -> delete text in line n (E)"
   CR ." FL.     -> save (FLUSH)"
   CR ." EB.     -> undo (EMPTY-BUFFERS)"
   CR ." L.      -> LIST current screen"
   CR ." N. / P. -> LIST next/previous screen"
-  CR ." --------- ADVANCED EDITOR"
-  CR ." EDITOR  -> enable advanced editor"
-  CR ." m EDIT  -> edit screen m"
-  CR ." E.      -> edit current screen"
-  CR ."            Esc+H opens help"
-  CR ." FORTH   -> disable advanced editor"
-  CR ." --------- QMEG"
-  CR ." QMG     -> enters QMEG's drive menu"
-  CR ." MLM or MON enters QMEG's monitor"
+(  CR ." --------- QMEG" )
+(  CR ." QMG     -> enters QMEG's drive menu" )
+(  CR ." MLM or MON enters QMEG's monitor" )
 CR CR ;
   
 : VER ( -- ; display version )
@@ -588,21 +583,20 @@ CR CR ;
   CR
   CR ." VER for version"
   CR ." ED-HELP for screen editing help"
-  CR ." .S to show the stack"
+  CR ." .S to show the stack in one line"
   CR ." .CC for CONTEXT and CURRENT info"
   CR ." .FRE to show free bytes"
   CR ." .BUFS to show disc buffers"
   CR ." STACK to toggle stack display"
-  CR ." DECOMP ABC to decompile"
+  CR ." DECOMP XYZ to decompile word XYZ"
   CR ." BREAK to debug, GO to proceed"
   CR ." || is BREAK, ?| is conditional"
-  CR ." UNRAVEL-ON /-OFF - error trace"
+  CR ." UNRAVEL-ON /-OFF - err stk trace"
   CR ." RE: and ;RE to redefine words"
   CR ." ' aaa SCAN to locate uses of aaa"
   CR ." D1:/D2:/DIR to browse floppies"
   CR ." n m SEARCH aaa for screen search"
-  CR ." s1 s2 OUTLINE for screen summary"
-  CR ." : X ; RE: X ;RE to redefine"
+  CR ." : X ; RE: X ;RE to redefine <BUG!"
   CR ." CLEAN removes extension bindings"
   CR CR ;
 

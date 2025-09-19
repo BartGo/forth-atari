@@ -6,11 +6,15 @@
 
 FORTH DEFINITIONS DECIMAL
 0 WARNING !
+
+( 40 LOAD ) ( <-- load assembler manually!!! )
+
 ASCII e 7903 C! 
 ASCII 1 7904 C! ( 1.1.1 )
 
 : EXTENSIONS ;
-VOCABULARY EDITOR IMMEDIATE FORTH DEFINITIONS 
+VOCABULARY EDITOR IMMEDIATE
+FORTH DEFINITIONS 
 
 : .FRE ( -- )
   741 @ HERE - U. ." bytes free" ;
@@ -50,21 +54,9 @@ VOCABULARY EDITOR IMMEDIATE FORTH DEFINITIONS
 : (HELLO) ( -- )
   EMPTY-BUFFERS 80 SCR ! 
   CR .FRE
-  CR ." Current Screen is #" SCR ?
-  CR ." 'HELP' for help"
+  CR ." Screen set to #" SCR ?
+  CR ." Type 'HELP' for help"
   CR QUIT ;
-
-( by BG )
-( // is a modified word (.") 
-( but instead of printing, keeps )
-( the string in the dictionary )
-: // R COUNT DUP 1+ R> + >R
-  DROP DROP ;
-
-( redefined as Space Forth won't have it )
-: (ASCII) BL WORD HERE 1+ C@
-  STATE @ IF COMPILE CLIT C,
-  THEN ;  IMMEDIATE
 
 HEX
 ( Re-Defining a Colon Word )
@@ -222,7 +214,7 @@ DECIMAL
 
 ( DOS-like DIR )
 : (INDEX) ( scr -- ; commented lines #0 ) 
-  DUP SCR ! 0 SWAP (LINE) SWAP DUP C@ (ASCII) (
+  DUP SCR ! 0 SWAP (LINE) SWAP DUP C@ ASCII (
   ( ) 
   = 0= IF 2DROP ;S THEN CR ." #"
   SCR ? SWAP -TRAILING TYPE ;      
@@ -491,9 +483,9 @@ FORTH DEFINITIONS
   OVER ' (LOOP)  = OR SWAP ' (+LOOP) = OR
   IF 2+ DUP @ SPACE . 2+ ELSE DUP @ 2+ ' CLIT =
   IF 2+ DUP C@ SPACE . 1+ ELSE DUP @ 2+ 
-  DUP ' (.") = SWAP ' // = OR IF ( BG )
-  2+ DUP COUNT TYPE 
-  DUP C@ 1+ + ELSE 2+ THEN THEN THEN THEN 
+  ' (.") = IF 2+ DUP COUNT TYPE 
+  DUP C@ 1+ + ELSE 2+ THEN
+  THEN THEN THEN 
   -2 GIN +! ; 
 : MYSELF LATEST PFA CFA , ; IMMEDIATE
 : DIN GIN @ SPACES ;
@@ -520,31 +512,7 @@ FORTH DEFINITIONS
     CR (GOESINTO)
   ELSE ." NOT FOUND" CR THEN ;
 : DECOMP GOESINTO ;
-
-( Transient Definitions )
-( Phillip Wasson, FDv3n6p171 )
-741 CONSTANT CEILING 
-CEILING @ 1024 512 + - CONSTANT TAREA
-( default is 1.5kb for the Ragsdale ASM )
-0 VARIABLE TP  TAREA TP !
-: TRANSIENT ( -- ADDR )
-  HERE TP @ DP ! ;
-: PERMANENT ( ADDR -- )
-  HERE TP ! DP ! ;
-: DISPOSE   ( -- )
-  TAREA TP ! VOC-LINK
-  BEGIN DUP
-   BEGIN @ DUP TAREA U< UNTIL DUP
-   ROT ! DUP 0=
-  UNTIL DROP VOC-LINK @
-  BEGIN DUP 4 -
-   BEGIN DUP
-    BEGIN PFA LFA @ DUP TAREA U<
-	UNTIL DUP ROT PFA LFA ! DUP 0=
-   UNTIL DROP @ DUP 0=
-  UNTIL DROP
-  [COMPILE] FORTH DEFINITIONS ;
-  
+ 
 : ED-HELP ( -- ; display FIG EDITOR help )
   CR
   CR ." m SCR ! -> select screen m"
@@ -600,14 +568,6 @@ CR CR ;
   CR ." CLEAN removes extension bindings"
   CR CR ;
 
-FLAVOR
-
-
-( The assembler is disposed of after compiling )
-( FIXME: IS IT?! )
-TRANSIENT 
-75 LOAD
-PERMANENT
 ASSEMBLER HEX
 
 ( RP@ code finally found in the Blazin' Forth sources )
@@ -617,7 +577,6 @@ CODE RP@
   1 # LDA,
   XSAVE LDX,
   PUSH JMP,
-END-CODE
 
 ( ** CALL ** )
 ( David Held, Forth Dimension V/5 p. 22 )
@@ -626,7 +585,8 @@ END-CODE
 CODE (CALL)
     XSAVE STX,    0 JSR,
     XSAVE LDX, NEXT JMP,
-END-CODE
+
+
 FORTH
 HEX
 : CALL
@@ -648,7 +608,7 @@ HEX
 : MON MLM ; 
 DECIMAL
 
-DISPOSE
+
 
 ( Add a Break Point Tool / BREAK & GO )
 ( Frank Seuberling / Kim Harris - FDv5n1p19 )
@@ -692,4 +652,72 @@ DISPOSE
 
 : TASK ( -- ; end of EXTENSIONS ) ;
 
-SAVE COLD  
+( 50 LOAD ) ( <-- load graphics manually )
+
+( demo code )
+
+80 CLEAR 80 SCR !
+0 | ( factorial )
+1 | : FAC         ( n -- n! )
+2 |   1 SWAP 1+ 1 ( 1 n+1 1 )
+3 |   DO I * LOOP ;  
+4 | CR 3 FAC .
+5 | CR 8 FAC U.
+6 | CR
+FLUSH
+
+81 CLEAR 81 SCR !
+0  | ( factorial tests )
+1  | : TEST.FAC ( -- )
+2  |  .” T1: f(0) = ”     
+3  |   0 FAC DUP U. 1 ?PAIRS CR
+4  |  .” T2: f(1) ”       
+5  |   1 FAC  1 ?PAIRS CR
+6  |  .” T3: f(4) ”       
+7  |   4 FAC 24 ?PAIRS CR
+8  |  .” T4: f(2)<f(4) ”
+9  |   2 FAC 3 FAC U< 1 ?PAIRS CR
+10 |  .” T5: f(8)<f(9) ”  
+11 |   8 FAC 9 FAC U< 1 ?PAIRS CR
+12 |  .” Tests Done. “ CR ; 
+FLUSH
+
+82 CLEAR 82 SCR !
+0  | ( a broken SQUARE )
+1  | 1 CONSTANT #COLOR
+2  | 0 VARIABLE X
+3  | 0 VARIABLE Y
+4  | 0 VARIABLE SIDE
+5  | : SQUARE  ( side y x -- )
+6  |   SIDE ! Y ! X !
+7  |   #COLOR X @ Y @ PLOT
+8  |   #COLOR X @ SIDE + Y @ DRAW
+9  |   #COLOR X @ SIDE + Y @ SIDE
+10 |     + DRAW
+11 |   #COLOR X @ Y @ DRAW  
+12 |   #COLOR X @ Y @ SIDE @
+13 |     + DRAW 1 ;
+14 | 8 GR. ( XGR exists ) CR CR 
+15 | ." 100 10 20 SQUARE " CR
+FLUSH
+
+83 CLEAR 83 SCR !
+0  | ( a fixed SQUARE )
+1  | 1 CONSTANT #COLOR
+2  | 0 VARIABLE X
+3  | 0 VARIABLE Y
+4  | 0 VARIABLE SIDE
+5  | : SQUARE  ( side y x -- )
+6  |   X ! Y ! SIDE !
+7  |   #COLOR X @ Y @ PLOT
+8  |   #COLOR X @ SIDE @ + Y @ DRAW
+9  |   #COLOR X @ SIDE @ + Y @ SIDE @
+10 |     + DRAW
+11 |   #COLOR X @ Y @ SIDE @ + DRAW  
+12 |   #COLOR X @ Y @ DRAW ;
+13 | ( no more bugs! )
+14 | 8 GR. ( XGR exists ) CR CR 
+15 | ." 100 10 20 SQUARE " CR
+FLUSH
+
+FLAVOR SAVE COLD  

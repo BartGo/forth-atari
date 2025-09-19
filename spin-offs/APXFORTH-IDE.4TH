@@ -10,7 +10,7 @@ FORTH DEFINITIONS DECIMAL
 ( 40 LOAD ) ( <-- load assembler manually!!! )
 
 ASCII e 7903 C! 
-ASCII 1 7904 C! ( 1.1.1 )
+ASCII 2 7904 C! ( 1.1e2 )
 
 : EXTENSIONS ;
 VOCABULARY EDITOR IMMEDIATE
@@ -438,7 +438,7 @@ EDITOR DEFINITIONS
 : REVB FRM# @ 128 XOR FRM# ! ;  ( reverse frame when Esc )
 : ESC REVB KEY CASES
     82 CASE CHSIDE    IS ( R )  47 CASE CHSIDE IS  ( / )
-    78 CASE ENEXT     IS ( N )  91 CASE ENEXT  IS  ( ] )
+    78 CASE ENEXT     IS ( N )  91 CASE ELAST  IS  ( ] )
     76 CASE ELAST     IS ( L )  93 CASE ENEXT  IS  ( [ )
     83 CASE SAVESCR   IS ( S )  49 CASE PIN1   IS  ( 1 )           
     81 CASE EABORT    IS ( Q )  50 CASE PIN2   IS  ( 2 )           
@@ -543,9 +543,11 @@ CR CR ;
   CR ." published by Atari through APX"
   CR ." ------------------------------"
   CR ."     EDIT - by M. Dougherty    "
-  CR ." as published in Micro Magazine"
+  CR ." as published in: 'Micro 6502' "
+  CR ."    (no. 57 - February 1983)   "
   CR ." ------------------------------"
-  CR ."  2025 tunings collected by BG "
+  CR ." collected & modified by BartGo"
+  CR ." in 2025 - for Atari Forth fans"
   CR ." =============================="
   CR CR ;
 

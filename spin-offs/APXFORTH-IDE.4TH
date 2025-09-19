@@ -16,6 +16,22 @@ ASCII 2 7904 C! ( 1.1e2 )
 VOCABULARY EDITOR IMMEDIATE
 FORTH DEFINITIONS 
 
+: VER ( -- ; display version )
+  CR
+  CR ."  =============================="
+  CR ."     Extended Fig-Forth Rev.2   "
+  CR ."   by Patrick L. Mullarky, 1982 "
+  CR ."  published by Atari through APX"
+  CR ."  ------------------------------"
+  CR ."      EDIT - by M. Dougherty    "
+  CR ."  as published in: 'Micro 6502' "
+  CR ."     (no. 57 - February 1983)   "
+  CR ."  ------------------------------"
+  CR ."  collected & modified by BartGo"
+  CR ."  in 2025 - for Atari Forth fans"
+  CR ."  =============================="
+  CR CR ;
+
 : .FRE ( -- )
   741 @ HERE - U. ." bytes free" ;
 
@@ -336,7 +352,7 @@ EDITOR DEFINITIONS
   16 0 DO I CLINE ! WRITE-LINE LOOP CLINE !
   SIDE @ IF 32 ELSE 0 ENDIF CCHAR ! BOT
   WRITE-EXTRA CURSOR SCREEN-CURSOR ;
-: ANYK CR ." (Return)" KEY DROP ; : ANYKD ANYK DISPLAY ;
+: ANYK CR ." (Press Return or Enter)" KEY DROP ; : ANYKD ANYK DISPLAY ;
 : CASES ?COMP CSP @ !CSP 4 ; IMMEDIATE
 : CASE 4 ?PAIRS COMPILE OVER COMPILE =
   COMPILE 0BRANCH HERE 0 , COMPILE DROP 5 ; IMMEDIATE
@@ -390,7 +406,7 @@ EDITOR DEFINITIONS
   ." Arrows, Ins, BckSp, Tab: normal use" CR
   ." Return: next line" CR
   ." Ctl-Ins: insert space " CR
-  ." Ctl-BckSpc: delete;  Esc-0: cold" CR
+  ." Ctl-BckSpc: delete ; Esc-0: version" CR
   ." Clear: clear screen (Shf> Ctl>)" CR 
   ." Esc-Q: quit (empty-buffers)" CR
   ." Esc-S: save (flush)" CR
@@ -398,11 +414,12 @@ EDITOR DEFINITIONS
   ." Esc-B: forth command line" CR
   ." Esc-N: screen+1 (empty-buf)( ] )" CR
   ." Esc-L: screen-1 (empty-buf)( [ )" CR
-  ." Esc-R: rotate/sides        ( / )" CR
-  ." Shf-Del: del ln*; Esc-T/F: color" CR
-  ." Esc-V: ins last del ln*" CR
-  ." Shf-Ins: ins ln; Esc-1:5: plgns" CR
-  ."         1/VLIST 2/LIST-this 3/.BUFS" CR
+  ." Esc-R: rotate sides        ( / )" CR
+  ." Esc-C: *copy line ; Esc-T/F: colors" CR  
+  ." Esc-V: *ins last del or copied line" CR
+  ." Shf-Del: *delete and copy line" CR
+  ." Shf-Ins: ins empty ln ; Esc-#: plgns" CR
+  ."       #=1/VLIST 2/LIST-this 3/.BUFS" CR
   ."         4/SCR80 5/LOAD-this" CR 
   CR ANYKD DISPLAY ; 
 : DELETE-CHAR ADDR SWAP CCHAR @ -
@@ -411,7 +428,8 @@ EDITOR DEFINITIONS
 : DELETE SIDE @ IF 63 ELSE 31 ENDIF
   DELETE-CHAR WRITE-LINE CURSOR SCREEN-CURSOR ;
 : L-A SCR @ (LINE) DROP ;
-: DELETE-L CLINE @ L-A SAV-BUF 64 CMOVE
+: COPY-L CLINE @ L-A SAV-BUF 64 CMOVE ;
+: DELETE-L COPY-L
   15 CLINE @ - IF 15 CLINE @ DO
   I 1+ L-A I L-A 64 CMOVE LOOP ENDIF
   15 L-A 64 BLANKS ;
@@ -436,6 +454,7 @@ EDITOR DEFINITIONS
 : PIN4 CLS DR0 80 SCR ! ANYKD ; ( set DR0, 80th screen )
 : PIN5 CLS SCR @ LOAD   ANYKD ; ( load  )
 : REVB FRM# @ 128 XOR FRM# ! ;  ( reverse frame when Esc )
+: (VER) 125 EMIT VER ANYK ;
 : ESC REVB KEY CASES
     82 CASE CHSIDE    IS ( R )  47 CASE CHSIDE IS  ( / )
     78 CASE ENEXT     IS ( N )  91 CASE ELAST  IS  ( ] )
@@ -445,8 +464,9 @@ EDITOR DEFINITIONS
     86 CASE PUT-LINE  IS ( V )  51 CASE PIN3   IS  ( 3 )           
     90 CASE 0 UNDOSCR IS ( Z )  52 CASE PIN4   IS  ( 4 ) 
     66 CASE SH        IS ( B )  53 CASE PIN5   IS  ( 5 ) 
-    48 CASE CLS COLD  IS ( 0 )  84 CASE BGRC   IS  ( T )
+    48 CASE (VER)     IS ( 0 )  84 CASE BGRC   IS  ( T )
     72 CASE HLP       IS ( H )  70 CASE FNTC   IS  ( F )
+    67 CASE COPY-L    IS ( C )
   END-CASES REVB ;
 : DEEP SP@ 12 +ORIGIN @ SWAP - 2 / ; ( if no DEPTH dfnd )
 : SETSCR DEEP 0= IF HLP# DUP ENDIF SCR ! ; ( -- | 80 )
@@ -535,22 +555,6 @@ FORTH DEFINITIONS
 (  CR ." MLM or MON enters QMEG's monitor" )
 CR CR ;
   
-: VER ( -- ; display version )
-  CR
-  CR ." =============================="
-  CR ."    Extended Fig-Forth Rev.2   "
-  CR ."  by Patrick L. Mullarky, 1982 "
-  CR ." published by Atari through APX"
-  CR ." ------------------------------"
-  CR ."     EDIT - by M. Dougherty    "
-  CR ." as published in: 'Micro 6502' "
-  CR ."    (no. 57 - February 1983)   "
-  CR ." ------------------------------"
-  CR ." collected & modified by BartGo"
-  CR ." in 2025 - for Atari Forth fans"
-  CR ." =============================="
-  CR CR ;
-
 : HELP ( -- ; display help )
   CR
   CR ." VER for version"

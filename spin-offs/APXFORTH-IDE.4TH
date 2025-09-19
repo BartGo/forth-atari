@@ -132,6 +132,8 @@ DECIMAL
   SP@ 188 = 0= IF SP@ 2 - 186 DO
   I @ . -2 +LOOP THEN 41 EMIT SPACE ;
 
+: S. .S ; ( -- ; an alias for .S )
+
 : (REFRM) ( -- )
   BASE @ DUP 10 = IF DROP 0 THEN 712 C! ;
 

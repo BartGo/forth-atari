@@ -20,6 +20,7 @@
   [ ' ;S CFA   ] LITERAL OVER  2+ !
   [ ' ;  CFA @ ] LITERAL SWAP CFA ! ;
 ' -FIND ' -FINDX ZAP
-FORGET ZAP
 
 ASCII o 7894 C! ( case insensitive ) ( fig-FoRTH )
+
+SAVE

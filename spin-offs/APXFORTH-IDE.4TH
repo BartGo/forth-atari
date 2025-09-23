@@ -575,7 +575,7 @@ FORTH DEFINITIONS
   CR ." E.      -> edit current screen"
   CR ."            Esc+H opens help"
   CR ." --------- FIG LINE EDITOR"
-  CR ." n |     -> add text in line n (P)"
+  CR ." n &     -> add text in line n (P)"
   CR ." n XX    -> delete text in line n (E)"
   CR ." FL.     -> save (FLUSH)"
   CR ." EB.     -> undo (EMPTY-BUFFERS)"
@@ -696,67 +696,67 @@ DECIMAL
 ( demo code )
 
 80 CLEAR 80 SCR !
-0 | ( factorial )
-1 | : FAC         ( n -- n! )
-2 |   1 SWAP 1+ 1 ( 1 n+1 1 )
-3 |   DO I * LOOP ;  
-4 | CR 3 FAC .
-5 | CR 8 FAC U.
-6 | CR
+0 & ( factorial )
+1 & : FAC         ( n -- n! )
+2 &   1 SWAP 1+ 1 ( 1 n+1 1 )
+3 &   DO I * LOOP ;  
+4 & CR 3 FAC .
+5 & CR 8 FAC U.
+6 & CR
 FLUSH
 
 81 CLEAR 81 SCR !
-0  | ( factorial tests )
-1  | : TEST.FAC ( -- )
-2  |  .” T1: f(0) = ”     
-3  |   0 FAC DUP U. 1 ?PAIRS CR
-4  |  .” T2: f(1) ”       
-5  |   1 FAC  1 ?PAIRS CR
-6  |  .” T3: f(4) ”       
-7  |   4 FAC 24 ?PAIRS CR
-8  |  .” T4: f(2)<f(4) ”
-9  |   2 FAC 3 FAC U< 1 ?PAIRS CR
-10 |  .” T5: f(8)<f(9) ”  
-11 |   8 FAC 9 FAC U< 1 ?PAIRS CR
-12 |  .” Tests Done. “ CR ; 
+0  & ( factorial tests )
+1  & : TEST.FAC ( -- )
+2  &  .” T1: f(0) = ”     
+3  &   0 FAC DUP U. 1 ?PAIRS CR
+4  &  .” T2: f(1) ”       
+5  &   1 FAC  1 ?PAIRS CR
+6  &  .” T3: f(4) ”       
+7  &   4 FAC 24 ?PAIRS CR
+8  &  .” T4: f(2)<f(4) ”
+9  &   2 FAC 3 FAC U< 1 ?PAIRS CR
+10 &  .” T5: f(8)<f(9) ”  
+11 &   8 FAC 9 FAC U< 1 ?PAIRS CR
+12 &  .” Tests Done. “ CR ; 
 FLUSH
 
 82 CLEAR 82 SCR !
-0  | ( a broken SQUARE )
-1  | 1 CONSTANT #COLOR
-2  | 0 VARIABLE X
-3  | 0 VARIABLE Y
-4  | 0 VARIABLE SIDE
-5  | : SQUARE  ( side y x -- )
-6  |   SIDE ! Y ! X !
-7  |   #COLOR X @ Y @ PLOT
-8  |   #COLOR X @ SIDE + Y @ DRAW
-9  |   #COLOR X @ SIDE + Y @ SIDE
-10 |     + DRAW
-11 |   #COLOR X @ Y @ DRAW  
-12 |   #COLOR X @ Y @ SIDE @
-13 |     + DRAW 1 ;
-14 | 8 GR. ( XGR exists ) CR CR 
-15 | ." 100 10 20 SQUARE " CR
+0  & ( a broken SQUARE )
+1  & 1 CONSTANT #COLOR
+2  & 0 VARIABLE X
+3  & 0 VARIABLE Y
+4  & 0 VARIABLE SIDE
+5  & : SQUARE  ( side y x -- )
+6  &   SIDE ! Y ! X !
+7  &   #COLOR X @ Y @ PLOT
+8  &   #COLOR X @ SIDE + Y @ DRAW
+9  &   #COLOR X @ SIDE + Y @ SIDE
+10 &     + DRAW
+11 &   #COLOR X @ Y @ DRAW  
+12 &   #COLOR X @ Y @ SIDE @
+13 &     + DRAW 1 ;
+14 & 8 GR. ( XGR exists ) CR CR 
+15 & ." 100 10 20 SQUARE " CR
 FLUSH
 
 83 CLEAR 83 SCR !
-0  | ( a fixed SQUARE )
-1  | 1 CONSTANT #COLOR
-2  | 0 VARIABLE X
-3  | 0 VARIABLE Y
-4  | 0 VARIABLE SIDE
-5  | : SQUARE  ( side y x -- )
-6  |   X ! Y ! SIDE !
-7  |   #COLOR X @ Y @ PLOT
-8  |   #COLOR X @ SIDE @ + Y @ DRAW
-9  |   #COLOR X @ SIDE @ + Y @ SIDE @
-10 |     + DRAW
-11 |   #COLOR X @ Y @ SIDE @ + DRAW  
-12 |   #COLOR X @ Y @ DRAW ;
-13 | ( no more bugs! )
-14 | 8 GR. ( XGR exists ) CR CR 
-15 | ." 100 10 20 SQUARE " CR
+0  & ( a fixed SQUARE )
+1  & 1 CONSTANT #COLOR
+2  & 0 VARIABLE X
+3  & 0 VARIABLE Y
+4  & 0 VARIABLE SIDE
+5  & : SQUARE  ( side y x -- )
+6  &   X ! Y ! SIDE !
+7  &   #COLOR X @ Y @ PLOT
+8  &   #COLOR X @ SIDE @ + Y @ DRAW
+9  &   #COLOR X @ SIDE @ + Y @ SIDE @
+10 &     + DRAW
+11 &   #COLOR X @ Y @ SIDE @ + DRAW  
+12 &   #COLOR X @ Y @ DRAW ;
+13 & ( no more bugs! )
+14 & 8 GR. ( XGR exists ) CR CR 
+15 & ." 100 10 20 SQUARE " CR
 FLUSH
 
 84 CLEAR FLUSH

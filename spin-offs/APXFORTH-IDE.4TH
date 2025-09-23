@@ -5,12 +5,13 @@
 ( todo: document compilation of below      )
 
 FORTH DEFINITIONS DECIMAL
+ASCII e 7903 C! 
+ASCII 3 7904 C! ( version 1.1e3 )
 0 WARNING !
 
-( 40 LOAD ) ( <-- load assembler manually!!! )
-
-ASCII e 7903 C! 
-ASCII 2 7904 C! ( 1.1e2 )
+: CORE ;
+( 40 LOAD ) ( <-- load assembler - manually! )
+( 50 LOAD ) ( <-- load graphics  - manually! )
 
 : EXTENSIONS ;
 VOCABULARY EDITOR IMMEDIATE
@@ -43,6 +44,7 @@ FORTH DEFINITIONS
 
 ( static messages are needed as a bigger kernel overwrites )
 ( first screens, including those with messages )
+( an alternative would be to move messages to the last screens )
 : (MESSAGE) ( n -- )
   ( blink red on real err, orange on warning / msg 4 )
   710 @ SWAP DUP 4 = 0= IF
@@ -160,10 +162,10 @@ DECIMAL
 : (PROMPT) ( -- )
   0 IF .S THEN
   PFLAG @ 0 PFLAG ! ." ok"
-  ' EDITOR CONTEXT @ 4 - = IF ." (editor)" THEN
+  ' EDITOR CONTEXT @ 4 - = IF ." -editor" THEN
   PFLAG ! ( prompt )
   (REFRM) ;  
-: ok(editor) ; ( omit it like ok )  
+: ok-editor ; ( omit it like ok )  
   
 : STACK ( -- ; toggle stack display )
   ' (PROMPT) @ ' 0 CFA = IF ' 1 ELSE ' 0 THEN
@@ -204,12 +206,12 @@ DECIMAL
     132 + ?TERMINAL IF LEAVE THEN
   LOOP DROP CR ;
 
-: .BUFSTAT ( -- ) ( simplified .BUFS )
+: .BUFSTAT ( -- ) ( show only buffer change flags )
   FIRST LIMIT FIRST - B/BUF /
-  ." [" 1+ 1 DO
+  ." (" 1+ 1 DO
     DUP @ 32768 AND
     0= 0= 32 + EMIT 132 + 
-  LOOP DROP ." ]" CR ;
+  LOOP DROP ." )" CR ;
 
 ( *** )
 ( KEYWORDS - WHERE USED
@@ -314,7 +316,7 @@ DECIMAL
   ." FLAVOR is ON." CR .FRE CR
   ." 'SAVE' and 'COLD' to proceed." CR CR ;
   
-: CLEAN ( -- ) 
+: PURGE ( -- ) 
   ' WARNING    CFA ' MESSAGE    !  
   ' @          CFA ' MESSAGE 2+ ! 
   ' PROMPT     CFA ' QUIT 26 +  ! 
@@ -322,6 +324,8 @@ DECIMAL
   ' QUIT       CFA ' ABORT 35 + ! 
   ' EXTENSIONS LFA @ PFA FENCE  !
   148 710 ! 125 EMIT
+  32 7903 C! 
+  32 7904 C! ( 1.1eN -> 1.1 )
   ." FLAVOR is OFF." CR .FRE CR
   ." 'FORGET EXTENSIONS' obliterates," CR
   ." 'SAVE' and 'COLD' to proceed." CR CR ;
@@ -606,7 +610,7 @@ CR CR ;
   CR ." n m THRU to load multiple screens"
   CR ." WHERE for the last loading error"
   CR ." : X ;  RE: X ;RE  to redefine words"
-  CR ." CLEAN removes extension bindings"
+  CR ." PURGE removes extension bindings"
   CR CR ;
 
 ASSEMBLER HEX
@@ -688,11 +692,11 @@ DECIMAL
 ( ^ replace 'QUIT' IN 'ERROR' with UNRAVEL + QUIT )
 : UNRAVEL-OFF ( -- ) ' QUIT    CFA 7290 ! ; ( default )
 
+: PURGE PURGE UNRAVEL-OFF ;
+
 : TASK ( -- ; end of EXTENSIONS ) ;
 
-( 50 LOAD ) ( <-- load graphics manually )
-
-( demo code )
+( demo source code )
 
 80 CLEAR 80 SCR !
 0 & ( factorial )
@@ -757,6 +761,8 @@ FLUSH
 14 & 8 GR. ( XGR exists ) CR CR 
 15 & ." 100 10 20 SQUARE " CR
 FLUSH
+
+( todo: diff between screens )
 
 84 CLEAR FLUSH
 85 CLEAR FLUSH

@@ -177,6 +177,10 @@ DECIMAL
 : LOAD ( n -- ) 
   DUP 2 * 712 C! [COMPILE] LOAD DECIMAL (REFRM) ;
 
+( load screens nl thru n2 inclusive )
+: THRU ( nl n2 -- ) 
+  1+ SWAP DO I LOAD LOOP ;
+  
 : .CC ( -- ; show CONTEXT and CURRENT)
   CR ." Context Current: "
   CONTEXT @ 4 - NFA ID.

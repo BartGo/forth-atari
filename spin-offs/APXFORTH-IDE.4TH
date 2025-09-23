@@ -603,7 +603,9 @@ CR CR ;
   CR ." ' aaa SCAN to locate uses of aaa"
   CR ." D1:/D2:/DIR to browse floppies"
   CR ." n m SEARCH aaa for screen search"
-  CR ." : X ; RE: X ;RE to redefine <BUG!"
+  CR ." n m THRU to load multiple screens"
+  CR ." WHERE for the last loading error"
+  CR ." : X ;  RE: X ;RE  to redefine words"
   CR ." CLEAN removes extension bindings"
   CR CR ;
 
@@ -611,11 +613,8 @@ ASSEMBLER HEX
 
 ( RP@ code finally found in the Blazin' Forth sources )
 CODE RP@ 
-  XSAVE STX,
-  TSX, TXA, PHA,
-  1 # LDA,
-  XSAVE LDX,
-  PUSH JMP,
+  XSAVE STX, TSX, TXA, PHA, 1 # LDA,
+  XSAVE LDX, PUSH JMP,
 
 ( ** CALL ** )
 ( David Held, Forth Dimension V/5 p. 22 )
@@ -640,7 +639,7 @@ HEX
   HERE   1E +ORIGIN ! ( DP )
   ; ( TODO: how is it different from )
     ( the partial content of (SAVE)
-    ( which also touches VOC-LINK etc
+    ( which also touches VOC-LINK etc )
   
 : MLM MEMUP E480 CALL ;
 : QMG MEMUP E471 CALL ;

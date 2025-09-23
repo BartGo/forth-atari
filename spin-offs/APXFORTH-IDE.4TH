@@ -18,18 +18,22 @@ FORTH DEFINITIONS
 
 : VER ( -- ; display version )
   CR
-  CR ."  =============================="
-  CR ."     Extended Fig-Forth Rev.2   "
-  CR ."   by Patrick L. Mullarky, 1982 "
-  CR ."  published by Atari through APX"
-  CR ."  ------------------------------"
-  CR ."      EDIT - by M. Dougherty    "
-  CR ."  as published in: 'Micro 6502' "
-  CR ."     (no. 57 - February 1983)   "
-  CR ."  ------------------------------"
-  CR ."  collected & modified by BartGo"
-  CR ."  in 2025 - for Atari Forth fans"
-  CR ."  =============================="
+  CR ."    =============================="
+  CR ."       Extended Fig-Forth Rev.2   "
+  CR ."     by Patrick L. Mullarky, 1982 "
+  CR ."    published by Atari through APX"
+  CR ."    ------------------------------"
+  CR ."        EDIT - by M. Dougherty    "
+  CR ."    as published in: 'Micro 6502' "
+  CR ."       (no. 57 - February 1983)   "
+  CR ."    ------------------------------"
+  CR ."    Additional tools from magazine"
+  CR ."    Forth Dimensions, collected & "
+  CR ."    extended by BartGo, Sept. 2025"
+  CR ."    =============================="
+  CR ."    For the glory of Atari & Forth"
+  CR ."    & PTODT (https://ptodt.org.pl)"  
+  CR ."    =============================="
   CR CR ;
 
 : .FRE ( -- )
@@ -98,7 +102,7 @@ HEX
 : TEXT/ HERE C/L 1+ BLANKS WORD HERE PAD C/L 1+ CMOVE ;
 : LINE/ DUP FFF0 AND 17 ?ERROR SCR @ (LINE) DROP ;
 : -MOVE/ LINE/ C/L CMOVE UPDATE ; 
-: | 1 TEXT/ PAD 1+ SWAP -MOVE/ ; ( = P )
+: & 1 TEXT/ PAD 1+ SWAP -MOVE/ ; ( = P )
 : XX LINE/ C/L BL FILL UPDATE ;  ( = E ) 
 : L. SCR @ LIST ; : FL. FLUSH ; : EB. EMPTY-BUFFERS ;
 : N. 1 SCR +! L. ; : P. -1 SCR +! L. ;
@@ -195,6 +199,13 @@ DECIMAL
     B/SCR /MOD 5 .R 4 SPACES 2 .R
     132 + ?TERMINAL IF LEAVE THEN
   LOOP DROP CR ;
+
+: .BUFSTAT ( -- ) ( simplified .BUFS )
+  FIRST LIMIT FIRST - B/BUF /
+  ." [" 1+ 1 DO
+    DUP @ 32768 AND
+    0= 0= 32 + EMIT 132 + 
+  LOOP DROP ." ]" CR ;
 
 ( *** )
 ( KEYWORDS - WHERE USED
@@ -347,12 +358,13 @@ EDITOR DEFINITIONS
 : ETITLE 0 CHAROFF @ POINT-CURSOR ." EDIT / Dr" 
   OFFSET @ 0= 0= . ." Scr" 
   SCR ? ." Side" SIDE
-  ? ." Free" (FRE) U. ; 
+  ? ." Free" (FRE) U. CR 8 SPACES ." Buffers" .BUFSTAT ; 
 : DISPLAY CLS 1 CRSINH C! ETITLE 2TOP CLINE @ 
   16 0 DO I CLINE ! WRITE-LINE LOOP CLINE !
   SIDE @ IF 32 ELSE 0 ENDIF CCHAR ! BOT
   WRITE-EXTRA CURSOR SCREEN-CURSOR ;
-: ANYK CR ." (Press Return or Enter)" KEY DROP ; : ANYKD ANYK DISPLAY ;
+: ANYK CR ." (Press Return or Enter)" KEY DROP ;
+: ANYKD ANYK DISPLAY ;
 : CASES ?COMP CSP @ !CSP 4 ; IMMEDIATE
 : CASE 4 ?PAIRS COMPILE OVER COMPILE =
   COMPILE 0BRANCH HERE 0 , COMPILE DROP 5 ; IMMEDIATE
@@ -401,27 +413,28 @@ EDITOR DEFINITIONS
   DUP 1 - C@ OVER C! 1 - LOOP ENDIF BL SWAP C! ;
 : INSERT SIDE @ IF 63 ELSE 31 ENDIF 
   INSERT-CHAR WRITE-LINE CURSOR SCREEN-CURSOR ;
-: HLP 125 EMIT
-  ." EDIT by M. Dougherty (Esc-H: help)" CR
-  ." Arrows, Ins, BckSp, Tab: normal use" CR
-  ." Return: next line" CR
-  ." Ctl-Ins: insert space " CR
-  ." Ctl-BckSpc: delete ; Esc-0: version" CR
-  ." Clear: clear screen (Shf> Ctl>)" CR 
-  ." Esc-Q: quit (empty-buffers)" CR
-  ." Esc-S: save (flush)" CR
-  ." Esc-Z: undo (empty-buffers) " CR
-  ." Esc-B: forth command line" CR
-  ." Esc-N: screen+1 (empty-buf)( ] )" CR
-  ." Esc-L: screen-1 (empty-buf)( [ )" CR
-  ." Esc-R: rotate sides        ( / )" CR
-  ." Esc-C: *copy line ; Esc-T/F: colors" CR  
-  ." Esc-V: *ins last del or copied line" CR
-  ." Shf-Del: *delete and copy line" CR
-  ." Shf-Ins: ins empty ln ; Esc-#: plgns" CR
-  ."       #=1/VLIST 2/LIST-this 3/.BUFS" CR
-  ."         4/SCR80 5/LOAD-this" CR 
-  CR ANYKD DISPLAY ; 
+: HLP 125 EMIT CR
+  ." *EDIT* by M. Dougherty  (Esc-H: help)" CR
+  ." =====================================" CR
+  ." Arrows, Ins, BckSp, Tab: normal use"   CR
+  ." Return: next line   ; Esc-J/K: colors" CR
+  ." Esc-S: save (flush) ; Esc-E: version"  CR
+  ." Esc-Q: quit (empty-buf)"               CR
+  ." Esc-Z: undo (empty-buf) "              CR
+  ." Esc-U: execute forth command"          CR
+  ." Esc-N: screen+1 (empty-buf)( ] )"      CR
+  ." Esc-L: screen-1 (empty-buf)( [ )"      CR
+  ." Esc-T: rotate sides        ( / )"      CR
+  ." Esc-X: *copy and delete line"          CR
+  ." Esc-C: *copy and keep line"            CR  
+  ." Esc-V: *insert copied line"            CR
+  ." Esc-R: *copy and run line in forth"    CR
+  ." Esc-B: insert empty line"              CR
+  ." Esc-#: forth macros and commands:"     CR
+  ."        1/VLIST 2/LIST-this 3/.BUFS"    CR
+  ."        4/SCR80 5/LOAD-this 0/CLRSCR"   CR
+  ." =====================================" CR
+  CR ANYKD ; 
 : DELETE-CHAR ADDR SWAP CCHAR @ -
   -DUP IF 0 DO DUP 1 + C@ OVER C!
   1 + LOOP ENDIF BL SWAP C! ;
@@ -436,14 +449,16 @@ EDITOR DEFINITIONS
 : INSERT-L 15 CLINE @ - IF
   CLINE @ 15 DO I 1 - L-A I L-A 64 CMOVE
   -1 +LOOP ENDIF CLINE @ L-A 64 BLANKS ;
-: INSERT-LINE INSERT-L DISPLAY ;
-: DELETE-LINE DELETE-L DISPLAY ; 
+: INS-LINE INSERT-L DISPLAY ;
+: DEL-LINE DELETE-L DISPLAY ; 
 : PUT-LINE INSERT-L SAV-BUF CLINE @
   L-A 64 CMOVE DISPLAY ;
+: PRT-LINE CLINE @ L-A 64 TYPE ;
+: RUN-LINE COPY-L CR PRT-LINE CR QUERY INTERPRET ;
 : TAB 2 0 DO RIGHT-CURSOR LOOP ;
 : DEL LEFT-CURSOR BL DUP ADDR C!
   CURSOR EMIT SCREEN-CURSOR ;
-: CLEAR-SCR 
+: CLRSCR 
   16 0 DO I L-A 64 BLANKS LOOP DISPLAY ; 
 : THEME DUP C@ 148 XOR SWAP C! ; 
 : SAVESCR FLUSH EREAD DISPLAY  ; 
@@ -456,17 +471,19 @@ EDITOR DEFINITIONS
 : REVB FRM# @ 128 XOR FRM# ! ;  ( reverse frame when Esc )
 : (VER) 125 EMIT VER ANYK ;
 : ESC REVB KEY CASES
-    82 CASE CHSIDE    IS ( R )  47 CASE CHSIDE IS  ( / )
-    78 CASE ENEXT     IS ( N )  91 CASE ELAST  IS  ( ] )
-    76 CASE ELAST     IS ( L )  93 CASE ENEXT  IS  ( [ )
-    83 CASE SAVESCR   IS ( S )  49 CASE PIN1   IS  ( 1 )           
-    81 CASE EABORT    IS ( Q )  50 CASE PIN2   IS  ( 2 )           
-    86 CASE PUT-LINE  IS ( V )  51 CASE PIN3   IS  ( 3 )           
-    90 CASE 0 UNDOSCR IS ( Z )  52 CASE PIN4   IS  ( 4 ) 
-    66 CASE SH        IS ( B )  53 CASE PIN5   IS  ( 5 ) 
-    48 CASE (VER)     IS ( 0 )  84 CASE BGRC   IS  ( T )
-    72 CASE HLP       IS ( H )  70 CASE FNTC   IS  ( F )
-    67 CASE COPY-L    IS ( C )
+    84 CASE CHSIDE    IS ( T ) 47 CASE CHSIDE   IS ( / )
+    78 CASE ENEXT     IS ( N ) 91 CASE ELAST    IS ( ] )
+    76 CASE ELAST     IS ( L ) 93 CASE ENEXT    IS ( [ )
+    83 CASE SAVESCR   IS ( S ) 49 CASE PIN1     IS ( 1 )           
+    81 CASE EABORT    IS ( Q ) 50 CASE PIN2     IS ( 2 )           
+    86 CASE PUT-LINE  IS ( V ) 51 CASE PIN3     IS ( 3 )           
+    90 CASE 0 UNDOSCR IS ( Z ) 52 CASE PIN4     IS ( 4 ) 
+    85 CASE SH        IS ( U ) 53 CASE PIN5     IS ( 5 ) 
+    69 CASE (VER)     IS ( E ) 74 CASE BGRC     IS ( J )
+    72 CASE HLP       IS ( H ) 75 CASE FNTC     IS ( K )
+    67 CASE COPY-L    IS ( C ) 48 CASE CLRSCR   IS ( 0 )
+    88 CASE DEL-LINE  IS ( X ) 66 CASE INS-LINE IS ( C )
+    82 CASE RUN-LINE  IS ( R )
   END-CASES REVB ;
 : DEEP SP@ 12 +ORIGIN @ SWAP - 2 / ; ( if no DEPTH dfnd )
 : SETSCR DEEP 0= IF HLP# DUP ENDIF SCR ! ; ( -- | 80 )
@@ -477,9 +494,7 @@ EDITOR DEFINITIONS
       28  CASE UP-CURSOR    IS  29  CASE DOWN-CURSOR IS
       31  CASE RIGHT-CURSOR IS  30  CASE LEFT-CURSOR IS
       255 CASE INSERT       IS  254 CASE DELETE      IS
-      157 CASE INSERT-LINE  IS  156 CASE DELETE-LINE IS
       126 CASE DEL          IS  127 CASE TAB         IS
-      125 CASE CLEAR-SCR IS 
       ( joy directions +300 not to collide w/ keys )
       314 CASE UP-CURSOR    IS  313 CASE DOWN-CURSOR IS
       307 CASE RIGHT-CURSOR IS  311 CASE LEFT-CURSOR IS

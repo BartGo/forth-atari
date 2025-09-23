@@ -405,6 +405,7 @@ EDITOR DEFINITIONS
 : UNDOSCR EMPTY-BUFFERS SCR +! EREAD DISPLAY ; ( n -- )
 : ENEXT  1 UNDOSCR ; 
 : ELAST -1 UNDOSCR ; 
+: EUNDO  0 UNDOSCR ;
 : ADDR CLINE @ SCR @ (LINE) DROP CCHAR @ + ; ( UPDATE HERE? )
 : ADDKEY DUP ADDR C! CURSOR EMIT RIGHT ;
 : CHSIDE SIDE @ 1 XOR SIDE ! DISPLAY ;
@@ -417,22 +418,24 @@ EDITOR DEFINITIONS
   ." *EDIT* by M. Dougherty  (Esc-H: help)" CR
   ." =====================================" CR
   ." Arrows, Ins, BckSp, Tab: normal use"   CR
-  ." Return: next line   ; Esc-J/K: colors" CR
-  ." Esc-S: save (flush) ; Esc-E: version"  CR
-  ." Esc-Q: quit (empty-buf)"               CR
-  ." Esc-Z: undo (empty-buf) "              CR
-  ." Esc-U: execute forth command"          CR
-  ." Esc-N: screen+1 (empty-buf)( ] )"      CR
-  ." Esc-L: screen-1 (empty-buf)( [ )"      CR
-  ." Esc-T: rotate sides        ( / )"      CR
+  ." Return: next line (no line breaks)"    CR
   ." Esc-X: *copy and delete line"          CR
   ." Esc-C: *copy and keep line"            CR  
   ." Esc-V: *insert copied line"            CR
   ." Esc-R: *copy and run line in forth"    CR
   ." Esc-B: insert empty line"              CR
+  ." Esc-U: execute forth command"          CR
   ." Esc-#: forth macros and commands:"     CR
   ."        1/VLIST 2/LIST-this 3/.BUFS"    CR
   ."        4/SCR80 5/LOAD-this 0/CLRSCR"   CR
+  ." Esc-]: screen+1 (empty-buf)"           CR
+  ." Esc-[: screen-1 (empty-buf)"           CR
+  ." Esc-W: switch with shadow screen"      CR
+  ." Esc-F/G: foregr.&backgr. colors"       CR
+  ." Esc-E: version"                        CR 
+  ." Esc-S: save (flush)"                   CR
+  ." Esc-Z: undo (empty-buf) "              CR
+  ." Esc-Q: quit (empty-buf)"               CR
   ." =====================================" CR
   CR ANYKD ; 
 : DELETE-CHAR ADDR SWAP CCHAR @ -
@@ -470,20 +473,29 @@ EDITOR DEFINITIONS
 : PIN5 CLS SCR @ LOAD   ANYKD ; ( load  )
 : REVB FRM# @ 128 XOR FRM# ! ;  ( reverse frame when Esc )
 : (VER) 125 EMIT VER ANYK ;
-: ESC REVB KEY CASES
-    84 CASE CHSIDE    IS ( T ) 47 CASE CHSIDE   IS ( / )
-    78 CASE ENEXT     IS ( N ) 91 CASE ELAST    IS ( ] )
-    76 CASE ELAST     IS ( L ) 93 CASE ENEXT    IS ( [ )
-    83 CASE SAVESCR   IS ( S ) 49 CASE PIN1     IS ( 1 )           
-    81 CASE EABORT    IS ( Q ) 50 CASE PIN2     IS ( 2 )           
-    86 CASE PUT-LINE  IS ( V ) 51 CASE PIN3     IS ( 3 )           
-    90 CASE 0 UNDOSCR IS ( Z ) 52 CASE PIN4     IS ( 4 ) 
-    85 CASE SH        IS ( U ) 53 CASE PIN5     IS ( 5 ) 
-    69 CASE (VER)     IS ( E ) 74 CASE BGRC     IS ( J )
-    72 CASE HLP       IS ( H ) 75 CASE FNTC     IS ( K )
-    67 CASE COPY-L    IS ( C ) 48 CASE CLRSCR   IS ( 0 )
-    88 CASE DEL-LINE  IS ( X ) 66 CASE INS-LINE IS ( C )
+: ESC REVB KEY CASES ( bug: more cases crush CASE/IS )
+    66 CASE INS-LINE  IS ( B )
+    67 CASE COPY-L    IS ( C )
+    69 CASE (VER)     IS ( E )
+    70 CASE FNTC      IS ( F )
+    71 CASE BGRC      IS ( G )
+    72 CASE HLP       IS ( H )
+    81 CASE EABORT    IS ( Q )
     82 CASE RUN-LINE  IS ( R )
+    83 CASE SAVESCR   IS ( S )
+    85 CASE SH        IS ( U )
+    86 CASE PUT-LINE  IS ( V )
+    87 CASE CHSIDE    IS ( W )
+    88 CASE DEL-LINE  IS ( X )
+    90 CASE EUNDO     IS ( Z )
+    91 CASE ELAST     IS ( ] )
+    93 CASE ENEXT     IS ( [ )
+    49 CASE PIN1      IS ( 1 )
+    50 CASE PIN2      IS ( 2 )
+    51 CASE PIN3      IS ( 3 )
+    52 CASE PIN4      IS ( 4 )
+    53 CASE PIN5      IS ( 5 )
+    48 CASE CLRSCR    IS ( 0 )
   END-CASES REVB ;
 : DEEP SP@ 12 +ORIGIN @ SWAP - 2 / ; ( if no DEPTH dfnd )
 : SETSCR DEEP 0= IF HLP# DUP ENDIF SCR ! ; ( -- | 80 )

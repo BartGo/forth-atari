@@ -3,10 +3,11 @@
 
 ( todo: consider RDCP instead of GOESINTO  )
 ( todo: document compilation of below      )
+( todo: make shadow screens non-default    )
 
 FORTH DEFINITIONS DECIMAL
 ASCII e 7903 C! 
-ASCII 3 7904 C! ( version 1.1e3 )
+ASCII 4 7904 C! ( version 1.1e4 )
 0 WARNING !
 
 : CORE ;
@@ -24,13 +25,13 @@ FORTH DEFINITIONS
   CR ."     by Patrick L. Mullarky, 1982 "
   CR ."    published by Atari through APX"
   CR ."    ------------------------------"
-  CR ."        EDIT - by M. Dougherty    "
+  CR ."       EDIT - by Mike Dougherty   "
   CR ."    as published in: 'Micro 6502' "
   CR ."       (no. 57 - February 1983)   "
   CR ."    ------------------------------"
   CR ."    Additional tools from magazine"
-  CR ."    Forth Dimensions, collected & "
-  CR ."    extended by BartGo, Sept. 2025"
+  CR ."    'Forth Dimensions', collected "
+  CR ."    & extended by BartGo/Sept.2025"
   CR ."    =============================="
   CR ."    For the glory of Atari & Forth"
   CR ."    & PTODT (https://ptodt.org.pl)"  
@@ -88,7 +89,7 @@ HEX
     HERE COUNT TYPE ."  NOT FOUND" ABORT
   THEN
   DROP DUP CFA @ [ ' : CFA @ ] LITERAL = 0= IF
-    HERE COUNT TYPE ."  NOT A COLON WORD" ABORT
+    HERE COUNT TYPE ."  NOT A COLON WORD!" ABORT
   THEN HERE SWAP ! ;
 : (RE-EXIT) ( -- ) R> R> 2DROP ;
 : RE: ( -- )
@@ -215,16 +216,16 @@ DECIMAL
 	  1 BUFCHANGE +! THEN
 	132 + 
   LOOP DROP
-  BUFCHANGE @ IF ."  unsaved "
-    ELSE ."  (saved) " THEN CR ;
+  BUFCHANGE @ IF ASCII - EMIT
+    ELSE ASCII + EMIT THEN ;
 
 ( *** )
 ( KEYWORDS - WHERE USED
 ( FD VOL VII, NO 1
 ( COPYRIGHT [C] 1983
 ( by Nicholas L. Pappas, PhD
-( + SCAN macro by BartGo
-( how to run, example: ' WORD SCAN
+( + LOCATE macro by BartGo
+( how to run, example: ' WORD LOCATE
 ( *** )
 : (FINDID.) ( addr -- )
   BEGIN
@@ -246,7 +247,7 @@ DECIMAL
     I 0 4 D.R SPACE
     I (FINDID.)
   THEN LOOP DROP ; 
-: SCAN ( pfa -- )
+: LOCATE ( pfa -- )
   CFA            ( n1 )
   ' LIT CFA      ( n1 n2 )
   LATEST PFA CFA ( n1 n2 n3 )
@@ -258,10 +259,10 @@ DECIMAL
   ( ) 
   = 0= IF 2DROP ;S THEN CR ." #"
   SCR ? SWAP -TRAILING TYPE ;      
-: INDICES ( 1st last -- ; INDEX on non-empty )
+: IND. ( 1st last -- ; INDEX on non-empty )
   1+ SWAP DO I (INDEX)
     ?TERMINAL IF LEAVE THEN LOOP ;
-: DIR 0 89 INDICES ; 
+: DIR 0 89 IND. ; 
 : D:  DR0 ; : D1: DR0 ; : D2: DR1 ;
 
 ( most basic string operations )
@@ -310,7 +311,7 @@ DECIMAL
 (   @1 @2 @3 @4 @5 ;LOCALS ; )
 ( 1 2 3 4 5 6 7 5INV )
 
-( enable / disable "bindings" )
+( enable "bindings" )
 : FLAVOR ( -- )
   ' (MESSAGE) CFA ' MESSAGE !
   ' ;S        CFA ' MESSAGE 2+ !
@@ -321,6 +322,7 @@ DECIMAL
   ." FLAVOR is ON." CR .FRE CR
   ." 'SAVE' and 'COLD' to proceed." CR CR ;
   
+( disable "bindings" )
 : PURGE ( -- ) 
   ' WARNING    CFA ' MESSAGE    !  
   ' @          CFA ' MESSAGE 2+ ! 
@@ -332,8 +334,10 @@ DECIMAL
   32 7903 C! 
   32 7904 C! ( 1.1eN -> 1.1 )
   ." FLAVOR is OFF." CR .FRE CR
-  ." 'FORGET EXTENSIONS' obliterates," CR
-  ." 'SAVE' and 'COLD' to proceed." CR CR ;
+  ." Use 'FLAVOR' to reenable," CR
+  ." 'FORGET EXTENSIONS' to obliterate." CR
+  ." 'SAVE' and 'COLD' to save." CR CR ;
+( later, PURGE is redefined with UNRAVEL )
 
 EDITOR DEFINITIONS
   
@@ -342,41 +346,46 @@ EDITOR DEFINITIONS
  752 CONSTANT CRSINH              59 CONSTANT HLP#               
  709 CONSTANT FNT#               710 CONSTANT BGR#
   18 CONSTANT TOP-BOT              2 CONSTANT REDGE
-  22 CONSTANT LEDGE                0 VARIABLE SIDE 
+  22 CONSTANT LEDGE              124 CONSTANT WALL
   17 VARIABLE EXTRAOFF             0 VARIABLE STOP
    0 VARIABLE SAV-BUF 64 ALLOT  HLP# VARIABLE HLPM
    3 VARIABLE LINEOFF              3 VARIABLE CHAROFF 
    0 VARIABLE CLINE                0 VARIABLE CCHAR
-: EREAD 16 0 DO I SCR @ (LINE) 
-  DROP UPDATE DROP LOOP 0 CLINE ! 0 CCHAR ! 0 SIDE ! ; ( FIXME )
+   0 VARIABLE SIDE               
+: EREAD 0 CLINE ! 0 CCHAR ! 0 SIDE ! ;
+: EREAD-MARK 16 0 DO I SCR @ (LINE) 
+  DROP UPDATE DROP LOOP ; 
 : POINT-CURSOR 85 ! 84 C! ;     712 CONSTANT FRM#
 : CURSOR@ CLINE @ LINEOFF @ +
   CCHAR @ SIDE @ IF 32 - ENDIF   CHAROFF @ + ;
 : CURSOR CURSOR@ POINT-CURSOR ; 
 : SCREEN-CURSOR CURSOR@ SWAP 40 * + 106 C@ 256 *
   960 - + DUP C@ 128 XOR SWAP C! ;
-: HLINE 34 0 DO TOP-BOT EMIT LOOP ;
+: HLINE 17 EMIT 32 0 DO TOP-BOT EMIT LOOP 5 EMIT ;
+: BLINE 26 EMIT 32 0 DO TOP-BOT EMIT LOOP 3 EMIT ;
 : LADDR CLINE @ SCR @ (LINE) DROP
   SIDE @ IF 32 + ENDIF ;
 : EADDR CLINE @ SCR @ (LINE) DROP
   SIDE @ 0= IF 32 + ENDIF ;
-: ELINE LEDGE EMIT LADDR 32 TYPE REDGE EMIT ;
-: XLINE LEDGE EMIT EADDR 32 TYPE REDGE EMIT ;
+: ELINE WALL EMIT LADDR 32 TYPE WALL EMIT ;
+: XLINE WALL EMIT EADDR 32 TYPE WALL EMIT ;
 : WRITE-LINE CLINE @ LINEOFF @ + CHAROFF @ 1 -
   POINT-CURSOR ELINE ;
 : WRITE-EXTRA EXTRAOFF @ LINEOFF @ + CHAROFF @ 1 -
-  POINT-CURSOR XLINE ; : (FRE) 741 @ HERE - ;
+  POINT-CURSOR XLINE CR CR 
+  ."   Esc-H for Help ; Esc-Q to Quit" ;
+: (FRE) 741 @ HERE - ;
 : 2TOP LINEOFF @ 1 - CHAROFF @ 1 - POINT-CURSOR HLINE ; 
-: BOT LINEOFF @ 16 + CHAROFF @ 1 - POINT-CURSOR HLINE ; 
+: BOT LINEOFF @ 16 + CHAROFF @ 1 - POINT-CURSOR BLINE ; 
 : ETITLE 0 CHAROFF @ POINT-CURSOR ." EDIT / Dr" 
-  OFFSET @ 0= 0= . ." Scr" 
-  SCR ? ." Side" SIDE
-  ? ." Free" (FRE) U. CR 17 SPACES .BUFSTAT ; 
+  OFFSET @ 0= 0= . .BUFSTAT ." Scr" 
+  SCR ? ." Side" SIDE ? ." Fre" (FRE) U. ; 
 : DISPLAY CLS 1 CRSINH C! ETITLE 2TOP CLINE @ 
   16 0 DO I CLINE ! WRITE-LINE LOOP CLINE !
   SIDE @ IF 32 ELSE 0 ENDIF CCHAR ! BOT
   WRITE-EXTRA CURSOR SCREEN-CURSOR ;
-: ANYK CR ." (Press Return or Enter)" KEY DROP ;
+: ANYK CR 7 SPACES
+  ." (Press Return or Enter)" KEY DROP ;
 : ANYKD ANYK DISPLAY ;
 : CASES ?COMP CSP @ !CSP 4 ; IMMEDIATE
 : CASE 4 ?PAIRS COMPILE OVER COMPILE =
@@ -426,10 +435,11 @@ EDITOR DEFINITIONS
   SWAP OVER + SWAP -DUP IF 0 DO
   DUP 1 - C@ OVER C! 1 - LOOP ENDIF BL SWAP C! ;
 : INSERT SIDE @ IF 63 ELSE 31 ENDIF 
-  INSERT-CHAR WRITE-LINE CURSOR SCREEN-CURSOR ;
+  INSERT-CHAR
+  WRITE-LINE CURSOR SCREEN-CURSOR EREAD-MARK ;
 : HLP 125 EMIT CR
   ." *EDIT* by M. Dougherty  (Esc-H: help)" CR
-  ." =====================================" CR
+  ." -------------------------------------" CR
   ." Arrows, Ins, BckSp, Tab: normal use"   CR
   ." Return: next line (no line breaks)"    CR
   ." Esc-X: *copy and delete line"          CR
@@ -441,21 +451,22 @@ EDITOR DEFINITIONS
   ." Esc-#: forth macros and commands:"     CR
   ."        1/VLIST 2/LIST-this 3/.BUFS"    CR
   ."        4/SCR80 5/LOAD-this 0/CLRSCR"   CR
-  ." Esc-]: screen+1 (empty-buf)"           CR
-  ." Esc-[: screen-1 (empty-buf)"           CR
-  ." Esc-W: switch with shadow screen"      CR
-  ." Esc-F/G: foregr.&backgr. colors"       CR
+  ." Esc-[: previous screen (empty-buf)"    CR
+  ." Esc-]: next screen     (empty-buf)"    CR
+  ." Esc-W: switch with the shadow screen"  CR
+  ." Esc-F/G: foregr./backgr. colors"       CR
   ." Esc-E: version"                        CR 
   ." Esc-S: save (flush)"                   CR
   ." Esc-Z: undo (empty-buf) "              CR
   ." Esc-Q: quit (empty-buf)"               CR
-  ." =====================================" CR
-  CR ANYKD ; 
+  ." -------------------------------------" 
+  ANYKD ; 
 : DELETE-CHAR ADDR SWAP CCHAR @ -
   -DUP IF 0 DO DUP 1 + C@ OVER C!
   1 + LOOP ENDIF BL SWAP C! ;
 : DELETE SIDE @ IF 63 ELSE 31 ENDIF
-  DELETE-CHAR WRITE-LINE CURSOR SCREEN-CURSOR ;
+  DELETE-CHAR
+  WRITE-LINE CURSOR SCREEN-CURSOR EREAD-MARK ;
 : L-A SCR @ (LINE) DROP ;
 : COPY-L CLINE @ L-A SAV-BUF 64 CMOVE ;
 : DELETE-L COPY-L
@@ -465,17 +476,17 @@ EDITOR DEFINITIONS
 : INSERT-L 15 CLINE @ - IF
   CLINE @ 15 DO I 1 - L-A I L-A 64 CMOVE
   -1 +LOOP ENDIF CLINE @ L-A 64 BLANKS ;
-: INS-LINE INSERT-L DISPLAY ;
-: DEL-LINE DELETE-L DISPLAY ; 
+: INS-LINE INSERT-L DISPLAY EREAD-MARK ;
+: DEL-LINE DELETE-L DISPLAY EREAD-MARK ; 
 : PUT-LINE INSERT-L SAV-BUF CLINE @
-  L-A 64 CMOVE DISPLAY ;
+  L-A 64 CMOVE DISPLAY EREAD-MARK ;
 : PRT-LINE CLINE @ L-A 64 TYPE ;
 : RUN-LINE COPY-L CR PRT-LINE CR QUERY INTERPRET ;
 : TAB 2 0 DO RIGHT-CURSOR LOOP ;
 : DEL LEFT-CURSOR BL DUP ADDR C!
-  CURSOR EMIT SCREEN-CURSOR ;
+  CURSOR EMIT SCREEN-CURSOR EREAD-MARK ;
 : CLRSCR 
-  16 0 DO I L-A 64 BLANKS LOOP DISPLAY ; 
+  16 0 DO I L-A 64 BLANKS LOOP DISPLAY EREAD-MARK ; 
 : THEME DUP C@ 148 XOR SWAP C! ; 
 : SAVESCR FLUSH EREAD DISPLAY  ; 
 : BGRC 710 THEME ;    : FNTC 709 THEME ;
@@ -485,8 +496,8 @@ EDITOR DEFINITIONS
 : PIN4 CLS DR0 80 SCR ! ANYKD ; ( set DR0, 80th screen )
 : PIN5 CLS SCR @ LOAD   ANYKD ; ( load  )
 : REVB FRM# @ 128 XOR FRM# ! ;  ( reverse frame when Esc )
-: (VER) 125 EMIT VER ANYK ;
-: ESC REVB KEY CASES ( bug: more cases crush CASE/IS )
+: (VER) 125 EMIT VER ANYK DISPLAY ;
+: ESC REVB KEY CASES ( bug: more cases crash CASE/IS )
     66 CASE INS-LINE  IS ( B )
     67 CASE COPY-L    IS ( C )
     69 CASE (VER)     IS ( E )
@@ -510,27 +521,36 @@ EDITOR DEFINITIONS
     53 CASE PIN5      IS ( 5 )
     48 CASE CLRSCR    IS ( 0 )
   END-CASES REVB ;
-: DEEP SP@ 12 +ORIGIN @ SWAP - 2 / ; ( if no DEPTH dfnd )
-: SETSCR DEEP 0= IF HLP# DUP ENDIF SCR ! ; ( -- | 80 )
-: (EDIT) ( m -- ; edit screen m with MDEDIT )
-  SETSCR EREAD DISPLAY 0 STOP ! BEGIN
+: DEEP SP@ 18 +ORIGIN @ SWAP - 2 / ; ( if no DEPTH dfnd )
+: NOP ;
+: (EDIT) ( m -- ; edit screen m )
+  DEEP 0= IF HLP# DUP ENDIF SCR !
+  EREAD DISPLAY 0 STOP ! BEGIN
     JOYKEY CASES
       27  CASE ESC          IS  155 CASE RETURN      IS
       28  CASE UP-CURSOR    IS  29  CASE DOWN-CURSOR IS
       31  CASE RIGHT-CURSOR IS  30  CASE LEFT-CURSOR IS
+	  157 CASE NOP ( insln) IS  156 CASE NOP ( X ln) IS
       255 CASE INSERT       IS  254 CASE DELETE      IS
       126 CASE DEL          IS  127 CASE TAB         IS
+	  125 CASE NOP ( clrsc) IS 
       ( joy directions +300 not to collide w/ keys )
       314 CASE UP-CURSOR    IS  313 CASE DOWN-CURSOR IS
       307 CASE RIGHT-CURSOR IS  311 CASE LEFT-CURSOR IS
       ( todo: add diagonals )
-      DUP DUP 300 < IF ADDKEY ELSE DROP THEN
+      DUP DUP 300 < IF
+	    ADDKEY EREAD-MARK
+	  ELSE DROP THEN
     END-CASES
   STOP @ UNTIL   
   CLS 0 CRSINH ! ;  
 FORTH DEFINITIONS
-: EDIT EDITOR (EDIT) FORTH ; ( n -- | -- : scr 80 )
-: E. EDITOR SCR @ (EDIT) FORTH ; ( -- : current ) 
+( n -- )
+: EDIT EDITOR (EDIT) FORTH ; 
+( -- )
+: E. EDITOR SCR @ IF
+    SCR @ (EDIT)
+  ELSE EDIT THEN FORTH ; 
 
 ( *******   GOESINTO    ****** )
 ( Decompiler by R. D. Ackerman )
@@ -608,13 +628,13 @@ CR CR ;
   CR ." BREAK to debug, GO to proceed"
   CR ." || is BREAK, ?| is conditional"
   CR ." UNRAVEL-ON /-OFF - err stk trace"
-  CR ." RE: and ;RE to redefine words"
-  CR ." ' aaa SCAN to locate uses of aaa"
+  CR ." RE: and ;RE allows redefining words"
+  CR ." : X ;  RE: X ;RE   <<- redefines X"
+  CR ." ' aaa LOCATE to locate uses of aaa"
   CR ." D1:/D2:/DIR to browse floppies"
   CR ." n m SEARCH aaa for screen search"
   CR ." n m THRU to load multiple screens"
   CR ." WHERE for the last loading error"
-  CR ." : X ;  RE: X ;RE  to redefine words"
   CR ." PURGE removes extension bindings"
   CR CR ;
 
@@ -744,8 +764,8 @@ FLUSH
 11 &   #COLOR X @ Y @ DRAW  
 12 &   #COLOR X @ Y @ SIDE @
 13 &     + DRAW 1 ;
-14 & 8 GR. ( XGR exists ) CR CR 
-15 & ." 100 10 20 SQUARE " CR
+14 & 8 GR. CR ." 100 10 20 SQUARE"
+15 & CR ." XGR ( exit graphics )" 
 FLUSH
 
 83 CLEAR 83 SCR !
@@ -763,8 +783,8 @@ FLUSH
 11 &   #COLOR X @ Y @ SIDE @ + DRAW  
 12 &   #COLOR X @ Y @ DRAW ;
 13 & ( no more bugs! )
-14 & 8 GR. ( XGR exists ) CR CR 
-15 & ." 100 10 20 SQUARE " CR
+14 & 8 GR. CR ." 100 10 20 SQUARE"
+15 & CR ." XGR ( exit graphics )" 
 FLUSH
 
 ( todo: diff between screens )

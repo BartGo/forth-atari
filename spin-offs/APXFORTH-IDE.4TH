@@ -206,12 +206,17 @@ DECIMAL
     132 + ?TERMINAL IF LEAVE THEN
   LOOP DROP CR ;
 
-: .BUFSTAT ( -- ) ( show only buffer change flags )
+0 VARIABLE BUFCHANGE
+: .BUFSTAT ( -- ) ( simplified .BUFS )
+  0 BUFCHANGE !
   FIRST LIMIT FIRST - B/BUF /
-  ." (" 1+ 1 DO
-    DUP @ 32768 AND
-    0= 0= 32 + EMIT 132 + 
-  LOOP DROP ." )" CR ;
+  1+ 1 DO
+	DUP @ 32768 AND 0= 0= IF
+	  1 BUFCHANGE +! THEN
+	132 + 
+  LOOP DROP
+  BUFCHANGE @ IF ."  unsaved "
+    ELSE ."  (saved) " THEN CR ;
 
 ( *** )
 ( KEYWORDS - WHERE USED
@@ -366,7 +371,7 @@ EDITOR DEFINITIONS
 : ETITLE 0 CHAROFF @ POINT-CURSOR ." EDIT / Dr" 
   OFFSET @ 0= 0= . ." Scr" 
   SCR ? ." Side" SIDE
-  ? ." Free" (FRE) U. CR 8 SPACES ." Buffers" .BUFSTAT ; 
+  ? ." Free" (FRE) U. CR 17 SPACES .BUFSTAT ; 
 : DISPLAY CLS 1 CRSINH C! ETITLE 2TOP CLINE @ 
   16 0 DO I CLINE ! WRITE-LINE LOOP CLINE !
   SIDE @ IF 32 ELSE 0 ENDIF CCHAR ! BOT

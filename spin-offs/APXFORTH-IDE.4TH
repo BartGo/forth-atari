@@ -1,3 +1,6 @@
+.VARIABLES
+.CONSTANTS
+
 ( * APX Extended Fig-Forth /IDE combined for ATARI 8-BIT * )
 ( from multiple 1980s/90s sources, mainly Forth Dimensions ) 
 
@@ -6,13 +9,14 @@
 ( todo: make shadow screens non-default    )
 
 FORTH DEFINITIONS DECIMAL
-ASCII e 7903 C! 
-ASCII 4 7904 C! ( version 1.1e4 )
 0 WARNING !
 
 : CORE ;
 ( 40 LOAD ) ( <-- load assembler - manually! )
 ( 50 LOAD ) ( <-- load graphics  - manually! )
+
+ASCII e 7903 C! 
+ASCII 4 7904 C! ( version 1.1e4 )
 
 : EXTENSIONS ;
 VOCABULARY EDITOR IMMEDIATE
@@ -41,7 +45,7 @@ FORTH DEFINITIONS
 : .FRE ( -- )
   741 @ HERE - U. ." bytes free" ;
 
-: BEEP 253 EMIT ;
+( : BEEP 253 EMIT ; )
 
 ( static messages are needed as a bigger kernel overwrites )
 ( first screens, including those with messages )
@@ -75,7 +79,8 @@ FORTH DEFINITIONS
 ' ;S        CFA ' MESSAGE 2+ ! ( ex: @ )
 
 : (HELLO) ( -- )
-  EMPTY-BUFFERS 80 SCR ! 
+  EMPTY-BUFFERS
+  80 SCR ! 
   CR .FRE
   CR ." Screen set to #" SCR ?
   CR ." Type 'HELP' for help"
@@ -371,12 +376,12 @@ EDITOR DEFINITIONS
 : XLINE WALL EMIT EADDR 32 TYPE WALL EMIT ;
 : WRITE-LINE CLINE @ LINEOFF @ + CHAROFF @ 1 -
   POINT-CURSOR ELINE ;
-: WRITE-EXTRA EXTRAOFF @ LINEOFF @ + CHAROFF @ 1 -
-  POINT-CURSOR XLINE CR CR 
-  ."   Esc-H for Help ; Esc-Q to Quit" ;
 : (FRE) 741 @ HERE - ;
 : 2TOP LINEOFF @ 1 - CHAROFF @ 1 - POINT-CURSOR HLINE ; 
 : BOT LINEOFF @ 16 + CHAROFF @ 1 - POINT-CURSOR BLINE ; 
+: WRITE-EXTRA EXTRAOFF @ LINEOFF @ + CHAROFF @ 1 -
+  POINT-CURSOR XLINE CR CR
+  ."   Esc-H for Help ; Esc-Q to Quit" ;
 : ETITLE 0 CHAROFF @ POINT-CURSOR ." EDIT / Dr" 
   OFFSET @ 0= 0= . .BUFSTAT ." Scr" 
   SCR ? ." Side" SIDE ? ." Fre" (FRE) U. ; 
@@ -423,7 +428,8 @@ EDITOR DEFINITIONS
 : JOYKEY 764 C@ 255 = IF 632 C@
   300 + ELSE KEY THEN ;
 : SH CLS 0 CRSINH C! IN @ >R BLK @ >R 0 IN ! 
-  0 BLK ! CR QUERY INTERPRET R> BLK ! R> IN ! ANYKD ; 
+  0 BLK ! CR QUERY INTERPRET R> BLK ! R> IN ! SP!
+  ANYKD ; 
 : UNDOSCR EMPTY-BUFFERS SCR +! EREAD DISPLAY ; ( n -- )
 : ENEXT  1 UNDOSCR ; 
 : ELAST -1 UNDOSCR ; 
@@ -445,7 +451,7 @@ EDITOR DEFINITIONS
   ." Esc-X: *copy and delete line"          CR
   ." Esc-C: *copy and keep line"            CR  
   ." Esc-V: *insert copied line"            CR
-  ." Esc-R: *copy and run line in forth"    CR
+(  ." Esc-R: *copy and run line in forth"    CR )
   ." Esc-B: insert empty line"              CR
   ." Esc-U: execute forth command"          CR
   ." Esc-#: forth macros and commands:"     CR
@@ -480,8 +486,8 @@ EDITOR DEFINITIONS
 : DEL-LINE DELETE-L DISPLAY EREAD-MARK ; 
 : PUT-LINE INSERT-L SAV-BUF CLINE @
   L-A 64 CMOVE DISPLAY EREAD-MARK ;
-: PRT-LINE CLINE @ L-A 64 TYPE ;
-: RUN-LINE COPY-L CR PRT-LINE CR QUERY INTERPRET ;
+( : PRT-LINE CLINE @ L-A 64 TYPE ; )
+( : RUN-LINE COPY-L CR PRT-LINE CR QUERY INTERPRET ; )
 : TAB 2 0 DO RIGHT-CURSOR LOOP ;
 : DEL LEFT-CURSOR BL DUP ADDR C!
   CURSOR EMIT SCREEN-CURSOR EREAD-MARK ;
@@ -505,7 +511,7 @@ EDITOR DEFINITIONS
     71 CASE BGRC      IS ( G )
     72 CASE HLP       IS ( H )
     81 CASE EABORT    IS ( Q )
-    82 CASE RUN-LINE  IS ( R )
+    ( 82 CASE RUN-LINE  IS ( R )
     83 CASE SAVESCR   IS ( S )
     85 CASE SH        IS ( U )
     86 CASE PUT-LINE  IS ( V )
@@ -539,7 +545,7 @@ EDITOR DEFINITIONS
       307 CASE RIGHT-CURSOR IS  311 CASE LEFT-CURSOR IS
       ( todo: add diagonals )
       DUP DUP 300 < IF
-	    ADDKEY EREAD-MARK
+	    ADDKEY EREAD-MARK ( todo: speed up )
 	  ELSE DROP THEN
     END-CASES
   STOP @ UNTIL   
@@ -724,29 +730,38 @@ DECIMAL
 ( demo source code )
 
 80 CLEAR 80 SCR !
-0 & ( factorial )
+0 & ( factorial, iterative )
 1 & : FAC         ( n -- n! )
 2 &   1 SWAP 1+ 1 ( 1 n+1 1 )
 3 &   DO I * LOOP ;  
-4 & CR 3 FAC .
-5 & CR 8 FAC U.
-6 & CR
+4 & CR 4 FAC . CR 8 FAC U. CR
+5 & ( factorial, recursive )
+6 & : FACR ( n -- n! ) DUP 0= IF 1 +
+7 &   ELSE DUP 1 - [ SMUDGE ]
+8 &     FACR [ SMUDGE ] * THEN ;
+9 & CR 4 FAC . CR 8 FAC U. CR
+
 FLUSH
 
 81 CLEAR 81 SCR !
-0  & ( factorial tests )
-1  & : TEST.FAC ( -- )
-2  &  .” T1: f(0) = ”     
-3  &   0 FAC DUP U. 1 ?PAIRS CR
-4  &  .” T2: f(1) ”       
-5  &   1 FAC  1 ?PAIRS CR
-6  &  .” T3: f(4) ”       
-7  &   4 FAC 24 ?PAIRS CR
-8  &  .” T4: f(2)<f(4) ”
-9  &   2 FAC 3 FAC U< 1 ?PAIRS CR
-10 &  .” T5: f(8)<f(9) ”  
-11 &   8 FAC 9 FAC U< 1 ?PAIRS CR
-12 &  .” Tests Done. “ CR ; 
+
+0  & ( factorial, tests ) 
+1  & : RUN OVER CFA EXECUTE ;
+2  & : U> SWAP U< ;
+3  & : TEST.FAC ( pfa -- ) CR
+4  &  ." Testing: "  DUP NFA ID. CR
+5  &  .” T1:f(0) ” 0 RUN 1  ?PAIRS CR
+6  &  .” T2:f(1) ” 1 RUN 1  ?PAIRS CR    
+7  &  .” T3:f(4) ” 4 RUN 24 ?PAIRS CR      
+8  &  .” T4:f(2)<f(4) ” 
+9  &     2 RUN SWAP 3 RUN ROT U> 1 ?PAIRS CR 
+10 &  .” T5: f(8)<f(9) ” 
+11 &     8 RUN SWAP 9 RUN ROT U> 1 ?PAIRS CR ;
+12 & ( ---- )
+13 & CR ' FAC  TEST.FAC
+14 & CR ' FACR TEST.FAC CR
+15 & FORGET RUN ;S
+
 FLUSH
 
 82 CLEAR 82 SCR !
@@ -765,7 +780,7 @@ FLUSH
 12 &   #COLOR X @ Y @ SIDE @
 13 &     + DRAW 1 ;
 14 & 8 GR. CR ." 100 10 20 SQUARE"
-15 & CR ." XGR ( exit graphics )" 
+15 & CR ." XGR ( exit graphics ) " 
 FLUSH
 
 83 CLEAR 83 SCR !
@@ -784,7 +799,7 @@ FLUSH
 12 &   #COLOR X @ Y @ DRAW ;
 13 & ( no more bugs! )
 14 & 8 GR. CR ." 100 10 20 SQUARE"
-15 & CR ." XGR ( exit graphics )" 
+15 & CR ." XGR ( exit graphics ) " 
 FLUSH
 
 ( todo: diff between screens )

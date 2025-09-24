@@ -1,12 +1,10 @@
-.VARIABLES
-.CONSTANTS
-
 ( * APX Extended Fig-Forth /IDE combined for ATARI 8-BIT * )
 ( from multiple 1980s/90s sources, mainly Forth Dimensions ) 
 
 ( todo: consider RDCP instead of GOESINTO  )
 ( todo: document compilation of below      )
 ( todo: make shadow screens non-default    )
+( todo: add .VARIABLES and .CONSTANTS      )
 
 FORTH DEFINITIONS DECIMAL
 0 WARNING !

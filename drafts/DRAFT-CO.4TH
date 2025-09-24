@@ -22,5 +22,34 @@
   125 EMIT
   PRIMARY SECONDARY ;
 
+( ---------------- )
+( more experiments )
+( ---------------- )
+: CO R> R> SWAP >R >R ;
+
+: 1ST BEGIN ." 1" CO AGAIN ;
+: 2ND BEGIN ." 2" CO AGAIN ;
+1ST 2ND
+
+---------
+
+: CO ( -- ) R> R> SWAP >R >R ;
+: 1ST ( -- )
+  0 IF 9999 THEN 10 0 DO
+	CR ." 1ST.I=" I . R> R>
+	[ SMUDGE ]
+	R ' 1ST 8 + ! ' 1ST 8 + ?
+	[ SMUDGE ] ." (1) " CO >R >R
+  LOOP ;
+: 2ND ( -- )
+  0 IF 9999 THEN 10 0 DO
+	CR ." 2ND.I=" I . R> R> 
+	[ SMUDGE ]
+	R ' 2ND 8 + ! ' 2ND 8 + ?
+	[ SMUDGE ] ." (2) " CO >R >R
+  LOOP ;
+: RUN ( -- ) 1ST 2ND ;
+
+
 
   

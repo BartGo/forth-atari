@@ -1,0 +1,153 @@
+( CRASH - MANY corrections needed )
+
+( SCREEN FORMATTER )
+
+
+( work in progress
+( https://archive.org/details
+( /Forth_Dimension_Volume_08_
+( Number_2/page/n1/mode/
+( 2up?q=FORMATTER
+( tuned for APX Forth - BartGo )
+
+( REQUIRED RAGSDALE ASM )
+( 75 LOAD )
+' ASSEMBLER DROP
+
+( REQUIRED: PICK )
+: PICK ( n -- n )
+  2 * SP@ OVER 1 < SWAP ROT +
+  SWAP OVER
+  18 +ORIGIN @ ( S0 ) < 0= OR IF
+    ." PICK: out of range"
+	CR ABORT
+  ELSE @ THEN ;
+
+VOCABULARY FORMATTER IMMEDIATE
+FORMATTER DEFINITIONS
+DECIMAL
+
+0 VARIABLE COLUMN  0 VARIABLE TAB
+0 VARIABLE #LINES  0 VARIABLE FND 
+0 VARIABLE IX
+
+C/L 2 / CONSTANT LINE-SIZE
+23      CONSTANT MAX-LINES
+2       CONSTANT (OFFSET)
+ASCII " CONSTANT A"
+ASCII ) CONSTANT RPAREN
+ASCII \ CONSTANT BSLASH
+ASCII ( CONSTANT PAREN
+
+: (BELL) 253 EMIT ;
+: (FF) 125 EMIT ;
+: (FND) -FIND DROP DROP ;
+: BUILD 0 VARIABLE -2 ALLOT ; IMMEDIATE
+
+BUILD QUOTES  1 , (FND) ." ,
+BUILD STARTS  2 , (FND) :  ,      
+                  (FND) CODE ,
+BUILD ENDS    4 , (FND) ; ,
+                  (FND) NEXT ,
+                  (FND) ;S ,
+              ASSEMBLER
+ 				  (FND) END-CODE ,
+              FORTH
+BUILD OUTS    6 , (FND) UNTIL ,
+                  (FND) LOOP ,
+				  (FND) +LOOP ,
+                  (FND) THEN ,
+				  (FND) REPEAT ,
+				  (FND) AGAIN ,
+BUILD INS     4 , (FND) IF ,
+                  (FND) DO ,
+ 				  (FND) BEGIN ,
+                  (FND) <BUILDS ,   
+BUILD IN+OUTS 4 , (FND) ELSE  ,
+                  (FND) WHILE ,
+                  (FND) DOES> ,
+				  (FND) ;CODE ,
+
+: CR?
+  COLUMN @ TAB @ > IF
+    CR #LINES @ MAX-LINES =
+	IF (FF) 0 #LINES !
+    ELSE 1 #LINES +!
+  THEN
+  0 COLUMN ! THEN ;
+: INDENT
+  CR? OFFSET * TAB +! ;
+: OUTDENT
+  CR? TAB @ SWAP OFFSET * - DUP
+  0< IF (BELL) THEN MAX TAB ! ;
+: NEW-LINE
+  0 TAB ! CR? ;
+: DONE?
+  IN @ 1023 < 0= ;
+: PARSE
+  IX @ IN ! BL WORD DROP ;
+: <TYPE>
+  COLUMN @ TAB @ < IF
+    TAB @ COLUMN @ - SPACES TAB @
+	COLUMN !
+  THEN
+  HERE COUNT 1+ DUP COLUMN @ +
+  LINE-SIZE > IF
+    CR? TAB @ SPACES TAB @ COLUMN ! 
+  THEN DUP COLUMN +! TYPE -1 (FND) ! ;
+: TYPE-IT
+  PARSE <TYPE> ;
+: ??
+  0 SWAP DUP SWAP @ 0 DO 2 + DUP @ 4
+  PICK = IF SWAP 1+ SWAP LEAVE THEN
+  LOOP DROP ;
+: F+L-INIT ( scr -- )
+  IN @ SCR @ SWAP SCR ! 0 IN !
+  1 #LINES ! 0 TAB ! 0 COLUMN !
+  ." Screen #" SCR @ . CR ; 
+: TYPE-TO-
+  CR? TYPE-IT WORD C@ 1+ HERE C!
+  BL HERE DUP C@ 1+ + C! <TYPE> CR? ;
+: COM BEGIN QUERY INTERPRET AGAIN ;
+: TYPE-TO-END-OF-LINE
+  CR? TYPE-IT SCR @ BLOCK IN @ + IN @ 63 COM
+  ( FIXME: MOD = COM ?) 
+  AND 64 + DUP >R IN @ - -TRAILING TYPE CR? R> IN ! ;
+
+: F+L ( scr -- ; list frmtd scr )
+  F+L-INIT 
+  BEGIN
+    0 FND ! IN @ IX !
+    -FIND QUOTES ?? IF
+	  A" TYPE-TO- THEN
+    DUP PAREN = IF
+	  RPAREN TYPE-TO-
+	THEN
+    DUP BSLASH = IF
+	  TYPE-TO-END-OF-LINE
+	THEN
+    STARTS ?? IF
+	  NEW-LINE TYPE-IT
+	  IN @ IX ! TYPE-IT 2 INDENT
+	THEN
+    INS ?? IF
+	  1 INDENT TYPE-IT 1 INDENT
+    THEN
+    OUTS ?? IF
+	  1 OUTDENT TYPE-IT 1
+	  OUTDENT
+	THEN
+    ENDS ?? IF
+	  2 OUTDENT TYPE-IT CR?
+	THEN
+    IN+OUTS ?? IF
+	  1 OUTDENT TYPE-IT 1 INDENT 
+	THEN
+    DROP DONE? IF
+	  NEW-LINE TYPE-IT CR (FF) 1
+    ELSE 0 THEN
+    FND @ 0= IF TYPE-IT THEN
+  UNTIL
+  IN ! SCR ! ;
+  
+  

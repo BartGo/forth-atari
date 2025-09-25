@@ -1,21 +1,22 @@
-( LINIJKA / Marek Omirski / [c] 1991 / Sp. Bajtek )
-( see https://gitlab.com/amarok8bit/atari-listings)
+( LINIJKA, Marek Omirski, Bajtek 1991 )
+( https://gitlab.com/amarok8bit/atari-listings)
 ( /-/blob/master/Moje_Atari/6/LINIJKA.LST )
-
 ( *Ported to Atari APX Forth * )
 ( *and its Mullarky Assembler* )
-( [screen 40] by BartGo - 2025 )
-( MIT license )
-
-( **************************** )
-( TO RUN:
-( 1. BOOT APX FORTH IN ALTIRA
-( 2. "40 LOAD" 
-( 3. PASTE THE BELOW CODE
-( 4. USE HELP TO MOVE THE LINE
-( **************************** )
+( * BartGo, 2025, MIT license* )
+( 1. BOOT APX FORTH IN ALTIRA  )
+( 2. "40 LOAD", PASTE THE BELOW) 
+( 3. USE HELP TO MOVE THE LINE )
+( OR, use 0 10 THRU where THRU:)
+( : THRU ( n m -- ) CR 1+ SWAP DO
+( BASE @ DECIMAL I ." !Loading scr# "
+( U. CR BASE ! I LOAD ?TERMINAL IF
+( LEAVE THEN LOOP CR ; )
+( OR, 1 LOAD 2 LOAD .. 5 LOAD  )
+( ---------------------------- )
 
 FORTH DEFINITIONS DECIMAL
+
 560 @ 561 @ 256 *
          CONSTANT #DL
 HEX

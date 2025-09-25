@@ -1,4 +1,4 @@
-( LINIJKA / Marek Omirski / (c) 1991 / Sp. Bajtek )
+( LINIJKA / Marek Omirski / [c] 1991 / Sp. Bajtek )
 ( see https://gitlab.com/amarok8bit/atari-listings)
 ( /-/blob/master/Moje_Atari/6/LINIJKA.LST )
 

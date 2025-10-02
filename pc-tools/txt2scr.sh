@@ -15,7 +15,9 @@
 
 # FIXME: sometimes wrongly removes empty lines mid-file
 
-awk -v max_line_len=32 -v max_file_size=92160 '
+timestamp=$(date "+%Y%m%d-%H%M%S")
+
+awk -v max_line_len=64 -v max_file_size=92160 '
 BEGIN {
     total_size = 0;
     space_needed = max_file_size;
@@ -27,6 +29,7 @@ BEGIN {
     line = $0;
     line_length = length(line);
 
+
     if (line_length > max_line_len) {
         print "Error: Line " NR " is too long (" line_length " characters):" > "/dev/stderr";
         print line > "/dev/stderr";
@@ -34,12 +37,13 @@ BEGIN {
         next;
     }
 
-    if (line_length < max_line_len) {
+    if (line_length< max_line_len ) {
         line = line sprintf("%-*s", max_line_len - line_length, "");
     }
 
     printf "%s", line;
     total_size += length(line);
+
 }
 
 END {
@@ -58,4 +62,4 @@ END {
         print "Processing completed." > "/dev/stderr";
     }
 }
-' input.4th | iconv -f UTF-8 -t WINDOWS-1252 > out.atr
+' MYFILE.FTH | iconv -f UTF-8 -t WINDOWS-1252 > "OUTPUT-$timestamp.ATR"

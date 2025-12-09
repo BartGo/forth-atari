@@ -6,7 +6,7 @@ ASSEMBLER DEFINITIONS HEX
   ; IMMEDIATE ( jmp over CODE header )
 
 CODE 11A
-  11 # LDA, 3 JOC, ( 5=len["nip"] )
+  11 # LDA, 3 JOC, ( 5=len["22a"] )
 CODE 22A
   22 # LDA, 8 JOC, ( 8=len["33a-test"] )
 CODE 33A-TEST

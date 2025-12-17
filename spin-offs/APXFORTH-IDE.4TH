@@ -14,7 +14,7 @@ FORTH DEFINITIONS DECIMAL
 ( 50 LOAD ) ( <-- load graphics  - manually! )
 
 ASCII e 7903 C! 
-ASCII 4 7904 C! ( version 1.1e4 )
+ASCII 5 7904 C! ( version 1.1e5 )
 
 : EXTENSIONS ;
 VOCABULARY EDITOR IMMEDIATE
@@ -32,8 +32,9 @@ FORTH DEFINITIONS
   CR ."       (no. 57 - February 1983)   "
   CR ."    ------------------------------"
   CR ."    Additional tools from magazine"
-  CR ."    'Forth Dimensions', collected "
-  CR ."    & extended by BartGo/Sept.2025"
+  CR ."    'Forth Dimensions' - collected"
+  CR ."    & extended by BartGo, v2025/"
+  7903 C@ EMIT 7904 C@ EMIT
   CR ."    =============================="
   CR ."    For the glory of Atari & Forth"
   CR ."    & PTODT (https://ptodt.org.pl)"  
@@ -728,16 +729,22 @@ DECIMAL
 ( demo source code )
 
 80 CLEAR 80 SCR !
-0 & ( factorial, iterative )
-1 & : FAC         ( n -- n! )
-2 &   1 SWAP 1+ 1 ( 1 n+1 1 )
-3 &   DO I * LOOP ;  
-4 & CR 4 FAC . CR 8 FAC U. CR
-5 & ( factorial, recursive )
-6 & : FACR ( n -- n! ) DUP 0= IF 1 +
-7 &   ELSE DUP 1 - [ SMUDGE ]
-8 &     FACR [ SMUDGE ] * THEN ;
-9 & CR 4 FAC . CR 8 FAC U. CR
+0  & ( factorial, iterative )
+1  & : FAC         ( n -- n! )
+2  &   1 SWAP 1+ 1 ( 1 n+1 1 )
+3  &   DO I * LOOP ;  
+4  & CR 3 FAC . CR 8 FAC U. 
+5 XX
+6  & ( factorial, recursive )
+7  & : FACR ( n -- n! ) DUP 0= IF 1 +
+8  &   ELSE DUP 1 - [ SMUDGE ]
+9  &     FACR [ SMUDGE ] * THEN ;
+10 & CR 4 FAC . CR 8 FAC U. CR
+11 XX
+12 & : =T ( n n -- ; assert )
+13 &   = 0= IF ."  .FAIL" CR
+14 &   ELSE ."  .PASS" CR THEN ; 
+15 & --> ( proceed to tests )
 
 FLUSH
 
@@ -746,20 +753,19 @@ FLUSH
 0  & ( factorial, tests ) 
 1  & : RUN OVER CFA EXECUTE ;
 2  & : U> SWAP U< ;
-3  & : TEST.FAC ( pfa -- ) CR
-4  &  ." Testing: "  DUP NFA ID. CR
-5  &  .” T1:f(0) ” 0 RUN 1  ?PAIRS CR
-6  &  .” T2:f(1) ” 1 RUN 1  ?PAIRS CR    
-7  &  .” T3:f(4) ” 4 RUN 24 ?PAIRS CR      
-8  &  .” T4:f(2)<f(4) ” 
-9  &     2 RUN SWAP 3 RUN ROT U> 1 ?PAIRS CR 
-10 &  .” T5: f(8)<f(9) ” 
-11 &     8 RUN SWAP 9 RUN ROT U> 1 ?PAIRS CR ;
-12 & ( ---- )
-13 & CR ' FAC  TEST.FAC
-14 & CR ' FACR TEST.FAC CR
-15 & FORGET RUN ;S
-
+3  & : TEST.FAC ( pfa -- ) 
+4  &  CR ." Test: " DUP NFA ID. 
+5  &  CR .” T1:f(0)” 0 RUN 1  =T 
+6  &  CR .” T2:f(1)” 1 RUN 1  =T     
+7  &  CR .” T3:f(4)” 4 RUN 24 =T       
+8  &  CR .” T4:f(2)<f(4)” 
+9  &    2 RUN SWAP 3 RUN ROT U>
+10 &    1 =ASSERT  
+11 &  CR .” T5: f(8)<f(9)” 
+12 &    8 RUN SWAP 9 RUN ROT U>
+13 &    1 =ASSERT CR ; ' FAC  
+14 & TEST.FAC          ' FACR
+15 & TEST.FAC    FORGET FAC ;S
 FLUSH
 
 82 CLEAR 82 SCR !
@@ -802,7 +808,7 @@ FLUSH
 
 ( todo: diff between screens )
 
-84 CLEAR FLUSH
+84 CLEAR FLUSH ( double fac? )
 85 CLEAR FLUSH
 86 CLEAR FLUSH
 87 CLEAR FLUSH

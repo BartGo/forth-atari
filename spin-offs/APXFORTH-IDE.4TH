@@ -637,10 +637,10 @@ CR CR ;
   CR ." UNRAVEL-ON /-OFF - err stk trace"
   CR ." RE: and ;RE allows redefining words"
   CR ."   : X ;  RE: X ;RE ( to redefine X )"
-  CR ." ' aaa LOCATE to locate uses of aaa"
+  CR ." ' XYZ LOCATE to locate uses of XYZ"
   CR ." D1:/D2:/DIR to browse floppies"
-  CR ." n m SEARCH aaa for screen search"
-  CR ." n m THRU to load multiple screens"
+  CR ." n m SEARCH XYZ search XYZ on screens"
+  CR ." n m THRU to load screens w/out -->"
   CR ." WHERE for the last loading error"
   CR ." PURGE removes extension bindings"
   CR CR ;
@@ -660,11 +660,7 @@ CODE (CALL)
     XSAVE STX,    0 JSR,
     XSAVE LDX, NEXT JMP,
 
-
-
-
-FORTH
-HEX
+FORTH HEX
 : CALL
   [ ' (CALL) 3 + ]
   LITERAL ! (CALL) ;
@@ -680,10 +676,9 @@ HEX
     ( which also touches VOC-LINK etc )
   
 : MLM MEMUP E480 CALL ;
+: MON MEMUP E480 CALL ;
 : QMG MEMUP E471 CALL ;
-: MON MLM ; 
 DECIMAL
-
 
 
 ( Add a Break Point Tool / BREAK & GO )
@@ -693,6 +688,7 @@ DECIMAL
   CR ." RS: " RP@ R0 2 -
   DO I @ U. -2 +LOOP CR ;
 0 VARIABLE RP*
+( TODO: consider behavior when loading )
 : BREAK ( -- ; BREAK&GO debugging method )
   CR ." Breapoint!"
   CR RP@ 4 - RP* ! 0 BLK !  BEGIN

@@ -16,8 +16,10 @@ FORTH DEFINITIONS DECIMAL
 
 ( after, below can be pasted into altirra )
 
-ASCII e 7903 C! 
-ASCII 5 7904 C! ( version 1.1e5 )
+: (VER) ( version 1.1e5 )
+  ASCII e 7903 C! 
+  ASCII 5 7904 C! ;
+(VER)
 
 : EXTENSIONS ;
 VOCABULARY EDITOR IMMEDIATE
@@ -324,12 +326,12 @@ DECIMAL
   ' (PROMPT)  CFA ' QUIT  26 + !
   ' (HOME)    CFA ' ABORT  6 + !
   ' (HELLO)   CFA ' ABORT 35 + !
-  125 EMIT  
+  125 EMIT (VER)  
   ." FLAVOR is ON." CR .FRE CR
   ." 'SAVE' and 'COLD' to proceed." CR CR ;
   
 ( disable "bindings" )
-: PURGE ( -- ) 
+: BLAND ( -- ) 
   ' WARNING    CFA ' MESSAGE    !  
   ' @          CFA ' MESSAGE 2+ ! 
   ' PROMPT     CFA ' QUIT 26 +  ! 
@@ -337,13 +339,13 @@ DECIMAL
   ' QUIT       CFA ' ABORT 35 + ! 
   ' EXTENSIONS LFA @ PFA FENCE  !
   148 710 ! 125 EMIT
-  32 7903 C! 
-  32 7904 C! ( 1.1eN -> 1.1 )
+  32 7903 C! ( reverse (VER) 
+  32 7904 C! ( so 1.1eN -> 1.1 )
   ." FLAVOR is OFF." CR .FRE CR
   ." Use 'FLAVOR' to reenable," CR
   ." 'FORGET EXTENSIONS' to obliterate." CR
   ." 'SAVE' and 'COLD' to save." CR CR ;
-( later, PURGE is redefined with UNRAVEL )
+( later, BLAND is redefined with UNRAVEL )
 
 EDITOR DEFINITIONS
   
@@ -642,7 +644,7 @@ CR CR ;
   CR ." n m SEARCH XYZ search XYZ on screens"
   CR ." n m THRU to load screens w/out -->"
   CR ." WHERE for the last loading error"
-  CR ." PURGE removes extension bindings"
+  CR ." BLAND removes interpreter plugins"
   CR CR ;
 
 ASSEMBLER HEX
@@ -722,7 +724,7 @@ DECIMAL
 ( ^ replace 'QUIT' IN 'ERROR' with UNRAVEL + QUIT )
 : UNRAVEL-OFF ( -- ) ' QUIT    CFA 7290 ! ; ( default )
 
-: PURGE PURGE UNRAVEL-OFF ;
+: BLAND BLAND UNRAVEL-OFF ;
 
 : TASK ( -- ; end of EXTENSIONS ) ;
 

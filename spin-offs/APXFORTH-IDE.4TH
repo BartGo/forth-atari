@@ -4,14 +4,17 @@
 ( todo: consider RDCP instead of GOESINTO  )
 ( todo: document compilation of below      )
 ( todo: make shadow screens non-default    )
-( todo: add .VARIABLES and .CONSTANTS      )
+( todo: add .VAR, .USER, .CONST            )
+( todo: diff between screens )
 
 FORTH DEFINITIONS DECIMAL
 0 WARNING !
 
 : CORE ;
-( 40 LOAD ) ( <-- load assembler - manually! )
-( 50 LOAD ) ( <-- load graphics  - manually! )
+( 40 LOAD ) ( <-- load assembler - manually!!!! )
+( 50 LOAD ) ( <-- load graphics  - manually!!!! )
+
+( after, below can be pasted into altirra )
 
 ASCII e 7903 C! 
 ASCII 5 7904 C! ( version 1.1e5 )
@@ -176,13 +179,12 @@ DECIMAL
   ' (PROMPT) @ ' 0 CFA = IF ' 1 ELSE ' 0 THEN
   CFA ' (PROMPT) ! ;
 
+( deprecated / faulty when loading from editor )
 ( blink border while loading )
-: --> ( -- )
-  SCR @ 1+ 2 * 712 C! [COMPILE] --> (REFRM) ; 
-
-( blink border while loading )
-: LOAD ( n -- ) 
-  DUP 2 * 712 C! [COMPILE] LOAD DECIMAL (REFRM) ;
+( : --> ( -- )
+(   SCR @ 1+ 2 * 712 C! [COMPILE] --> (REFRM) ( ; )
+( : LOAD ( n -- ) 
+(   DUP 2 * 712 C! [COMPILE] LOAD DECIMAL (REFRM) ( ; )
 
 ( load screens nl thru n2 inclusive )
 : THRU ( nl n2 -- ) 
@@ -615,9 +617,9 @@ FORTH DEFINITIONS
   CR ." EB.     -> undo (EMPTY-BUFFERS)"
   CR ." L.      -> LIST current screen"
   CR ." N. / P. -> LIST next/previous screen"
-(  CR ." --------- QMEG" )
-(  CR ." QMG     -> enters QMEG's drive menu" )
-(  CR ." MLM or MON enters QMEG's monitor" )
+  CR ." --------- QMEG (if available)" 
+  CR ." QMG     -> enters QMEG's menu" 
+  CR ." MLM or MON enters QMEG's monitor" 
 CR CR ;
   
 : HELP ( -- ; display help )
@@ -631,10 +633,10 @@ CR CR ;
   CR ." STACK to toggle stack display"
   CR ." DECOMP XYZ to decompile word XYZ"
   CR ." BREAK to debug, GO to proceed"
-  CR ." || is BREAK, ?| is conditional"
+  CR ."   || is BREAK, ?| is conditional"
   CR ." UNRAVEL-ON /-OFF - err stk trace"
   CR ." RE: and ;RE allows redefining words"
-  CR ." : X ;  RE: X ;RE   <<- redefines X"
+  CR ."   : X ;  RE: X ;RE ( to redefine X )"
   CR ." ' aaa LOCATE to locate uses of aaa"
   CR ." D1:/D2:/DIR to browse floppies"
   CR ." n m SEARCH aaa for screen search"
@@ -657,6 +659,8 @@ CODE RP@
 CODE (CALL)
     XSAVE STX,    0 JSR,
     XSAVE LDX, NEXT JMP,
+
+
 
 
 FORTH
@@ -741,7 +745,7 @@ DECIMAL
 9  &     FACR [ SMUDGE ] * THEN ;
 10 & CR 4 FAC . CR 8 FAC U. CR
 11 XX
-12 & : =T ( n n -- ; assert )
+12 & : =T ( n n -- ; assert-eq )
 13 &   = 0= IF ."  .FAIL" CR
 14 &   ELSE ."  .PASS" CR THEN ; 
 15 & --> ( proceed to tests )
@@ -753,19 +757,19 @@ FLUSH
 0  & ( factorial, tests ) 
 1  & : RUN OVER CFA EXECUTE ;
 2  & : U> SWAP U< ;
-3  & : TEST.FAC ( pfa -- ) 
-4  &  CR ." Test: " DUP NFA ID. 
-5  &  CR .” T1:f(0)” 0 RUN 1  =T 
-6  &  CR .” T2:f(1)” 1 RUN 1  =T     
-7  &  CR .” T3:f(4)” 4 RUN 24 =T       
-8  &  CR .” T4:f(2)<f(4)” 
+3  & : TEST.FAC ( pfa -- ) CR 
+4  &  ." Test: " DUP NFA ID. 
+5  &  .” T1:f(0)” 0 RUN 1  =T 
+6  &  .” T2:f(1)” 1 RUN 1  =T     
+7  &  .” T3:f(4)” 4 RUN 24 =T       
+8  &  .” T4:f(2)<f(4)” 
 9  &    2 RUN SWAP 3 RUN ROT U>
-10 &    1 =ASSERT  
-11 &  CR .” T5: f(8)<f(9)” 
+10 &    1 =T
+11 &  .” T5: f(8)<f(9)”      
 12 &    8 RUN SWAP 9 RUN ROT U>
-13 &    1 =ASSERT CR ; ' FAC  
-14 & TEST.FAC          ' FACR
-15 & TEST.FAC    FORGET FAC ;S
+13 &    1 =T ;
+14 & ' FAC  TEST.FAC 
+15 & ' FACR TEST.FAC  FORGET FAC ;S
 FLUSH
 
 82 CLEAR 82 SCR !
@@ -805,8 +809,6 @@ FLUSH
 14 & 8 GR. CR ." 100 10 20 SQUARE"
 15 & CR ." XGR ( exit graphics ) " 
 FLUSH
-
-( todo: diff between screens )
 
 84 CLEAR FLUSH ( double fac? )
 85 CLEAR FLUSH

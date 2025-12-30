@@ -22,12 +22,14 @@
 ( * store/! for pseudo-typed )  
 : #! ( #tv val #tadr adr -- )
   ( store value under adress )
+  ( TODO: test me )
   >R #ADR = ROT      ( val f #tv R: adr )
   #VAL = AND R> SWAP ( val adr f R: --  )
   IF ! ELSE     ( must be val->adr )
     2DROP ERR.TYPES  ( type error )
   THEN ; 
 : @! ( #adr adr1 #adr adr2 -- val )
+  ( FIXME: fix and test me )
   ( @ from address, store under address )
   SWAP #ADR = >R ROT #ADR = R> AND
   IF SWAP @ SWAP !
@@ -39,9 +41,9 @@
 : ]IS ( #ta a #tb -- f )
   SWAP DROP = ; ( ex: LST CDR #NIL ]IS )
 
-#VAL 0   #ADR 710 #! ( -- PASS )
-#VAL 148 #ADR 710 #! ( -- PASS )
-#ADR 710 #ADR 712 @! ( -- PASS )
+( #VAL 0   #ADR 710 #! ( -- PASS )
+( #VAL 148 #ADR 710 #! ( -- PASS )
+( #ADR 710 #ADR 712 @! ( -- PASS )
   
 ( * node pseudo-type wrapping  )
 : NIL]  ( -- #nil #nil ) #NIL #NIL ;
@@ -104,11 +106,42 @@
 : '.  ( pfa -- ) NFA ID. ;
 : (?T.) ( #t1 '#t2 -- )
   DUP ROT ROT 'EX = IF '. ELSE DROP THEN ;
-: ]. ( #tx x -- ; describe a node )
-  . DUP ' #NIL (?T.) DUP ' #ADR (?T.)
-    DUP ' #VAL (?T.) DUP ' #STR (?T.)
-    DUP ' #4TH (?T.)
-  DROP ;
+: ]. ( #tx x [lvl] -- ; describe a node )
+  ( TODO: add lvl and indent CAR/CDR )
+  ( ROT ROT ( lvl #tx x ) 
+  DUP . SWAP 
+  DUP ' #NIL (?T.) 
+  DUP ' #ADR (?T.) ( [lvl] x #tx )
+  DUP #ADR = IF 
+    SWAP ( [lvl] #tx x )
+	[ SMUDGE ]
+	  ( ROT >R R ROT ROT )
+	  2DUP CR ." CAR:" CAR ( R> ) ]. 
+	  ( ROT >R R ROT ROT )
+	  2DUP CR ." CDR:" CDR ( R> ) ]. 
+	[ SMUDGE ]
+	SWAP ( [lvl] x #tx )
+  THEN
+  DUP ' #VAL (?T.)
+  DUP #VAL = IF ( [lvl] x #tx )
+    OVER ." val=" . 
+  THEN
+  DUP ' #STR (?T.)
+  DUP #STR = IF ( [lvl] x #tx )
+    OVER ." str=" @ COUNT TYPE
+  THEN
+  DUP ' #4TH (?T.)
+  DUP #4TH = IF ( [lvl] x #tx )
+    OVER ." 4th=" @ NFA ID.
+  THEN
+  2DROP ( DROP ) ;
+
+NIL] NIL] CONS
+  VAL:] 1111 CONS
+  VAL:] 2222 CONS
+  VAL:] 3333 CONS
+S.
+].
 
 ;S
 
@@ -164,7 +197,7 @@ MYLIST CAR TREE =TEST
     STR:] S" ELEMENT2" 
       CONS
   TREE @!
-  TREE ]. ;
+  TREE 0 ]. ;
 	
 CONS$-TEST	
 	

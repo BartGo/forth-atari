@@ -19,8 +19,8 @@ FORTH DEFINITIONS DECIMAL 0 WARNING !
 
 ( 40 LOAD  ) ( <-- load assembler - manually!!!! )
 ( 50 LOAD  ) ( <-- load graphics  - manually!!!! )
-  ( or )
-( 70 LOAD  ) ( <-- load assembler - manually!!!! )
+( FIXME: incompatible with some words but better )
+( 76 LOAD  ) ( <-- load assembler - manually!!!! )
 ( then, no default graphic words )
 
 FORTH DEFINITIONS DECIMAL 0 WARNING !

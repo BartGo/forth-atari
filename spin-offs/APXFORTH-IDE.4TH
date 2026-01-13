@@ -291,14 +291,14 @@ DECIMAL
   0 R> C! ; ( -- )  
  
 ( tests )
-( 0 VARIABLE A$ 80 ALLOT 
-( 0 VARIABLE B$ 80 ALLOT 
-( A$ $" HELLO WORLD!"
-( A$ CTYPE
-( B$ $" HELLO UNIVERSE!"
-( B$ CTYPE
-( A$ CZ!
-( A$ ZTYPE
+( 0 VARIABLE A$ 80 ALLOT )
+( 0 VARIABLE B$ 80 ALLOT )
+( A$ $" HELLO WORLD!" )
+( A$ CTYPE )
+( B$ $" HELLO UNIVERSE!" )
+( B$ CTYPE )
+( A$ CZ! )
+( A$ ZTYPE )
 ( done )
 
 ( Local variables )
@@ -642,7 +642,7 @@ CR CR ;
   CR ." ' XYZ LOCATE to locate uses of XYZ"
   CR ." D1:/D2:/DIR to browse floppies"
   CR ." n m SEARCH XYZ search XYZ on screens"
-  CR ." n m THRU to load screens w/out -->"
+  ( CR ." n m THRU to load screens w/out -->" )
   CR ." WHERE for the last loading error"
   CR ." BLAND removes interpreter plugins"
   CR CR ;
@@ -746,7 +746,7 @@ DECIMAL
 12 & : =T ( n n -- ; assert-eq )
 13 &   = 0= IF ."  .FAIL" CR
 14 &   ELSE ."  .PASS" CR THEN ; 
-15 & --> ( proceed to tests )
+15 & 81 LOAD ( proceed to tests )
 
 FLUSH
 
@@ -757,13 +757,13 @@ FLUSH
 2  & : U> SWAP U< ;
 3  & : TEST.FAC ( pfa -- ) CR 
 4  &  ." Test: " DUP NFA ID. 
-5  &  .” T1:f(0)” 0 RUN 1  =T 
-6  &  .” T2:f(1)” 1 RUN 1  =T     
-7  &  .” T3:f(4)” 4 RUN 24 =T       
-8  &  .” T4:f(2)<f(4)” 
+5  &  ." T1:f(0)" 0 RUN 1  =T 
+6  &  ." T2:f(1)" 1 RUN 1  =T     
+7  &  ." T3:f(4)" 4 RUN 24 =T       
+8  &  ." T4:f(2)<f(4)" 
 9  &    2 RUN SWAP 3 RUN ROT U>
 10 &    1 =T
-11 &  .” T5: f(8)<f(9)”      
+11 &  ." T5: f(8)<f(9)"      
 12 &    8 RUN SWAP 9 RUN ROT U>
 13 &    1 =T ;
 14 & ' FAC  TEST.FAC 

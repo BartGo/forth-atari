@@ -6,14 +6,22 @@
 ( todo: shadow screens non-default in EDIT )
 ( todo: add .VAR, .USER, .CONST            )
 ( todo: diff between screens               )
-( todo: consider adding EDYTOR-FORTH       )
+( todo: consider adding EDYTOR-FORTH, note )
+(  that graph words from #50 are compatible)
+(  with MULLARKY's assembler so we have it )
+(  installed here, not the RAGSDALE one,   )
+(  required by EDYTOR-FORTH.               )
 
 FORTH DEFINITIONS DECIMAL 0 WARNING !
 
 ( : CORE ; )
 ( 21 LOAD  ) ( <-- load debugger  - manually!!!! )
+
 ( 40 LOAD  ) ( <-- load assembler - manually!!!! )
 ( 50 LOAD  ) ( <-- load graphics  - manually!!!! )
+  ( or )
+( 70 LOAD  ) ( <-- load assembler - manually!!!! )
+( then, no default graphic words )
 
 FORTH DEFINITIONS DECIMAL 0 WARNING !
 
@@ -714,10 +722,7 @@ CR CR ;
   CR ." BLAND removes interpreter plugins"
   CR CR ;
 
-( minor assembler extensions by R. Pantola )
-FORTH DEFINITIONS DECIMAL
-: C; CURRENT @ CONTEXT ! ?EXEC ?CSP SMUDGE ; IMMEDIATE
-: MAC  -FIND 0= 0 ?ERROR DROP 32 C, , ; IMMEDIATE
+( TODO: minor assembler extensions by R. Pantola )
 
 ASSEMBLER HEX
 

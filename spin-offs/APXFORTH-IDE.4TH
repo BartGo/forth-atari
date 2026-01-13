@@ -2,26 +2,29 @@
 ( from multiple 1980s/90s sources, mainly Forth Dimensions ) 
 
 ( todo: consider RDCP instead of GOESINTO  )
+( todo: set DECOMP as the main decompiler  )
 ( todo: document compilation of below      )
-( todo: make shadow screens non-default    )
+( todo: shadow screens non-default in EDIT )
 ( todo: add .VAR, .USER, .CONST            )
-( todo: diff between screens )
+( todo: diff between screens               )
+( todo: consider adding EDYTOR-FORTH       )
 
-FORTH DEFINITIONS DECIMAL
-0 WARNING !
+FORTH DEFINITIONS DECIMAL 0 WARNING !
 
-: CORE ;
-( 40 LOAD ) ( <-- load assembler - manually!!!! )
-( 50 LOAD ) ( <-- load graphics  - manually!!!! )
+( : CORE ; )
+( 40 LOAD  ) ( <-- load assembler - manually!!!! )
+( 50 LOAD  ) ( <-- load graphics  - manually!!!! )
+( with the below,
 
-( after, below can be pasted into altirra )
+FORTH DEFINITIONS DECIMAL 0 WARNING !
+
+: EXTENSIONS ;
 
 : (VER) ( version 1.1e5 )
   ASCII e 7903 C! 
   ASCII 5 7904 C! ;
 (VER)
 
-: EXTENSIONS ;
 VOCABULARY EDITOR IMMEDIATE
 FORTH DEFINITIONS 
 
@@ -189,8 +192,10 @@ DECIMAL
 (   DUP 2 * 712 C! [COMPILE] LOAD DECIMAL (REFRM) ( ; )
 
 ( load screens nl thru n2 inclusive )
-: THRU ( nl n2 -- ) 
-  1+ SWAP DO I LOAD LOOP ;
+( this is not enough and causes problems )
+( when word definitions span across screens )
+( : THRU ( nl n2 -- ) 
+(   1+ SWAP DO I LOAD LOOP ; )
   
 : .CC ( -- ; show CONTEXT and CURRENT)
   CR ." Context Current: "
@@ -215,8 +220,11 @@ DECIMAL
     132 + ?TERMINAL IF LEAVE THEN
   LOOP DROP CR ;
 
+( simplified .BUFS, displays +/- )
+( with + for buffers synced with )
+( the drive and '-' for pending )
 0 VARIABLE BUFCHANGE
-: .BUFSTAT ( -- ) ( simplified .BUFS )
+: .BUFSTAT ( -- ) 
   0 BUFCHANGE !
   FIRST LIMIT FIRST - B/BUF /
   1+ 1 DO
@@ -261,10 +269,10 @@ DECIMAL
   LATEST PFA CFA ( n1 n2 n3 )
   ROT (FINDNO) ;
 
-( DOS-like DIR )
+( DOS-like DIR, you can use now "D1: DIR" )
+( and DIR will show lines started with (s )
 : (INDEX) ( scr -- ; commented lines #0 ) 
   DUP SCR ! 0 SWAP (LINE) SWAP DUP C@ ASCII (
-  ( ) 
   = 0= IF 2DROP ;S THEN CR ." #"
   SCR ? SWAP -TRAILING TYPE ;      
 : IND. ( 1st last -- ; INDEX on non-empty )
@@ -274,6 +282,7 @@ DECIMAL
 : D:  DR0 ; : D1: DR0 ; : D2: DR1 ;
 
 ( most basic string operations )
+( only as a start of more complex module )
 : $" ( $ -- ; define counted string )
   ASCII " WORD HERE COUNT ROT OVER
   OVER C! 1+ SWAP CMOVE ; IMMEDIATE
@@ -301,8 +310,7 @@ DECIMAL
 ( A$ ZTYPE )
 ( done )
 
-( Local variables )
-( Baranov, Nozdrunov )
+( Local variables by Baranov, Nozdrunov; )
 ( Language Forth and its implementations )
 100 ALLOT HERE CONSTANT LP0
 0 VARIABLE LP@ 
@@ -319,7 +327,7 @@ DECIMAL
 (   @1 @2 @3 @4 @5 ;LOCALS ; )
 ( 1 2 3 4 5 6 7 5INV )
 
-( enable "bindings" )
+( enable hooks )
 : FLAVOR ( -- )
   ' (MESSAGE) CFA ' MESSAGE !
   ' ;S        CFA ' MESSAGE 2+ !
@@ -330,7 +338,7 @@ DECIMAL
   ." FLAVOR is ON." CR .FRE CR
   ." 'SAVE' and 'COLD' to proceed." CR CR ;
   
-( disable "bindings" )
+( disable hooks )
 : BLAND ( -- ) 
   ' WARNING    CFA ' MESSAGE    !  
   ' @          CFA ' MESSAGE 2+ ! 
@@ -428,8 +436,9 @@ EDITOR DEFINITIONS
   32 ELSE 0 ENDIF CCHAR ! DOWN ;
 : EABORT CLS EMPTY-BUFFERS 1 STOP !
  [COMPILE] FORTH ;
+( TODO: test this better, now seems v. slow )
 : JOYKEY 764 C@ 255 = IF 632 C@
-  300 + ELSE KEY THEN ;
+  300 + ELSE KEY THEN ; ( UNUSED )
 : SH CLS 0 CRSINH C! IN @ >R BLK @ >R 0 IN ! 
   0 BLK ! CR QUERY INTERPRET R> BLK ! R> IN ! SP!
   ANYKD ; 
@@ -535,7 +544,7 @@ EDITOR DEFINITIONS
 : (EDIT) ( m -- ; edit screen m )
   DEEP 0= IF HLP# DUP ENDIF SCR !
   EREAD DISPLAY 0 STOP ! BEGIN
-    JOYKEY CASES
+    KEY CASES ( TODO: FIX / SPEED UP JOYKEY )
       27  CASE ESC          IS  155 CASE RETURN      IS
       28  CASE UP-CURSOR    IS  29  CASE DOWN-CURSOR IS
       31  CASE RIGHT-CURSOR IS  30  CASE LEFT-CURSOR IS
@@ -544,9 +553,9 @@ EDITOR DEFINITIONS
       126 CASE DEL          IS  127 CASE TAB         IS
 	  125 CASE NOP ( clrsc) IS 
       ( joy directions +300 not to collide w/ keys )
-      314 CASE UP-CURSOR    IS  313 CASE DOWN-CURSOR IS
-      307 CASE RIGHT-CURSOR IS  311 CASE LEFT-CURSOR IS
-      ( todo: add diagonals )
+      ( 314 CASE UP-CURSOR    IS  313 CASE DOWN-CURSOR IS )
+      ( 307 CASE RIGHT-CURSOR IS  311 CASE LEFT-CURSOR IS )
+      ( also todo: add JOY diagonals )
       DUP DUP 300 < IF
 	    ADDKEY EREAD-MARK ( todo: speed up )
 	  ELSE DROP THEN
@@ -602,7 +611,7 @@ FORTH DEFINITIONS
     CR ." * Q=bye / Space=next / Enter=gointo *"
     CR (GOESINTO)
   ELSE ." NOT FOUND" CR THEN ;
-: DECOMP GOESINTO ;
+: DECOMP GOESINTO ; ( TODO: also baseline DECOMP needed )
  
 : ED-HELP ( -- ; display FIG EDITOR help )
   CR
@@ -619,7 +628,7 @@ FORTH DEFINITIONS
   CR ." EB.     -> undo (EMPTY-BUFFERS)"
   CR ." L.      -> LIST current screen"
   CR ." N. / P. -> LIST next/previous screen"
-  CR ." --------- QMEG (if available)" 
+  CR ." --------- QMEG (if present)" 
   CR ." QMG     -> enters QMEG's menu" 
   CR ." MLM or MON enters QMEG's monitor" 
 CR CR ;
@@ -635,13 +644,14 @@ CR CR ;
   CR ." STACK to toggle stack display"
   CR ." DECOMP XYZ to decompile word XYZ"
   CR ." BREAK to debug, GO to proceed"
-  CR ."   || is BREAK, ?| is conditional"
-  CR ." UNRAVEL-ON /-OFF - err stk trace"
+  CR ." || is BREAK alias, ?| is conditional"
+  CR ." UNRAVEL-ON /-OFF - err/stack trace"
   CR ." RE: and ;RE allows redefining words"
   CR ."   : X ;  RE: X ;RE ( to redefine X )"
   CR ." ' XYZ LOCATE to locate uses of XYZ"
-  CR ." D1:/D2:/DIR to browse floppies"
+  CR ." D1: or D2: and DIR to browse floppies"
   CR ." n m SEARCH XYZ search XYZ on screens"
+  ( THRU is disabled )
   ( CR ." n m THRU to load screens w/out -->" )
   CR ." WHERE for the last loading error"
   CR ." BLAND removes interpreter plugins"
@@ -728,7 +738,11 @@ DECIMAL
 
 : TASK ( -- ; end of EXTENSIONS ) ;
 
-( demo source code )
+FLAVOR SAVE COLD  
+
+;S ABORT ;S
+
+( demo source code below - can be pasted with Altirra )
 
 80 CLEAR 80 SCR !
 0  & ( factorial, iterative )
@@ -814,4 +828,3 @@ FLUSH
 87 CLEAR FLUSH
 88 CLEAR FLUSH
 
-FLAVOR SAVE COLD  

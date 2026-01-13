@@ -20,9 +20,9 @@ FORTH DEFINITIONS DECIMAL 0 WARNING !
 
 : EXTENSIONS ;
 
-: (VER) ( version 1.1e5 )
+: (VER) ( version 1.1e6 )
   ASCII e 7903 C! 
-  ASCII 5 7904 C! ;
+  ASCII 6 7904 C! ;
 (VER)
 
 VOCABULARY EDITOR IMMEDIATE
@@ -41,7 +41,7 @@ FORTH DEFINITIONS
   CR ."    ------------------------------"
   CR ."    Additional tools from magazine"
   CR ."    'Forth Dimensions' - collected"
-  CR ."    & extended by BartGo, v2025/"
+  CR ."    & extended by BartGo, v2026/"
   7903 C@ EMIT 7904 C@ EMIT
   CR ."    =============================="
   CR ."    For the glory of Atari & Forth"

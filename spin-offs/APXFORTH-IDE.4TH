@@ -714,6 +714,11 @@ CR CR ;
   CR ." BLAND removes interpreter plugins"
   CR CR ;
 
+( minor assembler extensions by R. Pantola )
+FORTH DEFINITIONS DECIMAL
+: C; CURRENT @ CONTEXT ! ?EXEC ?CSP SMUDGE ; IMMEDIATE
+: MAC  -FIND 0= 0 ?ERROR DROP 32 C, , ; IMMEDIATE
+
 ASSEMBLER HEX
 
 ( RP@ code finally found in the Blazin' Forth sources )

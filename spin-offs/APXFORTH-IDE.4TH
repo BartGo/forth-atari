@@ -2,7 +2,6 @@
 ( from multiple 1980s/90s sources, mainly Forth Dimensions ) 
 
 ( todo: consider RDCP instead of GOESINTO  )
-( todo: set DECOMP as the main decompiler  )
 ( todo: document compilation of below      )
 ( todo: shadow screens non-default in EDIT )
 ( todo: add .VAR, .USER, .CONST            )
@@ -12,17 +11,17 @@
 FORTH DEFINITIONS DECIMAL 0 WARNING !
 
 ( : CORE ; )
+( 21 LOAD  ) ( <-- load debugger  - manually!!!! )
 ( 40 LOAD  ) ( <-- load assembler - manually!!!! )
 ( 50 LOAD  ) ( <-- load graphics  - manually!!!! )
-( with the below,
 
 FORTH DEFINITIONS DECIMAL 0 WARNING !
 
 : EXTENSIONS ;
 
-: (VER) ( version 1.1e6 )
+: (VER) ( version 1.1e7 )
   ASCII e 7903 C! 
-  ASCII 6 7904 C! ;
+  ASCII 7 7904 C! ;
 (VER)
 
 VOCABULARY EDITOR IMMEDIATE
@@ -145,6 +144,31 @@ HEX
 
 DECIMAL
 
+( * PICK and ROLL * )
+(   for fig-FORTH   )
+(    Steve Oakey    )
+( /Forth for Micros )
+( tested: APX Forth )
+: PICK ( n -- n )
+  2 * SP@ OVER 1 < SWAP ROT +
+  SWAP OVER
+  18 +ORIGIN @ ( S0 ) < 0= OR IF
+    ." PICK: out of range"
+	CR ABORT
+  ELSE @ THEN ;
+: ROLL ( n -- )
+  2 * SP@ OVER 1 < SWAP ROT +
+  SWAP OVER 
+  18 +ORIGIN @ ( S0 ) < 0= OR IF
+    ." ROLL: out of range"
+	CR ABORT
+  ELSE
+    DUP @ >R SP@ 2+ SWAP DO
+	  I 2 - @ I ! -2
+	+LOOP
+    DROP R>
+  THEN ;
+
 ( Search )
 ( John S. James, FDv2N6p165 with errata )
 0 VARIABLE SRCHCNT
@@ -158,6 +182,8 @@ DECIMAL
 
 : (HOME) ( -- )
   146 710 ! 125 EMIT ;
+
+: ['] [COMPILE] ' ; IMMEDIATE
 
 : S0 18 +ORIGIN @ ; ( -- n )
 : R0 20 +ORIGIN @ ; ( -- n )
@@ -183,6 +209,35 @@ DECIMAL
 : STACK ( -- ; toggle stack display )
   ' (PROMPT) @ ' 0 CFA = IF ' 1 ELSE ' 0 THEN
   CFA ' (PROMPT) ! ;
+
+FORTH DEFINITIONS HEX
+: EVLIST ( -- ; extended VLIST )
+  CR 80 OUT ! CONTEXT @ @ 
+  CR ." Context Current: "
+  CONTEXT @ 4 - NFA ID.
+  CURRENT @ 4 - NFA ID. CR CR
+  ." PFA  SI WORD CFA\PFA LNK-TO " CR
+  ." ---------------------------" CR
+  BEGIN
+    OUT @ C/L 2 / > 0= IF CR 0 OUT ! THEN
+    DUP PFA 4 .R SPACE 
+    DUP @ 20 AND IF ." S" ELSE ." -" THEN
+    DUP @ 40 AND IF ." I" ELSE ." -" THEN
+    DUP SPACE ID. 
+	DUP PFA CFA @ 
+           DUP 1441 = IF ." :\"
+      ELSE DUP 147D = IF ." CONSTANT\"
+      ELSE DUP 1499 = IF ." VARIABLE\"
+      ELSE DUP 14B2 = IF ." USER\"
+      ELSE DUP 18D8 = IF ." DOES>\"
+    THEN THEN THEN THEN THEN
+	U.
+	DUP PFA LFA @ DUP 0= IF
+      ." \-- " DROP ELSE ." \" ID. THEN
+    PFA LFA @ DUP 0= ?TERMINAL OR CR
+  UNTIL DROP ;
+
+DECIMAL
 
 ( deprecated / faulty when loading from editor )
 ( blink border while loading )
@@ -611,7 +666,7 @@ FORTH DEFINITIONS
     CR ." * Q=bye / Space=next / Enter=gointo *"
     CR (GOESINTO)
   ELSE ." NOT FOUND" CR THEN ;
-: DECOMP GOESINTO ; ( TODO: also baseline DECOMP needed )
+: GOIN GOESINTO ; 
  
 : ED-HELP ( -- ; display FIG EDITOR help )
   CR
@@ -637,12 +692,14 @@ CR CR ;
   CR
   CR ." VER for version"
   CR ." ED-HELP for screen editing help"
+  CR ." EVLIST for extended EVLIST"
   CR ." .S to show the stack in one line"
   CR ." .CC for CONTEXT and CURRENT info"
   CR ." .FRE to show free bytes"
   CR ." .BUFS to show disc buffers"
   CR ." STACK to toggle stack display"
   CR ." DECOMP XYZ to decompile word XYZ"
+  CR ." GOIN XYZ for recursive decompiler"
   CR ." BREAK to debug, GO to proceed"
   CR ." || is BREAK alias, ?| is conditional"
   CR ." UNRAVEL-ON /-OFF - err/stack trace"

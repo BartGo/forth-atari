@@ -1,13 +1,17 @@
+( ------------------------------------ )
 ( word help for apx extended fig-forth )
 ( on atari 8-bit; code by BartGo, 2026 )
-
-( required DEBUG, so do 21 LOAD before )
+( requires and includes parts of DECOMP)
+( ------------------------------------ )
+( required DEBUG/DECOMP, so do 21 LOAD )
+( ------------------------------------ )
 ( use - \? cc - for help about word cc )
 (   \? SCR   )
 (   \? BL    )
 (   \? DUP   )
 (   \? SPACE )
 (   \? .WORD )
+( ------------------------------------ )
 
 FORTH DEFINITIONS HEX
 : /? ( -- cc )

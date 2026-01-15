@@ -1,11 +1,11 @@
-( * APX Extended Fig-Forth /IDE combined for ATARI 8-BIT * )
-( from multiple 1980s/90s sources, mainly Forth Dimensions ) 
-
-( todo: consider RDCP instead of GOESINTO  )
-( todo: document compilation of below      )
+( APX Extended Fig-Forth IDE combined for  )
+( ATARI 8-BIT from multiple 1980s/90s      )
+( sources, mainly Forth Dimensions         )
+( -- collected and tuned by BartGo for use ) 
+( -- with APX Extended fig-Forth Rev. 2    )
+( todo: document compilation the of below  )
 ( todo: shadow screens non-default in EDIT )
-( todo: add .VAR, .USER, .CONST            )
-( todo: diff between screens               )
+( todo: consider RDCP instead of GOESINTO  )
 ( todo: consider adding EDYTOR-FORTH, note )
 (  that graph words from #50 are compatible)
 (  with MULLARKY's assembler so we have it )
@@ -14,14 +14,14 @@
 
 FORTH DEFINITIONS DECIMAL 0 WARNING !
 
-( : CORE ; )
-( 21 LOAD  ) ( <-- load debugger  - manually!!!! )
+( : CORE ; ) ( run on vanilla forth )
+( 21 LOAD  ) ( run on vanilla forth )
+( 40 LOAD  ) ( run on vanilla forth )
+( 50 LOAD  ) ( run on vanilla forth )
 
-( 40 LOAD  ) ( <-- load assembler - manually!!!! )
-( 50 LOAD  ) ( <-- load graphics  - manually!!!! )
-( FIXME: incompatible with some words but better )
-( 76 LOAD  ) ( <-- load assembler - manually!!!! )
-( then, no default graphic words )
+( FIXME: incompatible with some words )
+( 76 LOAD  ) ( do not use yet )
+( then, no default graphic words work )
 
 FORTH DEFINITIONS DECIMAL 0 WARNING !
 
@@ -92,6 +92,7 @@ FORTH DEFINITIONS
 ' (MESSAGE) CFA ' MESSAGE    ! ( ex: WARNING )
 ' ;S        CFA ' MESSAGE 2+ ! ( ex: @ )
 
+
 : (HELLO) ( -- )
   EMPTY-BUFFERS
   80 SCR ! 
@@ -99,6 +100,35 @@ FORTH DEFINITIONS
   CR ." Screen set to #" SCR ?
   CR ." Type 'HELP' for help"
   CR QUIT ;
+
+HEX
+: /? ( -- cc )
+  [COMPILE] '
+  OUT @ C/L 2 / > 0= IF
+    CR 0 OUT ! THEN
+  CR CR ." * Word header of "
+  DUP NFA ID. 
+  DUP @ 20 AND IF CR ."   SMUDGE " THEN
+  DUP @ 40 AND IF CR ."   IMMEDIATE " THEN 
+  CR  DUP ."   NFA=" U.
+  DUP PFA ."   PFA=" U. CR
+  DUP LFA ."   LFA=" U. 
+  DUP CFA ."   CFA=" U. CR
+  DUP ."   CFA pointing to " CFA @ U.
+  DUP CFA @ 1441 = IF
+	.WORD ! ." (COLON)"
+	CR ." * Decomp" CR BEGIN
+      NXT1 NP CKIT CR
+    AGAIN 
+  ELSE DUP CFA @ 147D = IF ." (CONSTANT)"
+    DROP ( CR ."   Value=" @ . ) CR
+  ELSE DUP CFA @ 1499 = IF ." (VARIABLE)"
+    DROP ( CR ."   Value=" @ . ) CR
+  ELSE DUP CFA @ 14B2 = IF ." (USER)"
+    DROP ( CR ."   Value=" @ . ) CR
+  ELSE DUP CFA @ 18D8 = IF ." (DOES>)" CR
+  ELSE DUP CFA @      = IF ." (ASSEMBLY)" CR
+  THEN THEN THEN THEN THEN THEN CR ;
 
 HEX
 ( Re-Defining a Colon Word )
@@ -402,7 +432,7 @@ DECIMAL
   ." 'SAVE' and 'COLD' to proceed." CR CR ;
   
 ( disable hooks )
-: BLAND ( -- ) 
+: PURGE ( -- ) 
   ' WARNING    CFA ' MESSAGE    !  
   ' @          CFA ' MESSAGE 2+ ! 
   ' PROMPT     CFA ' QUIT 26 +  ! 
@@ -416,7 +446,7 @@ DECIMAL
   ." Use 'FLAVOR' to reenable," CR
   ." 'FORGET EXTENSIONS' to obliterate." CR
   ." 'SAVE' and 'COLD' to save." CR CR ;
-( later, BLAND is redefined with UNRAVEL )
+( later, PURGE is redefined with UNRAVEL )
 
 EDITOR DEFINITIONS
   
@@ -577,11 +607,11 @@ EDITOR DEFINITIONS
 : PIN4 CLS DR0 80 SCR ! ANYKD ; ( set DR0, 80th screen )
 : PIN5 CLS SCR @ LOAD   ANYKD ; ( load  )
 : REVB FRM# @ 128 XOR FRM# ! ;  ( reverse frame when Esc )
-: (VER) 125 EMIT VER ANYK DISPLAY ;
+: VERINFO 125 EMIT VER ANYK DISPLAY ;
 : ESC REVB KEY CASES ( bug: more cases crash CASE/IS )
     66 CASE INS-LINE  IS ( B )
     67 CASE COPY-L    IS ( C )
-    69 CASE (VER)     IS ( E )
+    69 CASE VERINFO  IS ( E )
     70 CASE FNTC      IS ( F )
     71 CASE BGRC      IS ( G )
     72 CASE HLP       IS ( H )
@@ -719,7 +749,7 @@ CR CR ;
   ( THRU is disabled )
   ( CR ." n m THRU to load screens w/out -->" )
   CR ." WHERE for the last loading error"
-  CR ." BLAND removes interpreter plugins"
+  CR ." PURGE removes interpreter plugins"
   CR CR ;
 
 ( TODO: minor assembler extensions by R. Pantola )
@@ -801,97 +831,14 @@ DECIMAL
 ( ^ replace 'QUIT' IN 'ERROR' with UNRAVEL + QUIT )
 : UNRAVEL-OFF ( -- ) ' QUIT    CFA 7290 ! ; ( default )
 
-: BLAND BLAND UNRAVEL-OFF ;
+: PURGE PURGE UNRAVEL-OFF ;
 
 : TASK ( -- ; end of EXTENSIONS ) ;
 
-FLAVOR SAVE COLD  
+FLAVOR
+1 89 CLEARS
+SAVE
+COLD 
 
 ;S ABORT ;S
-
-( demo source code below - can be pasted with Altirra )
-
-80 CLEAR 80 SCR !
-0  & ( factorial, iterative )
-1  & : FAC         ( n -- n! )
-2  &   1 SWAP 1+ 1 ( 1 n+1 1 )
-3  &   DO I * LOOP ;  
-4  & CR 3 FAC . CR 8 FAC U. 
-5 XX
-6  & ( factorial, recursive )
-7  & : FACR ( n -- n! ) DUP 0= IF 1 +
-8  &   ELSE DUP 1 - [ SMUDGE ]
-9  &     FACR [ SMUDGE ] * THEN ;
-10 & CR 4 FAC . CR 8 FAC U. CR
-11 XX
-12 & : =T ( n n -- ; assert-eq )
-13 &   = 0= IF ."  .FAIL" CR
-14 &   ELSE ."  .PASS" CR THEN ; 
-15 & 81 LOAD ( proceed to tests )
-
-FLUSH
-
-81 CLEAR 81 SCR !
-
-0  & ( factorial, tests ) 
-1  & : RUN OVER CFA EXECUTE ;
-2  & : U> SWAP U< ;
-3  & : TEST.FAC ( pfa -- ) CR 
-4  &  ." Test: " DUP NFA ID. 
-5  &  ." T1:f(0)" 0 RUN 1  =T 
-6  &  ." T2:f(1)" 1 RUN 1  =T     
-7  &  ." T3:f(4)" 4 RUN 24 =T       
-8  &  ." T4:f(2)<f(4)" 
-9  &    2 RUN SWAP 3 RUN ROT U>
-10 &    1 =T
-11 &  ." T5: f(8)<f(9)"      
-12 &    8 RUN SWAP 9 RUN ROT U>
-13 &    1 =T ;
-14 & ' FAC  TEST.FAC 
-15 & ' FACR TEST.FAC  FORGET FAC ;S
-FLUSH
-
-82 CLEAR 82 SCR !
-0  & ( a broken SQUARE )
-1  & 1 CONSTANT #COLOR
-2  & 0 VARIABLE X
-3  & 0 VARIABLE Y
-4  & 0 VARIABLE SIDE
-5  & : SQUARE  ( side y x -- )
-6  &   SIDE ! Y ! X !
-7  &   #COLOR X @ Y @ PLOT
-8  &   #COLOR X @ SIDE + Y @ DRAW
-9  &   #COLOR X @ SIDE + Y @ SIDE
-10 &     + DRAW
-11 &   #COLOR X @ Y @ DRAW  
-12 &   #COLOR X @ Y @ SIDE @
-13 &     + DRAW 1 ;
-14 & 8 GR. CR ." 100 10 20 SQUARE"
-15 & CR ." XGR ( exit graphics ) " 
-FLUSH
-
-83 CLEAR 83 SCR !
-0  & ( a fixed SQUARE )
-1  & 1 CONSTANT #COLOR
-2  & 0 VARIABLE X
-3  & 0 VARIABLE Y
-4  & 0 VARIABLE SIDE
-5  & : SQUARE  ( side y x -- )
-6  &   X ! Y ! SIDE !
-7  &   #COLOR X @ Y @ PLOT
-8  &   #COLOR X @ SIDE @ + Y @ DRAW
-9  &   #COLOR X @ SIDE @ + Y @ SIDE @
-10 &     + DRAW
-11 &   #COLOR X @ Y @ SIDE @ + DRAW  
-12 &   #COLOR X @ Y @ DRAW ;
-13 & ( no more bugs! )
-14 & 8 GR. CR ." 100 10 20 SQUARE"
-15 & CR ." XGR ( exit graphics ) " 
-FLUSH
-
-84 CLEAR FLUSH ( double fac? )
-85 CLEAR FLUSH
-86 CLEAR FLUSH
-87 CLEAR FLUSH
-88 CLEAR FLUSH
 

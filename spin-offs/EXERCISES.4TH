@@ -38,8 +38,8 @@ FLUSH
 11 &  ." T5: f(8)<f(9)"      
 12 &    8 RUN SWAP 9 RUN ROT U>
 13 &    1 =T ;
-14 & ' FAC  TEST.FAC 
-15 & ' FACR TEST.FAC  FORGET FAC ;S
+14 & ' FAC TEST.FAC  ' FACR TEST.FAC
+15 &   FORGET FAC      SP! QUIT 
 FLUSH
 
 82 CLEAR 82 SCR !
@@ -58,7 +58,7 @@ FLUSH
 12 &   #COLOR X @ Y @ SIDE @
 13 &     + DRAW 1 ;
 14 & 8 GR. CR ." 100 10 20 SQUARE"
-15 & CR ." XGR ( exit graphics ) " 
+15 & CR ." XGR " QUIT
 FLUSH
 
 83 CLEAR 83 SCR !
@@ -77,5 +77,5 @@ FLUSH
 12 &   #COLOR X @ Y @ DRAW ;
 13 & ( no more bugs! )
 14 & 8 GR. CR ." 100 10 20 SQUARE"
-15 & CR ." XGR ( exit graphics ) " 
+15 & CR ." XGR " QUIT
 FLUSH

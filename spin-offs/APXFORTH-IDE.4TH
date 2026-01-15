@@ -18,10 +18,10 @@ FORTH DEFINITIONS DECIMAL 0 WARNING !
 ( 21 LOAD  ) ( run on vanilla forth )
 ( 40 LOAD  ) ( run on vanilla forth )
 ( 50 LOAD  ) ( run on vanilla forth )
-
-( FIXME: incompatible with some words )
-( 76 LOAD  ) ( do not use yet )
-( then, no default graphic words work )
+( then, change the floppy to this and 1 LOAD )
+( FIXME: WFR asm is incompatible with some words )
+( 76 LOAD  ) ( so do not use it yet as default )
+( graphics words work only with the default asm )
 
 FORTH DEFINITIONS DECIMAL 0 WARNING !
 
@@ -421,13 +421,13 @@ DECIMAL
 ( 1 2 3 4 5 6 7 5INV )
 
 ( enable hooks )
-: FLAVOR ( -- )
+: (FLAVOR) ( -- )
   ' (MESSAGE) CFA ' MESSAGE !
   ' ;S        CFA ' MESSAGE 2+ !
   ' (PROMPT)  CFA ' QUIT  26 + !
   ' (HOME)    CFA ' ABORT  6 + !
-  ' (HELLO)   CFA ' ABORT 35 + !
-  125 EMIT (VER)  
+  ' (HELLO)   CFA ' ABORT 35 + ! ;
+: FLAVOR (FLAVOR) 125 EMIT (VER)  
   ." FLAVOR is ON." CR .FRE CR
   ." 'SAVE' and 'COLD' to proceed." CR CR ;
   
@@ -728,14 +728,16 @@ CR CR ;
   
 : HELP ( -- ; display help )
   CR
-  CR ." VER for version"
-  CR ." ED-HELP for screen editing help"
-  CR ." EVLIST for extended EVLIST"
-  CR ." .S to show the stack in one line"
-  CR ." .CC for CONTEXT and CURRENT info"
-  CR ." .FRE to show free bytes"
-  CR ." .BUFS to show disc buffers"
+  CR ." VER for version, .FRE for memory info"
+  CR ." EVLIST for an extended word list"
+  CR ." ED-HELP to help on the source editors"
+  CR ." \? XYZ for help on the word XYZ"
   CR ." STACK to toggle stack display"
+  CR ." .S to show the stack"
+  CR ." .CC for CONTEXT and CURRENT info"
+  CR ." D1: or D2: and DIR to browse floppies"
+  CR ." .BUFS to show disc buffers"
+  CR ." n m SEARCH XYZ search XYZ on screens"
   CR ." DECOMP XYZ to decompile word XYZ"
   CR ." GOIN XYZ for recursive decompiler"
   CR ." BREAK to debug, GO to proceed"
@@ -744,8 +746,6 @@ CR CR ;
   CR ." RE: and ;RE allows redefining words"
   CR ."   : X ;  RE: X ;RE ( to redefine X )"
   CR ." ' XYZ LOCATE to locate uses of XYZ"
-  CR ." D1: or D2: and DIR to browse floppies"
-  CR ." n m SEARCH XYZ search XYZ on screens"
   ( THRU is disabled )
   ( CR ." n m THRU to load screens w/out -->" )
   CR ." WHERE for the last loading error"
@@ -755,7 +755,6 @@ CR CR ;
 ( TODO: minor assembler extensions by R. Pantola )
 
 ASSEMBLER HEX
-
 ( RP@ code finally found in the Blazin' Forth sources )
 CODE RP@ 
   XSAVE STX, TSX, TXA, PHA, 1 # LDA,
@@ -835,10 +834,13 @@ DECIMAL
 
 : TASK ( -- ; end of EXTENSIONS ) ;
 
-FLAVOR
-DECIMAL 1 89 CLEARS
-SAVE
-COLD 
+(FLAVOR) CR CR 
+CR ." Please insert a formatted floppy"
+CR ." to overwrite and press RETURN"
+CR ." or ENTER. An updated, bootable"
+CR ." Forth kernel will be saved there." CR
+CR ." The computer will then reboot." CR CR
+KEY DROP SAVE COLD 
 
 ;S ABORT ;S
 

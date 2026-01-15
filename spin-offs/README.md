@@ -32,6 +32,16 @@ Includes a modified version of the editor published in "Micro 6502".
 
 ![editor help](../drafts/s5edhelp.png)
 
+### 4. Some convenient additions
+
+* `D1:`, `D2:` and `DIR` work similarly as in Atari DOS (though operate on blocks/screens)
+* `STACK` enables and disables command line stack viewer
+* Frame color changes depending on `BASE`
+* Background blinks in red in case of an error (except of Error #4 / redefining a word)
+* Error messages are now in-memory
+
+![editor help](../drafts/s7cmd.png)
+
 ---
 
 ## How to rebuild the system

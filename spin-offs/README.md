@@ -24,7 +24,7 @@ A combined word-header viewer and decompiler. Use `/? <wordname>` to inspect the
 ![word header and decomp](../drafts/s3head.png)
 
 ### 4. Full-screen editor
-Includes a modified version of the "Micro 6502" editor (with an integrated help).
+Includes a modified version of the editor published in "Micro 6502".
 
 ![editor](../drafts/s4edit.png)
 

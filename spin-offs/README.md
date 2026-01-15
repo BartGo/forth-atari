@@ -14,9 +14,11 @@ Displays version and some hints upon startup.
 ![banner after booting](../drafts/s1boot.png)
 
 ### 2. Built-in help system
-Explains usage of the most useful tools.
+Words `HELP` and `ED-HELP` explain usage of the most useful tools.
 
 ![built-in help](../drafts/s2help.png)
+
+![built-in help](../drafts/s6edhelp.png)
 
 ### 3. Integrated word inspector (`/?`)
 A combined word-header viewer and decompiler. Use `/? <wordname>` to inspect the dictionary entry and logic of any word.

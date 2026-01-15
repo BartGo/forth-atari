@@ -105,7 +105,9 @@ Er, I knew but forgot... perhaps, buy it on eBay?
 ### ["/spin-offs"](/spin-offs) - modifications of Forth environments
 
 * APXFORTH-IDE - routines to transform APX Forth floppy image into a more contemporary environment, suitable for Forth studies and small development tasks; includes source editing and debugging tools; contains help
-* *.ATR files - different versions of such environments, ready to be booted and played with (help included!)
+* *.ATR files - floppy files related to these environments, some ready to be booted and played with - see the dedicated [README.md](spin-offs/README.md) for details
+
+![banner](drafts/s1boot.png)
 
 ## ["/variables"](/variables) - less usual ways to define variables
 

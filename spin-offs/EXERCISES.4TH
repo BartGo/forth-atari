@@ -2,6 +2,8 @@
 ( demo source code below - can be pasted with Altirra )
 ( destroys screens 80-83 )
 
+FORTH DECIMAL
+
 80 CLEAR 80 SCR !
 0  & ( factorial, iterative )
 1  & : FAC         ( n -- n! )

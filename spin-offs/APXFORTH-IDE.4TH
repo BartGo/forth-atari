@@ -108,10 +108,10 @@ HEX
     CR 0 OUT ! THEN
   CR CR ." * Word header of "
   DUP NFA ID. 
-  DUP @ 20 AND IF CR ."   SMUDGE " THEN
-  DUP @ 40 AND IF CR ."   IMMEDIATE " THEN 
-  CR  DUP ."   NFA=" U.
-  DUP PFA ."   PFA=" U. CR
+  DUP NFA @ 20 AND IF CR ."   SMUDGE " THEN
+  DUP NFA @ 40 AND IF CR ."   IMMEDIATE " THEN 
+  CR  DUP ."   PFA=" U.
+  DUP NFA ."   NFA=" U. CR
   DUP LFA ."   LFA=" U. 
   DUP CFA ."   CFA=" U. CR
   DUP ."   CFA pointing to " CFA @ U.

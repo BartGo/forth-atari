@@ -81,3 +81,22 @@ FLUSH
 14 & 8 GR. CR ." 100 10 20 SQUARE"
 15 & CR ." XGR " QUIT
 FLUSH
+
+84 CLEAR 84 SCR !
+ 0 & ( "Blinking Characters" )
+ 1 & ( req: Mullarky's ASM [scr 39] )
+ 2 & ( *** RM COMPUTE 12/81 )
+ 3 & HEX : TASK ; CODE Blink ( -- )
+ 4 &   02F3 LDA,  2 # AND, 2 #  EOR,
+ 5 &   02F3 STA, 15 # LDA, 021A STA,
+ 6 & RTS,
+ 7 & CODE BlinkStart ( -- )
+ 8 &   15 # LDA, 021A STA,
+ 9 & NEXT JMP,
+10 & : BlinkInit ( -- )
+11 &   ' Blink 228 ! ;
+12 & : BlinkCursor ( -- )
+13 &   BlinkInit  BlinkStart ;
+14 & DECIMAL ;S
+
+FLUSH

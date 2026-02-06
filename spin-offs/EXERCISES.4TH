@@ -98,5 +98,24 @@ FLUSH
 12 & : BlinkCursor ( -- )
 13 &   BlinkInit  BlinkStart ;
 14 & DECIMAL ;S
-
 FLUSH
+
+( ESCAPE DEMO by J. Mattes - original author unknown )
+( published in Atari Computer Enthusiasts Nsw nr 6&8 )
+85 CLEAR 85 SCR !
+ 0 & ( ESCAPE DEMO by J. Mattes ) DECIMAL
+ 1 & 0 VARIABLE X1  0 VARIABLE Y1 0 VARIABLE X2  0 VARIABLE Y2
+ 2 & 1 VARIABLE C : BOX C @ X1 @ Y1 @ PLOT
+ 3 &  C @ X2 @ Y1 @ DRAW  C @ X2 @ Y2 @ DRAW
+ 4 &  C @ X1 @ Y2 @ DRAW  C @ X1 @ Y1 @ DRAW ;
+ 5 & : SETCR 0 2 4 6 8 6 4 2 9 1 DO 224 + 704 I + C! LOOP ;
+ 6 & : ROTATE DUP @ ROT ROT OVER SWAP DO I 1+ @ I C! LOOP C! ;
+ 7 & : RUN BEGIN 712 705 ROTATE 600 1 DO LOOP 2 0= UNTIL ;
+ 8 & : ESCAPE  ( -- ) 10 GR. SETCR 39 0 DO I X1 ! I I + Y1 !
+ 9 &  79 X1 @ - X2 ! 190 Y1 @ - Y2 ! BOX 1 Y1 +!
+10 &  1 MINUS Y2 +! BOX 1 C  +! C @ 8 > IF 1 C !
+11 & ENDIF LOOP RUN ;
+12 & CR CR ." type ESCAPE to start the demo" CR CR 
+FLUSH
+
+

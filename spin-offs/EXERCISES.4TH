@@ -118,4 +118,19 @@ FLUSH
 12 & CR CR ." type ESCAPE to start the demo" CR CR 
 FLUSH
 
+86 CLEAR 86 SCR !
+ 0 & ( GCD - fix me! )
+ 1 & : GCD         ( n m -- gcd ) 
+ 2 &   -DUP        ( n m m | n 0 )
+ 3 &   0 > IF      ( n m )
+ 4 &     ????????? ( m n m )
+ 5 &     MOD       ( m MOD{n/m} )
+ 6 &    [ SMUDGE ]
+ 7 &      GCD
+ 8 &    [ SMUDGE ] 
+ 9 &   THEN ;      ( ELSE: n )
+10 & 784 48 GCD . ( 16 ) 56 49 GCD . ( 7 )
+FLUSH
+
+
 

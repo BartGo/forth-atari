@@ -104,8 +104,8 @@ Er, I knew but forgot... perhaps, buy it on eBay?
 
 ### ["/spin-offs"](/spin-offs) - modifications of Forth environments
 
-* APXFORTH-IDE - routines to transform APX Forth floppy image into a more contemporary environment, suitable for Forth studies and small development tasks; includes source editing and debugging tools; contains help
-* *.ATR files - floppy files related to these environments, some ready to be booted and played with - see the dedicated [README.md](spin-offs/README.md) for details
+* IDE-SRC.* - routines to transform APX Forth floppy image into a more contemporary environment, suitable for Forth studies and small development tasks; includes source editing and debugging tools; contains help
+* IDE-BOOT.ATR - the modification itself, ready to be booted and played with - see the dedicated [README.md](spin-offs/README.md) for details
 
 ![banner](drafts/s1boot.png)
 

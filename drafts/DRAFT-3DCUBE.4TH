@@ -1,5 +1,3 @@
-( ported from Mad Pascal program by tr1x )
-( but can't make it working in Forth yet )
 
 : TASK ;
 0 WARNING !

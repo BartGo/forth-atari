@@ -41,7 +41,7 @@ FORTH DEFINITIONS
   CR CR ;
 
 : .FRE ( -- )
-  741 @ HERE - U. ." bytes free" ;
+  741 @ HERE - U. ." bytes free" ; 
 
 ( : BEEP 253 EMIT ; )
 

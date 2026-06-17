@@ -1,15 +1,18 @@
-( ----- )
-( REM https://www.atariarchives.org/c2bag/page069
-( 4000 M=4:DL=PEEK(560)+256*PEEK(561):POKE DL+3,M+64
-( 4005 FOR I=DL+6 TO DL+16+12*(M=4):POKE I,M:NEXT I:POKE I,65:POKE I+1,0:POKE I+2,DL/256
-( ----- )
+( fun with DL )
 
-: \ IN @ 64 MOD 64 SWAP - IN +! ; IMMEDIATE
+FORTH DEFINITIONS DECIMAL
 
 \ 39 LOAD ( LOAD ASSEMBLER )
 \ 50 LOAD ( LOAD GRAPHICS  )
 
-FORTH DEFINITIONS DECIMAL
+: \ IN @ 64 MOD 64 SWAP - IN +! ; IMMEDIATE
+
+: .DL ( -- ; show DL )
+  560 @ 32 0 DO DUP I + C? LOOP DROP ;
+: FLIPM ( line# -- ; flip line# between GR0 and A4 )
+  560 @ SWAP + DUP @ 6 XOR SWAP ! ;
+( example: 6 FLIPM 26 FLIPM )
+
 
 : DL@ ( -- n )
   [ 14 GR. 560 @ XGR ] LITERAL ;

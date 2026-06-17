@@ -1,18 +1,17 @@
-( LINIJKA, Marek Omirski, Bajtek 1991 )
+( ***LINIJKA, Marek Omirski ***)
 ( https://gitlab.com/amarok8bit/atari-listings)
 ( /-/blob/master/Moje_Atari/6/LINIJKA.LST )
-( Extended for Atari APX Forth )
-(  and its Mullarky Assembler  )
-(   BartGo, 2025, MIT license  )
-( 1. BOOT APX FORTH IN ALTIRA  )
-( 2. "40 LOAD", PASTE THE BELOW) 
-( 3. USE HELP TO MOVE THE LINE )
-( OR, use 0 10 THRU where THRU:)
-( : THRU ( n m -- ) CR 1+ SWAP DO
-( BASE @ DECIMAL I ." !Loading scr# "
-( U. CR BASE ! I LOAD ?TERMINAL IF
-( LEAVE THEN LOOP CR ; )
-( OR, 1 LOAD 2 LOAD .. 5 LOAD  )
+( port to Atari 8-bit APX Forth)
+( and its Mullarky Assembler   )
+( by BartGo, 2025, MIT license )
+( 1. BOOT APX FORTH IN ALTIRRA )
+( 2. LOAD WR's ASM FROM SCR#40 ) 
+( 3. PASTE BELOW OR COMPILE    )
+(    FROM ATR FILE: "n m THRU" )
+ : THRU ( n m -- ) CR 1+ SWAP DO
+ BASE @ DECIMAL I ." !Loading scr# "
+ U. CR BASE ! I LOAD ?TERMINAL IF
+ LEAVE THEN LOOP CR ; 
 ( ---------------------------- )
 
 FORTH DEFINITIONS HEX
@@ -95,4 +94,5 @@ CODE (VBISET)
 : VBI-NOP ( -- )
   ' (NOP) _CDTMA2 ! (VBISET) ;
 
-' LINER U. CR VBI-CUSTOM
+( ' LINER U. CR )
+VBI-CUSTOM

@@ -9,6 +9,11 @@
 ( before a word from it, and the  )
 ( control is immediately returned )
 ( to the FORTH vocabulary...      )
+( nicer thank solution 3 but so   )
+( far only allows to call one word)
+( from the dictionary, this can be)
+( improved and solutions 2 and 3  )
+( combined; TODO                  )
 
 FORTH DEFINITIONS
 

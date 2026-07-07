@@ -27,9 +27,9 @@ FORTH DEFINITIONS DECIMAL 0 WARNING !
 
 : EXTENSIONS ;
 
-: (VER) ( version 1.1e7 )
+: (VER) ( version 1.1e8 )
   ASCII e 7903 C! 
-  ASCII 7 7904 C! ;
+  ASCII 8 7904 C! ;
 (VER)
 
 VOCABULARY EDITOR IMMEDIATE
@@ -103,29 +103,31 @@ FORTH DEFINITIONS
 
 HEX
 : /? ( -- cc )
-  [COMPILE] '
-  OUT @ C/L 2 / > 0= IF
+  [COMPILE] ' OUT @ C/L 2 / > 0= IF
     CR 0 OUT ! THEN
   CR CR ." * Word header of "
   DUP NFA ID. 
   DUP NFA @ 20 AND IF CR ."   SMUDGE " THEN
   DUP NFA @ 40 AND IF CR ."   IMMEDIATE " THEN 
-  CR  DUP ."   PFA=" U.
-  DUP NFA ."   NFA=" U. CR
-  DUP LFA ."   LFA=" U. 
-  DUP CFA ."   CFA=" U. CR
-  DUP ."   CFA pointing to " CFA @ U.
+  CR DUP
+  ."   PFA=" U. CR DUP NFA
+  ."   NFA=" U. DUP LFA
+  ."   LFA=" U. DUP CFA
+  ."   CFA=" U. CR DUP
+  ."   CFA pointing to " CFA @ U.
   DUP CFA @ 1441 = IF
 	.WORD ! ." (COLON)"
-	CR ." * Decomp" CR BEGIN
-      NXT1 NP CKIT CR
-    AGAIN 
-  ELSE DUP CFA @ 147D = IF ." (CONSTANT)"
-    DROP ( CR ."   Value=" @ . ) CR
-  ELSE DUP CFA @ 1499 = IF ." (VARIABLE)"
-    DROP ( CR ."   Value=" @ . ) CR
-  ELSE DUP CFA @ 14B2 = IF ." (USER)"
-    DROP ( CR ."   Value=" @ . ) CR
+	CR ." * Decomp" CR
+    BEGIN NXT1 NP CKIT CR AGAIN 
+  ELSE DUP CFA @ 147D = IF
+    ." (CONSTANT)" CR ."   Equals: "
+    @ U. CR
+  ELSE DUP CFA @ 1499 = IF
+    ." (VARIABLE)" CR ."   Equals: "
+    @ U. CR
+  ELSE DUP CFA @ 14B2 = IF
+    ." (USER)" CR ."   Equals: "
+    C@ UP @ + @ . CR
   ELSE DUP CFA @ 18D8 = IF ." (DOES>)" CR
   ELSE DUP CFA @      = IF ." (ASSEMBLY)" CR
   THEN THEN THEN THEN THEN THEN CR ;
@@ -277,19 +279,6 @@ FORTH DEFINITIONS HEX
 
 DECIMAL
 
-( deprecated / faulty when loading from editor )
-( blink border while loading )
-( : --> ( -- )
-(   SCR @ 1+ 2 * 712 C! [COMPILE] --> (REFRM) ( ; )
-( : LOAD ( n -- ) 
-(   DUP 2 * 712 C! [COMPILE] LOAD DECIMAL (REFRM) ( ; )
-
-( load screens nl thru n2 inclusive )
-( this is not enough and causes problems )
-( when word definitions span across screens )
-( : THRU ( nl n2 -- ) 
-(   1+ SWAP DO I LOAD LOOP ; )
-  
 : .CC ( -- ; show CONTEXT and CURRENT)
   CR ." Context Current: "
   CONTEXT @ 4 - NFA ID.
@@ -419,6 +408,57 @@ DECIMAL
 (   5 LOCALS: !1 !2 !3 !4 !5 )
 (   @1 @2 @3 @4 @5 ;LOCALS ; )
 ( 1 2 3 4 5 6 7 5INV )
+
+( ----------------------------- )
+( Local/scoped words by BartGo; )
+( for Atari 8-bit APX fig-Forth )
+( ----------------------------- )
+( based on an idea published in )
+( Forth Dimensions [FD] - V06N6 )
+( by Carol Pruitt, 11-Jun-84 w/ )
+( the below licence note:       )
+( ----------------------------- )
+( Copyright[c] 1985 by the      )
+( University of Rochester. All  )
+( rights reserved. Permission is)
+( hereby granted for personal,  )
+( non-commercial use provided   )
+( this notice accompanies such  )
+( use. 
+( ----------------------------- )
+( the original idea used a bit  )
+( to mark local words; instead, )
+( I follow an existing fig-Forth)
+( convention of word names in   )
+( paretheses meaning "internal" )
+( ones. by FOLD'ing [ n -- ] we )
+( request that lfa links are    )
+( only preserved in non-internal)
+( words, so the internal/local  )
+( ones are not searchable - but )
+( the references are preserved. )
+( ----------------------------- )
+( purpose: hide non-local words )
+( ----------------------------- )
+( usage: HERE ..declare.. FOLD  )
+( or: ' FIRST-TO-CLEAN NFA FOLD )
+( ----------------------------- )
+
+FORTH DEFINITIONS DECIMAL
+
+40 CONSTANT CHAR.LOC     ( ; names starting with left par / ascii 40 dec / become local )
+0 VARIABLE LINK.FROM     ( ; to store the last non-local nfa [originally, lfa] )     
+: FOLD                   ( here -- )
+  LATEST DUP LINK.FROM ! ( ; set most recent's nfa parent as the sentinel for traversing the tree )
+  BEGIN 2DUP < WHILE     ( ; do not traverse deeper than 'here' - hopefully stored on the data stack )
+    DUP	1+ C@ CHAR.LOC   ( here nfa+1 f ; is the 1st char of the name saying it's a local word? )
+    = IF                 ( ; if a local word - kill the link, otherwise preserve in the LINK.FROM )
+	  PFA LFA @ DUP      ( here pnfa pnfa )
+	  LINK.FROM @ !      ( here pnfa )
+    ELSE                 ( ; global word )
+	  PFA LFA DUP        ( here lfa lfa )
+	  LINK.FROM ! @      ( here pnfa )
+    THEN REPEAT 2DROP ;  ( -- )
 
 ( enable hooks )
 : (FLAVOR) ( -- )
@@ -732,7 +772,7 @@ CR CR ;
   CR ." EVLIST for an extended word list"
   CR ." ED-HELP to help on the source editors"
   CR ." \? XYZ for help on the word XYZ"
-  CR ." STACK to toggle stack display"
+  CR ." STACK to _toggle_ stack display"
   CR ." .S to show the stack"
   CR ." .CC for CONTEXT and CURRENT info"
   CR ." D1: or D2: and DIR to browse floppies"
@@ -746,7 +786,7 @@ CR CR ;
   CR ." RE: and ;RE allows redefining words"
   CR ."   : X ;  RE: X ;RE ( to redefine X )"
   CR ." ' XYZ LOCATE to locate uses of XYZ"
-  ( THRU is disabled )
+  ( THRU removed as not reliable yet )
   ( CR ." n m THRU to load screens w/out -->" )
   CR ." WHERE for the last loading error"
   CR ." PURGE removes interpreter plugins"

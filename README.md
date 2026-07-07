@@ -36,11 +36,20 @@ Recommended method of using the code snippets:
 In some cases the code is prepared for storage on the "source screens" and it has to be put on the floppy / ATR by using the FIG editor commands. To see what I mean, check "editors/edit.4th". In any case, running some of the code snippets will not be straightforward.
 
 When in doubt, raise a ticket!
-## How to obtain APX Forth?
 
-Er, I knew but forgot... perhaps, buy it on eBay?
+## How to obtain the original APX Extended fig-Forth Rev. 2?
 
-## What EXACTLY are the sources?
+It is not clear how many "APX-20029" packages were originally sold by Atari - but the original medium seems to be an extremely rare collectible.
+
+The most official way (as of 2026) is to download `APX20029.DCM` from [https://www.atariarchives.org/APX/showinfo.php?cat=20029] and convert it into an ATR file. DO NOT use the 'APX20029.ATR' file included on the site as it's corrupted. If you don't want to do the conversion, look in other places for an ATR of this Forth - the correct version has the CRC-32 `F64B50DA` or `E6B43BB4`. The name of the file would be "Extended Atari FIG-Forth APX20029/APX Extended Fig Forth.atr", "Extended fig-FORTH 2.0 (v2).atr" or similar. 
+
+The manual can be found on [https://archive.org/details/extended-fig-forth-rev-2-apx] and is recommended.
+
+Two additional (official) add-ons exist:
+* "fun-FORTH" (APX-20146)
+* "FORTH Turtle Graphics Plus" (APX-20157)
+
+## What EXACTLY are these sources?
 ### ["/asm"](/asm) - snippets of the Forth Assembler code
 
 * LINER2 - shows a line on the screen and allows to move it down (with Help) or up (with Shift-Help); this is a slightly extended port from a machine code application written by Marek Omirski and published in "Bajtek"

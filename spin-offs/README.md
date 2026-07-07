@@ -52,10 +52,10 @@ Includes a modified version of the editor by Mike Dougherty, as published in "Mi
 
 1.  **Locate Source:** Navigate to the `spin-offs` folder in the cloned repository.
 2.  **Edit:** Modify `IDE-SRC.4TH` using your preferred text editor.
-3.  **Convert:** Run the conversion script in bash:
-    `./txt2scr.sh IDE-SRC.4TH`
+3.  **Convert:** Run the conversion script in bash (adapt the paths if needed):
+    `../pc-tools/txt2scr.sh ./IDE-SRC.4TH`
     *(This converts the text file into the screen-block format required by Forth.)*
-4.  **Rebuild:** Follow the **"How to Rebuild the System"** steps above using your newly generated `IDE-SRC.ATR`.
+4.  **Rebuild:** Follow the **"How to Rebuild the System"** steps below using your newly generated `IDE-SRC.ATR`.
 
 ---
 

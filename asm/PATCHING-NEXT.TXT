@@ -1,0 +1,61 @@
+( APX fig-Forth's NEXT analysis and patching )
+( -- by BartGo, 2026                         )
+( in Altirra, check System/ CPU/ Stop on BRK )
+
+;S
+
+( ---------------------------
+( HEX NEXT U. ( F47 ok
+( this means that code of NEXT
+( starts at 0F47...
+( ---------------------------
+( hence, below disassembly from there
+( ---------------------------
+
+0F47: LDY #$01
+      LDY ($CA),Y # this is IP
+      STA $CE     # this is W+1
+      DEY
+      LDY ($CA),Y # this is IP
+      STA $CD     # this is W
+      # JSR TRACE MISSING
+      CLC
+      LDA $CA     # this is IP
+      ADC #$02
+      STA $CA     # IP
+      BCC $0F5D   # L54 = to the JMP
+      INC $CB     # IP+1
+0F5D: JMP $00CC   # W-1 ( 4C CC 00 )
+
+( ---------------------------
+( above looks identical to fig-Forth )
+( 6502 listing as published on      )
+( forth.org/ ... fig-forth_6502.pdf )
+( ---------------------------
+( how to patch it?...
+( let's create a patching word,
+( put inside NOPs to fit in
+( one JMP and one BRK, inject
+( jump to it into NEXT.
+( normally, NEXT jumps to 00CC;
+( make it jump to something else,
+( which has placeholders for BRK or 
+( JMP and eventually jumps to 00CC.
+( ---------------------------
+
+( ** patching NEXT ** )
+
+HEX
+0F5E CONSTANT NXTJ ( NEXT's JMP's adr ) 
+CODE NXTP          
+  BRK, NOP, NOP, NOP, CC JMP, 
+FORTH
+' NXTP NXTJ ! ( patch NEXT )
+DECIMAL
+
+( ---------------------------
+( TODO:
+( we could create a toggle,
+( which flips NEXT between a normal JMP
+( and the patched one.
+( ---------------------------

@@ -472,19 +472,19 @@ DECIMAL
 
 FORTH DEFINITIONS DECIMAL
 
-40 CONSTANT CHAR.LOC     ( ; names starting with left par / ascii 40 dec / become local )
-0 VARIABLE LINK.FROM     ( ; to store the last non-local nfa [originally, lfa] )     
-: FOLD                   ( here -- )
-  LATEST DUP LINK.FROM ! ( ; set most recent's nfa parent as the sentinel for traversing the tree )
-  BEGIN 2DUP < WHILE     ( ; do not traverse deeper than 'here' - hopefully stored on the data stack )
-    DUP	1+ C@ CHAR.LOC   ( here nfa+1 f ; is the 1st char of the name saying it's a local word? )
-    = IF                 ( ; if a local word - kill the link, otherwise preserve in the LINK.FROM )
-	  PFA LFA @ DUP      ( here pnfa pnfa )
-	  LINK.FROM @ !      ( here pnfa )
-    ELSE                 ( ; global word )
-	  PFA LFA DUP        ( here lfa lfa )
-	  LINK.FROM ! @      ( here pnfa )
-    THEN REPEAT 2DROP ;  ( -- )
+40 CONSTANT CHAR.LOC
+0 VARIABLE LINK.FROM
+: FOLD ( here -- )
+  LATEST DUP LINK.FROM !
+  BEGIN 2DUP < WHILE
+    DUP	1+ C@ CHAR.LOC
+    = IF
+	  PFA LFA @ DUP
+	  LINK.FROM @ !
+    ELSE
+	  PFA LFA DUP
+	  LINK.FROM ! @
+    THEN REPEAT 2DROP ;
 
 ( enable hooks )
 : (FLAVOR) ( -- )

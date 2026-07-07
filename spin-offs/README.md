@@ -26,7 +26,7 @@ A combined word-header viewer and decompiler. Use `/? <wordname>` to inspect the
 ![word header and decomp](../drafts/s3head.png)
 
 ### 4. Full-screen editor
-Includes a modified version of the editor published in "Micro 6502".
+Includes a modified version of the editor by Mike Dougherty, as published in "Micro 6502".
 
 ![editor](../drafts/s4edit.png)
 
@@ -39,8 +39,23 @@ Includes a modified version of the editor published in "Micro 6502".
 * Frame color changes depending on `BASE`
 * Background blinks in red in case of an error (except of Error #4 / redefining a word)
 * Error messages are now in-memory
+* Added unnamed local variables (not named - this is an approach called "arguments - results")
+* Added ability to hide "private" words ("FOLD")
+* Other tools to pick and choose
 
 ![editor help](../drafts/s7cmd.png)
+
+---
+
+## How to modify the source 
+*Follow these steps to edit the code on a modern PC before injecting it into the Atari environment.*
+
+1.  **Locate Source:** Navigate to the `spin-offs` folder in the cloned repository.
+2.  **Edit:** Modify `IDE-SRC.4TH` using your preferred text editor.
+3.  **Convert:** Run the conversion script in bash:
+    `./txt2scr.sh IDE-SRC.4TH`
+    *(This converts the text file into the screen-block format required by Forth.)*
+4.  **Rebuild:** Follow the **"How to Rebuild the System"** steps above using your newly generated `IDE-SRC.ATR`.
 
 ---
 
@@ -55,14 +70,3 @@ Includes a modified version of the editor published in "Micro 6502".
 5.  **Save Image:** * Once the compilation finishes, insert an empty, formatted Single Density (SD) disk and press **Return**.
     * *Alternatively:* You can skip swapping the floppy and overwrite `IDE-SRC.ATR` with the new Forth version.
 
----
-
-## How to modify the source 
-*Follow these steps to edit the code on a modern PC before injecting it into the Atari environment.*
-
-1.  **Locate Source:** Navigate to the `spin-offs` folder in the cloned repository.
-2.  **Edit:** Modify `IDE-SRC.4TH` using your preferred text editor.
-3.  **Convert:** Run the conversion script in bash:
-    `./txt2scr.sh IDE-SRC.4TH`
-    *(This converts the text file into the screen-block format required by Forth.)*
-4.  **Rebuild:** Follow the **"How to Rebuild the System"** steps above using your newly generated `IDE-SRC.ATR`.

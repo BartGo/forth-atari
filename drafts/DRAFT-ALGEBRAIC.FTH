@@ -3,9 +3,8 @@
 ( implemented for unidentified Forth [79?] )
 ( Published in Forth Dimensions /V4N6 p.14 )
 
-( adaptation to Atari 8-bit APX Forth in progress, )
-( crashes but I feel it's close to a working state )
-( -- BartGo, 2026                                  )
+( fixes and adaptation to Atari 8-bit and  )
+( its APX Extended fig-Forth by BartGo '26 ) 
 
 HEX FORTH DEFINITIONS
 
@@ -50,10 +49,8 @@ ALGEBRAIC DEFINITIONS
   WHILE >R >R OP> R> R> REPEAT
   >OP ; 
 
-: ['] [COMPILE] ' ;
-
 : (
-  ['] CR 1 >OP
+  ' CR 1 >OP
   ; IMMEDIATE
 
 : )
@@ -78,8 +75,7 @@ FORTH DEFINITIONS
   0 OP ! [COMPILE] ALGEBRAIC
   ; IMMEDIATE
 
-( EXAMPLES - CRASH! )
-
+( EXAMPLES and TESTS )
 42 CONSTANT XXX
 A[ 1 + 66    ]A 
   67 ?PAIRS
@@ -88,9 +84,24 @@ A[ 31001 * 2 ]A
 A[ XXX * 2   ]A
   84 ?PAIRS
 A[ ( 9999 + 1 ) * 2 ]A
-  20000 ?PAIRS ( CRASH! )
+  20000 ?PAIRS
 A[ ( XXX + 5 ) * ( 8 + 2 ) ]A
-  470 ?PAIRS   ( CRASH! ) 
+  470 ?PAIRS
+  
+( helpers for more convenient variable usage )
+0 VARIABLE %TO
+: TO 1 %TO ! ;
+: VAL <BUILDS , DOES> %TO @
+  IF ! 0 %TO ! ELSE @ THEN ;
+( helpers end )
+
+1230 VAL IN_WALLET
+60   VAL BOOK_PRICE
+11   VAL CIG_PRICE
+( I bought 2x books and 3x cigarettes )
+A[ IN_WALLET - ( 2 * BOOK_PRICE ) - ( 3 * CIG_PRICE ) ]A TO IN_WALLET
+IN_WALLET 1077 ?PAIRS
+
 
 
   

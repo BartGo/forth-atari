@@ -17,7 +17,8 @@ Read about history of Forth [here](https://www.forth.com/resources/forth-program
 
 ## Why would I need it?
 
-If you know, you know.
+If you know, you know. Knowledge and fun.
+
 ## How to use these source files?
 
 Any information where the code came from and its possible issues, are mentioned in the comments. I give no guarantee that anything published here will work safely for you - and I especially recommend NOT TO RUN any of it on a real Atari hardware without heavy testing.
@@ -37,17 +38,21 @@ In some cases the code is prepared for storage on the "source screens" and it ha
 
 When in doubt, raise a ticket!
 
-## How to obtain the original APX Extended fig-Forth Rev. 2?
+## How to obtain APX Extended fig-Forth Rev. 2?
 
-It is not clear how many "APX-20029" packages were originally sold by Atari - but the original medium seems to be an extremely rare collectible.
+It is not clear how many "APX-20029" packages were sold by Atari - but the original medium seems to be an extremely rare collectible.
 
 The most official way (as of 2026) is to download `APX20029.DCM` from [https://www.atariarchives.org/APX/showinfo.php?cat=20029] and convert it into an ATR file. DO NOT use the 'APX20029.ATR' file included on the site as it's corrupted. If you don't want to do the conversion, look in other places for an ATR of this Forth - the correct version has the CRC-32 `F64B50DA` or `E6B43BB4`. The name of the file would be "Extended Atari FIG-Forth APX20029/APX Extended Fig Forth.atr", "Extended fig-FORTH 2.0 (v2).atr" or similar. 
 
 The manual can be found on [https://archive.org/details/extended-fig-forth-rev-2-apx] and is recommended.
 
-Two additional (official) add-ons exist:
+Two additional (official) add-ons exist, with manuals (look on archive.org):
 * "fun-FORTH" (APX-20146)
 * "FORTH Turtle Graphics Plus" (APX-20157)
+
+## Is it possible to learn this power?
+
+Probably. Please take a look at Mike Miller's APX fig-Forth course on YT: [https://www.youtube.com/watch?v=c4lT-IQTItM&list=PL9GQGINuWC-2bCTRWZHJzpXMXgmbpp5s6]
 
 ## What EXACTLY are these sources?
 ### ["/asm"](/asm) - snippets of the Forth Assembler code

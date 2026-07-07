@@ -7,12 +7,12 @@
 ( crashes but I feel it's close to a working state )
 ( -- BartGo, 2026                                  )
 
-HEX
+HEX FORTH DEFINITIONS
+
+0 VARIABLE OP 44 ALLOT
 
 VOCABULARY ALGEBRAIC IMMEDIATE
 ALGEBRAIC DEFINITIONS
-
-0 CONSTANT OP 44 ALLOT
 
 : ?INTERP ( pfa -- )
   CFA STATE @ IF , ELSE
@@ -50,6 +50,19 @@ ALGEBRAIC DEFINITIONS
   WHILE >R >R OP> R> R> REPEAT
   >OP ; 
 
+: ['] [COMPILE] ' ;
+
+: (
+  ['] CR 1 >OP
+  ; IMMEDIATE
+
+: )
+  FORTH BEGIN 1 LEV? <
+  WHILE OP> REPEAT
+  1 LEV? = IF -4 OP +! ELSE
+  1 ABORT" Missing ("
+  THEN ; IMMEDIATE
+
 7 INFIX * *  7 INFIX / /
 6 INFIX + +  6 INFIX - -
 5 INFIX > >  5 INFIX < <
@@ -58,28 +71,26 @@ ALGEBRAIC DEFINITIONS
 3 INFIX AND AND
 2 INFIX OR OR 
 
-: (
-  [COMPILE] CR 1 >OP ; IMMEDIATE
-: )
-  FORTH BEGIN 1 LEV? <
-  WHILE OP> REPEAT
-  1 LEV? = IF -4 OP +! ELSE
-  1 ABORT" Missing ("
-  THEN ; IMMEDIATE
-
 DECIMAL
 FORTH DEFINITIONS
 
 : A[
-  ALGEBRAIC 0 OP ! FORTH
-  [COMPILE] ALGEBRAIC ; IMMEDIATE
+  0 OP ! [COMPILE] ALGEBRAIC
+  ; IMMEDIATE
 
+( EXAMPLES - CRASH! )
 
-( EXAMPLES )
-
-( boom! crash! hang! )
-
-A[ 1 + 5 - 8 * ( 8 - 7 ) ]A
+42 CONSTANT XXX
+A[ 1 + 66    ]A 
+  67 ?PAIRS
+A[ 31001 * 2 ]A
+  62002 ?PAIRS
+A[ XXX * 2   ]A
+  84 ?PAIRS
+A[ ( 9999 + 1 ) * 2 ]A
+  20000 ?PAIRS ( CRASH! )
+A[ ( XXX + 5 ) * ( 8 + 2 ) ]A
+  470 ?PAIRS   ( CRASH! ) 
 
 
   

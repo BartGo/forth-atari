@@ -615,26 +615,27 @@ EDITOR DEFINITIONS
   INSERT-CHAR
   WRITE-LINE CURSOR SCREEN-CURSOR EREAD-MARK ;
 : HLP 125 EMIT CR
-  ." *EDIT* by M. Dougherty  (Esc-H: help)" CR
+  ." 'EDIT' by M. Dougherty  (Esc-H: help)" CR
   ." -------------------------------------" CR
   ." Arrows, Ins, BckSp, Tab: normal use"   CR
   ." Return: next line (no line breaks)"    CR
+  ." Esc-I: Insert empty line"              CR
   ." Esc-X: *copy and delete line"          CR
   ." Esc-C: *copy and keep line"            CR  
   ." Esc-V: *insert copied line"            CR
 (  ." Esc-R: *copy and run line in forth"    CR )
-  ." Esc-B: insert empty line"              CR
-  ." Esc-U: execute forth command"          CR
-  ." Esc-#: forth macros and commands:"     CR
-  ."        1/VLIST 2/LIST-this 3/.BUFS"    CR
+  ." Esc-U: execUte forth command"          CR
+  ." Esc-#: forth macros and commands "     CR
+  ."     #= 1/VLIST 2/LIST-this 3/.BUFS"    CR
   ."        4/SCR80 5/LOAD-this 0/CLRSCR"   CR
-  ." Esc-[: previous screen (empty-buf)"    CR
-  ." Esc-]: next screen     (empty-buf)"    CR
-  ." Esc-W: switch with the shadow screen"  CR
-  ." Esc-F/G: foregr./backgr. colors"       CR
-  ." Esc-E: version"                        CR 
-  ." Esc-S: save (flush)"                   CR
+  ." Esc-P: previous screen (empty-buf)"    CR
+  ." Esc-N: next screen     (empty-buf)"    CR
+  ." Esc-F: find string on screens (0-200)" CR
+  ." Esc-T: swiTch with the shadow screen"  CR
+  ." Esc-D: dark mode on/off"               CR
+  ." Esc-E: vErsion info"                   CR 
   ." Esc-Z: undo (empty-buf) "              CR
+  ." Esc-S: save (flush)"                   CR
   ." Esc-Q: quit (empty-buf)"               CR
   ." -------------------------------------" 
   ANYKD ; 
@@ -666,7 +667,7 @@ EDITOR DEFINITIONS
   16 0 DO I L-A 64 BLANKS LOOP DISPLAY EREAD-MARK ; 
 : THEME DUP C@ 148 XOR SWAP C! ; 
 : SAVESCR FLUSH EREAD DISPLAY  ; 
-: BGRC 710 THEME ;    : FNTC 709 THEME ;
+: BGRC 710 THEME ; : FNTC 709 THEME ; : BGFN BGRC FNTC ;
 : PIN1 CLS VLIST        ANYKD ; ( vlist )
 : PIN2 CLS SCR @ LIST   ANYKD ; ( list  )
 : PIN3 CLS .BUFS        ANYKD ; ( buffers )
@@ -674,23 +675,25 @@ EDITOR DEFINITIONS
 : PIN5 CLS SCR @ LOAD   ANYKD ; ( load  )
 : REVB FRM# @ 128 XOR FRM# ! ;  ( reverse frame when Esc )
 : VERINFO 125 EMIT VER ANYK DISPLAY ;
+: FND CLS ." TO BE IMPLEMENTED" CR ANYKD ; 
 : ESC REVB KEY CASES ( bug: more cases crash CASE/IS )
-    66 CASE INS-LINE  IS ( B )
     67 CASE COPY-L    IS ( C )
-    69 CASE VERINFO  IS ( E )
-    70 CASE FNTC      IS ( F )
-    71 CASE BGRC      IS ( G )
+    68 CASE BGFN      IS ( D )
+    69 CASE VERINFO   IS ( E )
+( TO BE IMPLEMENTED: USE 'SEARCH' )    
+( 70 CASE FND       IS ( F )
     72 CASE HLP       IS ( H )
+    73 CASE INS-LINE  IS ( I )
+    78 CASE ENEXT     IS ( N )
+    80 CASE ELAST     IS ( P )
     81 CASE EABORT    IS ( Q )
     ( 82 CASE RUN-LINE  IS ( R )
     83 CASE SAVESCR   IS ( S )
+    84 CASE CHSIDE    IS ( T )
     85 CASE SH        IS ( U )
     86 CASE PUT-LINE  IS ( V )
-    87 CASE CHSIDE    IS ( W )
     88 CASE DEL-LINE  IS ( X )
     90 CASE EUNDO     IS ( Z )
-    91 CASE ELAST     IS ( ] )
-    93 CASE ENEXT     IS ( [ )
     49 CASE PIN1      IS ( 1 )
     50 CASE PIN2      IS ( 2 )
     51 CASE PIN3      IS ( 3 )

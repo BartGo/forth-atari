@@ -1,0 +1,32 @@
+( Disable "Isn't unique" Warning )
+( ------------------------------ )
+( a crude hack so that we never  )
+( get "Isn't unique" after an    )
+( existing word is re-defined;   )
+( mind that it only works with   )
+( Atari 8-bit APX Forth and that )
+( the below DECOMP CREATE output )
+( is expected; otherwise, your   )
+( Forth will likely be destroyed )
+( or worse. You've been warned...)
+
+
+' DROP  CFA 7383 ! ( destroy ID. )
+' DUP   CFA 7388 ! ( destroy MESSAGE )
+' 2DROP CFA 7390 ! ( destroy SPACE )
+
+( ...
+( 7373   -FIND
+( 7375   0BRANCH to 7392
+( 7379   DROP
+( 7381   NFA 
+( 7383   ID.     => DROP
+( 7385   CLIT 4 
+( 7388   MESSAGE => DUP
+( 7390   SPACE   => 2DROP
+( ...
+
+
+
+
+  

@@ -4,6 +4,8 @@
 ( /Forth for Micros )
 ( tested: APX Forth )
 
+FORTH DEFINITIONS DECIMAL
+
 : PICK ( n -- n )
   2 * SP@ OVER 1 < SWAP ROT +
   SWAP OVER

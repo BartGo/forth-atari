@@ -1,5 +1,7 @@
-( RE-DEFINING A COLON WORD by EHS
-( https://www.forth.org/fd/FD-V06N3.pdf
+( RE-DEFINING A COLON WORD by EHS )
+( https://www.forth.org/fd/FD-V06N3.pdf )
+
+FORTH DEFINITIONS DECIMAL
 
 ' : CFA @ CONSTANT DOCOL
 
@@ -18,9 +20,9 @@
   ?CSP COMPILE RE-EXIT
   [COMPILE] [ ; IMMEDIATE
   
-( : XX 1 . ;
-( XX
-( RE: XX 2 . ;RE
-( XX
+( : XX 1 . ; )
+( XX )
+( RE: XX 2 . ;RE )
+( XX )
   
 

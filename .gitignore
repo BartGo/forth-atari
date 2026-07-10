@@ -1,4 +1,12 @@
 # .gitignore
 
-MYAPXFORTH.ATR
-*.hexer
+# 1. Ignore everything in the directory
+*.ATR
+*.OUT
+OUT.FTH
+
+# 2. Un-ignore specific files or folders
+!/pc-tools/
+!/asm/
+
+

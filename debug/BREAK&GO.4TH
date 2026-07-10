@@ -5,8 +5,8 @@
 (   In progress: testing on APX Forth   )
 (         - for Atari 8-bit             )
 
-FORTH DEFINITIONS DECIMAL
-39 LOAD
+( FORTH DEFINITIONS DECIMAL )
+( 39 LOAD - assembler required )
 
 FORTH DEFINITIONS DECIMAL
 
@@ -16,6 +16,7 @@ ASSEMBLER CODE RP@
   1 # LDA,
   XSAVE LDX,
   PUSH JMP,
+
 FORTH
 
 : S0 TIB 4 - @ ; ( -- n ) ( better: 18 +ORIGIN @ )
@@ -34,19 +35,20 @@ FORTH
 : ?BREAK IF BREAK THEN ;
 :  []  BREAK ;
 : ?[] ?BREAK ;
-( TODO:
-( : BREAK" CR COMPILE (.") BREAK ; IMMEDIATE
-( :  ["  CR [COMPILE] (.")  BREAK ; IMMEDIATE
-( : ?["  CR [COMPILE] (.") ?BREAK ; IMMEDIATE )
+
+( TODO: )
+( : BREAK" CR COMPILE (.") ( BREAK ; IMMEDIATE )
+( :  ["  CR [COMPILE] (.") ( BREAK ; IMMEDIATE )
+( : ?["  CR [COMPILE] (.") ( ?BREAK ; IMMEDIATE )
 
 : GO ( -- ) RP@ RP* @ = IF R> DROP R> DROP
   ELSE ." can't resume " QUIT THEN ; 
   
 ( usage example, conditional breakpoint )  
-: X ( -- )
-  1 2 + 3
-  #DEBUG ?[]
-  * ;
+( : X ( -- )
+(   1 2 + 3 )
+(  #DEBUG ?[] )
+(  * ; )
 
 ( nice, if DEPTH is available: DEPTH 0= ?() 
 

@@ -76,6 +76,7 @@ FORTH DEFINITIONS
   ; IMMEDIATE
 
 ( EXAMPLES and TESTS )
+( TODO: remove so that include is possible )
 42 CONSTANT XXX
 A[ 1 + 66    ]A 
   67 ?PAIRS
@@ -99,7 +100,9 @@ A[ ( XXX + 5 ) * ( 8 + 2 ) ]A
 60   VAL BOOK_PRICE
 11   VAL CIG_PRICE
 ( I bought 2x books and 3x cigarettes )
-A[ IN_WALLET - ( 2 * BOOK_PRICE ) - ( 3 * CIG_PRICE ) ]A TO IN_WALLET
+A[ IN_WALLET - ( 2 * BOOK_PRICE )
+   - ( 3 * CIG_PRICE ) ]A TO IN_WALLET
+
 IN_WALLET 1077 ?PAIRS
 
 

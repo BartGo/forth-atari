@@ -25,28 +25,28 @@
 ' (MESSAGE) CFA ' MESSAGE    ! ( was ' WARNING CFA )
 ' ;S        CFA ' MESSAGE 2+ ! ( was ' @ CFA )
 
-;S ( end )
 
-Messages from the OOTB APX Forth: 14 LIST 15 LIST
+( Messages from the OOTB )
+( APX Forth: 14 LIST 15 LIST )
 
-SCR # 14 
-  0 ( ERROR MESSAGES )
-  1 Stack empty
-  2 Dictionary full
-  3 Wrong address mode
-  4 Isn't unique
-  5 Value error
-  6 Disk address error
-  7 Stack full
-  8 Disk Error!
+( SCR # 14 )
+(  0 ( ERROR MESSAGES )
+(  1 Stack empty )
+(  2 Dictionary full )
+(  3 Wrong address mode )
+(  4 Isn't unique )
+(  5 Value error )
+(  6 Disk address error )
+(  7 Stack full )
+(  8 Disk Error! )
 
-SCR # 15 
-  0 ( ERROR MESSAGES )
-  1 Use only in Definitions
-  2 Execution only
-  3 Conditionals not paired
-  4 Definition not finished
-  5 In protected dictionary
-  6 Use only when loading
-  7 Off current screen
-  8 Declare VOCABULARY
+( SCR # 15 )
+(  0 ( ERROR MESSAGES )
+(  1 Use only in Definitions )
+(  2 Execution only )
+(  3 Conditionals not paired )
+(  4 Definition not finished )
+(  5 In protected dictionary )
+(  6 Use only when loading )
+(  7 Off current screen )
+(  8 Declare VOCABULARY )

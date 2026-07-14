@@ -43,7 +43,12 @@ process() {
     stack+=("$file")
 
     while IFS= read -r line || [[ -n "$line" ]]; do
-
+	
+        # stop including if the included file's line starts with ";S"
+        if [[ "$line" == ";S"* ]]; then
+          echo "Stopping include of $file (line starts with ;S)" >&2
+          break
+        fi
 
 		if [[ "$line" =~ \$\$([^[:space:]}]+) ]]; then
 			inc="${BASH_REMATCH[1]}"

@@ -1,8 +1,10 @@
 ( TURNING THE STACK INTO LOCAL )
 ( VARIABLES by Marc Perkel,    )
 ( published in FD V03N6 ------ )
-( tuned&tested for Atari 8-bit )
-( APX Forth by BartGo, 2026 -- )                     
+( merged w/ VAL-TO approach,   )
+( tuned, tested for Atari 8-bit)
+( APX Forth - by BartGo, 2026  )
+
 
 FORTH DEFINITIONS HEX
 
@@ -23,11 +25,14 @@ C +ARG S7  E +ARG S8 10 +ARG S9
   SP@ - 2 / 0 DO DROP LOOP
   R> R> [ARG] ! >R ;
 
+: VAL <BUILDS , DOES> [TO] @
+  IF ! 0 [TO] ! ELSE @ THEN ;
+
 DECIMAL
 
 ;S
 
-( EXAMPLES )
+( ARG-RES EXAMPLES )
 : BOX ( n n n -- n n )
   3 ARGUMENTS
     S1 S2 S3 * * TO S4
@@ -42,3 +47,17 @@ DECIMAL
 1 1 1 BOX
   1  ?PAIRS
   3  ?PAIRS
+
+
+;S
+
+( VAL examples )
+: TASK ;  
+42 VAL XYZ
+24 VAL ABC
+XYZ .
+ABC .
+11 TO ABC
+22 TO XYZ
+XYZ ABC + 33 ?PAIRS
+FORGET TASK

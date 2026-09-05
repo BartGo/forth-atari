@@ -11,15 +11,15 @@
 REQUIRE ASCII
 
 ( -- ERROR HANDLING -- )
-{ $$../mods/msg4-off.fth }
-{ $$../mods/message.4th }
+{ $$../mods/MSG4-OFF.FTH }
+{ $$../mods/MESSAGE.4TH }
 
 ( -- TRUE EXTENSIONS -- )
-{ $$../mods/argres-val.4th }
-{ $$../mods/algebraic.fth }
-{ !-- $$../mods/pick&roll.4th }
-{ $$../dictionary/localdef.4th }
-{ $$../dictionary/recolon.4th }
+{ $$../mods/ARGRES-VAL.4TH }
+{ $$../mods/ALGEBRAIC.FTH }
+{ !-- $$../mods/PICK&ROLL.4TH }
+{ $$../dictionary/LOCALDEF.4TH }
+{ $$../dictionary/RECOLON.4TH }
 
 ( -- DEBUG TOOLS -- )
 REQUIRE ASSEMBLER
@@ -27,8 +27,8 @@ REQUIRE EDITOR
 REQUIRE DECOMP
 REQUIRE RE-CREATE
 ( TODO: is our asm using END-CODE? )
-{ $$../debug/break&go.4th }
-{ $$../debug/stack-prompt.4th }
+{ $$../debug/BREAK&GO.4TH }
+{ $$../debug/STACK-PROMPT.4TH }
 
 REQUIRE ALGEBRAIC
 REQUIRE ARGUMENTS

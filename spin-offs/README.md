@@ -1,72 +1,52 @@
-# Study-oriented APX fig-Forth modification for 8-bit Atari
+# APX fig-Forth study overlay (Atari 8-bit)
 
-## How to Run
+Source for a thicker APX environment: Dougherty editor, in-memory messages, help, inspector, stack viewer, ARG/RES locals, `FOLD` (word hiding / pseudo-scopes).
 
-1.  **Emulator Setup:** Use an Atari 8-bit emulator (e.g., **Altirra**) configured with an **Atari XL/XE ROM**.
-2.  **Booting:** Mount and boot from `IDE-BOOT.ATR`.
-3.  **Interaction:** Once the banner appears, you are in the Forth interactive environment.
+The bootable ATR is **not** stored in git; build it (below) or keep a local copy.
 
-## Features
+Also in this folder:
 
-### 1. Informative boot banner
-Displays version and some hints upon startup.
+- `IDE-SRC.4TH` — combined screens for the overlay
+- `EXERCISES.4TH` — sample screens (overwrites screens 80–83 if loaded as written)
+- `DEVTOOLS.FTH` — host-side include list for `../pc-tools/preproc.sh`
 
-![banner after booting](../drafts/s1boot.png)
+## Run
 
-### 2. Built-in help system
-Words `HELP` and `ED-HELP` explain usage of the most useful tools.
+1. Emulator: Atari XL/XE OS ROM, BASIC off (Altirra is the usual choice).
+2. Boot vanilla APX Extended Fig-Forth Rev. 2, or a disk you previously saved after compiling `IDE-SRC.4TH`.
+3. If you have a rebuilt `IDE-BOOT.ATR`, mount and boot that instead.
 
-![built-in help](../drafts/s2help.png)
 
-![built-in help](../drafts/s6edhelp.png)
 
-### 3. Integrated word inspector (`/?`)
-A combined word-header viewer and decompiler. Use `/? <wordname>` to inspect the dictionary entry and logic of any word.
+## What the overlay adds
 
-![word header and decomp](../drafts/s3head.png)
+- Boot banner (`VER`)
+- `HELP` / `ED-HELP`
+- `/?` word header + decompiler
+- Full-screen editor (Mike Dougherty, *Micro 6502*)
+- `D1:` `D2:` `DIR` (block/screen oriented, not Atari DOS files)
+- `STACK` command-line stack display
+- Border color follows `BASE`; errors blink (except message 4 / redefinition)
+- Messages in RAM (kernel would otherwise overlay screen-based messages)
+- Unnamed locals (arguments / results)
+- `FOLD` to hide parenthesized “internal” names
 
-### 4. Full-screen editor
-Includes a modified version of the editor by Mike Dougherty, as published in "Micro 6502".
 
-![editor](../drafts/s4edit.png)
 
-![editor help](../drafts/s5edhelp.png)
+## Edit source on the PC
 
-### 4. Some convenient additions
+1. Edit `IDE-SRC.4TH`.
+2. Convert: `../pc-tools/txt2scr.sh ./IDE-SRC.4TH` → `IDE-SRC.ATR`.
+3. Rebuild using that ATR as in the next section.
 
-* `D1:`, `D2:` and `DIR` work similarly as in Atari DOS (though operate on blocks/screens)
-* `STACK` enables and disables command line stack viewer
-* Frame color changes depending on `BASE`
-* Background blinks in red in case of an error (except of Error #4 / redefining a word)
-* Error messages are now in-memory
-* Added unnamed local variables (not named - this is an approach called "arguments - results")
-* Added ability to hide "private" words ("FOLD")
-* Other tools to pick and choose
 
-![editor help](../drafts/s7cmd.png)
 
----
+## Rebuild
 
-## How to modify the source 
-*Follow these steps to edit the code on a modern PC before injecting it into the Atari environment.*
+1. Boot vanilla APX Forth (ATR not in this repo; CRC notes are in the root README).
+2. `: CORE ; 21 LOAD 40 LOAD 50 LOAD`
+3. Mount `IDE-SRC.ATR` (or a sector copy).
+4. `1 LOAD`
+5. When prompted, mount an empty formatted single-density disk and press Return — or overwrite the source ATR if you accept losing it.
 
-1.  **Locate Source:** Navigate to the `spin-offs` folder in the cloned repository.
-2.  **Edit:** Modify `IDE-SRC.4TH` using your preferred text editor.
-3.  **Convert:** Run the conversion script in bash (adapt the paths if needed):
-    `../pc-tools/txt2scr.sh ./IDE-SRC.4TH`
-    *(This converts the text file into the screen-block format required by Forth.)*
-4.  **Rebuild:** Follow the **"How to Rebuild the System"** steps below using your newly generated `IDE-SRC.ATR`.
-
----
-
-## How to rebuild the system
-*Use these steps if you want to build the bootable file similar to IDE-BOOT.ATR.*
-
-1.  **Initialize:** Boot the vanilla APX Forth ATR (not included).
-2.  **Load Dependencies:** Enter the following to load the out-of-the-box debugging words, assembler, and graphics support:
-    `: CORE ; 21 LOAD 40 LOAD 50 LOAD`
-3.  **Insert Source Disk:** Swap the disk image to `IDE-SRC.ATR` (or its physical sector-copy made via DISKCOPY or QMEG).
-4.  **Compile:** Enter `1 LOAD` to begin the build process.
-5.  **Save Image:** * Once the compilation finishes, insert an empty, formatted Single Density (SD) disk and press **Return**.
-    * *Alternatively:* You can skip swapping the floppy and overwrite `IDE-SRC.ATR` with the new Forth version.
-
+Assembler note in `IDE-SRC.4TH`: graphics words assume Mullarky’s assembler from the APX disk (`50 LOAD`), not Ragsdale. Pantola’s `EDYTOR-FORTH` wants Ragsdale; it is not the default editor here.

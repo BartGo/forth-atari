@@ -1,5 +1,15 @@
-start /B C:\Users\bgolda\Downloads\Altirra-4.21\Altirra64.exe^
-    /disk "..\spin-offs\IDE-BOOT.ATR"^
-    /disk "%1"^
-    /type "DR1 CR 1 LOAD ~" 
+@echo off
+if "%ALTIRRA%"=="" (
+  echo Set ALTIRRA to the full path of Altirra64.exe
+  exit /b 1
+)
+if "%~1"=="" (
+  echo Usage: scr2altirra.cmd source.ATR
+  exit /b 1
+)
 
+if "%IDE_BOOT%"=="" (
+  start /B "%ALTIRRA%" /disk "%~1"
+) else (
+  start /B "%ALTIRRA%" /disk "%IDE_BOOT%" /disk "%~1" /type "DR1 CR 1 LOAD ~"
+)

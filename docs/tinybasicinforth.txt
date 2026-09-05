@@ -1,3 +1,5 @@
+( NOT APX fig-Forth. Forth-83 listing, 1984. Will not LOAD on APX. )
+( Archive dump kept as-is, including the email wrapper below.      )
 ( as grabbed from https://web.archive.org/web/20060319013412/http://www.nicholson.com/rhn/files/Tiny_BASIC_in_Forth.txt
 
 Content-Type: text/plain; charset=us-ascii

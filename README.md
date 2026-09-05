@@ -1,137 +1,64 @@
-# "Forth-Atari": source code snippets for Atari 8-bit computers
+# Forth-Atari
 
-![fig-Forth booting banner](drafts/figboot.png)
+Source snippets for **APX Extended Fig-Forth Rev. 2** (written by Patrick Mullarky) on Atari 8-bit. This repository is not a Forth system and does not include the APX-20029 distribution.
+
+Most files are fig-Forth **screens** or pasteable listings: type-ins from *Forth Dimensions*, *Micro 6502*, *Tajemnice Atari*, *Bajtek*, plus later adaptations. Comments in each file are the authority for origin, load order, and known breakage.
+
+ Do not run any of this on real hardware without testing on an emulator first.
+
+`drafts/` is expected to be unfinished or wrong.
+
+## Target
+
+Boot **APX Extended Fig-Forth Rev. 2** in an emulator (suggested: Altirra, XL/XE OS, BASIC disabled).
+
+APX-20029 is not redistributed here. A DCM image is listed at [atariarchives.org APX-20029](https://www.atariarchives.org/APX/showinfo.php?cat=20029). Convert DCM → ATR yourself. The `APX20029.ATR` on that page has been reported corrupt. Working images have CRC-32 `F64B50DA` or `E6B43BB4` and may be found on other sites.
+
+Manual: [Extended fig-FORTH Rev. 2](https://archive.org/details/extended-fig-forth-rev-2-apx). Related APX disks (not required for this tree): fun-FORTH (APX-20146), FORTH Turtle Graphics Plus (APX-20157).
+
+fig-Forth background: [Forth, Inc. history notes](https://www.forth.com/resources/forth-programming-language).
+
+Highly recommended video courses: [Mike Miller, APX fig-Forth](https://www.youtube.com/watch?v=c4lT-IQTItM&list=PL9GQGINuWC-2bCTRWZHJzpXMXgmbpp5s6).
+
+## What git contains vs what you generate
+
+Tracked: `.4TH` / `.FTH` / a few `.TXT` listings, `pc-tools/` scripts, and markdown.
+
+Not tracked (`*.ATR`, `*.atr`, `*.OUT`, `OUT.FTH`): floppy images, including a rebuilt study disk. `spin-offs/README.md` describes how to build one from vanilla APX plus `IDE-SRC.4TH`.
+
+Load paths:
+
+1. Read the file header, then paste into Altirra on a booted APX system, or
+2. Convert text → ATR with `pc-tools/` and mount as a second disk, or
+3. Use the FIG editor (`editors/EDIT.4TH` and similar) to put source on screens.
+
+Filenames on disk are mixed case (e.g. `EDIT.4TH`). Use that spelling on case-sensitive checkouts.
+
+## Layout
 
 
-## TL;DR
+| Directory                 | Contents                                                                                                                                                                                                                                            |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [asm/](asm)               | Forth assembler experiments (Mullarky / Ragsdale). `LINER.4TH`, `LINER2.4TH` (Omirski *Bajtek* line demo), `LINIJKA.TXT` (original disassembly), `PATCHING-NEXT.TXT`.                                                                               |
+| [debug/](debug)           | `BREAK&GO.4TH`, `QMEG.FTH`, `STACK-PROMPT.4TH`.                                                                                                                                                                                                     |
+| [dictionary/](dictionary) | `LOCALDEF.4TH`, `NAMESPACES.4TH`, `RECOLON.4TH`, `TRANSIENTS.4TH`, `VOCABULARIES.4TH`, `WHERE-USED.4TH`.                                                                                                                                            |
+| [docs/](docs)             | Sidecar texts. See [docs/README.md](docs/README.md). Not all of it is APX fig-Forth.                                                                                                                                                                |
+| [drafts/](drafts)         | Unstable ports and experiments.                                                                                                                                                                                                                     |
+| [editors/](editors)       | `EDIT.4TH` (Dougherty), `EDYTOR-FORTH.4TH` / `EWK.4TH` (Pantola), `FIG-MINI.4TH`, `MTF.4TH`.                                                                                                                                                        |
+| [games/](games)           | `ESCAPE.4TH`, `LIFE.4TH`, `MUGWUMP.4TH`.                                                                                                                                                                                                            |
+| [io/](io)                 | `DISKCOPY.4TH`, `DISKSIMUL.4TH`.                                                                                                                                                                                                                    |
+| [mods/](mods)             | Interpreter / listing tweaks: `3VL.4TH`, `ALGEBRAIC.FTH`, `BLIST.FTH`, `CASEINSENS.4TH`, `COMPENT-XLIST.4TH`, `DOES-PARAM.FTH`, `INWORDPARAM.4TH`, `MESSAGE.4TH`, `MSG4-OFF.FTH`, `PICK&ROLL.4TH`, `PREPROC-IF.4TH`, `TERNARY.4TH`, `WORDHELP.4TH`. |
+| [pc-tools/](pc-tools)     | Host conversion. See [pc-tools/README.md](pc-tools/README.md).                                                                                                                                                                                      |
+| [spin-offs/](spin-offs)   | Study-oriented APX overlay: `IDE-SRC.4TH`, `EXERCISES.4TH`, `DEVTOOLS.FTH`. [spin-offs/README.md](spin-offs/README.md).                                                                                                                             |
+| [variables/](variables)   | `ANON.4TH`, `ARGRES-VAL.4TH`, `DEFER-IS.4TH`, `LOCALS-MINI.4TH`, `LOCALS-STACK.4TH`, `MAP.4TH`, `SEQUENCE.4TH`, `STRINGS.4TH`, `TABLE-LOOKUP.4TH`.                                                                                                  |
 
-A collection of fig-Forth code snippets, tools, editors, experiments, and oddities for Atari 8‑bit systems—mostly targeting APX Extended Fig-Forth. Everything comes from old type‑in listings, so expect quirks, broken bits, and nostalgia. Use an emulator (Altirra recommended), not real hardware, unless you enjoy surprises.
 
-## No, really, what is this?
 
-This repository contains different snippets of code implemented in fig-Forth - useful words, data structures, utilities and "stuff" - mainly for Atari 8-bit and the "APX Extended Fig-Forth" by Patrick Mullarky. Despite being a faithful implementation of the FIG "model", APX Forth was nearly never used for commercial purposes, unlike its successor, valForth. Neither was immensely successfull but both deserve being remembered.
 
-Fig-Forth was a "model", described in a standard-like document and sources for multiple microcomputers, popular in the beginning of the 1980s. 
+## Provenance and license
 
-Read about history of Forth [here](https://www.forth.com/resources/forth-programming-language).
+`LICENSE` (MIT) covers original work by BartGo in this repository.
 
-## Why would I need it?
+Magazine type-ins and third-party listings keep whatever notice is in the file. Example: `dictionary/LOCALDEF.4TH` quotes a University of Rochester personal, non-commercial notice from *Forth Dimensions*. That notice is not replaced by MIT.
 
-If you know, you know. Knowledge and fun.
-
-## How to use these source files?
-
-Any information where the code came from and its possible issues, are mentioned in the comments. I give no guarantee that anything published here will work safely for you - and I especially recommend NOT TO RUN any of it on a real Atari hardware without heavy testing.
-
-All the code comes from type-in listings, published mostly in "Forth Dimensions",  "Micro 6502" or "Tajemnice Atari" in the 1980s and 1990s - so typically are in the public domain or otherwise "free-like". The license was not explicitely stated but the intention was clearly similar to contemporary MIT and in the spirit of fig-Forth. 
-
-The most unstable snippets are in the "drafts" folder and may be in a completely broken state.
-
-Recommended method of using the code snippets:
-- check the comments and understand the general concept of the code
-- start Atari emulator (Altirra recommended), use atarixl.rom, disable Basic, potentially change the disk saving mode (perhaps to R/W - please check the emulator's manual)
-- boot Forth (usually APX Forth)
-- paste code into Altirra and test
-- if you can't paste the code (i.e. not using Altirra), it has to be converted to an ATR file and connected as a floppy (could be the second one, with the first one being the Forth); scripts present in the "pc-tools" folder may help you
-
-In some cases the code is prepared for storage on the "source screens" and it has to be put on the floppy / ATR by using the FIG editor commands. To see what I mean, check "editors/edit.4th". In any case, running some of the code snippets will not be straightforward.
-
-When in doubt, raise a ticket!
-
-## How to obtain APX Extended fig-Forth Rev. 2?
-
-It is not clear how many "APX-20029" packages were sold by Atari - but the original medium seems to be an extremely rare collectible.
-
-The most official way (as of 2026) is to download `APX20029.DCM` from [https://www.atariarchives.org/APX/showinfo.php?cat=20029] and convert it into an ATR file. DO NOT use the 'APX20029.ATR' file included on the site as it's corrupted. If you don't want to do the conversion, look in other places for an ATR of this Forth - the correct version has the CRC-32 `F64B50DA` or `E6B43BB4`. The name of the file would be "Extended Atari FIG-Forth APX20029/APX Extended Fig Forth.atr", "Extended fig-FORTH 2.0 (v2).atr" or similar. 
-
-The manual can be found on [https://archive.org/details/extended-fig-forth-rev-2-apx] and is recommended.
-
-Two additional (official) add-ons exist, with manuals (look on archive.org):
-* "fun-FORTH" (APX-20146)
-* "FORTH Turtle Graphics Plus" (APX-20157)
-
-## Is it possible to learn this power?
-
-Probably. Please take a look at Mike Miller's APX fig-Forth course on YT: [https://www.youtube.com/watch?v=c4lT-IQTItM&list=PL9GQGINuWC-2bCTRWZHJzpXMXgmbpp5s6]
-
-## What EXACTLY are these sources?
-### ["/asm"](/asm) - snippets of the Forth Assembler code
-
-* LINER2 - shows a line on the screen and allows to move it down (with Help) or up (with Shift-Help); this is a slightly extended port from a machine code application written by Marek Omirski and published in "Bajtek"
-* I put here my minor experiments with Forth Assemblers (typically with the Ragsdale Assembler)
-
-### ["/debug"](/debug) - debugging tools
-
-* BREAK&GO - adding breakpoints and starting an internal interpreter to better debug your fig-Forth code
-* QMEG - call a machine language monitor, Self Test or QMEG
-* STACK-PROMPT - enable or disable stack display
-
-### ["/dictionary"](/dictionary) - manipulating the Forth dictionary
-
-* NAMESPACES - a (failed) attempt to have vocabularies working more like real namespaces 
-* RECOLON - redefining a colon word is a great method, allowing to reconnect a more recent definition to its previous version - and to avoid FORGETing and recompiling parts of the dictionary
-* TRANSIENTS - temporary (disposable) areas of the dictionary; a typical usage would be to load there development tools (assembler, debugging words, editor) and remove them when no longer needed, without recompiling the rest
-* VOCABULARIES - showing that vocabularies allow multi-level inheritance (kind of)
-* WHERE-USED - identifying uses of a word, very useful when modifying the language
-
-### ["/docs"](/docs) - miscelleneaus documentation
-
-* ATARI-CONCEPTS - a mysterious description of Forth usage in Atari Coin-Op department as a means of game debugging; extracted from the file: "figasm, f69asm, computype master.atr" originally present at "http://annex.retroarchive.org/disks/Atari/Forth-Disks/"; the file is not converted correctly yet (missing inverse) and it is not clear whether it describes an unrealized concept or something which was actually used
-
-### ["/drafts"](/drafts) - unstable but potentially interesting 
-
-* work in progress, usually not working - failed attempts to run or port Forth code, broken data structures, crashing tools and procedures, unfinished type-in conversions...
-* when stabilized, code is moved to other (relevant) folders
-
-### ["/editors"](/editors) - source code editors
-
-* EDIT - a very nice (even if slow, as it's written only in Forth) screen editor, written by M. Dougherty
-* EDYTOR-FORTH - a very fast and modern (even if allowing editing of only one screen at once) screen editor by R. Pantola; includes (as a prerequisite) slightly tuned "Ragsdale Assembler" and Roland's "Edytor Wprowadzania" ("Entry Editor" - used to check control codes for type-in programs); contains a clipboard with a ring buffer; Esc-Space exits (without saving)
-* EWK - "Edytor Wyswietlania Kodow" ("Code Display Editor") - control code generator by R. Pantola, supplementary to the above mentioned "Edytor Wprowadzania" and allowing to generate control codes for single lines of Forth code
-* FIG-MINI - smallest useful subset of the FIG line editor (contains only Put and Erase)
-* MTF - this is Micro Text Formatter by Robert La Quey, a small tool to store slightly formatted text on Forth screens
-
-### ["/games"](/games) - very simple games and demos
-
-* ESCAPE - a conversion (by John Mattes) of a small graphical demo, wirtten by an unknown author
-* LIFE - a super-slow implementation of Life from the book "Forth" by Salman, Tisserand and Toulout
-* MUGWUMP - a conversion (from the Basic language) of an ancient logical game, enhanced by me with some graphics
-* Mugwump-240816.atr - above, bootable
-
-### ["/io"](/io) - external device management (drives etc)
-
-* DISKCOPY - a disk copy routine from Space Forth, not included later in APX Forth
-* DISKSIMUL - ram disk simulation from the fig-Forth installation guide
-
-### ["/mods"](/mods) - modifications of major words
-
-* BLIST - a better (?) LIST, trying to show both screens with sources and blocks with binary data
-* CASEINS - making the interpreter case-insensitive (ported from pns-Forth)
-* COMPENT-XLIST - "compiled comments" as a wasteful way to document words in-memory; XLIST is a VLIST, showing extended word info (with immediate/smudge bits, with CFA references and these "compiled comments" as well); APX's DECOMP modification is also described here not to break it completely with the compiled comments
-* MESSAGE - static error messages to avoid reading from the floppy
-* PICK&ROLL - tricky stack operations PICK and ROLL
-
-### ["/pc-tools"](/pc-tools) - file format conversion scripts
-
-* FS2ATR - a script by Buki to potentially convert Forth source files from PC into ATR images, may work in some cases
-* TXT2SCR - my attempts to solve the same problem (an in reverse), may work in some cases
-
-### ["/spin-offs"](/spin-offs) - modifications of Forth environments
-
-* IDE-SRC.* - routines to transform APX Forth floppy image into a more contemporary environment, suitable for Forth studies and small development tasks; includes source editing and debugging tools; contains help
-* IDE-BOOT.ATR - the modification itself, ready to be booted and played with - see the dedicated [README.md](spin-offs/README.md) for details
-
-![banner](drafts/s1boot.png)
-
-## ["/variables"](/variables) - less usual ways to define variables
-
-* ANON - anonymous variables by Leonard Morgenstern, published in Forth Dimensions
-* ARGRES - simple but useful local variables by Marc Perkel, published in Forth Dimensions as "Turning the Stack into Local Variables"
-* DEFER-IS - example of "deferred words" (vectored execution), based on Henry Laxen's code published in Forth Dimensions
-* LOCALS-MINI - my attempt to implement local variables; too many limitations to be practical
-* LOCALS-STACK - local variables as described by Baranov & Nozdrunov in "Language Forth and its Implementations"
-* MAP - a simple map-like data structure (apply a function when fetching an element of an array)
-* SEQUENCE - a simple Oracle sequence-like data structure (increase variable when fetching), also similar to ++ from C
-* STRINGS - multiple (not always consistent) concepts how to handle text strings 
-* TABLE-LOOKUP - table lookup example by Henry Laxen, as published in Forth Dimensions
-
+APX Forth, Atari ROMs, and DCM/ATR images of APX products are outside this license and are not in the tree.

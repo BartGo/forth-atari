@@ -38,8 +38,11 @@ DISPLAY DEFINITIONS DECIMAL
   LOOP DROP ;
   
 : 0/A4! ( line# -- ; flip GR0/A4 )
-  DL@ SWAP + DUP @ 6 XOR SWAP C! ;
-
+  DL@ SWAP + DUP C@ 6 XOR SWAP C! ;
+  
+: A4/5! 
+  DL@ SWAP + DUP C@ 1 XOR SWAP C! ;
+  
 FORTH DEFINITIONS DECIMAL
 
 ;S

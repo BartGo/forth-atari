@@ -83,3 +83,28 @@ CR CR S$ COUNT TYPE CR
 S$ SZ!  ( convert counted to zero-ended )
 S$ PR0  ( print zero-ended ) CR
 S$ ZYPE ( same )
+
+
+
+-----
+
+FORTH DEFINITIONS DECIMAL
+
+( string handling routines )
+
+: (S") ( adr -- next-adr )
+   R> COUNT  
+   2DUP + >R 
+   ROT SWAP  
+   OVER >R   
+   CMOVE R> ;
+
+: S" ( -- adr )
+   STATE @ IF
+     COMPILE (S") ASCII "
+     WORD HERE C@ 1+ ALLOT
+   ELSE
+     ASCII " WORD HERE
+  THEN ; IMMEDIATE
+
+;S

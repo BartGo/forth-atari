@@ -9,6 +9,8 @@ FORTH DEFINITIONS DECIMAL 0 WARNING !
   0= IF [COMPILE] ( THEN ; IMMEDIATE
 : #KNOWN -FIND IF DROP DROP 1 ELSE 0 THEN ;
 
+;S
+
 ( --------- )
 ( example 1 )
 ( --------- )

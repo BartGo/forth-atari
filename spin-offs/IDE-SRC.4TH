@@ -3,14 +3,17 @@
 ( sources, mainly Forth Dimensions         )
 ( -- collected and tuned by BartGo for use ) 
 ( -- with APX Extended fig-Forth Rev. 2    )
+( -- and its Assembler by Mr. Mullarky [M] )
 ( todo: document compilation the of below  )
 ( todo: shadow screens non-default in EDIT )
 ( todo: consider RDCP instead of GOESINTO  )
-( todo: consider adding EDYTOR-FORTH, note )
-(  that graph words from #50 are compatible)
-(  with MULLARKY's assembler so we have it )
-(  installed here, not the RAGSDALE one,   )
-(  required by EDYTOR-FORTH.               )
+( note: some definitions are FORGOTten, as )
+(       less useful, to save memory        )
+( test: recheck all new commands and editor)
+(       shortcuts                          )
+( fix: random switches from screen 80 > 59 )
+( fix: a better way to leave the editor    )
+( todo: alt assembl versions: Mullarky|WFR )
 
 FORTH DEFINITIONS DECIMAL 0 WARNING !
 
@@ -18,18 +21,20 @@ FORTH DEFINITIONS DECIMAL 0 WARNING !
 ( 21 LOAD  ) ( run on vanilla forth )
 ( 40 LOAD  ) ( run on vanilla forth )
 ( 50 LOAD  ) ( run on vanilla forth )
-( then, change the floppy to this and 1 LOAD )
-( FIXME: WFR asm is incompatible with some words )
+( then, change the floppy to this and 1 LOAD   )
+( FIX: WFR asm is incompatible with some words )
 ( 76 LOAD  ) ( so do not use it yet as default )
-( graphics words work only with the default asm )
+( graphics words work only with the default asm)
+( this makes the M version incompatible with   )
+( Mr. Pantola sources or anything using WFR asm)
 
 FORTH DEFINITIONS DECIMAL 0 WARNING !
 
 : EXTENSIONS ;
 
-: (VER) ( version 1.1e8 )
-  ASCII e 7903 C! 
-  ASCII 8 7904 C! ;
+: (VER) ( version 1.1m1 )
+  ASCII m 7903 C! 
+  ASCII 1 7904 C! ;
 (VER)
 
 VOCABULARY EDITOR IMMEDIATE
@@ -42,11 +47,9 @@ FORTH DEFINITIONS
   CR ."     by Patrick L. Mullarky, 1982 "
   CR ."    published by Atari through APX"
   CR ."    ------------------------------"
-  CR ."       EDIT - by Mike Dougherty   "
-  CR ."    as published in: 'Micro 6502' "
-  CR ."       (no. 57 - February 1983)   "
-  CR ."    ------------------------------"
-  CR ."    Additional tools from magazine"
+  CR ."    EDIT by Mike Dougherty - from:"
+  CR ."    'Micro 6502' nr. 57 (Feb 1983)"
+  CR ."    ------ other tools from ------"
   CR ."    'Forth Dimensions' - collected"
   CR ."    & extended by BartGo, v2026/"
   7903 C@ EMIT 7904 C@ EMIT
@@ -58,8 +61,6 @@ FORTH DEFINITIONS
 
 : .FRE ( -- )
   741 @ HERE - U. ." bytes free" ; 
-
-( : BEEP 253 EMIT ; )
 
 ( static messages are needed as a bigger kernel overwrites )
 ( first screens, including those with messages )
@@ -94,9 +95,7 @@ FORTH DEFINITIONS
 
 
 : (HELLO) ( -- )
-  EMPTY-BUFFERS
-  80 SCR ! 
-  CR .FRE
+  EMPTY-BUFFERS 80 SCR ! CR .FRE
   CR ." Screen set to #" SCR ?
   CR ." Type 'HELP' for help"
   CR QUIT ;
@@ -235,20 +234,21 @@ DECIMAL
 
 : S. .S ; ( -- ; an alias for .S )
 
-: (REFRM) ( -- )
-  BASE @ DUP 10 = IF DROP 0 THEN 712 C! ;
-
 : (PROMPT) ( -- )
   0 IF .S THEN
   PFLAG @ 0 PFLAG ! ." ok"
-  ' EDITOR CONTEXT @ 4 - = IF ." -editor" THEN
+  ' EDITOR CONTEXT @ 4 - = IF ." -edit" THEN
   PFLAG ! ( prompt )
-  (REFRM) ;  
-: ok-editor ; ( omit it like ok )  
+  BASE @ DUP 10 = IF DROP 0 THEN 712 C! ;
+: ok-edit ; ( omit it like ok )  
   
 : STACK ( -- ; toggle stack display )
-  ' (PROMPT) @ ' 0 CFA = IF ' 1 ELSE ' 0 THEN
+  ' (PROMPT) @ ' 0
+  CFA = IF ' 1 ELSE ' 0 THEN
   CFA ' (PROMPT) ! ;
+FORGET STACK
+: STACK-ON  ' 1 CFA ' (PROMPT) ! ;
+: STACK-OFF ' 0 CFA ' (PROMPT) ! ;
 
 FORTH DEFINITIONS HEX
 : EVLIST ( -- ; extended VLIST )
@@ -353,6 +353,7 @@ DECIMAL
 
 ( DOS-like DIR, you can use now "D1: DIR" )
 ( and DIR will show lines started with (s )
+( to identify screens with sources )
 : (INDEX) ( scr -- ; commented lines #0 ) 
   DUP SCR ! 0 SWAP (LINE) SWAP DUP C@ ASCII (
   = 0= IF 2DROP ;S THEN CR ." #"
@@ -408,6 +409,7 @@ DECIMAL
 (   5 LOCALS: !1 !2 !3 !4 !5 )
 (   @1 @2 @3 @4 @5 ;LOCALS ; )
 ( 1 2 3 4 5 6 7 5INV )
+FORGET LP0
 
 ( TURNING THE STACK INTO LOCAL VARIABLES
 ( Marc Perkel 
@@ -486,6 +488,8 @@ FORTH DEFINITIONS DECIMAL
 	  LINK.FROM ! @
     THEN REPEAT 2DROP ;
 
+FORGET CHAR.LOC
+
 ( enable hooks )
 : (FLAVOR) ( -- )
   ' (MESSAGE) CFA ' MESSAGE !
@@ -506,7 +510,7 @@ FORTH DEFINITIONS DECIMAL
   ' QUIT       CFA ' ABORT 35 + ! 
   ' EXTENSIONS LFA @ PFA FENCE  !
   148 710 ! 125 EMIT
-  32 7903 C! ( reverse (VER) 
+  32 7903 C! ( rollback (VER) 
   32 7904 C! ( so 1.1eN -> 1.1 )
   ." FLAVOR is OFF." CR .FRE CR
   ." Use 'FLAVOR' to reenable," CR
@@ -615,27 +619,26 @@ EDITOR DEFINITIONS
   INSERT-CHAR
   WRITE-LINE CURSOR SCREEN-CURSOR EREAD-MARK ;
 : HLP 125 EMIT CR
-  ." 'EDIT' by M. Dougherty  (Esc-H: help)" CR
+  ." =EDIT= by M. Dougherty  (Esc-H: help)" CR
   ." -------------------------------------" CR
   ." Arrows, Ins, BckSp, Tab: normal use"   CR
   ." Return: next line (no line breaks)"    CR
   ." Esc-I: Insert empty line"              CR
-  ." Esc-X: *copy and delete line"          CR
-  ." Esc-C: *copy and keep line"            CR  
-  ." Esc-V: *insert copied line"            CR
-(  ." Esc-R: *copy and run line in forth"    CR )
-  ." Esc-U: execUte forth command"          CR
-  ." Esc-#: forth macros and commands "     CR
+  ." Esc-X: copy and delete line  \  use a" CR
+  ." Esc-C: copy and keep line     > clip-" CR  
+  ." Esc-V: insert copied line    /  board" CR
+  ." Esc-F: go Forth (interpret one line) " CR
+  ." Esc-R: run the current screen (load) "  CR
+  ." Esc-#: misc. macros and commands "     CR
   ."     #= 1/VLIST 2/LIST-this 3/.BUFS"    CR
-  ."        4/SCR80 5/LOAD-this 0/CLRSCR"   CR
+  ."        4/SCR80             0/CLRSCR"   CR
   ." Esc-P: previous screen (empty-buf)"    CR
   ." Esc-N: next screen     (empty-buf)"    CR
-  ." Esc-F: find string on screens (0-200)" CR
   ." Esc-T: swiTch with the shadow screen"  CR
   ." Esc-D: dark mode on/off"               CR
   ." Esc-E: vErsion info"                   CR 
-  ." Esc-Z: undo (empty-buf) "              CR
   ." Esc-S: save (flush)"                   CR
+  ." Esc-Z: undo (empty-buf) "              CR
   ." Esc-Q: quit (empty-buf)"               CR
   ." -------------------------------------" 
   ANYKD ; 
@@ -658,8 +661,6 @@ EDITOR DEFINITIONS
 : DEL-LINE DELETE-L DISPLAY EREAD-MARK ; 
 : PUT-LINE INSERT-L SAV-BUF CLINE @
   L-A 64 CMOVE DISPLAY EREAD-MARK ;
-( : PRT-LINE CLINE @ L-A 64 TYPE ; )
-( : RUN-LINE COPY-L CR PRT-LINE CR QUERY INTERPRET ; )
 : TAB 2 0 DO RIGHT-CURSOR LOOP ;
 : DEL LEFT-CURSOR BL DUP ADDR C!
   CURSOR EMIT SCREEN-CURSOR EREAD-MARK ;
@@ -672,25 +673,22 @@ EDITOR DEFINITIONS
 : PIN2 CLS SCR @ LIST   ANYKD ; ( list  )
 : PIN3 CLS .BUFS        ANYKD ; ( buffers )
 : PIN4 CLS DR0 80 SCR ! ANYKD ; ( set DR0, 80th screen )
-: PIN5 CLS SCR @ LOAD   ANYKD ; ( load  )
+: LO&R CLS SCR @ LOAD ANYKD ; ( load  )
 : REVB FRM# @ 128 XOR FRM# ! ;  ( reverse frame when Esc )
 : VERINFO 125 EMIT VER ANYK DISPLAY ;
-: FND CLS ." TO BE IMPLEMENTED" CR ANYKD ; 
 : ESC REVB KEY CASES ( bug: more cases crash CASE/IS )
     67 CASE COPY-L    IS ( C )
     68 CASE BGFN      IS ( D )
     69 CASE VERINFO   IS ( E )
-( TO BE IMPLEMENTED: USE 'SEARCH' )    
-( 70 CASE FND       IS ( F )
+    70 CASE SH        IS ( F )
     72 CASE HLP       IS ( H )
     73 CASE INS-LINE  IS ( I )
     78 CASE ENEXT     IS ( N )
     80 CASE ELAST     IS ( P )
     81 CASE EABORT    IS ( Q )
-    ( 82 CASE RUN-LINE  IS ( R )
+    82 CASE LO&R      IS ( R )
     83 CASE SAVESCR   IS ( S )
     84 CASE CHSIDE    IS ( T )
-    85 CASE SH        IS ( U )
     86 CASE PUT-LINE  IS ( V )
     88 CASE DEL-LINE  IS ( X )
     90 CASE EUNDO     IS ( Z )
@@ -698,7 +696,6 @@ EDITOR DEFINITIONS
     50 CASE PIN2      IS ( 2 )
     51 CASE PIN3      IS ( 3 )
     52 CASE PIN4      IS ( 4 )
-    53 CASE PIN5      IS ( 5 )
     48 CASE CLRSCR    IS ( 0 )
   END-CASES REVB ;
 : DEEP SP@ 18 +ORIGIN @ SWAP - 2 / ; ( if no DEPTH dfnd )
@@ -790,9 +787,6 @@ FORTH DEFINITIONS
   CR ." EB.     -> undo (EMPTY-BUFFERS)"
   CR ." L.      -> LIST current screen"
   CR ." N. / P. -> LIST next/previous screen"
-  CR ." --------- QMEG (if present)" 
-  CR ." QMG     -> enters QMEG's menu" 
-  CR ." MLM or MON enters QMEG's monitor" 
 CR CR ;
   
 : HELP ( -- ; display help )
@@ -801,7 +795,6 @@ CR CR ;
   CR ." EVLIST for an extended word list"
   CR ." ED-HELP to help on the source editors"
   CR ." \? XYZ for help on the word XYZ"
-  CR ." STACK to _toggle_ stack display"
   CR ." .S to show the stack"
   CR ." .CC for CONTEXT and CURRENT info"
   CR ." D1: or D2: and DIR to browse floppies"
@@ -811,17 +804,15 @@ CR CR ;
   CR ." GOIN XYZ for recursive decompiler"
   CR ." BREAK to debug, GO to proceed"
   CR ." || is BREAK alias, ?| is conditional"
+  CR ." STACK-ON /-OFF for stack display"
   CR ." UNRAVEL-ON /-OFF - err/stack trace"
-  CR ." RE: and ;RE allows redefining words"
-  CR ."   : X ;  RE: X ;RE ( to redefine X )"
   CR ." ' XYZ LOCATE to locate uses of XYZ"
-  ( THRU removed as not reliable yet )
-  ( CR ." n m THRU to load screens w/out -->" )
   CR ." WHERE for the last loading error"
   CR ." PURGE removes interpreter plugins"
+  CR ." QMG/MLM/MON to enter ext. tools"
+  CR ." RE: and ;RE allows to redefine words:"
+  CR ."   : X ;  RE: X ;RE ( to redefine X )"
   CR CR ;
-
-( TODO: minor assembler extensions by R. Pantola )
 
 ASSEMBLER HEX
 ( RP@ code finally found in the Blazin' Forth sources )
@@ -899,7 +890,84 @@ DECIMAL
 ( ^ replace 'QUIT' IN 'ERROR' with UNRAVEL + QUIT )
 : UNRAVEL-OFF ( -- ) ' QUIT    CFA 7290 ! ; ( default )
 
-: PURGE PURGE UNRAVEL-OFF ;
+( Algebraic Expression Evaluation in FORTH )
+(   by Michael Stolovitz - - 30 Nov 1982   )
+( implemented for unidentified Forth [79?] )
+( Published in Forth Dimensions /V4N6 p.14 )
+
+( fixes and adaptation to Atari 8-bit and  )
+( its APX Extended fig-Forth by BartGo '26 ) 
+
+HEX FORTH DEFINITIONS
+
+0 VARIABLE OP 44 ALLOT
+
+VOCABULARY ALGEBRAIC IMMEDIATE
+ALGEBRAIC DEFINITIONS
+
+: ?INTERP ( pfa -- )
+  CFA STATE @ IF , ELSE
+  EXECUTE THEN ;
+  
+: OPP@ ( -- addr )
+  OP DUP @ + ;
+
+: >OP ( pfa lev -- )
+  4 OP +! OPP@ D! ;
+
+: OP> ( -- )
+  OPP@ D@ -4 OP +!
+  DROP ?INTERP ; 
+
+: LEV? ( -- lev )
+  OPP@ @ ;
+
+: ]A
+  BEGIN LEV? WHILE OP> REPEAT
+  [COMPILE] FORTH ; IMMEDIATE
+
+: ABORT"
+  STATE @ IF COMPILE 0BRANCH
+  HERE 0 , COMPILE (.")
+  ASCII " WORD HERE C@ 1+ ALLOT
+  COMPILE QUIT HERE OVER -
+  SWAP ! ELSE IF ASCII " WORD
+  HERE COUNT TYPE QUIT THEN
+  THEN ; IMMEDIATE  
+
+: INFIX ( lev -- ; rpnop infop )
+  [COMPILE] ' <BUILDS SWAP , , IMMEDIATE
+  DOES> D@ BEGIN DUP LEV? > 0=
+  WHILE >R >R OP> R> R> REPEAT
+  >OP ; 
+
+: (
+  ' CR 1 >OP
+  ; IMMEDIATE
+
+: )
+  FORTH BEGIN 1 LEV? <
+  WHILE OP> REPEAT
+  1 LEV? = IF -4 OP +! ELSE
+  1 ABORT" Missing ("
+  THEN ; IMMEDIATE
+
+7 INFIX * *  7 INFIX / /
+6 INFIX + +  6 INFIX - -
+5 INFIX > >  5 INFIX < <
+5 INFIX = =
+4 INFIX 0= 0=
+3 INFIX AND AND
+2 INFIX OR OR 
+
+DECIMAL
+FORTH DEFINITIONS
+
+: A[
+  0 OP ! [COMPILE] ALGEBRAIC
+  ; IMMEDIATE
+
+: PURGE PURGE A[ ;
 
 : TASK ( -- ; end of EXTENSIONS ) ;
 

@@ -1,11 +1,11 @@
 ( RDCP decompiler )
 ( see also DISFORTHer FDv10n2 )
+( w/ CASE BY C. EAKER FD V02N03 P 36 )
 
-( CASE BY C. EAKER FD V02N03 P 36 )
-: /CASE
+: CASES
   ?COMP CSP @ !CSP
   4 ; IMMEDIATE
-: /OF
+: CASE
   4 ?PAIRS
   COMPILE OVER
   COMPILE = 
@@ -13,12 +13,12 @@
   HERE 0 ,
   COMPILE DROP
   5 ; IMMEDIATE
-: /ENDOF
+: IS
   5 ?PAIRS
   COMPILE BRANCH HERE 0 ,
   SWAP 2 [COMPILE] ENDIF
   4 ; IMMEDIATE
-: /ENDCASE 
+: END-CASES 
   4 ?PAIRS 
   COMPILE DROP
   BEGIN
@@ -49,13 +49,13 @@ HEX
 : MYSELF LATEST PFA CFA , ; IMMEDIATE
 
 : GCHKTYP ( pfa -- f )
-  /CASE ' LIT    /OF 1 /ENDOF
-       ' BRANCH  /OF 1 /ENDOF
-       ' 0BRANCH /OF 1 /ENDOF
-       ' (LOOP)  /OF 1 /ENDOF
-       ' (+LOOP) /OF 1 /ENDOF
+  CASES ' LIT    CASE 1 IS
+       ' BRANCH  CASE 1 IS
+       ' 0BRANCH CASE 1 IS
+       ' (LOOP)  CASE 1 IS
+       ' (+LOOP) CASE 1 IS
        0 SWAP 
-  /ENDCASE ;
+  END-CASES ;
 
 : 1KEY KEYSW @
   IF ?TERMINAL IF ASCII Q
@@ -64,14 +64,14 @@ HEX
   ELSE KEY THEN ;
 
 : GCHK ( pfa -- pfa2 )
-  1 /CASE GOV ' COMPILE =
-    /OF 2+D @ 2+ NFA ID. /ENDOF
+  1 CASES GOV ' COMPILE =
+    CASE 2+D @ 2+ NFA ID. IS
        GOV GCHKTYP
-    /OF 2+D @ SPACE U. /ENDOF
+    CASE 2+D @ SPACE U. IS
        GOV ' (.") =
-    /OF 2+D COUNT TYPE
-      DUP C@ 1 - + /ENDOF
-  /ENDCASE 2+ -2 GIN +! ;
+    CASE 2+D COUNT TYPE
+      DUP C@ 1 - + IS
+  END-CASES 2+ -2 GIN +! ;
  
 : CK: DUP CFA @ ' : CFA @ = ;
 
@@ -79,15 +79,15 @@ HEX
   DUP C@ 40 AND ( immediate bit )
   IF ." [COMPILE] " ID.
   ELSE DUP ID. PFA CFA DUP @
-    /CASE
-      CONST.ADR /OF ." const "
-        EXECUTE U. /ENDOF
-      VAR.ADR   /OF ." var " 
-        EXECUTE @ U. /ENDOF
-      USERV.ADR /OF ." user "
-        EXECUTE @ U. /ENDOF
+    CASES
+      CONST.ADR CASE ." const "
+        EXECUTE U. IS
+      VAR.ADR   CASE ." var " 
+        EXECUTE @ U. IS
+      USERV.ADR CASE ." user "
+        EXECUTE @ U. IS
       DROP
-    /ENDCASE THEN ;
+    END-CASES THEN ;
 
 : (GOESINTO) ( pfa -- )
   CK: IF
@@ -100,17 +100,17 @@ HEX
  	  OVER ' (;CODE) CFA = OR 0=
     WHILE
  	  2+ GIN+ DUP NFA DISTYPE
- 	  1KEY /CASE
- 	    ASCII Q /OF
+ 	  1KEY CASES
+ 	    ASCII Q CASE
  	  	  SP! BASESAV @
- 	  	  BASE ! QUIT /ENDOF
- 	    155 ( CR ) /OF
- 	  	  MYSELF /ENDOF
- 	    ASCII U /OF
+ 	  	  BASE ! QUIT IS
+ 	    155 ( CR ) CASE
+ 	  	  MYSELF IS
+ 	    ASCII U CASE
  	  	  DROP DROP R>
- 	  	  DROP -2 GIN +! /ENDOF
+ 	  	  DROP -2 GIN +! IS
  	    DROP
- 	  /ENDCASE
+ 	  END-CASES
  	  GCHK
     REPEAT CR
     GIN @ 6 + SPACES 2+ NFA ID.

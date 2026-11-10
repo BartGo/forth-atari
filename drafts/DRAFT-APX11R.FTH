@@ -14,6 +14,8 @@
 ( e.g. & for edit/p and \ for edit/del )
 ( remove clashes of EDYTOR-FORTH or make words hidden )
 
+( TODO: consider compatibility with valForth assembly )
+
 FORTH DEFINITIONS DECIMAL 0 WARNING !
 
 ( : CORE ; ) 

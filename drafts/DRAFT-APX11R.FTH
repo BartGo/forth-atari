@@ -254,11 +254,14 @@ DECIMAL
   CFA ' (PROMPT) ! ;
 
 FORTH DEFINITIONS HEX
-: EVLIST ( -- ; extended VLIST )
-  CR 80 OUT ! CONTEXT @ @ 
+
+: .CC ( -- ; show CONTEXT and CURRENT)
   CR ." Context Current: "
   CONTEXT @ 4 - NFA ID.
-  CURRENT @ 4 - NFA ID. CR CR
+  CURRENT @ 4 - NFA ID. CR ; 
+
+: EVLIST ( -- ; extended VLIST )
+  CR 80 OUT ! CONTEXT @ @ .CC CR
   ." PFA  SI WORD CFA\PFA LNK-TO " CR
   ." ---------------------------" CR
   BEGIN
@@ -281,11 +284,6 @@ FORTH DEFINITIONS HEX
   UNTIL DROP ;
 
 DECIMAL
-
-: .CC ( -- ; show CONTEXT and CURRENT)
-  CR ." Context Current: "
-  CONTEXT @ 4 - NFA ID.
-  CURRENT @ 4 - NFA ID. CR ; 
 
 ( Diagnostics on Disk Buffers )
 ( Timothy Huang, FDv3nr6p183 )

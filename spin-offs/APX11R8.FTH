@@ -433,8 +433,8 @@ DECIMAL
   CR ." 1) EDYTOR-FORTH by Roland Pantola
   CR ." EDIT    -> edit current screen"
   CR ." n E.    -> edit screen n"
-  CR ."   Shift+Del/Tab -> cut to/from buffer" 
-  CR ."   To exit, press Esc, release, Space" CR
+  CR ."  Shift+Del, Tab -> cut to/from buffer" 
+  CR ."  To exit: Escape, Space" CR
   CR ." 2) FIG LINE EDITOR and screen mngmnt"
   CR ." SCR ?   -> show current screen number"
   CR ." n SCR ! -> select screen n"

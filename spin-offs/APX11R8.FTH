@@ -126,14 +126,24 @@ HEX
 : LINE/ DUP FFF0 AND 17 ?ERROR SCR @ (LINE) DROP ;
 : -MOVE/ LINE/ C/L CMOVE UPDATE ; 
 : P 1 TEXT/ PAD 1+ SWAP -MOVE/ ; ( = P )
+
+DECIMAL
 : L. ( -- )
-  CR ." --- Listing screen: " SCR ? 
-  C/L 32 ' C/L ! 16 0 DO
-    CR I SCR @ .LINE
-  LOOP CR ' C/L ! ;  
+  CR CR ." SCR #" SCR ? 
+  32 0 DO ( 2x lines if 2x shorter )
+    CR I 3 .R SPACE I SCR @
+	( below is (LINE] but C/L=32 )
+	>R 32 B/BUF */MOD R>	
+	B/SCR * + BLOCK + 32
+	( with the below, works line .LINE )
+	-TRAILING TYPE
+  LOOP CR ;
 : LL. SCR @ LIST ; 
 : N. 1 SCR +! L. ; : P. -1 SCR +! L. ;
 : NN. 1 SCR +! LL. ; : PP. -1 SCR +! LL. ;
+: V. VLIST ;
+HEX
+
 : WHERE DUP B/SCR / DUP SCR
     ! ." SCR # " DECIMAL .
     SWAP C/L /MOD C/L * ROT BLOCK +
@@ -185,8 +195,9 @@ DECIMAL
   ' EDITOR CONTEXT @ 4 - = IF ." -editor" THEN
   PFLAG ! ( prompt )
   (REFRM) ;  
-( FIXME: not showing the ok-editor )
 : ok-editor ; ( omit it like ok )  
+: STACK-ON  ' 1 CFA ' (PROMPT) ! ;
+: STACK-OFF ' 0 CFA ' (PROMPT) ! ;
 
 HEX
 : EVLIST ( -- ; extended VLIST )
@@ -545,7 +556,7 @@ DO ASC-PEEK LOOP ;
 ' BL CFA ' SPACE ! ;
 : BEEP 253 EMIT ;  
 
-VOCABULARY EDITOR IMMEDIATE
+( VOCABULARY EDITOR IMMEDIATE )
 EDITOR DEFINITIONS
 : #DLE [ 112 C, 66 C, 48032 ,
 2 C, 2 C, 2 C, 2 C, 2 C, 2 C,

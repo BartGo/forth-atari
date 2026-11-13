@@ -1,4 +1,4 @@
-( APX forth spin-off, R variant )
+( APX Forth spin-off, 'R' variant )
 ( with WFR assembler  and RP's EDYTOR-FORTH )
 
 ( no graphics words included ; intended use )
@@ -7,34 +7,28 @@
 ( - compatibility with mr. Pantola's editor  )
 (   and routines                             )
 
-( FIXME: )
-( difference in small asm pieces: WFR requires END-CODE )
-( this can be unified, add empty end-code to Mullarky's ) 
-( rename XX to something else )
-( e.g. & for edit/p and \ for edit/del )
-( remove clashes of EDYTOR-FORTH or make words hidden )
-
-( TODO: consider compatibility with valForth assembly )
+( 21 LOAD ) ( DEBUG WORDS )
+( 76 LOAD ) ( WFR ASSEMBLER ) ( <- \!/ )
 
 FORTH DEFINITIONS DECIMAL 0 WARNING !
 
-( : CORE ; ) 
-( 21 LOAD  ) 
-( 76 LOAD  ) ( WFR )
+: CORE ;
 
 FORTH DEFINITIONS DECIMAL 0 WARNING !
 
-( RP - added words for optional use with WFR assembler )
-: C; CURRENT @ CONTEXT ! ?EXEC ?CSP SMUDGE ; IMMEDIATE
-: MAC  -FIND 0= 0 ?ERROR DROP 32 C, , ; IMMEDIATE
-
-FORTH DEFINITIONS DECIMAL 0 WARNING !
 
 : EXTENSIONS ;
 
-: (VER) ( version 1.1e8 )
-  ASCII r 7903 C! 
-  ASCII 8 7904 C! ;
+ASSEMBLER HEX
+( RP@ code finally found in the Blazin' Forth sources )
+CODE RP@ 
+  XSAVE STX, TSX, TXA, PHA, 1 # LDA,
+  XSAVE LDX, PUSH JMP,
+END-CODE
+FORTH DECIMAL
+  
+: (VER) ( version 1.1r8 )
+  ASCII r 7903 C! ASCII 8 7904 C! ;
 (VER)
 
 VOCABULARY EDITOR IMMEDIATE
@@ -47,28 +41,21 @@ FORTH DEFINITIONS
   CR ."     by Patrick L. Mullarky, 1982 "
   CR ."    published by Atari through APX"
   CR ."    ------------------------------"
-  CR ."       EDIT - by Mike Dougherty   "
-  CR ."    as published in: 'Micro 6502' "
-  CR ."       (no. 57 - February 1983)   "
-  CR ."    ------------------------------"
-  CR ."    Additional tools from magazine"
-  CR ."    'Forth Dimensions' - collected"
-  CR ."    & extended by BartGo, v2026/"
+  CR ."    Tunings and tools collected by"
+  CR ."           BartGo, v2026/"
   7903 C@ EMIT 7904 C@ EMIT
+    CR ."    ------------------------------"
+  CR ."    * Assembler by Bill Ragsdale *"
+  CR ."    ------------------------------"
+  CR ."    EDYTOR-FORTH by Roland Pantola"
   CR ."    =============================="
   CR ."    For the glory of Atari & Forth"
   CR ."    & PTODT (https://ptodt.org.pl)"  
   CR ."    =============================="
   CR CR ;
 
-: .FRE ( -- )
-  741 @ HERE - U. ." bytes free" ; 
+: .FRE ( -- ) 741 @ HERE - U. ." bytes free" ; 
 
-( : BEEP 253 EMIT ; )
-
-( static messages are needed as a bigger kernel overwrites )
-( first screens, including those with messages )
-( an alternative would be to move messages to the last screens )
 : (MESSAGE) ( n -- )
   ( blink red on real err, orange on warning / msg 4 )
   710 @ SWAP DUP 4 = 0= IF
@@ -97,12 +84,9 @@ FORTH DEFINITIONS
 ' (MESSAGE) CFA ' MESSAGE    ! ( ex: WARNING )
 ' ;S        CFA ' MESSAGE 2+ ! ( ex: @ )
 
-
 : (HELLO) ( -- )
   EMPTY-BUFFERS
-  80 SCR ! 
-  CR .FRE
-  CR ." Screen set to #" SCR ?
+  CR .FRE 80 SCR ! 
   CR ." Type 'HELP' for help"
   CR QUIT ;
 
@@ -138,32 +122,13 @@ HEX
   THEN THEN THEN THEN THEN THEN CR ;
 
 HEX
-( Re-Defining a Colon Word )
-( by E. H. Schmauch, FDv6n3p20 )
-: (RE-CREATE) ( -- )
-  -FIND 0= IF
-    HERE COUNT TYPE ."  NOT FOUND" ABORT
-  THEN
-  DROP DUP CFA @ [ ' : CFA @ ] LITERAL = 0= IF
-    HERE COUNT TYPE ."  NOT A COLON WORD!" ABORT
-  THEN HERE SWAP ! ;
-: (RE-EXIT) ( -- ) R> R> 2DROP ;
-: RE: ( -- )
-  SP@ CSP ! CURRENT @ CONTEXT ! 
-  (RE-CREATE) [ ' : CFA @ ] LITERAL , ] ;
-: ;RE ( -- )
-  ?CSP COMPILE (RE-EXIT)
-  [COMPILE] [ ; IMMEDIATE
-( : XX 1 . ; XX RE: XX 2 . ;RE XX )
-
-HEX
 ( FIG edit minimal subset, in the FORTH vocabulary )
+( also, used by SEARCH )
 : TEXT/ HERE C/L 1+ BLANKS WORD HERE PAD C/L 1+ CMOVE ;
 : LINE/ DUP FFF0 AND 17 ?ERROR SCR @ (LINE) DROP ;
 : -MOVE/ LINE/ C/L CMOVE UPDATE ; 
-: & 1 TEXT/ PAD 1+ SWAP -MOVE/ ; ( = P )
-: XX LINE/ C/L BL FILL UPDATE ;  ( = E ) 
-: L. SCR @ LIST ; : FL. FLUSH ; : EB. EMPTY-BUFFERS ;
+: P 1 TEXT/ PAD 1+ SWAP -MOVE/ ; ( = P )
+: L. SCR @ LIST ; 
 : N. 1 SCR +! L. ; : P. -1 SCR +! L. ;
 : WHERE DUP B/SCR / DUP SCR
     ! ." SCR # " DECIMAL .
@@ -171,10 +136,6 @@ HEX
     CR C/L -TRAILING TYPE CR
     HERE C@ - SPACES 1 2FE C!
     1C EMIT 0 2FE C! SP! QUIT ; 
-: CLEAR ( n -- )
-  SCR ! 10 0 DO I XX LOOP ; 
-: CLEARS ( n m -- ) 
-  DO I CLEAR FLUSH LOOP ; 
 : COPY B/SCR * OFFSET @ + SWAP
   B/SCR * B/SCR OVER + SWAP DO
   DUP I BLOCK 2 - ! 1+ UPDATE
@@ -185,34 +146,9 @@ HEX
 : (1LINE) #LAG PAD COUNT MATCH R# +! ; 
 : (M) R# +! CR SPACE #LEAD TYPE
   17 EMIT #LAG TYPE #LOCATE . DROP ;
-: TOP 0 R# ! ; 
+: TOP 0 R# ! ;
 
 DECIMAL
-
-( * PICK and ROLL * )
-(   for fig-FORTH   )
-(    Steve Oakey    )
-( /Forth for Micros )
-( tested: APX Forth )
-: PICK ( n -- n )
-  2 * SP@ OVER 1 < SWAP ROT +
-  SWAP OVER
-  18 +ORIGIN @ ( S0 ) < 0= OR IF
-    ." PICK: out of range"
-	CR ABORT
-  ELSE @ THEN ;
-: ROLL ( n -- )
-  2 * SP@ OVER 1 < SWAP ROT +
-  SWAP OVER 
-  18 +ORIGIN @ ( S0 ) < 0= OR IF
-    ." ROLL: out of range"
-	CR ABORT
-  ELSE
-    DUP @ >R SP@ 2+ SWAP DO
-	  I 2 - @ I ! -2
-	+LOOP
-    DROP R>
-  THEN ;
 
 ( Search )
 ( John S. James, FDv2N6p165 with errata )
@@ -225,8 +161,7 @@ DECIMAL
       (1LINE) IF 0 (M) SCR ? (BUMP) THEN
     1023 R# @ < UNTIL LOOP ; 
 
-: (HOME) ( -- )
-  146 710 ! 125 EMIT ;
+: (HOME) ( -- ) 144 710 ! 125 EMIT ;
 
 : ['] [COMPILE] ' ; IMMEDIATE
 
@@ -237,26 +172,22 @@ DECIMAL
   40 EMIT SPACE
   SP@ 188 = 0= IF SP@ 2 - 186 DO
   I @ . -2 +LOOP THEN 41 EMIT SPACE ;
-
 : S. .S ; ( -- ; an alias for .S )
 
 : (REFRM) ( -- )
   BASE @ DUP 10 = IF DROP 0 THEN 712 C! ;
-
 : (PROMPT) ( -- )
   0 IF .S THEN
   PFLAG @ 0 PFLAG ! ." ok"
   ' EDITOR CONTEXT @ 4 - = IF ." -editor" THEN
   PFLAG ! ( prompt )
   (REFRM) ;  
+( FIXME: not showing the ok-editor )
 : ok-editor ; ( omit it like ok )  
-  
-: STACK ( -- ; toggle stack display )
-  ' (PROMPT) @ ' 0 CFA = IF ' 1 ELSE ' 0 THEN
-  CFA ' (PROMPT) ! ;
 
 FORTH DEFINITIONS HEX
 
+( MERGE WITH EVLIST ) 
 : .CC ( -- ; show CONTEXT and CURRENT)
   CR ." Context Current: "
   CONTEXT @ 4 - NFA ID.
@@ -305,21 +236,6 @@ DECIMAL
     132 + ?TERMINAL IF LEAVE THEN
   LOOP DROP CR ;
 
-( simplified .BUFS, displays +/- )
-( with + for buffers synced with )
-( the drive and '-' for pending )
-0 VARIABLE BUFCHANGE
-: .BUFSTAT ( -- ) 
-  0 BUFCHANGE !
-  FIRST LIMIT FIRST - B/BUF /
-  1+ 1 DO
-	DUP @ 32768 AND 0= 0= IF
-	  1 BUFCHANGE +! THEN
-	132 + 
-  LOOP DROP
-  BUFCHANGE @ IF ASCII - EMIT
-    ELSE ASCII + EMIT THEN ;
-
 ( *** )
 ( KEYWORDS - WHERE USED
 ( FD VOL VII, NO 1
@@ -354,64 +270,6 @@ DECIMAL
   LATEST PFA CFA ( n1 n2 n3 )
   ROT (FINDNO) ;
 
-( DOS-like DIR, you can use now "D1: DIR" )
-( and DIR will show lines started with (s )
-: (INDEX) ( scr -- ; commented lines #0 ) 
-  DUP SCR ! 0 SWAP (LINE) SWAP DUP C@ ASCII (
-  = 0= IF 2DROP ;S THEN CR ." #"
-  SCR ? SWAP -TRAILING TYPE ;      
-: IND. ( 1st last -- ; INDEX on non-empty )
-  1+ SWAP DO I (INDEX)
-    ?TERMINAL IF LEAVE THEN LOOP ;
-: DIR 0 89 IND. ; 
-: D:  DR0 ; : D1: DR0 ; : D2: DR1 ;
-
-( most basic string operations )
-( only as a start of more complex module )
-: $" ( $ -- ; define counted string )
-  ASCII " WORD HERE COUNT ROT OVER
-  OVER C! 1+ SWAP CMOVE ; IMMEDIATE
-: CTYPE ( a -- ; type counted )
-  COUNT TYPE ; 
-: ZTYPE ( n -- ; type zeroed )
-  0 ENCLOSE     ( a n1 n2 n3 )
-  ROT DROP DROP ( a ct )
-  TYPE ;
-: CZ! ( a1 -- ) ( convert counted to zeroed )
-  DUP COUNT ( a1 a1' ct )
-  ROT SWAP  ( a1' a1 ct )
-  2DUP + >R ( a1' al ct R: al+ct )
-  CMOVE     ( R: al+ct )
-  0 R> C! ; ( -- )  
- 
-( tests )
-( 0 VARIABLE A$ 80 ALLOT )
-( 0 VARIABLE B$ 80 ALLOT )
-( A$ $" HELLO WORLD!" )
-( A$ CTYPE )
-( B$ $" HELLO UNIVERSE!" )
-( B$ CTYPE )
-( A$ CZ! )
-( A$ ZTYPE )
-( done )
-
-( Local variables by Baranov, Nozdrunov; )
-( Language Forth and its implementations )
-100 ALLOT HERE CONSTANT LP0
-0 VARIABLE LP@ 
-: INIT LP0 LP@ ! ; INIT
-: LOCALS: ( n -- )
-  1+ 2 * LP@ @ OVER - DUP LP@ ! ! ;
-: ;LOCALS ( -- ) LP@ @ @ LP@ +! ;
-: @@ <BUILDS , DOES> @ LP@ @ + @ ;
-: !! <BUILDS , DOES> @ LP@ @ + ! ;
-2 @@ @1 4 @@ @2 6 @@ @3 8 @@ @4 10 @@ @5
-2 !! !1 4 !! !2 6 !! !3 8 !! !4 10 !! !5
-( : 5INV ( ABCDE -> EDCBA )
-(   5 LOCALS: !1 !2 !3 !4 !5 )
-(   @1 @2 @3 @4 @5 ;LOCALS ; )
-( 1 2 3 4 5 6 7 5INV )
-
 ( TURNING THE STACK INTO LOCAL VARIABLES
 ( Marc Perkel 
 ( https://www.forth.org/fd/FD-V03N6.pdf
@@ -428,66 +286,6 @@ HEX 0 VARIABLE [ARG] 0 VARIABLE [TO]
 : RESULTS 2 * [ARG] @ SWAP - SP@ - 2 / 0 DO DROP LOOP
   R> R> [ARG] ! >R ;
 DECIMAL
-
-( : BOX ( n n n -- n n )
-(  3 ARGUMENTS
-(    S1 S2 S3 * * TO S4
-(    S1 S2 S3 + + TO S5
-(    S5 TO S1 
-(    S4 TO S2
-(  2 RESULTS ;
-( 2 3 4 BOX .
-
-( ----------------------------- )
-( Local/scoped words by BartGo; )
-( for Atari 8-bit APX fig-Forth )
-( ----------------------------- )
-( based on an idea published in )
-( Forth Dimensions [FD] - V06N6 )
-( by Carol Pruitt, 11-Jun-84 w/ )
-( the below licence note:       )
-( ----------------------------- )
-( Copyright[c] 1985 by the      )
-( University of Rochester. All  )
-( rights reserved. Permission is)
-( hereby granted for personal,  )
-( non-commercial use provided   )
-( this notice accompanies such  )
-( use. 
-( ----------------------------- )
-( the original idea used a bit  )
-( to mark local words; instead, )
-( I follow an existing fig-Forth)
-( convention of word names in   )
-( paretheses meaning "internal" )
-( ones. by FOLD'ing [ n -- ] we )
-( request that lfa links are    )
-( only preserved in non-internal)
-( words, so the internal/local  )
-( ones are not searchable - but )
-( the references are preserved. )
-( ----------------------------- )
-( purpose: hide non-local words )
-( ----------------------------- )
-( usage: HERE ..declare.. FOLD  )
-( or: ' FIRST-TO-CLEAN NFA FOLD )
-( ----------------------------- )
-
-FORTH DEFINITIONS DECIMAL
-
-40 CONSTANT CHAR.LOC
-0 VARIABLE LINK.FROM
-: FOLD ( here -- )
-  LATEST DUP LINK.FROM !
-  BEGIN 2DUP < WHILE
-    DUP	1+ C@ CHAR.LOC
-    = IF
-	  PFA LFA @ DUP
-	  LINK.FROM @ !
-    ELSE
-	  PFA LFA DUP
-	  LINK.FROM ! @
-    THEN REPEAT 2DROP ;
 
 ( enable hooks )
 : (FLAVOR) ( -- )
@@ -561,66 +359,124 @@ FORTH DEFINITIONS DECIMAL
   ELSE ." NOT FOUND" CR THEN ;
 : GOIN GOESINTO ; 
  
+
+( 6502 Disassembler by John Mattes )              
+HEX FORTH DEFINITIONS
+
+0 VARIABLE POINTER
+0 VARIABLE MULTIMODE -2 ALLOT
+1D , 1E , 3C , 3D , 3E , 5C ,
+5D , 5E , 7D , 7E , 9C , 9D ,
+9E , BC , BD , BE , DC , DD ,
+DE , FC , FD , FE ,
+: SEEKD 1 + 0 DO OVER OVER I 2
+* + C@ - DUP 0= IF DROP
+DROP DROP I 1 LEAVE ELSE
+0 < IF DROP DROP I 0 LEAVE
+ENDIF ENDIF LOOP ;
+: STRING BL BLK @ IF BLK @ BLOCK
+ELSE TIB @ ENDIF IN @ + SWAP
+ENCLOSE IN +! OVER - >R +
+HERE R CMOVE R> ALLOT ;
+0 VARIABLE MULTINAME -2 ALLOT
+STRING ORAASLBITANDROLJMPEORLSR
+STRING ADCRORSTYSTASTXLDYLDALDX
+STRING CPYCMPDECCPXSBCINC
+: CHKMODE DROP DUP 2 *
+' MULTIMODE + @ POINTER @ C@ -
+4 /MOD SWAP IF SWAP 1+ SWAP ENDIF ;
+0 VARIABLE ONENAME -2 ALLOT
+STRING BRKPHPASLBPLCLCJSRPLPROL
+STRING BMISECRTIPHALSRBVCCLIRTS
+STRING PLARORJMPBVSSEIDEYTXABCC
+STRING STXTYATXSLDYLDXTAYTAXBCS
+STRING LDXCLVTSXLDXINYDEXBNECLD
+STRING INXNOPBEQSED???
+0 VARIABLE ONEMODE -2 ALLOT
+2C00 , 2C08 , 280A , 3010 ,
+2C18 , 1020 , 2C28 , 282A ,
+3030 , 2C38 , 2C40 , 2C48 ,
+284A , 3050 , 2C58 , 2C60 ,
+2C68 , 286A , 246C , 3070 ,
+2C78 , 2C88 , 2C8A , 3090 ,
+2096 , 2C98 , 2C9A , 14A0 ,
+14A2 , 2CA8 , 2CAA , 30B0 ,
+20B6 , 2CB8 , 2CBA , 04BE ,
+2CC8 , 2CCA , 30D0 , 2CD8 ,
+2CE8 , 2CEA , 30F0 , 2CF8 ,
+00FF ,
+0 VARIABLE MODE -2 ALLOT
+STRING ,X,Y,X)Y..##0PX).Y().AIMRE 
+0 VARIABLE LENGTH -2 ALLOT
+2 C, 2 C, 1 C, 1 C, 2 C, 1 C,
+1 C, 1 C, 1 C, 2 C, 0 C, 0 C,
+1 C, 0 C,
+: .NAME SPACE SWAP 3 * +
+3 TYPE 2 SPACES ;
+: .MODE 2 * ' MODE + 2 TYPE
+2 SPACES ;
+: .ADD POINTER @ C@ DUP 20
+= OVER 40 = OR OVER 4C = OR
+OVER 60 = OR SWAP 6C = OR
+SWAP ' LENGTH + C@ 1 POINTER
++! POINTER @ OVER POINTER +!
+OVER 0= IF DROP DROP ELSE
+OVER 1 = IF C@ . DROP ELSE
+@ 0 D. DROP ENDIF ENDIF ;
+: DISASSEMBLE POINTER ! CR
+BEGIN CR
+POINTER @ DUP 0 D. 2 SPACES
+C@ ' ONEMODE 2D SEEKD
+IF DUP ' ONENAME .NAME 2 * 1+
+' ONEMODE + C@ 4 /
+ELSE DROP POINTER @ C@
+' MULTIMODE 16 SEEKD
+CHKMODE CHKMODE CHKMODE
+SWAP ' MULTINAME .NAME ENDIF
+DUP .MODE .ADD ?TERMINAL OR
+UNTIL ; : DIS DISASSEMBLE ;
+
+DECIMAL
+ 
 : ED-HELP ( -- ; display FIG EDITOR help )
   CR
-  CR ." m SCR ! -> select screen m"
-  CR ." .BUFS   -> show buffers"
-  CR ." --------- EDYTOR-FORTH by RP
-  CR ." E.      -> edit screen n"
-  CR ." EE.     -> edit current screen"
-  CR ."            Esc+space exits"
-  ( CR ." EF-HELP -> cheatsheet
-  CR ." --------- FIG LINE EDITOR"
-  CR ." n &     -> add text in line n (P)"
-  CR ." n XX    -> delete text in line n (E)"
-  CR ." FL.     -> save (FLUSH)"
-  CR ." EB.     -> undo (EMPTY-BUFFERS)"
+  CR ." 1) EDYTOR-FORTH by Roland Pantola
+  CR ." EDIT    -> edit current screen"
+  CR ." n E.    -> edit screen n"
+  CR ." Shift+Insert/Delete -> cut/paste" 
+  CR ." To exit, press Esc, release, Space" CR
+  CR ." 2) FIG LINE EDITOR and screen mngmnt"
+  CR ." n SCR ! -> select screen n"
   CR ." L.      -> LIST current screen"
   CR ." N. / P. -> LIST next/previous screen"
-  CR ." --------- QMEG (if present)" 
-  CR ." QMG     -> enters QMEG's menu" 
-  CR ." MLM or MON enters QMEG's monitor" 
-CR CR ;
-  
-: EF-HELP ( -- )  ;  
-  
-  ( TODO: add RP's editor, remove conflicts 
-  ( e.g. L.
-  ( consider removing IND
-  ( how about tape management?
-  
+  CR ." n P ccc -> put text ccc in line n"
+  CR ." .BUFS   -> show buffers"
+  CR ." FL.     -> save (FLUSH)"
+  CR ." EB.     -> undo (EMPTY-BUFFERS)"
+  CR ." n m SEARCH XYZ -> search screens"
+  CR ." n LOAD  -> compile from screen n"
+  CR ." WHERE   -> show last compile error"
+  CR CR ;
+ 
 : HELP ( -- ; display help )
   CR
-  CR ." VER for version, .FRE for memory info"
-  CR ." EVLIST for an extended word list"
-  CR ." ED-HELP to help on the source editors"
-  CR ." \? XYZ for help on the word XYZ"
-  CR ." STACK to _toggle_ stack display"
-  CR ." .S to show the stack"
-  CR ." .CC for CONTEXT and CURRENT info"
-  CR ." D1: or D2: and DIR to browse floppies"
-  CR ." .BUFS to show disc buffers"
-  CR ." n m SEARCH XYZ search XYZ on screens"
-  CR ." DECOMP XYZ to decompile word XYZ"
-  CR ." GOIN XYZ for recursive decompiler"
-  CR ." BREAK to debug, GO to proceed"
-  CR ." || is BREAK alias, ?| is conditional"
-  CR ." UNRAVEL-ON /-OFF - err/stack trace"
-  CR ." RE: and ;RE allows redefining words"
-  CR ."   : X ;  RE: X ;RE ( to redefine X )"
-  CR ." ' XYZ LOCATE to locate uses of XYZ"
-  ( THRU removed as not reliable yet )
-  ( CR ." n m THRU to load screens w/out -->" )
-  CR ." WHERE for the last loading error"
-  CR ." PURGE removes interpreter plugins"
+  CR ." HELP    -> *this* help"
+  CR ." VER     -> version"
+  CR ." .FRE    -> memory info"
+  CR ." .CC     -> context"
+  CR ." .S      -> show the stack"
+  CR ." ED-HELP -> help on the source editors"
+  CR ." \? cc   -> help on the word cc"
+  CR ." EVLIST  -> show enhanced VLIST"
+  CR ." DECOMP cc   -> decomp cc 
+  CR ." GOIN cc     -> decomp cc [Ackerman]"
+  CR ." ' cc DIS    -> deassemble cc [Mattes]"
+  CR ." ' cc LOCATE -> locate uses of XYZ" 
   CR CR ;
 
-
-
-( EDYTOR-FORTH /STARTS @ )
+( EDYTOR-FORTH /STARTS )
 ( autor: Roland Pantola )
 ( [c] 1992 T.A. ) 
-
 
 FORTH FORTH DEFINITIONS
 0 VARIABLE #GGE
@@ -886,16 +742,17 @@ KEY DUP #NR-KLAW #WYB0
 ." FORTH" CR 0 752 C! ;
 : CLEAR % 16 0 DO I SCR @
 (LINE) DROP C/L BLANKS UPDATE
-LOOP ; ( TODO )
+LOOP ; 
 
 ( EDYTOR-FORTH /ENDS     )
 ( ED-DYSK )
 : MARK SCR @ % 8 * % 8 0 DO I
 OVER + BLOCK DROP UPDATE
 LOOP DROP ;
-: EE. (E) EXFO ; ( renamed E. )
-: E. SCR ! E. ; (renamed L.) 
-: F. MARK FLUSH ; ( TODO: unclash with floating point ! )
+: EDIT (E) EXFO ; ( renamed E. )
+: E. SCR ! EDIT ; ( renamed L.) 
+: FL. MARK FLUSH ; 
+: EB. EMPTY-BUFFERS ;
 : INDE EMPTY-BUFFERS
 GGE SWAP GGE 1 - MIN
 DO I 8 * BLOCK 32 -TRAILING
@@ -903,166 +760,13 @@ OVER @ DUP 8224 = 0= * IF CR
 I . SPACE TYPE ELSE 2DROP ENDIF
 ?TERMINAL IF LEAVE ENDIF
 LOOP EMPTY-BUFFERS ;
-: IND 1 INDE ; 
+: IND 1 INDE ; : DIR IND ;
 
 ( /END )
 
+DECIMAL FORTH DEFINITIONS
 
-ASSEMBLER HEX
-( RP@ code finally found in the Blazin' Forth sources )
-CODE RP@ 
-  XSAVE STX, TSX, TXA, PHA, 1 # LDA,
-  XSAVE LDX, PUSH JMP,
-  END-CODE
-
-( ** CALL ** )
-( David Held, Forth Dimension V/5 p. 22 )
-( David Held, Forth Dimension V/3 p. 23 )
-( Test: call selftest ->  HEX E471 CALL )
-CODE (CALL)
-    XSAVE STX,    0 JSR,
-    XSAVE LDX, NEXT JMP,
- END-CODE
- 
-FORTH HEX
-: CALL
-  [ ' (CALL) 3 + ]
-  LITERAL ! (CALL) ;
-
-( ** QMEG & MLM ** )
-: MEMUP
-  FORTH DEFINITIONS
-  LATEST 0C +ORIGIN ! ( NTOP )
-  HERE   1C +ORIGIN ! ( FENCE )
-  HERE   1E +ORIGIN ! ( DP )
-  ; ( TODO: how is it different from )
-    ( the partial content of (SAVE)
-    ( which also touches VOC-LINK etc )
-  
-: MLM MEMUP E480 CALL ;
-: MON MEMUP E480 CALL ;
-: QMG MEMUP E471 CALL ;
-DECIMAL
-
-
-( Add a Break Point Tool / BREAK & GO )
-( Frank Seuberling / Kim Harris - FDv5n1p19 )
-( with small tunings by BG )
-: .RS ( -- )
-  CR ." RS: " RP@ R0 2 -
-  DO I @ U. -2 +LOOP CR ;
-0 VARIABLE RP*
-( TODO: consider behavior when loading )
-: BREAK ( -- ; BREAK&GO debugging method )
-  CR ." Breapoint!"
-  CR RP@ 4 - RP* ! 0 BLK !  BEGIN
-    QUERY INTERPRET ." aok [GO]" CR
-  AGAIN ;
-: || ( -- ; alias for BREAK ) BREAK ;
-: ?| ( f -- ; BREAK if f ) IF BREAK THEN ;
-: GO ( -- ; proceed after BREAK )
-  RP@ RP* @ = IF R> DROP R> DROP
-  ELSE ." can't resume " QUIT THEN ;
-
-( ***** AUGMENTED TRACE ***** )
-( https://www.forth.org/fd/FD-V06N5.pdf )
-( REQUIRES: assembler [39], RP@, R0     )
-( FIXME: UNRAVEL sometimes fails, with  )
-(        short words and other cases    )
-: HIGH? ( cfa -- f )
-  DUP  @    [ ' : @ @ ] LITERAL =
-  SWAP @ C@ [ ' FORTH @ C@ ] LITERAL = OR ;
-: (UNLINE CR SPACE DUP 4 .R SPACE ;
-: UNRAVEL ( -- )
-  BEGIN RP@ R0 = 0= WHILE
-    R> DUP CFA @ DUP ( n2 n n ) 
-    HIGH?            ( n2 n f  )
-    IF   (UNLINE NFA ID. DROP
-    ELSE (UNLINE DROP U. THEN
-  REPEAT QUIT ; ( original QUIT replaced with BREAK? )
-
-( *** stack trace ON / OFF *** )
-: UNRAVEL-ON ( -- ) ' UNRAVEL CFA 7290 ! ;
-( ^ replace 'QUIT' IN 'ERROR' with UNRAVEL + QUIT )
-: UNRAVEL-OFF ( -- ) ' QUIT    CFA 7290 ! ; ( default )
-
-( Algebraic Expression Evaluation in FORTH )
-(   by Michael Stolovitz - - 30 Nov 1982   )
-( implemented for unidentified Forth [79?] )
-( Published in Forth Dimensions /V4N6 p.14 )
-( fixes and adaptation to Atari 8-bit and  )
-( its APX Extended fig-Forth by BartGo '26 ) 
-
-HEX FORTH DEFINITIONS
-
-0 VARIABLE OP 44 ALLOT
-
-VOCABULARY ALGEBRAIC IMMEDIATE
-ALGEBRAIC DEFINITIONS
-
-: ?INTERP ( pfa -- )
-  CFA STATE @ IF , ELSE
-  EXECUTE THEN ;
-  
-: OPP@ ( -- addr )
-  OP DUP @ + ;
-
-: >OP ( pfa lev -- )
-  4 OP +! OPP@ D! ;
-
-: OP> ( -- )
-  OPP@ D@ -4 OP +!
-  DROP ?INTERP ; 
-
-: LEV? ( -- lev )
-  OPP@ @ ;
-
-: ]A
-  BEGIN LEV? WHILE OP> REPEAT
-  [COMPILE] FORTH ; IMMEDIATE
-
-: ABORT"
-  STATE @ IF COMPILE 0BRANCH
-  HERE 0 , COMPILE (.")
-  ASCII " WORD HERE C@ 1+ ALLOT
-  COMPILE QUIT HERE OVER -
-  SWAP ! ELSE IF ASCII " WORD
-  HERE COUNT TYPE QUIT THEN
-  THEN ; IMMEDIATE  
-
-: INFIX ( lev -- ; rpnop infop )
-  [COMPILE] ' <BUILDS SWAP , , IMMEDIATE
-  DOES> D@ BEGIN DUP LEV? > 0=
-  WHILE >R >R OP> R> R> REPEAT
-  >OP ; 
-
-: (
-  ' CR 1 >OP
-  ; IMMEDIATE
-
-: )
-  FORTH BEGIN 1 LEV? <
-  WHILE OP> REPEAT
-  1 LEV? = IF -4 OP +! ELSE
-  1 ABORT" Missing ("
-  THEN ; IMMEDIATE
-
-7 INFIX * *  7 INFIX / /
-6 INFIX + +  6 INFIX - -
-5 INFIX > >  5 INFIX < <
-5 INFIX = =
-4 INFIX 0= 0=
-3 INFIX AND AND
-2 INFIX OR OR 
-
-DECIMAL
-FORTH DEFINITIONS
-
-: A[
-  0 OP ! [COMPILE] ALGEBRAIC
-  ; IMMEDIATE
-
-: PURGE PURGE A[ ;
+: PURGE PURGE DIR ;
 
 : TASK ( -- ; end of EXTENSIONS ) ;
 
@@ -1072,6 +776,7 @@ CR ." to overwrite and press RETURN"
 CR ." or ENTER. An updated, bootable"
 CR ." Forth kernel will be saved there." CR
 CR ." The computer will then reboot." CR CR
+
 KEY DROP SAVE COLD 
 
-;S ABORT ;S
+

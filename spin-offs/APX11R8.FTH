@@ -441,12 +441,13 @@ DECIMAL
 : ED-HELP ( -- ; display FIG EDITOR help )
   CR
   CR ." 1) EDYTOR-FORTH by Roland Pantola
-  CR ." EDIT    -> edit current screen"
-  CR ." n E.    -> edit screen n"
-  CR ." Shift+Insert/Delete -> cut/paste" 
+  CR ." EDIT          -> edit current screen"
+  CR ." n E.          -> edit screen n"
+  CR ." Shift+Del/Tab -> cut to/from buffer" 
   CR ." To exit, press Esc, release, Space" CR
   CR ." 2) FIG LINE EDITOR and screen mngmnt"
   CR ." n SCR ! -> select screen n"
+  CR ." SCR ?   -> show current screen number"
   CR ." L.      -> LIST current screen"
   CR ." N. / P. -> LIST next/previous screen"
   CR ." n P ccc -> put text ccc in line n"

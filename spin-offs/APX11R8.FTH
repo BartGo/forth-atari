@@ -122,9 +122,11 @@ HEX
 : LINE/ DUP FFF0 AND 17 ?ERROR SCR @ (LINE) DROP ;
 : -MOVE/ LINE/ C/L CMOVE UPDATE ; 
 : P 1 TEXT/ PAD 1+ SWAP -MOVE/ ; ( = P )
-: L. ( scr -- )
-  SCR @ SWAP SCR ! C/L 32 ' C/L ! 16 0 DO
-    CR I SCR @ .LINE LOOP CR ' C/L ! SCR ! ;  
+: L. ( -- )
+  CR ." --- Listing screen: " SCR ? 
+  C/L 32 ' C/L ! 16 0 DO
+    CR I SCR @ .LINE
+  LOOP CR ' C/L ! ;  
 : LL. SCR @ LIST ; 
 : N. 1 SCR +! L. ; : P. -1 SCR +! L. ;
 : NN. 1 SCR +! LL. ; : PP. -1 SCR +! LL. ;
@@ -433,8 +435,9 @@ DECIMAL
   CR ." SCR ?   -> show current screen number"
   CR ." n SCR ! -> select screen n"
   CR ." n LIST  -> show content of screen n"
-  CR ." L.      -> LIST current screen"
-  CR ." N. / P. -> LIST next/previous screen"
+  CR ." L. / LL.-> LIST current screen (32/64)"
+  CR ." N. / NN.-> LIST next screen    (32/64)"
+  CR ." P. / PP.-> LIST previous screen(32/64)"
   CR ." n P ccc -> put text ccc in line n"
   CR ." FL.     -> save (FLUSH)"
   CR ." EB.     -> undo (EMPTY-BUFFERS)"

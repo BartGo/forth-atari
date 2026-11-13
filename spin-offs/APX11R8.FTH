@@ -7,17 +7,14 @@
 ( - compatibility with mr. Pantola's editor  )
 (   and routines                             )
 
-( 21 LOAD ) ( DEBUG WORDS )
-( 76 LOAD ) ( WFR ASSEMBLER ) ( <- \!/ )
-
-FORTH DEFINITIONS DECIMAL 0 WARNING !
-
+FORTH DEFINITIONS DECIMAL
+0 WARNING !
 : CORE ;
-
-FORTH DEFINITIONS DECIMAL 0 WARNING !
-
-
+( 21 LOAD ) ( DEBUG WORDS   ) ( <- \!/ )
+( 76 LOAD ) ( WFR ASSEMBLER ) ( <- \!/ )
 : EXTENSIONS ;
+VOCABULARY EDITOR IMMEDIATE
+FORTH DEFINITIONS DECIMAL
 
 ASSEMBLER HEX
 ( RP@ code finally found in the Blazin' Forth sources )
@@ -25,14 +22,11 @@ CODE RP@
   XSAVE STX, TSX, TXA, PHA, 1 # LDA,
   XSAVE LDX, PUSH JMP,
 END-CODE
+
 FORTH DECIMAL
-  
 : (VER) ( version 1.1r8 )
   ASCII r 7903 C! ASCII 8 7904 C! ;
 (VER)
-
-VOCABULARY EDITOR IMMEDIATE
-FORTH DEFINITIONS 
 
 : VER ( -- ; display version )
   CR
@@ -149,7 +143,6 @@ HEX
 : TOP 0 R# ! ;
 
 DECIMAL
-
 ( Search )
 ( John S. James, FDv2N6p165 with errata )
 0 VARIABLE SRCHCNT
@@ -161,19 +154,19 @@ DECIMAL
       (1LINE) IF 0 (M) SCR ? (BUMP) THEN
     1023 R# @ < UNTIL LOOP ; 
 
-: (HOME) ( -- ) 144 710 ! 125 EMIT ;
-
 : ['] [COMPILE] ' ; IMMEDIATE
-
 : S0 18 +ORIGIN @ ; ( -- n )
 : R0 20 +ORIGIN @ ; ( -- n )
-
 : .S ( -- ; display stack )
   40 EMIT SPACE
   SP@ 188 = 0= IF SP@ 2 - 186 DO
   I @ . -2 +LOOP THEN 41 EMIT SPACE ;
 : S. .S ; ( -- ; an alias for .S )
-
+: .CC ( -- ; show CONTEXT and CURRENT)
+  CR ." Context Current: "
+  CONTEXT @ 4 - NFA ID.
+  CURRENT @ 4 - NFA ID. CR ; 
+: (HOME) ( -- ) 144 710 ! 125 EMIT ;
 : (REFRM) ( -- )
   BASE @ DUP 10 = IF DROP 0 THEN 712 C! ;
 : (PROMPT) ( -- )
@@ -185,14 +178,7 @@ DECIMAL
 ( FIXME: not showing the ok-editor )
 : ok-editor ; ( omit it like ok )  
 
-FORTH DEFINITIONS HEX
-
-( MERGE WITH EVLIST ) 
-: .CC ( -- ; show CONTEXT and CURRENT)
-  CR ." Context Current: "
-  CONTEXT @ 4 - NFA ID.
-  CURRENT @ 4 - NFA ID. CR ; 
-
+HEX
 : EVLIST ( -- ; extended VLIST )
   CR 80 OUT ! CONTEXT @ @ .CC CR
   ." PFA  SI WORD CFA\PFA LNK-TO " CR
@@ -217,7 +203,6 @@ FORTH DEFINITIONS HEX
   UNTIL DROP ;
 
 DECIMAL
-
 ( Diagnostics on Disk Buffers )
 ( Timothy Huang, FDv3nr6p183 )
 : .BUFS ( -- ; show buffers )
@@ -285,8 +270,8 @@ HEX 0 VARIABLE [ARG] 0 VARIABLE [TO]
   12 - SP@ SWAP - 2 / 0 DO 0 LOOP 0 [TO] ! ;
 : RESULTS 2 * [ARG] @ SWAP - SP@ - 2 / 0 DO DROP LOOP
   R> R> [ARG] ! >R ;
-DECIMAL
 
+DECIMAL
 ( enable hooks )
 : (FLAVOR) ( -- )
   ' (MESSAGE) CFA ' MESSAGE !
@@ -297,7 +282,6 @@ DECIMAL
 : FLAVOR (FLAVOR) 125 EMIT (VER)  
   ." FLAVOR is ON." CR .FRE CR
   ." 'SAVE' and 'COLD' to proceed." CR CR ;
-  
 ( disable hooks )
 : PURGE ( -- ) 
   ' WARNING    CFA ' MESSAGE    !  
@@ -314,7 +298,6 @@ DECIMAL
   ." 'FORGET EXTENSIONS' to obliterate." CR
   ." 'SAVE' and 'COLD' to save." CR CR ;
 ( later, PURGE is redefined with UNRAVEL )
-
 
 ( *******   GOESINTO    ****** )
 ( Decompiler by R. D. Ackerman )
@@ -359,10 +342,8 @@ DECIMAL
   ELSE ." NOT FOUND" CR THEN ;
 : GOIN GOESINTO ; 
  
-
 ( 6502 Disassembler by John Mattes )              
-HEX FORTH DEFINITIONS
-
+HEX
 0 VARIABLE POINTER
 0 VARIABLE MULTIMODE -2 ALLOT
 1D , 1E , 3C , 3D , 3E , 5C ,
@@ -437,7 +418,6 @@ DUP .MODE .ADD ?TERMINAL OR
 UNTIL ; : DIS DISASSEMBLE ;
 
 DECIMAL
- 
 : ED-HELP ( -- ; display FIG EDITOR help )
   CR
   CR ." 1) EDYTOR-FORTH by Roland Pantola
@@ -479,7 +459,7 @@ DECIMAL
 ( autor: Roland Pantola )
 ( [c] 1992 T.A. ) 
 
-FORTH FORTH DEFINITIONS
+FORTH FORTH DEFINITIONS DECIMAL
 0 VARIABLE #GGE
 : GGE #GGE @ ; 129 #GGE !
 : <=< OVER > >R < R> * ; ASSEMBLER
@@ -765,7 +745,8 @@ LOOP EMPTY-BUFFERS ;
 
 ( /END )
 
-DECIMAL FORTH DEFINITIONS
+FORTH DEFINITIONS
+DECIMAL 
 
 : PURGE PURGE DIR ;
 
@@ -779,5 +760,3 @@ CR ." Forth kernel will be saved there." CR
 CR ." The computer will then reboot." CR CR
 
 KEY DROP SAVE COLD 
-
-

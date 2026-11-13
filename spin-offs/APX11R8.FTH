@@ -122,8 +122,12 @@ HEX
 : LINE/ DUP FFF0 AND 17 ?ERROR SCR @ (LINE) DROP ;
 : -MOVE/ LINE/ C/L CMOVE UPDATE ; 
 : P 1 TEXT/ PAD 1+ SWAP -MOVE/ ; ( = P )
-: L. SCR @ LIST ; 
+: L. ( scr -- )
+  SCR @ SWAP SCR ! C/L 32 ' C/L ! 16 0 DO
+    CR I SCR @ .LINE LOOP CR ' C/L ! SCR ! ;  
+: LL. SCR @ LIST ; 
 : N. 1 SCR +! L. ; : P. -1 SCR +! L. ;
+: NN. 1 SCR +! LL. ; : PP. -1 SCR +! LL. ;
 : WHERE DUP B/SCR / DUP SCR
     ! ." SCR # " DECIMAL .
     SWAP C/L /MOD C/L * ROT BLOCK +

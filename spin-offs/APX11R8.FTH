@@ -16,12 +16,16 @@ FORTH DEFINITIONS DECIMAL
 VOCABULARY EDITOR IMMEDIATE
 FORTH DEFINITIONS DECIMAL
 
-ASSEMBLER HEX
-( RP@ code finally found in the Blazin' Forth sources )
+ASSEMBLER DECIMAL
+( identical to END-CODE but shorter )
+: C; CURRENT @ CONTEXT ! ?EXEC ?CSP SMUDGE ; IMMEDIATE
+( MAC / MACRO word for the assembler by R. Pantola )
+: MAC  -FIND 0= 0 ?ERROR DROP 32 C, , ; IMMEDIATE
+( return stack pointer word, from the Blazin' Forth sources )
 CODE RP@ 
   XSAVE STX, TSX, TXA, PHA, 1 # LDA,
   XSAVE LDX, PUSH JMP,
-END-CODE
+C;
 
 FORTH DECIMAL
 : (VER) ( version 1.1r8 )

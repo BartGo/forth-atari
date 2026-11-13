@@ -421,35 +421,37 @@ DECIMAL
 : ED-HELP ( -- ; display FIG EDITOR help )
   CR
   CR ." 1) EDYTOR-FORTH by Roland Pantola
-  CR ." EDIT          -> edit current screen"
-  CR ." n E.          -> edit screen n"
-  CR ." Shift+Del/Tab -> cut to/from buffer" 
-  CR ." To exit, press Esc, release, Space" CR
+  CR ." EDIT    -> edit current screen"
+  CR ." n E.    -> edit screen n"
+  CR ."   Shift+Del/Tab -> cut to/from buffer" 
+  CR ."   To exit, press Esc, release, Space" CR
   CR ." 2) FIG LINE EDITOR and screen mngmnt"
-  CR ." n SCR ! -> select screen n"
   CR ." SCR ?   -> show current screen number"
+  CR ." n SCR ! -> select screen n"
+  CR ." n LIST  -> show content of screen n"
   CR ." L.      -> LIST current screen"
   CR ." N. / P. -> LIST next/previous screen"
   CR ." n P ccc -> put text ccc in line n"
-  CR ." .BUFS   -> show buffers"
   CR ." FL.     -> save (FLUSH)"
   CR ." EB.     -> undo (EMPTY-BUFFERS)"
-  CR ." n m SEARCH XYZ -> search screens"
+  CR ." .BUFS   -> show disk buffers"
   CR ." n LOAD  -> compile from screen n"
   CR ." WHERE   -> show last compile error"
-  CR CR ;
+  CR ." n m SEARCH XYZ -> search screens"
+CR CR ;
  
 : HELP ( -- ; display help )
   CR
-  CR ." HELP    -> *this* help"
-  CR ." VER     -> version"
-  CR ." .FRE    -> memory info"
-  CR ." .CC     -> context"
-  CR ." .S      -> show the stack"
-  CR ." ED-HELP -> help on the source editors"
-  CR ." \? cc   -> help on the word cc"
-  CR ." EVLIST  -> show enhanced VLIST"
-  CR ." DECOMP cc   -> decomp cc 
+  CR ." HELP        -> *this* help"
+  CR ." ED-HELP     -> code editing help"
+  CR ." VER         -> version"
+  CR ." .FRE        -> free memory info"
+  CR ." .S          -> show the stack"
+  CR ." .CC         -> context"
+  CR ." VLIST       -> list Forth words"
+  CR ." EVLIST      -> enhanced VLIST"
+  CR ." \? cc       -> help on the word cc"
+  CR ." DECOMP cc   -> decomp cc"
   CR ." GOIN cc     -> decomp cc [Ackerman]"
   CR ." ' cc DIS    -> deassemble cc [Mattes]"
   CR ." ' cc LOCATE -> locate uses of XYZ" 

@@ -11,25 +11,28 @@
 ( enhancement words MAC and ;C)
 ( - checks and definitions are)
 ( below to redefine if needed )
-( --------------------------- )
 ( / Collected by BartGo '26 / )
 ( --------------------------- )
 
+( \ macro / subroutine word   )
 ' MAC DROP 
-( -------- macro / subroutine )
 ( : MAC  -FIND 0= 0 ?ERROR    )
 (   DROP 32 C, , ; IMMEDIATE  )
 
+( / alias to the END-CODE word)
 ' C;  DROP 
-( -------- END-CODE alias     )
 ( : C; CURRENT @ CONTEXT !    )
 (   ?EXEC ?CSP SMUDGE ; IMMEDIATE )
 ( : END-CODE [COMPILE] C; ;   )
+
+( --------------------------- )
 
 (  FORTH part 7 - ASSEMBLER  )
 ( examples by Roland Pantola )
 (  "TAJEMNICE ATARI", 08/92  )
 
+( increment a Forth variable,)
+( using assembly )
 0 VARIABLE WA
 CODE WA+
   WA LDY, INY,
@@ -41,10 +44,16 @@ S.
 
 FORGET WA
 
+( --------------------------- )
+
 (  FORTH part 8 - ASSEMBLER  )
 ( examples by Roland Pantola )
 (  "TAJEMNICE ATARI", 09/92  )
 
+( modify a Forth variable,   )
+( using assembly:            )
+( * increment it, if <  100  )
+( * decrement it, if >= 100  )
 0 VARIABLE WA
 CODE ZMW
   WA LDA,
@@ -60,6 +69,10 @@ S.
 
 FORGET WA
 
+( modify a Forth variable,   )
+( using assembly:            )
+( * increment it, if <= 100  )
+( * decrement it, if >  100  )
 0 VARIABLE WA
 CODE ZM<
   WA LDA,
@@ -75,6 +88,7 @@ S.
 
 FORGET WA
 
+( fill text rows with $ char )
 CODE C$
   119 # LDY, 4 # LDA,
   BEGIN,
@@ -86,6 +100,7 @@ C$
 
 FORGET C$
 
+( macro / subroutine example )
 0 VARIABLE WA
 CODE WA+
   CLC,
@@ -105,10 +120,13 @@ S.
 
 FORGET WA
 
+( --------------------------- )
+
 (  FORTH part 9 - ASSEMBLER  )
 ( examples by Roland Pantola )
 (  "TAJEMNICE ATARI", 10/92  )
 
+( stack to variable, no DROP )
 SP!
 0 VARIABLE WA
 CODE >WA
@@ -121,6 +139,9 @@ S. 257 ?PAIRS
 
 FORGET WA
 
+( stack to variable, remove  )
+( value from the stack, using)
+( Forth's POP word to leave  )
 SP!
 0 VARIABLE W1
 CODE >W1
@@ -133,6 +154,9 @@ S.
 
 FORGET W1
 
+( stack to variable, remove  )
+( value from the stack, by   )
+( using INX on stack pointer )
 SP!
 0 VARIABLE W2
 CODE >W2

@@ -1,10 +1,34 @@
+( --------------------------- )
+( FORTH COURSE, by R. Pantola )
+( - FORTH ASSEMBLER chapters, )
+( as published in a Polish    )
+( magazine "TAJEMNICE ATARI", )
+( 8/1992 - 10/1992            )
+( --------------------------- )
+( Requires Atari 8-bit, APX   )
+( Extended fig-Forth rev. 2,  )
+( Ragsdale assembler and small)
+( enhancement words MAC and ;C)
+( - checks and definitions are)
+( below to redefine if needed )
+( --------------------------- )
+( / Collected by BartGo '26 / )
+( --------------------------- )
+
+' MAC DROP 
+( -------- macro / subroutine )
+( : MAC  -FIND 0= 0 ?ERROR    )
+(   DROP 32 C, , ; IMMEDIATE  )
+
+' C;  DROP 
+( -------- END-CODE alias     )
+( : C; CURRENT @ CONTEXT !    )
+(   ?EXEC ?CSP SMUDGE ; IMMEDIATE )
+( : END-CODE [COMPILE] C; ;   )
+
 (  FORTH part 7 - ASSEMBLER  )
 ( examples by Roland Pantola )
 (  "TAJEMNICE ATARI", 08/92  )
-
-( require RP's ehancements )
-' MAC DROP 
-' C;  DROP 
 
 0 VARIABLE WA
 CODE WA+
@@ -13,7 +37,6 @@ CODE WA+
   NEXT JMP, C;
 10 WA ! WA+ WA ? ( 11 )
 WA @ 11 ?PAIRS
-
 S. 
 
 FORGET WA
@@ -31,10 +54,8 @@ CODE ZMW
   NEXT JMP, C;
 10  WA ! ZMW WA ?
 WA @ 11  ?PAIRS
-
 150 WA ! ZMW WA ?
 WA @ 149 ?PAIRS
-
 S.
 
 FORGET WA
@@ -61,7 +82,6 @@ CODE C$
 	DEY,
   0< UNTIL,
   NEXT JMP, C; 
-
 C$
 
 FORGET C$
@@ -73,12 +93,10 @@ CODE WA+
   CS IF, WA 1+ INC, THEN,
   WA STA,
   RTS, C;
-
 CODE WA5+
   5 # LDA,
   MAC WA+
   NEXT JMP, C;
-
 276 WA !
 WA5+
 WA ?

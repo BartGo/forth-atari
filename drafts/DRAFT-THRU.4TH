@@ -40,7 +40,32 @@
   LOOP
   CR R> IN ! R> BLK ! ;
 
-21 26 THRU
+( -- Gemini proposal, to be tested )
+
+FORTH DEFINITIONS DECIMAL
+
+89 VARIABLE MAX-SCR
+
+: (THRU-->) ( -- )
+  ?LOADING
+  BLK @ B/SCR / 1+ MAX-SCR @ > IF
+    R> DROP  ( abort current LOAD cleanly )
+  ELSE
+    0 IN !
+    B/SCR BLK @ OVER MOD - BLK +!
+    BASE @ DECIMAL
+    CR ." Loading scr# " BLK @ B/SCR / U.
+    BASE !
+  THEN ; IMMEDIATE
+
+: THRU ( n m -- )
+  MAX-SCR !
+  BASE @ DECIMAL
+  CR ." Loading scr# " DUP U.
+  BASE !
+  LOAD ;
+
+( 81 83 THRU )
 
 
    

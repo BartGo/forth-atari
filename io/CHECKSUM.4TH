@@ -1,3 +1,4 @@
+(   ------------------------------------------   )
 (    Checksum for hand-entered source screens    )
 (   ---- by Klaxon Suralis and Leo Brodie ----   )
 (   Forth Dimensions Vol 4 No 3, public domain   )
@@ -5,6 +6,11 @@
 ( Adapted to APX Forth by porting from Forth-79, )
 ( done by BartGo; fix for different screen sizes )
 ( by Gemini; )
+(   ------------------------------------------   )
+( Faster but incompatible ACCUMULATE: Vol 5 No 1 )
+( : PRBS XOR DUP O< IF 5260 XOR DUP + LSHIFT 1 + )
+(   ELSE DUP + THEN ; -- untested; LSHIFT needed )
+(   ------------------------------------------   )
 
 FORTH DEFINITIONS DECIMAL
 

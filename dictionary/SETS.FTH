@@ -3,10 +3,8 @@
 (   A Techniques Tutorial by    )
 (   Henry Laxen, FD V4N2 p.20   )
 ( ----------------------------- )
-( !! FIXME - tests in progress, )
-( MEMBERS don't work correctly! )
-( ----------------------------- )
-( checks: Atari 8-bit APX Forth )
+( -  ported to and tested on: - )
+( -   Atari 8-bit APX Forth   - )
 ( ----------------------------- )
 
 ( Uniquely identifies the name as an item number )
@@ -37,13 +35,12 @@
 ( a class, and returns True if the item is )
 ( a member of the class. Else False.       )
 : MEMBER? ( n pfa -- f )
-  0 ROT ROT BEGIN @ DUP WHILE 2DUP 2+ @
+  2+ 0 ROT ROT BEGIN @ DUP WHILE 2DUP 2+ @
   = IF 2DROP DROP 1 1 NULL# THEN REPEAT 2DROP ;
 
 ( Takes a pointer to a class and lists its members. )
 : MEMBERS ( pfa -- )
-  BEGIN @ DUP WHILE DUP NFA ID. REPEAT DROP ;
-( FIXME )
+  2+ BEGIN @ DUP WHILE DUP CFA NFA ID. REPEAT DROP ;
 
 
 CLASS COLOR
@@ -60,4 +57,4 @@ YELLOW ' COLOR MEMBER? .
 SMOOTH ' TEXTURE MEMBER? .
 RED SMOOTH = .
 
-' COLOR MEMBERS ( FIXME )
+' COLOR MEMBERS 

@@ -1,52 +1,25 @@
-# APX fig-Forth study overlay (Atari 8-bit)
+# APX fig-Forth extensions for Atari 8-bit
 
-Source for a thicker APX environment: Dougherty editor, in-memory messages, help, inspector, stack viewer, ARG/RES locals, `FOLD` (word hiding / pseudo-scopes).
+Two versions of extension packages were created:
 
-The bootable ATR is **not** stored in git; build it (below) or keep a local copy.
+* APXfigForth11r8 (55716AA2).atr is a tuning of APX Forth, using Ragsdale Assembler and Roland Pantoła's Editor (EDYTOR-FORTH).
+* IDE-BOOT.atr is another tuning of the same, based on Mullarky's sources and Dougherty's editor (EDIT)
 
-Also in this folder:
+Both contain multiple tools for decompiling and work with Forth screens.
 
-- `IDE-SRC.4TH` — combined screens for the overlay
-- `EXERCISES.4TH` — sample screens (overwrites screens 80–83 if loaded as written)
-- `DEVTOOLS.FTH` — host-side include list for `../pc-tools/preproc.sh`
+Once the Forth is booted, use HELP, ED-HELP and /? words to understand how to work with the environment. You need to know APX Forth before.
 
-## Run
+## Edit source on the PC and convert any of the 4TH/FTH files
 
-1. Emulator: Atari XL/XE OS ROM, BASIC off (Altirra is the usual choice).
-2. Boot vanilla APX Extended Fig-Forth Rev. 2, or a disk you previously saved after compiling `IDE-SRC.4TH`.
-3. If you have a rebuilt `IDE-BOOT.ATR`, mount and boot that instead.
+You can try to convert included sources into a screen-based ATR:
+`../pc-tools/txt2scr.sh ./myfile.4TH` → `myfile.ATR`.
 
-
-
-## What the overlay adds
-
-- Boot banner (`VER`)
-- `HELP` / `ED-HELP`
-- `/?` word header + decompiler
-- Full-screen editor (Mike Dougherty, *Micro 6502*)
-- `D1:` `D2:` `DIR` (block/screen oriented, not Atari DOS files)
-- `STACK` command-line stack display
-- Border color follows `BASE`; errors blink (except message 4 / redefinition)
-- Messages in RAM (kernel would otherwise overlay screen-based messages)
-- Unnamed locals (arguments / results)
-- `FOLD` to hide parenthesized “internal” names
-
-
-
-## Edit source on the PC
-
-1. Edit `IDE-SRC.4TH`.
-2. Convert: `../pc-tools/txt2scr.sh ./IDE-SRC.4TH` → `IDE-SRC.ATR`.
-3. Rebuild using that ATR as in the next section.
-
-
-
-## Rebuild
+## To rebuild
 
 1. Boot vanilla APX Forth (ATR not in this repo; CRC notes are in the root README).
-2. `: CORE ; 21 LOAD 40 LOAD 50 LOAD`
-3. Mount `IDE-SRC.ATR` (or a sector copy).
-4. `1 LOAD`
-5. When prompted, mount an empty formatted single-density disk and press Return — or overwrite the source ATR if you accept losing it.
-
-Assembler note in `IDE-SRC.4TH`: graphics words assume Mullarky’s assembler from the APX disk (`50 LOAD`), not Ragsdale. Pantola’s `EDYTOR-FORTH` wants Ragsdale; it is not the default editor here.
+2. Check the screens to load in the source code of the Forth modification, look for a part like `: CORE ; 21 LOAD 40 LOAD 50 LOAD`
+3. LOAD these enhancements to form a bigger kernel (typically with at least DEBUG and ASSEMBLER words)
+4. Mount sources converted with txt2scr as a floppy image (or a real floppy, not tested but should work if you do a proper sector copy).
+5. Now the core Forth floppy is removed so you won't break it
+6. DO `1 LOAD` to proceed with extension loading 
+7. When prompted, mount an empty formatted single-density disk and press Return — you can of course overwrite the source ATR if you accept losing it.

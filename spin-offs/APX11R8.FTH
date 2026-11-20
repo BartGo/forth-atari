@@ -1,11 +1,21 @@
-( APX Forth spin-off, 'R' variant )
+( ----------------------------------------- )
+( **** APX Forth spin-off, 'r' variant **** )
 ( with WFR assembler  and RP's EDYTOR-FORTH )
-
+( when SAVE-d, v1.1r8 occupies screens 1-22 )
+( for: Atari 8-bit; paste into Altirra with )
+( lower case on, or convert to screens and  )
+( compile; this code overwrites used floppy )
+( or its image, but allows to roll back to  )
+( the original dictionary; it erases some   )
+( starting screens, including start of the  )
+( DEBUG package - but compiles in its words )
+( before that;                              )
 ( no graphics words included ; intended use )
 (  - higher compatibility with assembly code )
 (    published and used in other 6502 forths )
 ( - compatibility with mr. Pantola's editor  )
 (   and routines                             )
+( -------- combined by BartGo, 2026 -------- )
 
 FORTH DEFINITIONS DECIMAL
 0 WARNING !
@@ -84,7 +94,7 @@ FORTH DECIMAL
 
 : (HELLO) ( -- )
   EMPTY-BUFFERS
-  CR .FRE 80 SCR ! 
+  CR .FRE 40 SCR ! 
   CR ." Type 'HELP' for help"
   CR QUIT ;
 
@@ -454,6 +464,7 @@ DECIMAL
   CR ." L. / LL.-> LIST current screen 32/64"
   CR ." N. / NN.-> LIST next screen    32/64"
   CR ." P. / PP.-> LIST prev screen    32/64"
+  CR ." CLEAR   -> clear current screen"
   CR ." n P ccc -> put text ccc in line n"
   CR ." FL.     -> save (FLUSH)"
   CR ." EB.     -> undo (EMPTY-BUFFERS)"
@@ -770,8 +781,7 @@ LOOP EMPTY-BUFFERS ;
 
 ( /END )
 
-FORTH DEFINITIONS
-DECIMAL 
+FORTH DEFINITIONS DECIMAL 
 
 : PURGE PURGE DIR ;
 
